@@ -168,24 +168,25 @@ int MvvLva(POS *p, int move)
   return 5;
 }
 
-void ClearHist(void)
-{
-  int i, j;
+void ClearHist(void) {
 
-  for (i = 0; i < 12; i++)
-    for (j = 0; j < 64; j++)
+  for (int i = 0; i < 12; i++)
+    for (int j = 0; j < 64; j++)
       history[i][j] = 0;
-  for (i = 0; i < MAX_PLY; i++) {
+
+  for (int i = 0; i < MAX_PLY; i++) {
     killer[i][0] = 0;
     killer[i][1] = 0;
   }
 }
 
-void Hist(POS *p, int move, int depth, int ply)
-{
+void Hist(POS *p, int move, int depth, int ply) {
+
   if (p->pc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
     return;
-  history[p->pc[Fsq(move)]][Tsq(move)] += depth;
+
+  history[p->pc[Fsq(move)]][Tsq(move)] += depth * depth;
+
   if (move != killer[ply][0]) {
     killer[ply][1] = killer[ply][0];
     killer[ply][0] = move;

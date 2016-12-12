@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include "rodent.h"
 
-void AllocTrans(int mbsize)
-{
+void AllocTrans(int mbsize) {
+
   for (tt_size = 2; tt_size <= mbsize; tt_size *= 2)
     ;
   tt_size = ((tt_size / 2) << 20) / sizeof(ENTRY);
@@ -12,8 +12,8 @@ void AllocTrans(int mbsize)
   ClearTrans();
 }
 
-void ClearTrans(void)
-{
+void ClearTrans(void) {
+
   ENTRY *entry;
 
   tt_date = 0;
@@ -27,8 +27,8 @@ void ClearTrans(void)
   }
 }
 
-int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply)
-{
+int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
+
   ENTRY *entry;
   int i;
 
@@ -54,8 +54,8 @@ int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth
   return 0;
 }
 
-void TransStore(U64 key, int move, int score, int flags, int depth, int ply)
-{
+void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
+
   ENTRY *entry, *replace;
   int i, oldest, age;
 

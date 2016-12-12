@@ -1,6 +1,9 @@
 #ifndef RODENT_H
 #define RODENT_H
 
+// REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
+// 1801 lines
+
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};
 enum {WP, BP, WN, BN, WB, BB, WR, BR, WQ, BQ, WK, BK, NO_PC};
@@ -188,6 +191,7 @@ void ParsePosition(POS *, char *);
 void ParseSetoption(char *);
 char *ParseToken(char *, char *);
 int PopCnt(U64);
+int PopFirstBit(U64 * bb);
 void PvToStr(int *, char *);
 int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
 U64 Random64(void);

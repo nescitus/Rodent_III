@@ -1,14 +1,13 @@
 #include "rodent.h"
 
-void UndoMove(POS *p, int move, UNDO *u)
-{
-  int side, fsq, tsq, ftp, ttp;
+void UndoMove(POS *p, int move, UNDO *u) {
 
-  side = Opp(p->side);
-  fsq = Fsq(move);
-  tsq = Tsq(move);
-  ftp = TpOnSq(p, tsq);
-  ttp = u->ttp;
+  int side = Opp(p->side);
+  int fsq = Fsq(move);
+  int tsq = Tsq(move);
+  int ftp = TpOnSq(p, tsq);
+  int ttp = u->ttp;
+
   p->c_flags = u->c_flags;
   p->ep_sq = u->ep_sq;
   p->rev_moves = u->rev_moves;
@@ -66,8 +65,8 @@ void UndoMove(POS *p, int move, UNDO *u)
   p->side ^= 1;
 }
 
-void UndoNull(POS *p, UNDO *u)
-{
+void UndoNull(POS *p, UNDO *u) {
+
   p->ep_sq = u->ep_sq;
   p->key = u->key;
   p->head--;

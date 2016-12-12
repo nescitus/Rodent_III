@@ -1,7 +1,7 @@
 #include "rodent.h"
 
-U64 AttacksFrom(POS *p, int sq)
-{
+U64 AttacksFrom(POS *p, int sq) {
+
   switch (TpOnSq(p, sq)) {
   case P:
     return p_attacks[Cl(p->pc[sq])][sq];
@@ -19,8 +19,8 @@ U64 AttacksFrom(POS *p, int sq)
   return 0;
 }
 
-U64 AttacksTo(POS *p, int sq)
-{
+U64 AttacksTo(POS *p, int sq) {
+
   return (PcBb(p, WC, P) & p_attacks[BC][sq]) |
          (PcBb(p, BC, P) & p_attacks[WC][sq]) |
          (p->tp_bb[N] & n_attacks[sq]) |
@@ -29,8 +29,8 @@ U64 AttacksTo(POS *p, int sq)
          (p->tp_bb[K] & k_attacks[sq]);
 }
 
-int Attacked(POS *p, int sq, int side)
-{
+int Attacked(POS *p, int sq, int side) {
+
   return (PcBb(p, side, P) & p_attacks[Opp(side)][sq]) ||
          (PcBb(p, side, N) & n_attacks[sq]) ||
          ((PcBb(p, side, B) | PcBb(p, side, Q)) & BAttacks(OccBb(p), sq)) ||

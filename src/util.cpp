@@ -7,8 +7,8 @@
 #endif
 #include "rodent.h"
 
-int InputAvailable(void)
-{
+int InputAvailable(void) {
+
 #if defined(_WIN32) || defined(_WIN64)
   static int init = 0, pipe;
   static HANDLE inh;
@@ -44,8 +44,8 @@ int InputAvailable(void)
 #endif
 }
 
-int GetMS(void)
-{
+int GetMS(void) {
+
 #if defined(_WIN32) || defined(_WIN64)
   return GetTickCount();
 #else
@@ -56,16 +56,16 @@ int GetMS(void)
 #endif
 }
 
-U64 Random64(void)
-{
+U64 Random64(void) {
+
   static U64 next = 1;
 
   next = next * 1103515245 + 12345;
   return next;
 }
 
-U64 Key(POS *p)
-{
+U64 Key(POS *p) {
+
   int i;
   U64 key;
 
@@ -81,8 +81,8 @@ U64 Key(POS *p)
   return key;
 }
 
-int PopCnt(U64 bb)
-{
+int PopCnt(U64 bb) {
+
   U64 k1 = (U64)0x5555555555555555;
   U64 k2 = (U64)0x3333333333333333;
   U64 k3 = (U64)0x0F0F0F0F0F0F0F0F;
@@ -94,8 +94,8 @@ int PopCnt(U64 bb)
   return (bb * k4) >> 56;
 }
 
-void MoveToStr(int move, char *move_str)
-{
+void MoveToStr(int move, char *move_str) {
+
   static const char prom_char[5] = "nbrq";
 
   move_str[0] = File(Fsq(move)) + 'a';
@@ -109,15 +109,15 @@ void MoveToStr(int move, char *move_str)
   }
 }
 
-int StrToMove(POS *p, char *move_str)
-{
-  int from, to, type;
+int StrToMove(POS *p, char *move_str) {
 
-  from = Sq(move_str[0] - 'a', move_str[1] - '1');
-  to = Sq(move_str[2] - 'a', move_str[3] - '1');
-  type = NORMAL;
+  int from = Sq(move_str[0] - 'a', move_str[1] - '1');
+  int to = Sq(move_str[2] - 'a', move_str[3] - '1');
+  int type = NORMAL;
+
   if (TpOnSq(p, from) == K && Abs(to - from) == 2)
     type = CASTLE;
+
   else if (TpOnSq(p, from) == P) {
     if (to == p->ep_sq) 
       type = EP_CAP;
@@ -142,8 +142,8 @@ int StrToMove(POS *p, char *move_str)
   return (type << 12) | (to << 6) | from;
 }
 
-void PvToStr(int *pv, char *pv_str)
-{
+void PvToStr(int *pv, char *pv_str) {
+
   int *movep;
   char move_str[6];
 
@@ -155,9 +155,16 @@ void PvToStr(int *pv, char *pv_str)
   }
 }
 
-void BuildPv(int *dst, int *src, int move)
-{
+void BuildPv(int *dst, int *src, int move) {
+
   *dst++ = move;
   while ((*dst++ = *src++))
     ;
+}
+
+int PopFirstBit(U64 * bb) {
+
+  U64 bbLocal = *bb;
+  *bb &= (*bb - 1);
+  return FirstOne(bbLocal);
 }

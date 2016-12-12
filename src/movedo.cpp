@@ -1,14 +1,13 @@
 #include "rodent.h"
 
-void DoMove(POS *p, int move, UNDO *u)
-{
-  int side, fsq, tsq, ftp, ttp;
+void DoMove(POS *p, int move, UNDO *u) {
 
-  side = p->side;
-  fsq = Fsq(move);
-  tsq = Tsq(move);
-  ftp = TpOnSq(p, fsq);
-  ttp = TpOnSq(p, tsq);
+  int side = p->side;
+  int fsq = Fsq(move);
+  int tsq = Tsq(move);
+  int ftp = TpOnSq(p, fsq);
+  int ttp = TpOnSq(p, tsq);
+
   u->ttp = ttp;
   u->c_flags = p->c_flags;
   u->ep_sq = p->ep_sq;
@@ -89,8 +88,8 @@ void DoMove(POS *p, int move, UNDO *u)
   p->key ^= SIDE_RANDOM;
 }
 
-void DoNull(POS *p, UNDO *u)
-{
+void DoNull(POS *p, UNDO *u) {
+
   u->ep_sq = p->ep_sq;
   u->key = p->key;
   p->rep_list[p->head++] = p->key;

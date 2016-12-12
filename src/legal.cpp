@@ -1,14 +1,13 @@
 #include "rodent.h"
 
-int Legal(POS *p, int move)
-{
-  int side, fsq, tsq, ftp, ttp;
+int Legal(POS *p, int move) {
 
-  side = p->side;
-  fsq = Fsq(move);
-  tsq = Tsq(move);
-  ftp = TpOnSq(p, fsq);
-  ttp = TpOnSq(p, tsq);
+  int side = p->side;
+  int fsq = Fsq(move);
+  int tsq = Tsq(move);
+  int ftp = TpOnSq(p, fsq);
+  int ttp = TpOnSq(p, tsq);
+
   if (ftp == NO_TP || Cl(p->pc[fsq]) != side)
     return 0;
   if (ttp != NO_TP && Cl(p->pc[tsq]) == side)

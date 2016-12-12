@@ -1,3 +1,12 @@
+0.003 (2016-12-12)
+
+- history counter incremented by depth * depth
+- normalizing function headers
+
+0.002 (2016-12-12)
+
+- late move pruning
+
 0.001 (2016-12-12)
 
 - late move reduction (Stockfish depth formula)

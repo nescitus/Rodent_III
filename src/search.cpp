@@ -27,8 +27,8 @@ void InitSearch(void) {
   }
 }
 
-void Think(POS *p, int *pv)
-{
+void Think(POS *p, int *pv) {
+
   ClearHist();
   tt_date = (tt_date + 1) & 255;
   nodes = 0;
@@ -42,8 +42,8 @@ void Think(POS *p, int *pv)
   }
 }
 
-int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
-{
+int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv) {
+
   int best, score, move, new_depth, reduction, fl_check, new_pv[MAX_PLY];
   int is_pv = (alpha != beta - 1);
   int mv_type;
@@ -199,8 +199,8 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
   return best;
 }
 
-int Quiesce(POS *p, int ply, int alpha, int beta, int *pv)
-{
+int Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
+
   int best, score, move, new_pv[MAX_PLY];
   MOVES m[1];
   UNDO u[1];
@@ -238,18 +238,21 @@ int Quiesce(POS *p, int ply, int alpha, int beta, int *pv)
   return best;
 }
 
-int Repetition(POS *p)
-{
-  int i;
+int Repetition(POS *p) {
 
-  for (i = 4; i <= p->rev_moves; i += 2)
+  // DRAW BY REPETITION
+
+  for (int i = 4; i <= p->rev_moves; i += 2)
     if (p->key == p->rep_list[p->head - i])
       return 1;
+
+  // DEFAULT: NO DRAW
+
   return 0;
 }
 
-void DisplayPv(int score, int *pv)
-{
+void DisplayPv(int score, int *pv) {
+
   char *type, pv_str[512];
 
   type = "mate";
@@ -264,8 +267,8 @@ void DisplayPv(int score, int *pv)
       root_depth, GetMS() - start_time, nodes, type, score, pv_str);
 }
 
-void Check(void)
-{
+void Check(void) {
+
   char command[80];
 
   if (nodes & 4095 || root_depth == 1)

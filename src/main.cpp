@@ -1,7 +1,7 @@
 #include "rodent.h"
 
-int main()
-{
+int main() {
+
   Init();
   InitSearch();
   UciLoop();

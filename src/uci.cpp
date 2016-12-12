@@ -23,8 +23,8 @@ char *ParseToken(char *string, char *token)
   return string;
 }
 
-void UciLoop(void)
-{
+void UciLoop(void) {
+
   char command[4096], token[80], *ptr;
   POS p[1];
 
@@ -36,7 +36,7 @@ void UciLoop(void)
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.002\n");
+      printf("id name Rodent III 0.003\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
       printf("option name Hash type spin default 16 min 1 max 4096\n");
       printf("option name Clear Hash type button\n");
@@ -55,8 +55,8 @@ void UciLoop(void)
   }
 }
 
-void ParseSetoption(char *ptr)
-{
+void ParseSetoption(char *ptr) {
+
   char token[80], name[80], value[80];
 
   ptr = ParseToken(ptr, token);
@@ -87,8 +87,8 @@ void ParseSetoption(char *ptr)
   }
 }
 
-void ParsePosition(POS *p, char *ptr)
-{
+void ParsePosition(POS *p, char *ptr) {
+
   char token[80], fen[80];
   UNDO u[1];
 
@@ -118,8 +118,8 @@ void ParsePosition(POS *p, char *ptr)
     }
 }
 
-void ParseGo(POS *p, char *ptr)
-{
+void ParseGo(POS *p, char *ptr) {
+
   char token[80], bestmove_str[6], ponder_str[6];
   int wtime, btime, winc, binc, movestogo, time, inc, pv[MAX_PLY];
 

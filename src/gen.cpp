@@ -1,7 +1,7 @@
 #include "rodent.h"
 
-int *GenerateCaptures(POS *p, int *list)
-{
+int *GenerateCaptures(POS *p, int *list) {
+
   U64 pieces, moves;
   int side, from, to;
 
@@ -152,8 +152,8 @@ int *GenerateCaptures(POS *p, int *list)
   return list;
 }
 
-int *GenerateQuiet(POS *p, int *list)
-{
+int *GenerateQuiet(POS *p, int *list) {
+
   U64 pieces, moves;
   int side, from, to;
 
