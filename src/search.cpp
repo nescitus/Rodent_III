@@ -48,28 +48,38 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
   int is_pv = (alpha != beta - 1);
   int mv_type;
   int mv_tried = 0;
+  int quiet_tried = 0;
   MOVES m[1];
   UNDO u[1];
 
+  // QUIESCENCE SEARCH ENTRY POINT
+
   if (depth <= 0)
     return Quiesce(p, ply, alpha, beta, pv);
+
+  // QUICK EXIT
 
   nodes++;
   Check();
   if (abort_search) return 0;
   if (ply) *pv = 0;
-  if (Repetition(p) && ply)
-    return 0;
+  if (Repetition(p) && ply) return 0;
+
+  // TRANSPOSITION TABLE READ
 
   move = 0;
   if (TransRetrieve(p->key, &move, &score, alpha, beta, depth, ply)) {
 	  if (!is_pv) return score;
   }
 
+  // SAFEGUARD AGAINST REACHING MAX_PLY LIMIT
+
   if (ply >= MAX_PLY - 1)
     return Evaluate(p);
 
   fl_check = InCheck(p);
+
+  // NULL MOVE
 
   if (depth > 1 && beta <= Evaluate(p) && !fl_check && MayNull(p)) {
     DoNull(p, u);
@@ -82,15 +92,38 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
     }
   }
 
+  // MAIN LOOP
+
   best = -INF;
   InitMoves(p, m, move, ply);
   while ((move = NextMove(m, &mv_type))) {
+
+    // MAKE MOVE AND GATHER MOVE STATISTICS
+
     DoMove(p, move, u);
     if (Illegal(p)) { UndoMove(p, move, u); continue; }
 	mv_tried++;
+	if (mv_type == MV_NORMAL) quiet_tried++;
+
+    // SET NEW DEPTH
+
     new_depth = depth - 1 + InCheck(p);
 
- // LMR 1: NORMAL MOVES
+    // LATE MOVE PRUNING
+
+    if (!fl_check
+    && !is_pv
+    && alpha > -MAX_EVAL
+    && beta < MAX_EVAL
+    && depth < 4
+    && quiet_tried > 3 * depth
+    && !InCheck(p)
+    && mv_type == MV_NORMAL) {
+      UndoMove(p, move, u); continue;
+    }
+
+    // LMR 1: NORMAL MOVES
+	// TODO: alpha/beta  <> MAX_EVAL conditions
 
     reduction = 0;
 
@@ -105,7 +138,9 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
       new_depth = new_depth - reduction;
     }
 
-	research:
+    research:
+
+	// PVS
 
     if (best == -INF)
       score = -Search(p, ply + 1, -beta, -alpha, new_depth, new_pv);
@@ -123,13 +158,21 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
 		goto research;
 	}
 
+	// UNMAKE MOVE
+
     UndoMove(p, move, u);
     if (abort_search) return 0;
+
+	// BETA CUTOFF
+
     if (score >= beta) {
       Hist(p, move, depth, ply);
       TransStore(p->key, move, score, LOWER, depth, ply);
       return score;
     }
+
+	// BEST MOVE CHANGE
+
     if (score > best) {
       best = score;
       if (score > alpha) {
@@ -139,13 +182,20 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
       }
     }
   }
+
+  // RETURN CORRECT CHECKMATE/STALEMATE SCORE
+
   if (best == -INF)
     return InCheck(p) ? -MATE + ply : 0;
+
+  // SAVE RESULT TO TRANSPOSITION TABLE
+
   if (*pv) {
     Hist(p, *pv, depth, ply);
     TransStore(p->key, *pv, best, EXACT, depth, ply);
   } else
     TransStore(p->key, 0, best, UPPER, depth, ply);
+
   return best;
 }
 
