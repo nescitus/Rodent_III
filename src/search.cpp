@@ -1,6 +1,31 @@
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "rodent.h"
+
+double lmr_size[2][MAX_PLY][MAX_MOVES];
+
+void InitSearch(void) {
+
+  // Set depth of late move reduction using modified Stockfish formula
+
+  for (int dp = 0; dp < MAX_PLY; dp++)
+    for (int mv = 0; mv < MAX_MOVES; mv++) {
+
+      double r = log((double)dp) * log((double)Min(mv, 63)) / 2;
+      if (r < 0.80) r = 0; // TODO: test without
+
+      lmr_size[0][dp][mv] = r;             // zero window node
+      lmr_size[1][dp][mv] = Max(r - 1, 0); // principal variation node
+
+      for (int node = 0; node <= 1; node++) {
+        if (lmr_size[node][dp][mv] < 1) lmr_size[node][dp][mv] = 0; // ultra-small reductions make no sense
+
+        if (lmr_size[node][dp][mv] > dp - 1) // reduction cannot exceed actual depth
+          lmr_size[node][dp][mv] = dp - 1;
+     }
+  }
+}
 
 void Think(POS *p, int *pv)
 {
@@ -19,24 +44,34 @@ void Think(POS *p, int *pv)
 
 int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
 {
-  int best, score, move, new_depth, new_pv[MAX_PLY];
+  int best, score, move, new_depth, reduction, fl_check, new_pv[MAX_PLY];
+  int is_pv = (alpha != beta - 1);
+  int mv_type;
+  int mv_tried = 0;
   MOVES m[1];
   UNDO u[1];
 
   if (depth <= 0)
     return Quiesce(p, ply, alpha, beta, pv);
+
   nodes++;
   Check();
   if (abort_search) return 0;
   if (ply) *pv = 0;
   if (Repetition(p) && ply)
     return 0;
+
   move = 0;
-  if (TransRetrieve(p->key, &move, &score, alpha, beta, depth, ply))
-    return score;
+  if (TransRetrieve(p->key, &move, &score, alpha, beta, depth, ply)) {
+	  if (!is_pv) return score;
+  }
+
   if (ply >= MAX_PLY - 1)
     return Evaluate(p);
-  if (depth > 1 && beta <= Evaluate(p) && !InCheck(p) && MayNull(p)) {
+
+  fl_check = InCheck(p);
+
+  if (depth > 1 && beta <= Evaluate(p) && !fl_check && MayNull(p)) {
     DoNull(p, u);
     score = -Search(p, ply + 1, -beta, -beta + 1, depth - 3, new_pv);
     UndoNull(p, u);
@@ -46,12 +81,32 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
       return score;
     }
   }
+
   best = -INF;
   InitMoves(p, m, move, ply);
-  while ((move = NextMove(m))) {
+  while ((move = NextMove(m, &mv_type))) {
     DoMove(p, move, u);
     if (Illegal(p)) { UndoMove(p, move, u); continue; }
+	mv_tried++;
     new_depth = depth - 1 + InCheck(p);
+
+ // LMR 1: NORMAL MOVES
+
+    reduction = 0;
+
+    if (depth > 2
+    && mv_tried > 3
+    && !fl_check
+	&& lmr_size[is_pv][depth][mv_tried] > 0
+    && !InCheck(p)
+    && mv_type == MV_NORMAL
+    && MoveType(move) != CASTLE) {
+      reduction = lmr_size[is_pv][depth][mv_tried];
+      new_depth = new_depth - reduction;
+    }
+
+	research:
+
     if (best == -INF)
       score = -Search(p, ply + 1, -beta, -alpha, new_depth, new_pv);
     else {
@@ -59,6 +114,15 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv)
       if (!abort_search && score > alpha && score < beta)
         score = -Search(p, ply + 1, -beta, -alpha, new_depth, new_pv);
     }
+
+	// DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
+
+	if (score > alpha && reduction) {
+		new_depth = new_depth + reduction;
+		reduction = 0;
+		goto research;
+	}
+
     UndoMove(p, move, u);
     if (abort_search) return 0;
     if (score >= beta) {

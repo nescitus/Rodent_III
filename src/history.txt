@@ -1,0 +1,6 @@
+0.001 (2016-12-12)
+
+- late move reduction (Stockfish depth formula)
+- detecting pv nodes
+- move type flag in NextMove()
+- small problem with time losses

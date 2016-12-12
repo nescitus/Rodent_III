@@ -36,7 +36,7 @@ void UciLoop(void)
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.000\n");
+      printf("id name Rodent III 0.001\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
       printf("option name Hash type spin default 16 min 1 max 4096\n");
       printf("option name Clear Hash type button\n");

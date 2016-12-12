@@ -9,23 +9,26 @@ void InitMoves(POS *p, MOVES *m, int trans_move, int ply)
   m->killer2 = killer[ply][1];
 }
 
-int NextMove(MOVES *m)
+int NextMove(MOVES *m, int *flag)
 {
-  int move;
+ int move;
 
   switch (m->phase) {
   case 0:
     move = m->trans_move;
     if (move && Legal(m->p, move)) {
       m->phase = 1;
+	  *flag = MV_HASH;
       return move;
     }
+
   case 1:
     m->last = GenerateCaptures(m->p, m->move);
     ScoreCaptures(m);
     m->next = m->move;
     m->badp = m->bad;
     m->phase = 2;
+
   case 2:
     while (m->next < m->last) {
       move = SelectBest(m);
@@ -35,27 +38,34 @@ int NextMove(MOVES *m)
         *m->badp++ = move;
         continue;
       }
+	  *flag = MV_CAPTURE;
       return move;
     }
+
   case 3:
     move = m->killer1;
     if (move && move != m->trans_move &&
         m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
       m->phase = 4;
+	  *flag = MV_KILLER;
       return move;
     }
+
   case 4:
     move = m->killer2;
     if (move && move != m->trans_move &&
         m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
       m->phase = 5;
+	  *flag = MV_KILLER;
       return move;
     }
+
   case 5:
     m->last = GenerateQuiet(m->p, m->move);
     ScoreQuiet(m);
     m->next = m->move;
     m->phase = 6;
+
   case 6:
     while (m->next < m->last) {
       move = SelectBest(m);
@@ -63,13 +73,17 @@ int NextMove(MOVES *m)
           move == m->killer1 ||
           move == m->killer2)
         continue;
+	  *flag = MV_NORMAL;
       return move;
     }
+
     m->next = m->bad;
     m->phase = 7;
   case 7:
-    if (m->next < m->badp)
+    if (m->next < m->badp) {
+      *flag = MV_BADCAPT;
       return *m->next++;
+    }
   }
   return 0;
 }
