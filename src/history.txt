@@ -1,3 +1,15 @@
+0.006 (2016-12-13)
+
+- detecting draw by 50 move rule
+
+0.005 (2016-12-13)
+
+- better check for timeout
+
+0.004 (2016-12-13)
+
+- go depth command
+
 0.003 (2016-12-12)
 
 - history counter incremented by depth * depth

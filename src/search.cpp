@@ -60,16 +60,16 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv) {
   // QUICK EXIT
 
   nodes++;
-  Check();
+  Check(ply);
   if (abort_search) return 0;
   if (ply) *pv = 0;
-  if (Repetition(p) && ply) return 0;
+  if (IsDraw(p) && ply) return 0;
 
   // TRANSPOSITION TABLE READ
 
   move = 0;
   if (TransRetrieve(p->key, &move, &score, alpha, beta, depth, ply)) {
-	  if (!is_pv) return score;
+    if (!is_pv) return score;
   }
 
   // SAFEGUARD AGAINST REACHING MAX_PLY LIMIT
@@ -206,13 +206,13 @@ int Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
   UNDO u[1];
 
   nodes++;
-  Check();
+  Check(ply);
   if (abort_search) return 0;
   *pv = 0;
-  if (Repetition(p))
-    return 0;
-  if (ply >= MAX_PLY - 1)
-    return Evaluate(p);
+  if (IsDraw(p)) return 0;
+
+  if (ply >= MAX_PLY - 1) return Evaluate(p);
+
   best = Evaluate(p);
   if (best >= beta)
     return best;
@@ -238,7 +238,11 @@ int Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
   return best;
 }
 
-int Repetition(POS *p) {
+int IsDraw(POS *p) {
+
+  // DRAW BY 50 MOVE RULE
+
+  if (p->rev_moves > 100) return 1;
 
   // DRAW BY REPETITION
 
@@ -267,12 +271,13 @@ void DisplayPv(int score, int *pv) {
       root_depth, GetMS() - start_time, nodes, type, score, pv_str);
 }
 
-void Check(void) {
+void Check(int ply) {
 
   char command[80];
 
-  if (nodes & 4095 || root_depth == 1)
-    return;
+  if ((nodes & 4095 || root_depth == 1)
+  && ply > 3) return;
+
   if (InputAvailable()) {
     ReadLine(command, sizeof(command));
     if (strcmp(command, "stop") == 0)
