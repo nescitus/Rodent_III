@@ -231,6 +231,7 @@ extern U64 zob_ep[8];
 extern int move_time;
 extern int pondering;
 extern int root_depth;
+extern int search_depth;
 extern int nodes;
 extern int abort_search;
 extern int start_time;

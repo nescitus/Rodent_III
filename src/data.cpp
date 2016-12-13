@@ -34,6 +34,7 @@ U64 zob_ep[8];
 int move_time;
 int pondering;
 int root_depth;
+int search_depth;
 int nodes;
 int abort_search;
 int start_time;

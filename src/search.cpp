@@ -34,7 +34,7 @@ void Think(POS *p, int *pv) {
   nodes = 0;
   abort_search = 0;
   start_time = GetMS();
-  for (root_depth = 1; root_depth < 256; root_depth++) {
+  for (root_depth = 1; root_depth <= search_depth; root_depth++) {
     printf("info depth %d\n", root_depth);
     Search(p, 0, -INF, INF, root_depth, pv);
     if (abort_search)
