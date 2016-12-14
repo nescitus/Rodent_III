@@ -199,7 +199,7 @@ void ReadLine(char *, int);
 int IsDraw(POS *p);
 void ScoreCaptures(MOVES *);
 void ScoreQuiet(MOVES *);
-int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv);
+int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv);
 int SelectBest(MOVES *);
 void SetPosition(POS *, char *);
 int StrToMove(POS *, char *);

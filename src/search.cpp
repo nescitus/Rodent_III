@@ -36,13 +36,13 @@ void Think(POS *p, int *pv) {
   start_time = GetMS();
   for (root_depth = 1; root_depth <= search_depth; root_depth++) {
     printf("info depth %d\n", root_depth);
-    Search(p, 0, -INF, INF, root_depth, pv);
+    Search(p, 0, -INF, INF, root_depth, 0, pv);
     if (abort_search)
       break;
   }
 }
 
-int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv) {
+int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv) {
 
   int best, score, move, new_depth, reduction, fl_check, new_pv[MAX_PLY];
   int is_pv = (alpha != beta - 1);
@@ -68,6 +68,7 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv) {
   // TRANSPOSITION TABLE READ
 
   move = 0;
+
   if (TransRetrieve(p->key, &move, &score, alpha, beta, depth, ply)) {
     if (!is_pv) return score;
   }
@@ -81,14 +82,19 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv) {
 
   // NULL MOVE
 
-  if (depth > 1 && beta <= Evaluate(p) && !fl_check && MayNull(p)) {
-    DoNull(p, u);
-    score = -Search(p, ply + 1, -beta, -beta + 1, depth - 3, new_pv);
-    UndoNull(p, u);
-    if (abort_search) return 0;
-    if (score >= beta) {
-      TransStore(p->key, 0, score, LOWER, depth, ply);
-      return score;
+  if (depth > 1 
+  && !was_null 
+  && !fl_check 
+  && MayNull(p)) {
+    if (beta <= Evaluate(p)) {
+      DoNull(p, u);
+      score = -Search(p, ply + 1, -beta, -beta + 1, depth - 3, 1, new_pv);
+      UndoNull(p, u);
+      if (abort_search) return 0;
+      if (score >= beta) {
+        TransStore(p->key, 0, score, LOWER, depth, ply);
+        return score;
+      }
     }
   }
 
@@ -143,11 +149,11 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int *pv) {
 	// PVS
 
     if (best == -INF)
-      score = -Search(p, ply + 1, -beta, -alpha, new_depth, new_pv);
+      score = -Search(p, ply + 1, -beta, -alpha, new_depth, 0, new_pv);
     else {
-      score = -Search(p, ply + 1, -alpha - 1, -alpha, new_depth, new_pv);
+      score = -Search(p, ply + 1, -alpha - 1, -alpha, new_depth, 0, new_pv);
       if (!abort_search && score > alpha && score < beta)
-        score = -Search(p, ply + 1, -beta, -alpha, new_depth, new_pv);
+        score = -Search(p, ply + 1, -beta, -alpha, new_depth, 0, new_pv);
     }
 
 	// DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
