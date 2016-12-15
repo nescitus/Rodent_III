@@ -155,6 +155,15 @@ typedef struct {
   unsigned char depth;
 } ENTRY;
 
+typedef class {
+public:
+  int mg_pst[2][6][64];
+  int eg_pst[2][6][64];
+  void Init(void);
+} cParam;
+
+extern cParam Par;
+
 void AllocTrans(int);
 int Attacked(POS *, int, int);
 U64 AttacksFrom(POS *, int);
@@ -168,8 +177,11 @@ void DisplayPv(int score, int *pv);
 void DoMove(POS *, int, UNDO *);
 void DoNull(POS *, UNDO *);
 int Evaluate(POS *);
-int EvaluateKing(POS *, int);
-int EvaluatePawns(POS *, int);
+int ScoreKing(POS *p, int sd);
+int ScorePawns(POS *p, int sd);
+int ScoreLikeSungorus(POS * p);
+int ScoreLikeIdiot(POS * p);
+void ScorePst(POS * p, int sd);
 int *GenerateCaptures(POS *, int *);
 int *GenerateQuiet(POS *, int *);
 int GetMS(void);
@@ -181,7 +193,7 @@ void InitSearch(void);
 int InputAvailable(void);
 U64 Key(POS *);
 int Legal(POS *, int);
-int Mobility(POS *, int);
+int ScorePieces(POS *p, int sd);
 void MoveToStr(int, char *);
 int MvvLva(POS *, int);
 int NextCapture(MOVES *);
