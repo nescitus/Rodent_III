@@ -29,11 +29,11 @@ U64 AttacksTo(POS *p, int sq) {
          (p->tp_bb[K] & k_attacks[sq]);
 }
 
-int Attacked(POS *p, int sq, int side) {
+int Attacked(POS *p, int sq, int sd) {
 
-  return (PcBb(p, side, P) & p_attacks[Opp(side)][sq]) ||
-         (PcBb(p, side, N) & n_attacks[sq]) ||
-         ((PcBb(p, side, B) | PcBb(p, side, Q)) & BAttacks(OccBb(p), sq)) ||
-         ((PcBb(p, side, R) | PcBb(p, side, Q)) & RAttacks(OccBb(p), sq)) ||
-         (PcBb(p, side, K) & k_attacks[sq]);
+  return (PcBb(p, sd, P) & p_attacks[Opp(sd)][sq]) ||
+         (PcBb(p, sd, N) & n_attacks[sq]) ||
+         ((PcBb(p, sd, B) | PcBb(p, sd, Q)) & BAttacks(OccBb(p), sq)) ||
+         ((PcBb(p, sd, R) | PcBb(p, sd, Q)) & RAttacks(OccBb(p), sq)) ||
+         (PcBb(p, sd, K) & k_attacks[sq]);
 }

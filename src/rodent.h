@@ -165,18 +165,18 @@ public:
 extern cParam Par;
 
 void AllocTrans(int);
-int Attacked(POS *, int, int);
-U64 AttacksFrom(POS *, int);
-U64 AttacksTo(POS *, int);
+int Attacked(POS *p, int sq, int sd);
+U64 AttacksFrom(POS *p, int sq);
+U64 AttacksTo(POS *p, int sq);
 int BadCapture(POS *, int);
 void BuildPv(int *, int *, int);
 void Check(int ply);
 void ClearHist(void);
 void ClearTrans(void);
 void DisplayPv(int score, int *pv);
-void DoMove(POS *, int, UNDO *);
-void DoNull(POS *, UNDO *);
-int Evaluate(POS *);
+void DoMove(POS *p, int move, UNDO *u);
+void DoNull(POS *p, UNDO *u);
+int Evaluate(POS *p);
 int ScoreKing(POS *p, int sd);
 int ScorePawns(POS *p, int sd);
 int ScorePieces(POS *p, int sd);
@@ -224,8 +224,8 @@ void Think(POS *p, int *pv);
 int TransRetrieve(U64, int *, int *, int, int, int, int);
 void TransStore(U64, int, int, int, int, int);
 void UciLoop(void);
-void UndoMove(POS *, int, UNDO *);
-void UndoNull(POS *, UNDO *);
+void UndoMove(POS *p, int move, UNDO *u);
+void UndoNull(POS *p, UNDO *u);
 
 extern U64 line_mask[4][64];
 extern U64 attacks[4][64][64];

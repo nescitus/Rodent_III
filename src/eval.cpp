@@ -1,6 +1,16 @@
 #include "rodent.h"
 #include "eval.h"
 
+static const int passed_bonus_mg[2][8] = {
+  { 0, 12, 12, 30, 50, 80, 130, 0 },
+  { 0, 120, 80, 50, 30, 12, 12, 0 }
+};
+
+const int passed_bonus_eg[2][8] = {
+  { 0, 16, 16, 39, 65, 104, 156, 0 },
+  { 0, 156, 104, 65, 39, 16, 16, 0 }
+};
+
 #define REL_SQ(sq,cl)   ( sq ^ (cl * 56) )
 
 int mg_sc[2];
@@ -165,8 +175,14 @@ int ScorePawns(POS *p, int sd) {
   while (pieces) {
     from = PopFirstBit(&pieces);
 
-    if (!(passed_mask[sd][from] & PcBb(p, Opp(sd), P)))
-      score += passed_bonus[sd][Rank(from)];
+	// PASSED PAWNS
+
+	if (!(passed_mask[sd][from] & PcBb(p, Opp(sd), P))) {
+		mg_sc[sd] += passed_bonus_mg[sd][Rank(from)];
+		eg_sc[sd] += passed_bonus_eg[sd][Rank(from)];
+	}
+    
+	// ISOLATED PAWNS
 
     if (!(adjacent_mask[File(from)] & PcBb(p, sd, P)))
       score -= 20;
