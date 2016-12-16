@@ -41,14 +41,14 @@ void ScorePst(POS * p, int sd) {
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	mg_sc[sd] += Par.mg_pst[sd][P][sq];
-	eg_sc[sd] += Par.mg_pst[sd][P][sq];
+	eg_sc[sd] += Par.eg_pst[sd][P][sq];
   }
 
   pieces = PcBb(p, sd, N);
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	mg_sc[sd] += Par.mg_pst[sd][N][sq];
-	eg_sc[sd] += Par.mg_pst[sd][N][sq];
+	eg_sc[sd] += Par.eg_pst[sd][N][sq];
 	phase += 1;
   }
 
@@ -56,7 +56,7 @@ void ScorePst(POS * p, int sd) {
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	mg_sc[sd] += Par.mg_pst[sd][B][sq];
-	eg_sc[sd] += Par.mg_pst[sd][B][sq];
+	eg_sc[sd] += Par.eg_pst[sd][B][sq];
 	phase += 1;
   }
 
@@ -64,7 +64,7 @@ void ScorePst(POS * p, int sd) {
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	mg_sc[sd] += Par.mg_pst[sd][R][sq];
-	eg_sc[sd] += Par.mg_pst[sd][R][sq];
+	eg_sc[sd] += Par.eg_pst[sd][R][sq];
 	phase += 2;
   }
 
@@ -72,7 +72,7 @@ void ScorePst(POS * p, int sd) {
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	mg_sc[sd] += Par.mg_pst[sd][Q][sq];
-	eg_sc[sd] += Par.mg_pst[sd][Q][sq];
+	eg_sc[sd] += Par.eg_pst[sd][Q][sq];
 	phase += 4;
   }
 
@@ -80,36 +80,76 @@ void ScorePst(POS * p, int sd) {
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	mg_sc[sd] += Par.mg_pst[sd][K][sq];
-	eg_sc[sd] += Par.mg_pst[sd][K][sq];
+	eg_sc[sd] += Par.eg_pst[sd][K][sq];
   }
 }
 
-
 int ScorePieces(POS *p, int sd) {
 
-  U64 pieces;
+  U64 pieces, control;
   int sq, mob, cnt;
+  mg_sc[sd] = 0;
+  eg_sc[sd] = 0;
 
   mob = 0;
+
+ pieces = PcBb(p, sd, P);
+  while (pieces) {
+    sq = PopFirstBit(&pieces);
+	mg_sc[sd] += Par.mg_pst[sd][P][sq];
+	eg_sc[sd] += Par.eg_pst[sd][P][sq];
+  }
+
+  pieces = PcBb(p, sd, N);
+  while (pieces) {
+    sq = PopFirstBit(&pieces);
+	control = n_attacks[sq] & ~p->cl_bb[sd];
+	cnt = PopCnt(control);
+	mg_sc[sd] += 4 * (cnt - 4);
+	eg_sc[sd] += 4 * (cnt - 4);
+	mg_sc[sd] += Par.mg_pst[sd][N][sq];
+	eg_sc[sd] += Par.eg_pst[sd][N][sq];
+	phase += 1;
+  }
+
   pieces = PcBb(p, sd, B);
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	cnt = PopCnt(BAttacks(OccBb(p), sq));
-    mob += 4 * cnt;
+	mg_sc[sd] += 5 * (cnt - 7);
+	eg_sc[sd] += 5 * (cnt - 7);
+	mg_sc[sd] += Par.mg_pst[sd][B][sq];
+	eg_sc[sd] += Par.eg_pst[sd][B][sq];
+	phase += 1;
   }
 
   pieces = PcBb(p, sd, R);
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	cnt = PopCnt(RAttacks(OccBb(p), sq));
-    mob += 2 * cnt;
+	mg_sc[sd] += 2 * (cnt - 7);
+	eg_sc[sd] += 4 * (cnt - 7);
+	mg_sc[sd] += Par.mg_pst[sd][R][sq];
+	eg_sc[sd] += Par.eg_pst[sd][R][sq];
+	phase += 2;
   }
 
   pieces = PcBb(p, sd, Q);
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	cnt = PopCnt(QAttacks(OccBb(p), sq));
-    mob += 1 * cnt;
+	mg_sc[sd] += 1 * (cnt - 14);
+	eg_sc[sd] += 2 * (cnt - 14);
+	mg_sc[sd] += Par.mg_pst[sd][Q][sq];
+	eg_sc[sd] += Par.eg_pst[sd][Q][sq];
+	phase += 4;
+  }
+
+  pieces = PcBb(p, sd, K);
+  while (pieces) {
+	  sq = PopFirstBit(&pieces);
+	  mg_sc[sd] += Par.mg_pst[sd][K][sq];
+	  eg_sc[sd] += Par.eg_pst[sd][K][sq];
   }
 
   return mob;
@@ -149,11 +189,7 @@ int ScoreLikeIdiot(POS * p) {
   return score;
 }
 
-int ScoreLikeUfo(POS * p) {
-
-  phase = 0;
-  ScorePst(p, WC);
-  ScorePst(p, BC);
+int Interpolate(POS * p) {
 
   int mg_tot = mg_sc[WC] - mg_sc[BC];
   int eg_tot = eg_sc[WC] - eg_sc[BC];
@@ -163,23 +199,30 @@ int ScoreLikeUfo(POS * p) {
   return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
 }
 
-int ScoreLikeSungorus(POS * p) {
+int ScoreLikeUfo(POS * p) {
 
-  int score = p->mat[WC] - p->mat[BC];
+  phase = 0;
+  ScorePst(p, WC);
+  ScorePst(p, BC);
+  return Interpolate(p);
+}
 
-  if (score > -200 && score < 200)
-    score += ScorePieces(p, WC) - ScorePieces(p, BC);
+int ScoreLikeRodent(POS * p) {
 
-  score += p->pst[WC] - p->pst[BC];
+  int score = 0;
+  phase = 0;
+
+  score += ScorePieces(p, WC) - ScorePieces(p, BC);
   score += ScorePawns(p, WC) - ScorePawns(p, BC);
-  score += ScoreKing(p, WC) - ScoreKing(p, BC);
+  //score += ScoreKing(p, WC) - ScoreKing(p, BC);
+
+  score += Interpolate(p);
 
   return score;
 }
-
 int Evaluate(POS *p) {
 
-  int score = ScoreLikeSungorus(p);
+  int score = ScoreLikeRodent(p);
 
   // Make sure eval does not exceed mate score
 
