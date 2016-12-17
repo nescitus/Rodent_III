@@ -94,16 +94,14 @@ void ScorePst(POS * p, int sd) {
   }
 }
 
-int ScorePieces(POS *p, int sd) {
+void ScorePieces(POS *p, int sd) {
 
   U64 pieces, control;
-  int sq, mob, cnt;
+  int sq, cnt;
   mg_sc[sd] = 0;
   eg_sc[sd] = 0;
 
-  mob = 0;
-
- pieces = PcBb(p, sd, P);
+  pieces = PcBb(p, sd, P);
   while (pieces) {
     sq = PopFirstBit(&pieces);
 	mg_sc[sd] += Par.mg_pst[sd][P][sq];
@@ -155,14 +153,6 @@ int ScorePieces(POS *p, int sd) {
 	phase += 4;
   }
 
-  pieces = PcBb(p, sd, K);
-  while (pieces) {
-	  sq = PopFirstBit(&pieces);
-	  mg_sc[sd] += Par.mg_pst[sd][K][sq];
-	  eg_sc[sd] += Par.eg_pst[sd][K][sq];
-  }
-
-  return mob;
 }
 
 int ScorePawns(POS *p, int sd) {
@@ -177,12 +167,12 @@ int ScorePawns(POS *p, int sd) {
 
 	// PASSED PAWNS
 
-	if (!(passed_mask[sd][from] & PcBb(p, Opp(sd), P))) {
-		mg_sc[sd] += passed_bonus_mg[sd][Rank(from)];
-		eg_sc[sd] += passed_bonus_eg[sd][Rank(from)];
-	}
+    if (!(passed_mask[sd][from] & PcBb(p, Opp(sd), P))) {
+      mg_sc[sd] += passed_bonus_mg[sd][Rank(from)];
+      eg_sc[sd] += passed_bonus_eg[sd][Rank(from)];
+    }
     
-	// ISOLATED PAWNS
+    // ISOLATED PAWNS
 
     if (!(adjacent_mask[File(from)] & PcBb(p, sd, P)))
       score -= 20;
@@ -190,11 +180,11 @@ int ScorePawns(POS *p, int sd) {
   return score;
 }
 
-int ScoreKing(POS *p, int sd) {
+void ScoreKing(POS *p, int sd) {
 
-  if (!PcBb(p, Opp(sd), Q) || p->mat[Opp(sd)] <= 1600)
-    return 0;
-  return -2 * pst[K][KingSq(p, sd)];
+  int sq = KingSq(p, sd);
+  mg_sc[sd] += Par.mg_pst[sd][K][sq];
+  eg_sc[sd] += Par.eg_pst[sd][K][sq];
 }
 
 int ScoreLikeIdiot(POS * p) {
@@ -228,14 +218,17 @@ int ScoreLikeRodent(POS * p) {
   int score = 0;
   phase = 0;
 
-  score += ScorePieces(p, WC) - ScorePieces(p, BC);
+  ScorePieces(p, WC); 
+  ScorePieces(p, BC);
   score += ScorePawns(p, WC) - ScorePawns(p, BC);
-  //score += ScoreKing(p, WC) - ScoreKing(p, BC);
+  ScoreKing(p, WC); 
+  ScoreKing(p, BC);
 
   score += Interpolate(p);
 
   return score;
 }
+
 int Evaluate(POS *p) {
 
   int score = ScoreLikeRodent(p);
