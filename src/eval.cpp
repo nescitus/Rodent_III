@@ -11,6 +11,10 @@ const int passed_bonus_eg[2][8] = {
   { 0, 156, 104, 65, 39, 16, 16, 0 }
 };
 
+static const int att_weight[16] = {
+	0, 0, 128, 192, 224, 240, 248, 252, 254, 255, 256, 256 ,256, 256, 256, 256,
+};
+
 #define REL_SQ(sq,cl)   ( sq ^ (cl * 56) )
 
 int mg_sc[2];
@@ -50,107 +54,190 @@ void ScorePst(POS * p, int sd) {
   pieces = PcBb(p, sd, P);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	mg_sc[sd] += Par.mg_pst[sd][P][sq];
-	eg_sc[sd] += Par.eg_pst[sd][P][sq];
+    mg_sc[sd] += Par.mg_pst[sd][P][sq];
+    eg_sc[sd] += Par.eg_pst[sd][P][sq];
   }
 
   pieces = PcBb(p, sd, N);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	mg_sc[sd] += Par.mg_pst[sd][N][sq];
-	eg_sc[sd] += Par.eg_pst[sd][N][sq];
-	phase += 1;
+    mg_sc[sd] += Par.mg_pst[sd][N][sq];
+    eg_sc[sd] += Par.eg_pst[sd][N][sq];
+    phase += 1;
   }
 
   pieces = PcBb(p, sd, B);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	mg_sc[sd] += Par.mg_pst[sd][B][sq];
-	eg_sc[sd] += Par.eg_pst[sd][B][sq];
-	phase += 1;
+    mg_sc[sd] += Par.mg_pst[sd][B][sq];
+    eg_sc[sd] += Par.eg_pst[sd][B][sq];
+    phase += 1;
   }
 
   pieces = PcBb(p, sd, R);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	mg_sc[sd] += Par.mg_pst[sd][R][sq];
-	eg_sc[sd] += Par.eg_pst[sd][R][sq];
-	phase += 2;
+    mg_sc[sd] += Par.mg_pst[sd][R][sq];
+    eg_sc[sd] += Par.eg_pst[sd][R][sq];
+    phase += 2;
   }
 
   pieces = PcBb(p, sd, Q);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	mg_sc[sd] += Par.mg_pst[sd][Q][sq];
-	eg_sc[sd] += Par.eg_pst[sd][Q][sq];
-	phase += 4;
+    mg_sc[sd] += Par.mg_pst[sd][Q][sq];
+    eg_sc[sd] += Par.eg_pst[sd][Q][sq];
+    phase += 4;
   }
 
   pieces = PcBb(p, sd, K);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	mg_sc[sd] += Par.mg_pst[sd][K][sq];
-	eg_sc[sd] += Par.eg_pst[sd][K][sq];
+    mg_sc[sd] += Par.mg_pst[sd][K][sq];
+    eg_sc[sd] += Par.eg_pst[sd][K][sq];
   }
 }
 
 void ScorePieces(POS *p, int sd) {
 
-  U64 pieces, control;
-  int sq, cnt;
+  U64 pieces, bb_attacks, bb_control;
+  int op, sq, ksq, cnt;
+  int att = 0;
+  int wood = 0;
   mg_sc[sd] = 0;
   eg_sc[sd] = 0;
+
+  // Init variables
+
+  op = Opp(sd);
+  ksq = KingSq(p, op);
+
+  // Init enemy king zone for attack evaluation. We mark squares where the king
+  // can move plus two or three more squares facing enemy position.
+
+  U64 bb_zone = k_attacks[ksq];
+  (sd == WC) ? bb_zone |= ShiftSouth(bb_zone) : bb_zone |= ShiftNorth(bb_zone);
 
   pieces = PcBb(p, sd, P);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	mg_sc[sd] += Par.mg_pst[sd][P][sq];
-	eg_sc[sd] += Par.eg_pst[sd][P][sq];
+    mg_sc[sd] += Par.mg_pst[sd][P][sq];
+    eg_sc[sd] += Par.eg_pst[sd][P][sq];
   }
+
+  // KNIGHT EVAL
 
   pieces = PcBb(p, sd, N);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	control = n_attacks[sq] & ~p->cl_bb[sd];
-	cnt = PopCnt(control);
-	mg_sc[sd] += 4 * (cnt - 4);
-	eg_sc[sd] += 4 * (cnt - 4);
-	mg_sc[sd] += Par.mg_pst[sd][N][sq];
-	eg_sc[sd] += Par.eg_pst[sd][N][sq];
-	phase += 1;
+
+    // knight king attack score
+
+    bb_control = n_attacks[sq] & ~p->cl_bb[sd];
+    if (bb_control & bb_zone) {
+      wood++;
+      att += 1;
+    }
+
+    // knight mobility score
+
+    cnt = PopCnt(bb_control);
+    mg_sc[sd] += 4 * (cnt - 4);
+    eg_sc[sd] += 4 * (cnt - 4);
+
+    // knight piece/square score
+
+    mg_sc[sd] += Par.mg_pst[sd][N][sq];
+    eg_sc[sd] += Par.eg_pst[sd][N][sq];
+    phase += 1;
   }
+
+  // BISHOP EVAL
 
   pieces = PcBb(p, sd, B);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	cnt = PopCnt(BAttacks(OccBb(p), sq));
-	mg_sc[sd] += 5 * (cnt - 7);
-	eg_sc[sd] += 5 * (cnt - 7);
-	mg_sc[sd] += Par.mg_pst[sd][B][sq];
-	eg_sc[sd] += Par.eg_pst[sd][B][sq];
-	phase += 1;
+
+    // bishop king attack score
+
+    bb_attacks = BAttacks(OccBb(p) ^ PcBb(p, sd, Q), sq);
+    if (bb_attacks & bb_zone) {
+      wood++;
+      att += 1;
+    }
+
+    // bishop mobility score
+
+    cnt = PopCnt(BAttacks(OccBb(p), sq));
+    mg_sc[sd] += 5 * (cnt - 7);
+    eg_sc[sd] += 5 * (cnt - 7);
+
+    // bishop piece/square score
+
+    mg_sc[sd] += Par.mg_pst[sd][B][sq];
+    eg_sc[sd] += Par.eg_pst[sd][B][sq];
+    phase += 1;
   }
+
+  // ROOK EVAL
 
   pieces = PcBb(p, sd, R);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	cnt = PopCnt(RAttacks(OccBb(p), sq));
-	mg_sc[sd] += 2 * (cnt - 7);
-	eg_sc[sd] += 4 * (cnt - 7);
-	mg_sc[sd] += Par.mg_pst[sd][R][sq];
-	eg_sc[sd] += Par.eg_pst[sd][R][sq];
-	phase += 2;
+
+   // rook king attack score
+
+    bb_attacks = RAttacks(OccBb(p) ^ PcBb(p, sd, Q) ^ PcBb(p, sd, R), sq);
+    if (bb_attacks & bb_zone) {
+      wood++;
+      att += 2;
+    }
+
+    // rook mobility score
+
+    cnt = PopCnt(RAttacks(OccBb(p), sq));
+    mg_sc[sd] += 2 * (cnt - 7);
+    eg_sc[sd] += 4 * (cnt - 7);
+
+    // rook piece/square score
+
+    mg_sc[sd] += Par.mg_pst[sd][R][sq];
+    eg_sc[sd] += Par.eg_pst[sd][R][sq];
+    phase += 2;
   }
 
+  // QUEEN EVAL
+  
   pieces = PcBb(p, sd, Q);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	cnt = PopCnt(QAttacks(OccBb(p), sq));
-	mg_sc[sd] += 1 * (cnt - 14);
-	eg_sc[sd] += 2 * (cnt - 14);
-	mg_sc[sd] += Par.mg_pst[sd][Q][sq];
-	eg_sc[sd] += Par.eg_pst[sd][Q][sq];
-	phase += 4;
+
+    // queen king attack score
+
+    bb_attacks  = BAttacks(OccBb(p) ^ PcBb(p, sd, B) ^ PcBb(p, sd, Q), sq);
+    bb_attacks |= RAttacks(OccBb(p) ^ PcBb(p, sd, R) ^ PcBb(p, sd, Q), sq);
+    if (bb_attacks & bb_zone) {
+      wood++;
+      att += 4;
+    }
+
+    // queen mobility score
+
+    cnt = PopCnt(QAttacks(OccBb(p), sq));
+    mg_sc[sd] += 1 * (cnt - 14);
+    eg_sc[sd] += 2 * (cnt - 14);
+
+    // queen piece/square score
+
+    mg_sc[sd] += Par.mg_pst[sd][Q][sq];
+    eg_sc[sd] += Par.eg_pst[sd][Q][sq];
+    phase += 4;
+  }
+
+  if (PcBb(p, sd, Q)) {
+    int att_score = (att * 20 * att_weight[wood]) / 256;
+    mg_sc[sd] += att_score;
+    eg_sc[sd] += att_score;
   }
 
 }
@@ -165,7 +252,7 @@ int ScorePawns(POS *p, int sd) {
   while (pieces) {
     from = PopFirstBit(&pieces);
 
-	// PASSED PAWNS
+    // PASSED PAWNS
 
     if (!(passed_mask[sd][from] & PcBb(p, Opp(sd), P))) {
       mg_sc[sd] += passed_bonus_mg[sd][Rank(from)];

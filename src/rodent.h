@@ -104,6 +104,18 @@ enum {
 #define BAttacks(o, x)  (L3Attacks(o, x) | L4Attacks(o, x))
 #define QAttacks(o, x)  (RAttacks(o, x) | BAttacks(o, x))
 
+#define bbNotA          (U64)0xfefefefefefefefe // ~FILE_A_BB
+#define bbNotH          (U64)0x7f7f7f7f7f7f7f7f // ~FILE_H_BB
+
+#define ShiftNorth(x)   (x<<8)
+#define ShiftSouth(x)   (x>>8)
+#define ShiftWest(x)    ((x & bbNotA)>>1)
+#define ShiftEast(x)    ((x & bbNotH)<<1)
+#define ShiftNW(x)      ((x & bbNotA)<<7)
+#define ShiftNE(x)      ((x & bbNotH)<<9)
+#define ShiftSW(x)      ((x & bbNotA)>>9)
+#define ShiftSE(x)      ((x & bbNotH)>>7)
+
 #define FirstOne(x)     bit_table[(((x) & (~(x) + 1)) * (U64)0x0218A392CD3D5DBF) >> 58]
 
 typedef unsigned long long U64;
