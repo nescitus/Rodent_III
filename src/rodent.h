@@ -2,7 +2,7 @@
 #define RODENT_H
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 1801 lines
+// 2306 lines
 
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};

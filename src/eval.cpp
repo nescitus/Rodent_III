@@ -12,7 +12,7 @@ const int passed_bonus_eg[2][8] = {
 };
 
 static const int att_weight[16] = {
-	0, 0, 128, 192, 224, 240, 248, 252, 254, 255, 256, 256 ,256, 256, 256, 256,
+	0, 0, 128, 192, 224, 240, 248, 252, 254, 255, 256, 256, 256, 256, 256, 256,
 };
 
 #define REL_SQ(sq,cl)   ( sq ^ (cl * 56) )
@@ -117,13 +117,6 @@ void ScorePieces(POS *p, int sd) {
 
   U64 bb_zone = k_attacks[ksq];
   (sd == WC) ? bb_zone |= ShiftSouth(bb_zone) : bb_zone |= ShiftNorth(bb_zone);
-
-  pieces = PcBb(p, sd, P);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
-    mg_sc[sd] += Par.mg_pst[sd][P][sq];
-    eg_sc[sd] += Par.eg_pst[sd][P][sq];
-  }
 
   // KNIGHT EVAL
 
@@ -247,23 +240,28 @@ void ScorePieces(POS *p, int sd) {
 int ScorePawns(POS *p, int sd) {
 
   U64 pieces;
-  int from, score;
+  int sq, score;
 
   score = 0;
   pieces = PcBb(p, sd, P);
   while (pieces) {
-    from = PopFirstBit(&pieces);
+    sq = PopFirstBit(&pieces);
+
+	// PIECE SQUARE TABLE
+
+	mg_sc[sd] += Par.mg_pst[sd][P][sq];
+	eg_sc[sd] += Par.eg_pst[sd][P][sq];
 
     // PASSED PAWNS
 
-    if (!(passed_mask[sd][from] & PcBb(p, Opp(sd), P))) {
-      mg_sc[sd] += passed_bonus_mg[sd][Rank(from)];
-      eg_sc[sd] += passed_bonus_eg[sd][Rank(from)];
+    if (!(passed_mask[sd][sq] & PcBb(p, Opp(sd), P))) {
+      mg_sc[sd] += passed_bonus_mg[sd][Rank(sq)];
+      eg_sc[sd] += passed_bonus_eg[sd][Rank(sq)];
     }
     
     // ISOLATED PAWNS
 
-    if (!(adjacent_mask[File(from)] & PcBb(p, sd, P)))
+    if (!(adjacent_mask[File(sq)] & PcBb(p, sd, P)))
       score -= 20;
   }
   return score;
