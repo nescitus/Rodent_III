@@ -234,6 +234,8 @@ void ScorePieces(POS *p, int sd) {
     phase += 4;
   }
 
+  // king attack - 
+
   if (PcBb(p, sd, Q)) {
     int att_score = (att * 20 * att_weight[wood]) / 256;
     mg_sc[sd] += att_score;
