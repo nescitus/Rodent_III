@@ -6,6 +6,7 @@ U64 p_attacks[2][64];
 U64 n_attacks[64];
 U64 k_attacks[64];
 U64 passed_mask[2][64];
+U64 support_mask[2][64];
 U64 adjacent_mask[8];
 int pst[6][64];
 int c_mask[64];

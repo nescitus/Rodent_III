@@ -41,6 +41,16 @@ void cParam::Init(void) {
 
     }
   }
+
+  // Init support mask (for detecting weak pawns)
+
+  for (int sq = 0; sq < 64; sq++) {
+    support_mask[WC][sq] = ShiftWest(SqBb(sq)) | ShiftEast(SqBb(sq));
+    support_mask[WC][sq] |= FillSouth(support_mask[WC][sq]);
+
+    support_mask[BC][sq] = ShiftWest(SqBb(sq)) | ShiftEast(SqBb(sq));
+    support_mask[BC][sq] |= FillNorth(support_mask[BC][sq]);
+  }
 }
 
 void ScorePst(POS * p, int sd) {
@@ -237,12 +247,11 @@ void ScorePieces(POS *p, int sd) {
 
 }
 
-int ScorePawns(POS *p, int sd) {
+void ScorePawns(POS *p, int sd) {
 
   U64 pieces;
-  int sq, score;
+  int sq;
 
-  score = 0;
   pieces = PcBb(p, sd, P);
   while (pieces) {
     sq = PopFirstBit(&pieces);
@@ -261,10 +270,18 @@ int ScorePawns(POS *p, int sd) {
     
     // ISOLATED PAWNS
 
-    if (!(adjacent_mask[File(sq)] & PcBb(p, sd, P)))
-      score -= 20;
+    if (!(adjacent_mask[File(sq)] & PcBb(p, sd, P))) {
+      mg_sc[sd] -= 20;
+      eg_sc[sd] -= 20;
+    }
+
+	// WEAK PAWNS
+
+    else if ((support_mask[sd][sq] & PcBb(p, sd, P)) == 0) {
+      mg_sc[sd] -= 8;
+      eg_sc[sd] -= 8;
+    }
   }
-  return score;
 }
 
 void ScoreKing(POS *p, int sd) {
@@ -302,18 +319,17 @@ int ScoreLikeUfo(POS * p) {
 
 int ScoreLikeRodent(POS * p) {
 
-  int score = 0;
+  // cleanup
   phase = 0;
 
   ScorePieces(p, WC); 
   ScorePieces(p, BC);
-  score += ScorePawns(p, WC) - ScorePawns(p, BC);
+  ScorePawns(p, WC); 
+  ScorePawns(p, BC);
   ScoreKing(p, WC); 
   ScoreKing(p, BC);
 
-  score += Interpolate(p);
-
-  return score;
+  return Interpolate(p);
 }
 
 int Evaluate(POS *p) {
