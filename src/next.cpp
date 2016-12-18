@@ -1,7 +1,7 @@
 #include "rodent.h"
 
-void InitMoves(POS *p, MOVES *m, int trans_move, int ply)
-{
+void InitMoves(POS *p, MOVES *m, int trans_move, int ply) {
+
   m->p = p;
   m->phase = 0;
   m->trans_move = trans_move;

@@ -120,6 +120,9 @@ enum {
 
 typedef unsigned long long U64;
 
+static const U64 bbRelRank[2][8] = { { RANK_1_BB, RANK_2_BB, RANK_3_BB, RANK_4_BB, RANK_5_BB, RANK_6_BB, RANK_7_BB, RANK_8_BB },
+                                     { RANK_8_BB, RANK_7_BB, RANK_6_BB, RANK_5_BB, RANK_4_BB, RANK_3_BB, RANK_2_BB, RANK_1_BB } };
+
 typedef struct {
   U64 cl_bb[2];
   U64 tp_bb[6];
@@ -176,7 +179,7 @@ public:
 
 extern cParam Par;
 
-void AllocTrans(int);
+void AllocTrans(int mbsize);
 int Attacked(POS *p, int sq, int sd);
 U64 AttacksFrom(POS *p, int sq);
 U64 AttacksTo(POS *p, int sq);
@@ -194,6 +197,9 @@ U64 FillSouth(U64 bb);
 void ScoreKing(POS *p, int sd);
 void ScorePawns(POS *p, int sd);
 void ScorePieces(POS *p, int sd);
+int EvalKingFile(POS * p, int sd, U64 bbFile);
+int EvalFileShelter(U64 bbOwnPawns, int sd);
+int EvalFileStorm(U64 bbOppPawns, int sd);
 int ScoreKingSg(POS *p, int sd);
 int ScorePawnsSg(POS *p, int sd);
 int ScorePiecesSg(POS *p, int sd);
@@ -208,11 +214,11 @@ U64 GetWPControl(U64 bb);
 U64 GetBPControl(U64 bb);
 void Hist(POS *p, int move, int depth, int ply);
 void Init(void);
-void InitCaptures(POS *, MOVES *);
-void InitMoves(POS *, MOVES *, int, int);
+void InitCaptures(POS *p, MOVES *m);
+void InitMoves(POS *p, MOVES *m, int trans_move, int ply);
 void InitSearch(void);
 int InputAvailable(void);
-U64 Key(POS *);
+U64 Key(POS *p);
 int Legal(POS *, int);
 void MoveToStr(int move, char *move_str);
 int MvvLva(POS *, int);
