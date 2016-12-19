@@ -1,5 +1,6 @@
 #include "rodent.h"
 
+int thread_no;
 U64 line_mask[4][64];
 U64 attacks[4][64][64];
 U64 p_attacks[2][64];
@@ -27,14 +28,11 @@ const int passed_bonus[2][8] = {
 const int tp_value[7] = {
   100, 325, 325, 500, 1000, 0, 0
 };
-int history[12][64];
-int killer[MAX_PLY][2];
 U64 zob_piece[12][64];
 U64 zob_castle[16];
 U64 zob_ep[8];
 int move_time;
 int pondering;
-int root_depth;
 int search_depth;
 int nodes;
 int abort_search;

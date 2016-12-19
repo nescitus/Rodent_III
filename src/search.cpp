@@ -27,22 +27,54 @@ void InitSearch(void) {
   }
 }
 
-void Think(POS *p, int *pv) {
+void CopyPos(POS * old_pos, POS * new_pos) {
 
-  ClearHist();
-  tt_date = (tt_date + 1) & 255;
-  nodes = 0;
-  abort_search = 0;
-  start_time = GetMS();
-  for (root_depth = 1; root_depth <= search_depth; root_depth++) {
-    printf("info depth %d\n", root_depth);
-    Search(p, 0, -INF, INF, root_depth, 0, pv);
-    if (abort_search)
-      break;
+  new_pos->cl_bb[WC] = old_pos->cl_bb[WC];
+  new_pos->cl_bb[BC] = old_pos->cl_bb[BC];
+
+  for (int tp = 0; tp < 6; tp++) {
+    new_pos->tp_bb[tp] = old_pos->tp_bb[tp];
+  }
+
+  for (int sq = 0; sq < 64; sq++) {
+    new_pos->pc[sq] = old_pos->pc[sq];
+  }
+
+  new_pos->king_sq[WC] = old_pos->king_sq[WC];
+  new_pos->king_sq[BC] = old_pos->king_sq[BC];
+
+  new_pos->pst[WC] = old_pos->pst[WC];
+  new_pos->pst[BC] = old_pos->pst[BC];
+
+  new_pos->side = old_pos->side;
+  new_pos->c_flags = old_pos->c_flags;
+  new_pos->ep_sq = old_pos->ep_sq;
+  new_pos->rev_moves = old_pos->rev_moves;
+  new_pos->head = old_pos->head;
+  new_pos->key = old_pos->key;
+
+  for (int i = 0; i < 256; i++) {
+    new_pos->rep_list[i] = old_pos->rep_list[i];
   }
 }
 
-int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv) {
+
+void cEngine::Think(POS *p, int *pv) {
+
+  POS curr[1];
+  CopyPos(p, curr);
+  ClearHist();
+  local_nodes = 0;
+
+  for (root_depth = 1; root_depth <= search_depth; root_depth++) {
+    printf("info depth %d\n", root_depth);
+    Search(curr, 0, -INF, INF, root_depth, 0, pv);
+    if (abort_search) break;
+	else depth_reached = root_depth;
+  }
+}
+
+int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv) {
 
   int best, score, move, new_depth, reduction, fl_check, new_pv[MAX_PLY];
   int is_pv = (alpha != beta - 1);
@@ -51,6 +83,7 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *p
   int quiet_tried = 0;
   MOVES m[1];
   UNDO u[1];
+  eData e;
 
   // QUIESCENCE SEARCH ENTRY POINT
 
@@ -60,7 +93,8 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *p
   // QUICK EXIT
 
   nodes++;
-  Check(ply);
+  local_nodes++;
+  CheckTimeout(ply);
   if (abort_search) return 0;
   if (ply) *pv = 0;
   if (IsDraw(p) && ply) return 0;
@@ -76,7 +110,7 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *p
   // SAFEGUARD AGAINST REACHING MAX_PLY LIMIT
 
   if (ply >= MAX_PLY - 1)
-    return Evaluate(p);
+    return Evaluate(p, &e);
 
   fl_check = InCheck(p);
 
@@ -86,7 +120,7 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *p
   && !was_null 
   && !fl_check 
   && MayNull(p)) {
-    if (beta <= Evaluate(p)) {
+    if (beta <= Evaluate(p, &e)) {
       DoNull(p, u);
       score = -Search(p, ply + 1, -beta, -beta + 1, depth - 3, 1, new_pv);
       UndoNull(p, u);
@@ -172,7 +206,7 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *p
 	// BETA CUTOFF
 
     if (score >= beta) {
-      Hist(p, move, depth, ply);
+      UpdateHist(p, move, depth, ply);
       TransStore(p->key, move, score, LOWER, depth, ply);
       return score;
     }
@@ -197,7 +231,7 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *p
   // SAVE RESULT TO TRANSPOSITION TABLE
 
   if (*pv) {
-    Hist(p, *pv, depth, ply);
+    UpdateHist(p, *pv, depth, ply);
     TransStore(p->key, *pv, best, EXACT, depth, ply);
   } else
     TransStore(p->key, 0, best, UPPER, depth, ply);
@@ -205,25 +239,26 @@ int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *p
   return best;
 }
 
-int Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
+int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
   int best, score, move, new_pv[MAX_PLY];
   MOVES m[1];
   UNDO u[1];
+  eData e;
 
   nodes++;
-  Check(ply);
+  local_nodes++;
+  CheckTimeout(ply);
   if (abort_search) return 0;
   *pv = 0;
   if (IsDraw(p)) return 0;
 
-  if (ply >= MAX_PLY - 1) return Evaluate(p);
+  if (ply >= MAX_PLY - 1) return Evaluate(p, &e);
 
-  best = Evaluate(p);
-  if (best >= beta)
-    return best;
-  if (best > alpha)
-    alpha = best;
+  best = Evaluate(p, &e);
+  if (best >= beta) return best;
+  if (best > alpha) alpha = best;
+
   InitCaptures(p, m);
   while ((move = NextCapture(m))) {
     DoMove(p, move, u);
@@ -244,7 +279,7 @@ int Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
   return best;
 }
 
-int IsDraw(POS *p) {
+int cEngine::IsDraw(POS *p) {
 
   // DRAW BY 50 MOVE RULE
 
@@ -261,7 +296,7 @@ int IsDraw(POS *p) {
   return 0;
 }
 
-void DisplayPv(int score, int *pv) {
+void cEngine::DisplayPv(int score, int *pv) {
 
   char *type, pv_str[512];
 
@@ -277,11 +312,11 @@ void DisplayPv(int score, int *pv) {
       root_depth, GetMS() - start_time, nodes, type, score, pv_str);
 }
 
-void Check(int ply) {
+void cEngine::CheckTimeout(int ply) {
 
   char command[80];
 
-  if ((nodes & 4095 || root_depth == 1)
+  if ((local_nodes & 4095 || root_depth == 1)
   && ply > 3) return;
 
   if (InputAvailable()) {

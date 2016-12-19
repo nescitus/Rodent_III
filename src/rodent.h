@@ -2,7 +2,7 @@
 #define RODENT_H
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2306 lines
+// 2249 lines
 
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};
@@ -179,51 +179,79 @@ public:
 
 extern cParam Par;
 
+typedef struct {
+  int mg_sc[2];
+  int eg_sc[2];
+  int phase;
+} eData;
+
+typedef class {
+public:
+
+  int history[12][64];
+  int killer[MAX_PLY][2];
+  int local_nodes;
+  int depth_reached;
+  int root_depth;
+
+  void Think(POS *p, int *pv);
+  int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv);
+  int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
+  int IsDraw(POS *p);
+  void CheckTimeout(int ply);
+  void DisplayPv(int score, int *pv);
+
+  void InitMoves(POS *p, MOVES *m, int trans_move, int ply);
+  int NextMove(MOVES *m, int *flag);
+  void InitCaptures(POS *p, MOVES *m);
+  int NextCapture(MOVES *m);
+  void ScoreCaptures(MOVES *m);
+  void ScoreQuiet(MOVES *m);
+  int SelectBest(MOVES *m);
+  int BadCapture(POS *p, int move);
+  int MvvLva(POS *p, int move);
+  void ClearHist(void);
+  void UpdateHist(POS *p, int move, int depth, int ply);
+} cEngine;
+
+extern cEngine Engine1;
+extern cEngine Engine2;
+
 void AllocTrans(int mbsize);
 int Attacked(POS *p, int sq, int sd);
 U64 AttacksFrom(POS *p, int sq);
 U64 AttacksTo(POS *p, int sq);
-int BadCapture(POS *p, int move);
 void BuildPv(int *dst, int *src, int move);
-void Check(int ply);
-void ClearHist(void);
 void ClearTrans(void);
-void DisplayPv(int score, int *pv);
+void CopyPos(POS * old_pos, POS * new_pos);
 void DoMove(POS *p, int move, UNDO *u);
 void DoNull(POS *p, UNDO *u);
-int Evaluate(POS *p);
+
+int Evaluate(POS *p, eData *e);
+int Interpolate(POS * p, eData *e);
+
 U64 FillNorth(U64 bb);
 U64 FillSouth(U64 bb);
-void ScoreKing(POS *p, int sd);
-void ScorePawns(POS *p, int sd);
-void ScorePieces(POS *p, int sd);
+U64 FillNorthExcl(U64 bb);
+U64 FillSouthExcl(U64 bb);
+U64 GetFrontSpan(U64 bb, int sd);
+void ScoreKing(POS *p, eData *e, int sd);
+void ScorePawns(POS *p, eData *e, int sd);
+void ScorePieces(POS *p, eData *e, int sd);
 int EvalKingFile(POS * p, int sd, U64 bbFile);
 int EvalFileShelter(U64 bbOwnPawns, int sd);
 int EvalFileStorm(U64 bbOppPawns, int sd);
-int ScoreKingSg(POS *p, int sd);
-int ScorePawnsSg(POS *p, int sd);
-int ScorePiecesSg(POS *p, int sd);
-int ScoreLikeSungorus(POS * p);
-int ScoreLikeRodent(POS * p);
-int ScoreLikeIdiot(POS * p);
-void ScorePst(POS * p, int sd);
 int *GenerateCaptures(POS *p, int *list);
 int *GenerateQuiet(POS *p, int *list);
 int GetMS(void);
 U64 GetWPControl(U64 bb);
 U64 GetBPControl(U64 bb);
-void Hist(POS *p, int move, int depth, int ply);
 void Init(void);
-void InitCaptures(POS *p, MOVES *m);
-void InitMoves(POS *p, MOVES *m, int trans_move, int ply);
 void InitSearch(void);
 int InputAvailable(void);
 U64 Key(POS *p);
 int Legal(POS *, int);
 void MoveToStr(int move, char *move_str);
-int MvvLva(POS *, int);
-int NextCapture(MOVES *);
-int NextMove(MOVES *m, int *flag);
 void ParseGo(POS *, char *);
 void ParsePosition(POS *, char *);
 void ParseSetoption(char *);
@@ -231,24 +259,18 @@ char *ParseToken(char *, char *);
 int PopCnt(U64);
 int PopFirstBit(U64 * bb);
 void PvToStr(int *pv, char *pv_str);
-int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
 U64 Random64(void);
 void ReadLine(char *, int);
-int IsDraw(POS *p);
-void ScoreCaptures(MOVES *);
-void ScoreQuiet(MOVES *);
-int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv);
-int SelectBest(MOVES *);
 void SetPosition(POS *, char *);
 int StrToMove(POS *p, char *move_str);
 int Swap(POS *, int, int);
-void Think(POS *p, int *pv);
 int TransRetrieve(U64, int *, int *, int, int, int, int);
 void TransStore(U64, int, int, int, int, int);
 void UciLoop(void);
 void UndoMove(POS *p, int move, UNDO *u);
 void UndoNull(POS *p, UNDO *u);
 
+extern int thread_no;
 extern U64 line_mask[4][64];
 extern U64 attacks[4][64][64];
 extern U64 p_attacks[2][64];
@@ -262,14 +284,11 @@ extern int c_mask[64];
 extern const int bit_table[64];
 extern const int passed_bonus[2][8];
 extern const int tp_value[7];
-extern int history[12][64];
-extern int killer[MAX_PLY][2];
 extern U64 zob_piece[12][64];
 extern U64 zob_castle[16];
 extern U64 zob_ep[8];
 extern int move_time;
 extern int pondering;
-extern int root_depth;
 extern int search_depth;
 extern int nodes;
 extern int abort_search;

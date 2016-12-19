@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <thread>
+#include <iostream>
+using namespace std;
 #include "rodent.h"
 
 void ReadLine(char *str, int n)
@@ -36,8 +39,9 @@ void UciLoop(void) {
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.012\n");
+      printf("id name Rodent III 0.013\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
+	  printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
       printf("option name Hash type spin default 16 min 1 max 4096\n");
       printf("option name Clear Hash type button\n");
       printf("uciok\n");
@@ -84,6 +88,8 @@ void ParseSetoption(char *ptr) {
     AllocTrans(atoi(value));
   } else if (strcmp(name, "Clear Hash") == 0) {
     ClearTrans();
+  } else if (strcmp(name, "Threads") == 0) {
+    thread_no = (atoi(value));
   }
 }
 
@@ -118,10 +124,18 @@ void ParsePosition(POS *p, char *ptr) {
     }
 }
 
+void task1(POS * p, int *pv) {
+  Engine1.Think(p, pv);
+}
+
+void task2(POS * p, int *pv) {
+  Engine2.Think(p, pv);
+}
+
 void ParseGo(POS *p, char *ptr) {
 
   char token[80], bestmove_str[6], ponder_str[6];
-  int wtime, btime, winc, binc, movestogo, time, inc, pv[MAX_PLY];
+  int wtime, btime, winc, binc, movestogo, time, inc, pv[MAX_PLY], pv2[MAX_PLY];
 
   move_time = -1;
   pondering = 0;
@@ -168,11 +182,37 @@ void ParseGo(POS *p, char *ptr) {
     if (move_time < 0)
       move_time = 0;
   }
-  Think(p, pv);
-  MoveToStr(pv[0], bestmove_str);
-  if (pv[1]) {
-    MoveToStr(pv[1], ponder_str);
-    printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
-  } else
-    printf("bestmove %s\n", bestmove_str);
+
+  // thread-independent stuff to be done before searching
+
+  tt_date = (tt_date + 1) & 255;
+  nodes = 0;
+  abort_search = 0;
+  start_time = GetMS();
+  Engine1.depth_reached = 0;
+  Engine2.depth_reached = 0;
+
+  thread t1(task1, p, pv);
+  thread t2(task2, p, pv2);
+  t1.join();
+  t2.join();
+
+  if (thread_no == 2 && Engine2.depth_reached > Engine1.depth_reached) {
+  // if second thread managed to search to the greater depth than the first thread
+    MoveToStr(pv2[0], bestmove_str);
+    if (pv2[1]) {
+      MoveToStr(pv2[1], ponder_str);
+      printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+    }
+    else
+      printf("bestmove %s\n", bestmove_str);
+  } else { 
+  // we are searching single-threaded or the first thread got at least the same depth as the second thread
+    MoveToStr(pv[0], bestmove_str);
+    if (pv[1]) {
+      MoveToStr(pv[1], ponder_str);
+      printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+    } else
+      printf("bestmove %s\n", bestmove_str);
+  }
 }

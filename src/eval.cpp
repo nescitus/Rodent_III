@@ -26,10 +26,6 @@ static const U64 bbKSCastle[2] = { SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | S
 
 static const U64 bbCentralFile = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
-int mg_sc[2];
-int eg_sc[2];
-int phase;
-
 void cParam::Init(void) {
 
   for (int sq = 0; sq < 64; sq++) {
@@ -62,69 +58,14 @@ void cParam::Init(void) {
   }
 }
 
-void ScorePst(POS * p, int sd) {
-   
-  U64 pieces;
-  int sq;
-
-  mg_sc[sd] = 0;
-  eg_sc[sd] = 0;
-
-  pieces = PcBb(p, sd, P);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
-    mg_sc[sd] += Par.mg_pst[sd][P][sq];
-    eg_sc[sd] += Par.eg_pst[sd][P][sq];
-  }
-
-  pieces = PcBb(p, sd, N);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
-    mg_sc[sd] += Par.mg_pst[sd][N][sq];
-    eg_sc[sd] += Par.eg_pst[sd][N][sq];
-    phase += 1;
-  }
-
-  pieces = PcBb(p, sd, B);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
-    mg_sc[sd] += Par.mg_pst[sd][B][sq];
-    eg_sc[sd] += Par.eg_pst[sd][B][sq];
-    phase += 1;
-  }
-
-  pieces = PcBb(p, sd, R);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
-    mg_sc[sd] += Par.mg_pst[sd][R][sq];
-    eg_sc[sd] += Par.eg_pst[sd][R][sq];
-    phase += 2;
-  }
-
-  pieces = PcBb(p, sd, Q);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
-    mg_sc[sd] += Par.mg_pst[sd][Q][sq];
-    eg_sc[sd] += Par.eg_pst[sd][Q][sq];
-    phase += 4;
-  }
-
-  pieces = PcBb(p, sd, K);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
-    mg_sc[sd] += Par.mg_pst[sd][K][sq];
-    eg_sc[sd] += Par.eg_pst[sd][K][sq];
-  }
-}
-
-void ScorePieces(POS *p, int sd) {
+void ScorePieces(POS *p, eData *e, int sd) {
 
   U64 pieces, bb_attacks, bb_control;
   int op, sq, ksq, cnt;
   int att = 0;
   int wood = 0;
-  mg_sc[sd] = 0;
-  eg_sc[sd] = 0;
+  e->mg_sc[sd] = 0;
+  e->eg_sc[sd] = 0;
 
   // Init variables
 
@@ -154,14 +95,14 @@ void ScorePieces(POS *p, int sd) {
     // knight mobility score
 
     cnt = PopCnt(bb_control);
-    mg_sc[sd] += 4 * (cnt - 4);
-    eg_sc[sd] += 4 * (cnt - 4);
+    e->mg_sc[sd] += 4 * (cnt - 4);
+    e->eg_sc[sd] += 4 * (cnt - 4);
 
     // knight piece/square score
 
-    mg_sc[sd] += Par.mg_pst[sd][N][sq];
-    eg_sc[sd] += Par.eg_pst[sd][N][sq];
-    phase += 1;
+    e->mg_sc[sd] += Par.mg_pst[sd][N][sq];
+    e->eg_sc[sd] += Par.eg_pst[sd][N][sq];
+    e->phase += 1;
   }
 
   // BISHOP EVAL
@@ -181,14 +122,14 @@ void ScorePieces(POS *p, int sd) {
     // bishop mobility score
 
     cnt = PopCnt(BAttacks(OccBb(p), sq));
-    mg_sc[sd] += 5 * (cnt - 7);
-    eg_sc[sd] += 5 * (cnt - 7);
+    e->mg_sc[sd] += 5 * (cnt - 7);
+    e->eg_sc[sd] += 5 * (cnt - 7);
 
     // bishop piece/square score
 
-    mg_sc[sd] += Par.mg_pst[sd][B][sq];
-    eg_sc[sd] += Par.eg_pst[sd][B][sq];
-    phase += 1;
+    e->mg_sc[sd] += Par.mg_pst[sd][B][sq];
+    e->eg_sc[sd] += Par.eg_pst[sd][B][sq];
+    e->phase += 1;
   }
 
   // ROOK EVAL
@@ -208,14 +149,14 @@ void ScorePieces(POS *p, int sd) {
     // rook mobility score
 
     cnt = PopCnt(RAttacks(OccBb(p), sq));
-    mg_sc[sd] += 2 * (cnt - 7);
-    eg_sc[sd] += 4 * (cnt - 7);
+    e->mg_sc[sd] += 2 * (cnt - 7);
+    e->eg_sc[sd] += 4 * (cnt - 7);
 
     // rook piece/square score
 
-    mg_sc[sd] += Par.mg_pst[sd][R][sq];
-    eg_sc[sd] += Par.eg_pst[sd][R][sq];
-    phase += 2;
+    e->mg_sc[sd] += Par.mg_pst[sd][R][sq];
+    e->eg_sc[sd] += Par.eg_pst[sd][R][sq];
+    e->phase += 2;
   }
 
   // QUEEN EVAL
@@ -236,27 +177,27 @@ void ScorePieces(POS *p, int sd) {
     // queen mobility score
 
     cnt = PopCnt(QAttacks(OccBb(p), sq));
-    mg_sc[sd] += 1 * (cnt - 14);
-    eg_sc[sd] += 2 * (cnt - 14);
+    e->mg_sc[sd] += 1 * (cnt - 14);
+    e->eg_sc[sd] += 2 * (cnt - 14);
 
     // queen piece/square score
 
-    mg_sc[sd] += Par.mg_pst[sd][Q][sq];
-    eg_sc[sd] += Par.eg_pst[sd][Q][sq];
-    phase += 4;
+    e->mg_sc[sd] += Par.mg_pst[sd][Q][sq];
+    e->eg_sc[sd] += Par.eg_pst[sd][Q][sq];
+    e->phase += 4;
   }
 
   // king attack - 
 
   if (PcBb(p, sd, Q)) {
     int att_score = (att * 20 * att_weight[wood]) / 256;
-    mg_sc[sd] += att_score;
-    eg_sc[sd] += att_score;
+    e->mg_sc[sd] += att_score;
+    e->eg_sc[sd] += att_score;
   }
 
 }
 
-void ScorePawns(POS *p, int sd) {
+void ScorePawns(POS *p, eData *e, int sd) {
 
   U64 pieces;
   int sq;
@@ -267,41 +208,41 @@ void ScorePawns(POS *p, int sd) {
 
 	// PIECE SQUARE TABLE
 
-	mg_sc[sd] += Par.mg_pst[sd][P][sq];
-	eg_sc[sd] += Par.eg_pst[sd][P][sq];
+	e->mg_sc[sd] += Par.mg_pst[sd][P][sq];
+	e->eg_sc[sd] += Par.eg_pst[sd][P][sq];
 
     // PASSED PAWNS
 
     if (!(passed_mask[sd][sq] & PcBb(p, Opp(sd), P))) {
-      mg_sc[sd] += passed_bonus_mg[sd][Rank(sq)];
-      eg_sc[sd] += passed_bonus_eg[sd][Rank(sq)];
+      e->mg_sc[sd] += passed_bonus_mg[sd][Rank(sq)];
+      e->eg_sc[sd] += passed_bonus_eg[sd][Rank(sq)];
     }
     
     // ISOLATED PAWNS
 
     if (!(adjacent_mask[File(sq)] & PcBb(p, sd, P))) {
-      mg_sc[sd] -= 20;
-      eg_sc[sd] -= 20;
+      e->mg_sc[sd] -= 20;
+      e->eg_sc[sd] -= 20;
     }
 
 	// WEAK PAWNS
 
     else if ((support_mask[sd][sq] & PcBb(p, sd, P)) == 0) {
-      mg_sc[sd] -= 8;
-      eg_sc[sd] -= 8;
+      e->mg_sc[sd] -= 8;
+      e->eg_sc[sd] -= 8;
     }
   }
 }
 
-void ScoreKing(POS *p, int sd) {
+void ScoreKing(POS *p, eData *e, int sd) {
 
   const int startSq[2] = { E1, E8 };
   const int qCastle[2] = { B1, B8 };
   const int kCastle[2] = { G1, G8 };
 
   int sq = KingSq(p, sd);
-  mg_sc[sd] += Par.mg_pst[sd][K][sq];
-  eg_sc[sd] += Par.eg_pst[sd][K][sq];
+  e->mg_sc[sd] += Par.mg_pst[sd][K][sq];
+  e->eg_sc[sd] += Par.eg_pst[sd][K][sq];
 
   // Normalize king square for pawn shield evaluation,
   // to discourage shuffling the king between g1 and h1.
@@ -320,7 +261,7 @@ void ScoreKing(POS *p, int sd) {
   bbNextFile = ShiftWest(bbKingFile);
   if (bbNextFile) result += EvalKingFile(p, sd, bbNextFile);
 
-  mg_sc[sd] += result;
+  e->mg_sc[sd] += result;
 }
 
 int EvalKingFile(POS * p, int sd, U64 bbFile) {
@@ -352,50 +293,28 @@ int EvalFileStorm(U64 bbOppPawns, int sd) {
   return 0;
 }
 
-int ScoreLikeIdiot(POS * p) {
+int Interpolate(POS * p, eData *e) {
 
-  int score = p->mat[WC] - p->mat[BC];
-  int randomMod = (80 / 2) - (p->key % 80);
-  score += randomMod;
-  return score;
-}
-
-int Interpolate(POS * p) {
-
-  int mg_tot = mg_sc[WC] - mg_sc[BC];
-  int eg_tot = eg_sc[WC] - eg_sc[BC];
-  int mg_phase = Min(phase, 24);
+  int mg_tot = e->mg_sc[WC] - e->mg_sc[BC];
+  int eg_tot = e->eg_sc[WC] - e->eg_sc[BC];
+  int mg_phase = Min(e->phase, 24);
   int eg_phase = 24 - mg_phase;
 
   return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
 }
 
-int ScoreLikeUfo(POS * p) {
+int Evaluate(POS *p, eData *e) {
 
-  phase = 0;
-  ScorePst(p, WC);
-  ScorePst(p, BC);
-  return Interpolate(p);
-}
+	e->phase = 0;
 
-int ScoreLikeRodent(POS * p) {
+	ScorePieces(p, e, WC);
+	ScorePieces(p, e, BC);
+	ScorePawns(p, e, WC);
+	ScorePawns(p, e, BC);
+	ScoreKing(p, e, WC);
+	ScoreKing(p, e, BC);
 
-  // cleanup
-  phase = 0;
-
-  ScorePieces(p, WC); 
-  ScorePieces(p, BC);
-  ScorePawns(p, WC); 
-  ScorePawns(p, BC);
-  ScoreKing(p, WC); 
-  ScoreKing(p, BC);
-
-  return Interpolate(p);
-}
-
-int Evaluate(POS *p) {
-
-  int score = ScoreLikeRodent(p);
+	int score = Interpolate(p,e);
 
   // Make sure eval does not exceed mate score
 
