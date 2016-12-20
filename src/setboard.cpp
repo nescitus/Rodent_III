@@ -5,17 +5,20 @@ void SetPosition(POS *p, char *epd) {
   int i, j, pc;
   static const char pc_char[13] = "PpNnBbRrQqKk";
 
-  for (i = 0; i < 2; i++) {
+  for (int i = 0; i < 2; i++) {
     p->cl_bb[i] = 0;
     p->mat[i] = 0;
     p->pst[i] = 0;
   }
-  for (i = 0; i < 6; i++)
+
+  for (int i = 0; i < 6; i++)
     p->tp_bb[i] = 0;
+
   p->c_flags = 0;
   p->rev_moves = 0;
   p->head = 0;
-  for (i = 56; i >= 0; i -= 8) {
+
+  for (int i = 56; i >= 0; i -= 8) {
     j = 0;
     while (j < 8) {
       if (*epd >= '1' && *epd <= '8')

@@ -31,16 +31,16 @@ void cParam::Init(void) {
   for (int sq = 0; sq < 64; sq++) {
     for (int sd = 0; sd < 2; sd++) {
 
-      mg_pst[sd][P][REL_SQ(sq, sd)] = tp_value[P] + pstPawnMg[sq];
-      eg_pst[sd][P][REL_SQ(sq, sd)] = tp_value[P] + pstPawnEg[sq];
-      mg_pst[sd][N][REL_SQ(sq, sd)] = tp_value[N] + pstKnightMg[sq];
-      eg_pst[sd][N][REL_SQ(sq, sd)] = tp_value[N] + pstKnightEg[sq];
-      mg_pst[sd][B][REL_SQ(sq, sd)] = tp_value[B] + pstBishopMg[sq];
-      eg_pst[sd][B][REL_SQ(sq, sd)] = tp_value[B] + pstBishopEg[sq];
-      mg_pst[sd][R][REL_SQ(sq, sd)] = tp_value[R] + pstRookMg[sq];
-      eg_pst[sd][R][REL_SQ(sq, sd)] = tp_value[R] + pstRookEg[sq];
-      mg_pst[sd][Q][REL_SQ(sq, sd)] = tp_value[Q] + pstQueenMg[sq];
-      eg_pst[sd][Q][REL_SQ(sq, sd)] = tp_value[Q] + pstQueenEg[sq];
+      mg_pst[sd][P][REL_SQ(sq, sd)] = 70 + pstPawnMg[sq];
+      eg_pst[sd][P][REL_SQ(sq, sd)] = 90 + pstPawnEg[sq];
+      mg_pst[sd][N][REL_SQ(sq, sd)] = 325 + pstKnightMg[sq];
+      eg_pst[sd][N][REL_SQ(sq, sd)] = 325 + pstKnightEg[sq];
+      mg_pst[sd][B][REL_SQ(sq, sd)] = 325 + pstBishopMg[sq];
+      eg_pst[sd][B][REL_SQ(sq, sd)] = 325 + pstBishopEg[sq];
+      mg_pst[sd][R][REL_SQ(sq, sd)] = 500 + pstRookMg[sq];
+      eg_pst[sd][R][REL_SQ(sq, sd)] = 500 + pstRookEg[sq];
+      mg_pst[sd][Q][REL_SQ(sq, sd)] = 975 + pstQueenMg[sq];
+      eg_pst[sd][Q][REL_SQ(sq, sd)] = 975 + pstQueenEg[sq];
       mg_pst[sd][K][REL_SQ(sq, sd)] = pstKingMg[sq];
       eg_pst[sd][K][REL_SQ(sq, sd)] = pstKingEg[sq];
 

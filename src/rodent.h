@@ -2,7 +2,7 @@
 #define RODENT_H
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2249 lines
+// 2185 lines
 
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};
@@ -195,6 +195,7 @@ public:
   int root_depth;
 
   void Think(POS *p, int *pv);
+  void Iterate(POS *curr, int *pv);
   int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv);
   int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
   int IsDraw(POS *p);
@@ -222,6 +223,7 @@ int Attacked(POS *p, int sq, int sd);
 U64 AttacksFrom(POS *p, int sq);
 U64 AttacksTo(POS *p, int sq);
 void BuildPv(int *dst, int *src, int move);
+int BulletCorrection(int time);
 void ClearTrans(void);
 void CopyPos(POS * old_pos, POS * new_pos);
 void DoMove(POS *p, int move, UNDO *u);
@@ -250,22 +252,22 @@ void Init(void);
 void InitSearch(void);
 int InputAvailable(void);
 U64 Key(POS *p);
-int Legal(POS *, int);
+int Legal(POS *p, int move);
 void MoveToStr(int move, char *move_str);
-void ParseGo(POS *, char *);
-void ParsePosition(POS *, char *);
-void ParseSetoption(char *);
-char *ParseToken(char *, char *);
-int PopCnt(U64);
+void ParseGo(POS *p, char *ptr);
+void ParsePosition(POS *p, char *ptr);
+void ParseSetoption(char *ptr);
+char *ParseToken(char *string, char *token);
+int PopCnt(U64 bb);
 int PopFirstBit(U64 * bb);
 void PvToStr(int *pv, char *pv_str);
 U64 Random64(void);
-void ReadLine(char *, int);
-void SetPosition(POS *, char *);
+void ReadLine(char *str, int n);
+void SetPosition(POS *p, char *epd);
 int StrToMove(POS *p, char *move_str);
-int Swap(POS *, int, int);
-int TransRetrieve(U64, int *, int *, int, int, int, int);
-void TransStore(U64, int, int, int, int, int);
+int Swap(POS *p, int from, int to);
+int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
+void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
 void UciLoop(void);
 void UndoMove(POS *p, int move, UNDO *u);
 void UndoNull(POS *p, UNDO *u);

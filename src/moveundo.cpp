@@ -18,8 +18,10 @@ void UndoMove(POS *p, int move, UNDO *u) {
   p->cl_bb[side] ^= SqBb(fsq) | SqBb(tsq);
   p->tp_bb[ftp] ^= SqBb(fsq) | SqBb(tsq);
   p->pst[side] += pst[ftp][fsq] - pst[ftp][tsq];
+
   if (ftp == K)
     p->king_sq[side] = fsq;
+
   if (ttp != NO_TP) {
     p->pc[tsq] = Pc(Opp(side), ttp);
     p->cl_bb[Opp(side)] ^= SqBb(tsq);
@@ -30,6 +32,7 @@ void UndoMove(POS *p, int move, UNDO *u) {
   switch (MoveType(move)) {
   case NORMAL:
     break;
+
   case CASTLE:
     if (tsq > fsq) {
       fsq += 3;
@@ -44,6 +47,7 @@ void UndoMove(POS *p, int move, UNDO *u) {
     p->tp_bb[R] ^= SqBb(fsq) | SqBb(tsq);
     p->pst[side] += pst[R][fsq] - pst[R][tsq];
     break;
+
   case EP_CAP:
     tsq ^= 8;
     p->pc[tsq] = Pc(Opp(side), P);
@@ -52,8 +56,10 @@ void UndoMove(POS *p, int move, UNDO *u) {
     p->mat[Opp(side)] += tp_value[P];
     p->pst[Opp(side)] += pst[P][tsq];
     break;
+
   case EP_SET:
     break;
+
   case N_PROM: case B_PROM: case R_PROM: case Q_PROM:
     p->pc[fsq] = Pc(side, P);
     p->tp_bb[P] ^= SqBb(fsq);

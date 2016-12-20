@@ -65,6 +65,10 @@ void cEngine::Think(POS *p, int *pv) {
   CopyPos(p, curr);
   ClearHist();
   local_nodes = 0;
+  Iterate(curr, pv);
+}
+
+void cEngine::Iterate(POS *curr, int *pv) {
 
   for (root_depth = 1; root_depth <= search_depth; root_depth++) {
     printf("info depth %d\n", root_depth);

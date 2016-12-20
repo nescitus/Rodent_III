@@ -6,8 +6,7 @@
 using namespace std;
 #include "rodent.h"
 
-void ReadLine(char *str, int n)
-{
+void ReadLine(char *str, int n) {
   char *ptr;
 
   if (fgets(str, n, stdin) == NULL)
@@ -16,14 +15,22 @@ void ReadLine(char *str, int n)
     *ptr = '\0';
 }
 
-char *ParseToken(char *string, char *token)
-{
+char *ParseToken(char *string, char *token) {
+
   while (*string == ' ')
     string++;
   while (*string != ' ' && *string != '\0')
     *token++ = *string++;
   *token = '\0';
   return string;
+}
+
+int BulletCorrection(int time) {
+
+  if (time < 200)       return (time * 23) / 32;
+  else if (time <  400) return (time * 26) / 32;
+  else if (time < 1200) return (time * 29) / 32;
+  else return time;
 }
 
 void UciLoop(void) {
@@ -39,7 +46,7 @@ void UciLoop(void) {
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.013\n");
+      printf("id name Rodent III 0.014\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
 	  printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
       printf("option name Hash type spin default 16 min 1 max 4096\n");
@@ -183,6 +190,8 @@ void ParseGo(POS *p, char *ptr) {
       move_time = 0;
   }
 
+  time = BulletCorrection(time);
+
   // thread-independent stuff to be done before searching
 
   tt_date = (tt_date + 1) & 255;
@@ -192,10 +201,17 @@ void ParseGo(POS *p, char *ptr) {
   Engine1.depth_reached = 0;
   Engine2.depth_reached = 0;
 
-  thread t1(task1, p, pv);
-  thread t2(task2, p, pv2);
-  t1.join();
-  t2.join();
+  if (thread_no == 1) {
+    thread t1(task1, p, pv);
+    t1.join();
+  }
+
+  if (thread_no == 2) {
+    thread t1(task1, p, pv);
+    thread t2(task2, p, pv2);
+    t1.join();
+    t2.join();
+  }
 
   if (thread_no == 2 && Engine2.depth_reached > Engine1.depth_reached) {
   // if second thread managed to search to the greater depth than the first thread

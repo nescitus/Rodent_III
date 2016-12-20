@@ -13,11 +13,11 @@ void DoMove(POS *p, int move, UNDO *u) {
   u->ep_sq = p->ep_sq;
   u->rev_moves = p->rev_moves;
   u->key = p->key;
+
   p->rep_list[p->head++] = p->key;
-  if (ftp == P || ttp != NO_TP)
-    p->rev_moves = 0;
-  else
-    p->rev_moves++;
+  if (ftp == P || ttp != NO_TP) p->rev_moves = 0;
+  else                          p->rev_moves++;
+
   p->key ^= zob_castle[p->c_flags];
   p->c_flags &= c_mask[fsq] & c_mask[tsq];
   p->key ^= zob_castle[p->c_flags];
@@ -31,8 +31,10 @@ void DoMove(POS *p, int move, UNDO *u) {
   p->cl_bb[side] ^= SqBb(fsq) | SqBb(tsq);
   p->tp_bb[ftp] ^= SqBb(fsq) | SqBb(tsq);
   p->pst[side] += pst[ftp][tsq] - pst[ftp][fsq];
+
   if (ftp == K)
     p->king_sq[side] = tsq;
+
   if (ttp != NO_TP) {
     p->key ^= zob_piece[Pc(Opp(side), ttp)][tsq];
     p->cl_bb[Opp(side)] ^= SqBb(tsq);
@@ -58,6 +60,7 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->tp_bb[R] ^= SqBb(fsq) | SqBb(tsq);
     p->pst[side] += pst[R][tsq] - pst[R][fsq];
     break;
+
   case EP_CAP:
     tsq ^= 8;
     p->pc[tsq] = NO_PC;
@@ -67,6 +70,7 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->mat[Opp(side)] -= tp_value[P];
     p->pst[Opp(side)] -= pst[P][tsq];
     break;
+
   case EP_SET:
     tsq ^= 8;
     if (p_attacks[side][tsq] & PcBb(p, Opp(side), P)) {
@@ -74,6 +78,7 @@ void DoMove(POS *p, int move, UNDO *u) {
       p->key ^= zob_ep[File(tsq)];
     }
     break;
+
   case N_PROM: case B_PROM: case R_PROM: case Q_PROM:
     ftp = PromType(move);
     p->pc[tsq] = Pc(side, ftp);

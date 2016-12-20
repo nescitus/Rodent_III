@@ -183,10 +183,16 @@ void cEngine::ClearHist(void) {
 
 void cEngine::UpdateHist(POS *p, int move, int depth, int ply) {
 
+  // don't update history score if the move is not quiet
+
   if (p->pc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
     return;
 
+  // increase move's history score
+
   history[p->pc[Fsq(move)]][Tsq(move)] += depth * depth;
+
+  // update killer moves, making sure that moves in both killer slots are different
 
   if (move != killer[ply][0]) {
     killer[ply][1] = killer[ply][0];
