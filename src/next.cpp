@@ -181,6 +181,13 @@ void cEngine::ClearHist(void) {
   }
 }
 
+void cEngine::TrimHist(void) {
+
+  for (int i = 0; i < 12; i++)
+    for (int j = 0; j < 64; j++)
+      history[i][j] /= 2;
+}
+
 void cEngine::UpdateHist(POS *p, int move, int depth, int ply) {
 
   // don't update history score if the move is not quiet
@@ -191,6 +198,11 @@ void cEngine::UpdateHist(POS *p, int move, int depth, int ply) {
   // increase move's history score
 
   history[p->pc[Fsq(move)]][Tsq(move)] += depth * depth;
+
+  // keep history score within the right limit
+
+  if (history[p->pc[Fsq(move)]][Tsq(move)] >= MAX_HIST)
+    TrimHist();
 
   // update killer moves, making sure that moves in both killer slots are different
 

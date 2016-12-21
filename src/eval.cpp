@@ -191,7 +191,7 @@ void ScorePieces(POS *p, eData *e, int sd) {
 
 void ScorePawns(POS *p, eData *e, int sd) {
 
-  U64 pieces;
+  U64 pieces, span;
   int sq;
 
   pieces = PcBb(p, sd, P);

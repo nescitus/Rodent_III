@@ -23,6 +23,7 @@ enum {
 
 #define MAX_PLY         64
 #define MAX_MOVES       256
+#define MAX_HIST        (1 << 15)
 #define INF             32767
 #define MATE            32000
 #define MAX_EVAL        29999
@@ -210,6 +211,7 @@ public:
   int MvvLva(POS *p, int move);
   void ClearHist(void);
   void UpdateHist(POS *p, int move, int depth, int ply);
+  void TrimHist(void);
 } cEngine;
 
 extern cEngine Engine1;
