@@ -1,8 +1,5 @@
-#ifndef RODENT_H
-#define RODENT_H
-
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2185 lines
+// 2177 lines
 
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};
@@ -231,6 +228,7 @@ void DoNull(POS *p, UNDO *u);
 
 int Evaluate(POS *p, eData *e);
 int Interpolate(POS * p, eData *e);
+void Add(eData *e, int sd, int mg, int eg);
 
 U64 FillNorth(U64 bb);
 U64 FillSouth(U64 bb);
@@ -299,5 +297,3 @@ extern ENTRY *tt;
 extern int tt_size;
 extern int tt_mask;
 extern int tt_date;
-
-#endif

@@ -95,13 +95,12 @@ void ScorePieces(POS *p, eData *e, int sd) {
     // knight mobility score
 
     cnt = PopCnt(bb_control);
-    e->mg_sc[sd] += 4 * (cnt - 4);
-    e->eg_sc[sd] += 4 * (cnt - 4);
+	Add(e, sd, 4 * (cnt-4), 4 * (cnt-4));
 
     // knight piece/square score
 
-    e->mg_sc[sd] += Par.mg_pst[sd][N][sq];
-    e->eg_sc[sd] += Par.eg_pst[sd][N][sq];
+    Add(e, sd, Par.mg_pst[sd][N][sq], Par.eg_pst[sd][N][sq]);
+
     e->phase += 1;
   }
 
@@ -122,13 +121,11 @@ void ScorePieces(POS *p, eData *e, int sd) {
     // bishop mobility score
 
     cnt = PopCnt(BAttacks(OccBb(p), sq));
-    e->mg_sc[sd] += 5 * (cnt - 7);
-    e->eg_sc[sd] += 5 * (cnt - 7);
+    Add(e, sd, 5 * (cnt - 7),  5 * (cnt - 7));
 
     // bishop piece/square score
 
-    e->mg_sc[sd] += Par.mg_pst[sd][B][sq];
-    e->eg_sc[sd] += Par.eg_pst[sd][B][sq];
+	Add(e, sd, Par.mg_pst[sd][B][sq], Par.eg_pst[sd][B][sq]);
     e->phase += 1;
   }
 
@@ -149,13 +146,11 @@ void ScorePieces(POS *p, eData *e, int sd) {
     // rook mobility score
 
     cnt = PopCnt(RAttacks(OccBb(p), sq));
-    e->mg_sc[sd] += 2 * (cnt - 7);
-    e->eg_sc[sd] += 4 * (cnt - 7);
+    Add(e, sd, 2 * (cnt - 7), 4 * (cnt - 7));
 
     // rook piece/square score
 
-    e->mg_sc[sd] += Par.mg_pst[sd][R][sq];
-    e->eg_sc[sd] += Par.eg_pst[sd][R][sq];
+	Add(e, sd, Par.mg_pst[sd][R][sq], Par.eg_pst[sd][R][sq]);
     e->phase += 2;
   }
 
@@ -177,13 +172,11 @@ void ScorePieces(POS *p, eData *e, int sd) {
     // queen mobility score
 
     cnt = PopCnt(QAttacks(OccBb(p), sq));
-    e->mg_sc[sd] += 1 * (cnt - 14);
-    e->eg_sc[sd] += 2 * (cnt - 14);
+    Add(e, sd, 1 * (cnt - 14), 2 * (cnt - 14));
 
     // queen piece/square score
 
-    e->mg_sc[sd] += Par.mg_pst[sd][Q][sq];
-    e->eg_sc[sd] += Par.eg_pst[sd][Q][sq];
+	Add(e, sd, Par.mg_pst[sd][Q][sq], Par.eg_pst[sd][Q][sq]);
     e->phase += 4;
   }
 
@@ -191,8 +184,7 @@ void ScorePieces(POS *p, eData *e, int sd) {
 
   if (PcBb(p, sd, Q)) {
     int att_score = (att * 20 * att_weight[wood]) / 256;
-    e->mg_sc[sd] += att_score;
-    e->eg_sc[sd] += att_score;
+	Add(e, sd, att_score, att_score);
   }
 
 }
@@ -208,8 +200,7 @@ void ScorePawns(POS *p, eData *e, int sd) {
 
 	// PIECE SQUARE TABLE
 
-	e->mg_sc[sd] += Par.mg_pst[sd][P][sq];
-	e->eg_sc[sd] += Par.eg_pst[sd][P][sq];
+	Add(e, sd, Par.mg_pst[sd][P][sq], Par.eg_pst[sd][P][sq]);
 
     // PASSED PAWNS
 
@@ -291,6 +282,11 @@ int EvalFileStorm(U64 bbOppPawns, int sd) {
   if (bbOppPawns & bbRelRank[sd][RANK_4]) return -16;
   if (bbOppPawns & bbRelRank[sd][RANK_5]) return -8;
   return 0;
+}
+
+void Add(eData * e, int sd, int mg, int eg) {
+  e->mg_sc[sd] += mg;
+  e->eg_sc[sd] += eg;
 }
 
 int Interpolate(POS * p, eData *e) {
