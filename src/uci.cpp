@@ -139,9 +139,22 @@ void task2(POS * p, int *pv) {
   Engine2.Think(p, pv);
 }
 
+void ExtractMove(int pv[MAX_PLY]) {
+
+  char bestmove_str[6], ponder_str[6];
+
+  MoveToStr(pv[0], bestmove_str);
+  if (pv[1]) {
+    MoveToStr(pv[1], ponder_str);
+    printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+  }
+  else
+    printf("bestmove %s\n", bestmove_str);
+}
+
 void ParseGo(POS *p, char *ptr) {
 
-  char token[80], bestmove_str[6], ponder_str[6];
+  char token[80];
   int wtime, btime, winc, binc, movestogo, time, inc, pv[MAX_PLY], pv2[MAX_PLY];
 
   move_time = -1;
@@ -204,6 +217,8 @@ void ParseGo(POS *p, char *ptr) {
   if (thread_no == 1) {
     thread t1(task1, p, pv);
     t1.join();
+	ExtractMove(pv);
+	return;
   }
 
   if (thread_no == 2) {
@@ -215,20 +230,9 @@ void ParseGo(POS *p, char *ptr) {
 
   if (thread_no == 2 && Engine2.depth_reached > Engine1.depth_reached) {
   // if second thread managed to search to the greater depth than the first thread
-    MoveToStr(pv2[0], bestmove_str);
-    if (pv2[1]) {
-      MoveToStr(pv2[1], ponder_str);
-      printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
-    }
-    else
-      printf("bestmove %s\n", bestmove_str);
+	  ExtractMove(pv2);
   } else { 
   // we are searching single-threaded or the first thread got at least the same depth as the second thread
-    MoveToStr(pv[0], bestmove_str);
-    if (pv[1]) {
-      MoveToStr(pv[1], ponder_str);
-      printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
-    } else
-      printf("bestmove %s\n", bestmove_str);
+	  ExtractMove(pv);
   }
 }

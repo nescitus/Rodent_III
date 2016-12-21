@@ -192,6 +192,16 @@ public:
   int depth_reached;
   int root_depth;
 
+  int Evaluate(POS *p, eData *e);
+  void ScoreKing(POS *p, eData *e, int sd);
+  void ScorePawns(POS *p, eData *e, int sd);
+  void ScorePieces(POS *p, eData *e, int sd);
+  int EvalKingFile(POS * p, int sd, U64 bbFile);
+  int EvalFileShelter(U64 bbOwnPawns, int sd);
+  int EvalFileStorm(U64 bbOppPawns, int sd);
+  int Interpolate(POS * p, eData *e);
+  void Add(eData *e, int sd, int mg, int eg);
+
   void Think(POS *p, int *pv);
   void Iterate(POS *curr, int *pv);
   int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv);
@@ -227,22 +237,12 @@ void ClearTrans(void);
 void CopyPos(POS * old_pos, POS * new_pos);
 void DoMove(POS *p, int move, UNDO *u);
 void DoNull(POS *p, UNDO *u);
-
-int Evaluate(POS *p, eData *e);
-int Interpolate(POS * p, eData *e);
-void Add(eData *e, int sd, int mg, int eg);
-
+void ExtractMove(int pv[MAX_PLY]);
 U64 FillNorth(U64 bb);
 U64 FillSouth(U64 bb);
 U64 FillNorthExcl(U64 bb);
 U64 FillSouthExcl(U64 bb);
 U64 GetFrontSpan(U64 bb, int sd);
-void ScoreKing(POS *p, eData *e, int sd);
-void ScorePawns(POS *p, eData *e, int sd);
-void ScorePieces(POS *p, eData *e, int sd);
-int EvalKingFile(POS * p, int sd, U64 bbFile);
-int EvalFileShelter(U64 bbOwnPawns, int sd);
-int EvalFileStorm(U64 bbOppPawns, int sd);
 int *GenerateCaptures(POS *p, int *list);
 int *GenerateQuiet(POS *p, int *list);
 int GetMS(void);

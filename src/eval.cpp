@@ -58,7 +58,7 @@ void cParam::Init(void) {
   }
 }
 
-void ScorePieces(POS *p, eData *e, int sd) {
+void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   U64 pieces, bb_attacks, bb_control;
   int op, sq, ksq, cnt;
@@ -189,7 +189,7 @@ void ScorePieces(POS *p, eData *e, int sd) {
 
 }
 
-void ScorePawns(POS *p, eData *e, int sd) {
+void cEngine::ScorePawns(POS *p, eData *e, int sd) {
 
   U64 pieces, span;
   int sq;
@@ -225,7 +225,7 @@ void ScorePawns(POS *p, eData *e, int sd) {
   }
 }
 
-void ScoreKing(POS *p, eData *e, int sd) {
+void cEngine::ScoreKing(POS *p, eData *e, int sd) {
 
   const int startSq[2] = { E1, E8 };
   const int qCastle[2] = { B1, B8 };
@@ -255,7 +255,7 @@ void ScoreKing(POS *p, eData *e, int sd) {
   e->mg_sc[sd] += result;
 }
 
-int EvalKingFile(POS * p, int sd, U64 bbFile) {
+int cEngine::EvalKingFile(POS * p, int sd, U64 bbFile) {
 
   int shelter = EvalFileShelter(bbFile & PcBb(p, sd, P), sd);
   int storm   = EvalFileStorm  (bbFile & PcBb(p, Opp(sd), P), sd);
@@ -263,7 +263,7 @@ int EvalKingFile(POS * p, int sd, U64 bbFile) {
   else return shelter + storm;
 }
 
-int EvalFileShelter(U64 bbOwnPawns, int sd) {
+int cEngine::EvalFileShelter(U64 bbOwnPawns, int sd) {
 
   if (!bbOwnPawns) return -36;
   if (bbOwnPawns & bbRelRank[sd][RANK_2]) return    2;
@@ -275,7 +275,7 @@ int EvalFileShelter(U64 bbOwnPawns, int sd) {
   return 0;
 }
 
-int EvalFileStorm(U64 bbOppPawns, int sd) {
+int cEngine::EvalFileStorm(U64 bbOppPawns, int sd) {
 
   if (!bbOppPawns) return -16;
   if (bbOppPawns & bbRelRank[sd][RANK_3]) return -32;
@@ -284,12 +284,12 @@ int EvalFileStorm(U64 bbOppPawns, int sd) {
   return 0;
 }
 
-void Add(eData * e, int sd, int mg, int eg) {
+void cEngine::Add(eData * e, int sd, int mg, int eg) {
   e->mg_sc[sd] += mg;
   e->eg_sc[sd] += eg;
 }
 
-int Interpolate(POS * p, eData *e) {
+int cEngine::Interpolate(POS * p, eData *e) {
 
   int mg_tot = e->mg_sc[WC] - e->mg_sc[BC];
   int eg_tot = e->eg_sc[WC] - e->eg_sc[BC];
@@ -299,7 +299,7 @@ int Interpolate(POS * p, eData *e) {
   return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
 }
 
-int Evaluate(POS *p, eData *e) {
+int cEngine::Evaluate(POS *p, eData *e) {
 
 	e->phase = 0;
 

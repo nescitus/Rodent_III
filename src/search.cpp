@@ -62,6 +62,8 @@ void CopyPos(POS * old_pos, POS * new_pos) {
 void cEngine::Think(POS *p, int *pv) {
 
   POS curr[1];
+  pv[0] = 0;
+  pv[1] = 0;
   CopyPos(p, curr);
   ClearHist();
   local_nodes = 0;
