@@ -301,6 +301,15 @@ int cEngine::Interpolate(POS * p, eData *e) {
 
 int cEngine::Evaluate(POS *p, eData *e) {
 
+  // try retrieving score from per-thread eval hashtable
+
+  int addr = p->key % EVAL_HASH_SIZE;
+
+  if (EvalTT[addr].key == p->key) {
+    int sc = EvalTT[addr].score;
+    return p->side == WC ? sc : -sc;
+  }
+
 	e->phase = 0;
 
 	ScorePieces(p, e, WC);
@@ -318,6 +327,11 @@ int cEngine::Evaluate(POS *p, eData *e) {
     score = -MAX_EVAL;
   else if (score > MAX_EVAL)
     score = MAX_EVAL;
+
+  // Save eval score in the evaluation hash table
+
+  EvalTT[addr].key = p->key;
+  EvalTT[addr].score = score;
 
   // Return score relative to the side to move
 

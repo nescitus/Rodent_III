@@ -1,5 +1,6 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2177 lines
+// 2202 lines
+// d.20: 80.6 -> 79,1
 
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};
@@ -183,9 +184,17 @@ typedef struct {
   int phase;
 } eData;
 
+struct sEvalHashEntry {
+  U64 key;
+  int score;
+};
+
+#define EVAL_HASH_SIZE 512 * 512 / 4
+
 typedef class {
 public:
 
+  sEvalHashEntry EvalTT[EVAL_HASH_SIZE];
   int history[12][64];
   int killer[MAX_PLY][2];
   int local_nodes;
