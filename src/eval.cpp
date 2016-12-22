@@ -67,6 +67,11 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
   e->mg_sc[sd] = p->mg_sc[sd];
   e->eg_sc[sd] = p->eg_sc[sd];
 
+  // Bishop pair
+
+  if (PopCnt(PcBb(p, sd, B)) == 2)
+    Add(e, sd, 50, 50);
+
   // Init variables
 
   op = Opp(sd);
@@ -179,11 +184,19 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 void cEngine::ScorePawns(POS *p, eData *e, int sd) {
 
   U64 pieces, span;
-  int sq;
+  int op = Opp(sd);
+  int sq, fl_unopposed;
 
   pieces = PcBb(p, sd, P);
   while (pieces) {
     sq = PopFirstBit(&pieces);
+	span = GetFrontSpan(SqBb(sq), sd);
+	fl_unopposed = ((span & PcBb(p, op, P)) == 0);
+
+	// DOUBLED PAWNS
+
+	if (span & PcBb(p, sd, P))
+      Add(e, sd, -10, -20);
 
     // PASSED PAWNS
 
@@ -195,15 +208,15 @@ void cEngine::ScorePawns(POS *p, eData *e, int sd) {
     // ISOLATED PAWNS
 
     if (!(adjacent_mask[File(sq)] & PcBb(p, sd, P))) {
-      e->mg_sc[sd] -= 20;
+      e->mg_sc[sd] -= (10 + 10 * fl_unopposed);
       e->eg_sc[sd] -= 20;
     }
 
 	// WEAK PAWNS
 
     else if ((support_mask[sd][sq] & PcBb(p, sd, P)) == 0) {
-      e->mg_sc[sd] -= 8;
-      e->eg_sc[sd] -= 8;
+      e->mg_sc[sd] -= (8 + 8 * fl_unopposed);
+      e->eg_sc[sd] -= 10;
     }
   }
 }
