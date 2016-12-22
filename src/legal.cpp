@@ -1,4 +1,4 @@
-#include "skeleton.h"
+#include "rodent.h"
 
 int Legal(POS *p, int move) {
 
@@ -10,8 +10,10 @@ int Legal(POS *p, int move) {
 
   if (ftp == NO_TP || Cl(p->pc[fsq]) != side)
     return 0;
+
   if (ttp != NO_TP && Cl(p->pc[tsq]) == side)
     return 0;
+
   switch (MoveType(move)) {
   case NORMAL:
     break;

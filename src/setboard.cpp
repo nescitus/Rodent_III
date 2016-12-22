@@ -1,28 +1,24 @@
-#include "skeleton.h"
+#include "rodent.h"
 
 void SetPosition(POS *p, char *epd) {
 
   int i, j, pc;
   static const char pc_char[13] = "PpNnBbRrQqKk";
 
-  for (i = 0; i < 2; i++) {
+  for (int i = 0; i < 2; i++) {
     p->cl_bb[i] = 0;
-    p->mg_sc[i] = 0;
-	p->eg_sc[i] = 0;
+    p->mat[i] = 0;
+    p->pst[i] = 0;
   }
 
-  for (int pc = 0; pc < 6; pc++) {
-    p->tp_bb[pc] = 0ULL;
-    p->cnt[WC][pc] = 0;
-    p->cnt[BC][pc] = 0;
-  }
+  for (int i = 0; i < 6; i++)
+    p->tp_bb[i] = 0;
 
   p->c_flags = 0;
   p->rev_moves = 0;
   p->head = 0;
-  p->phase = 0;
 
-  for (i = 56; i >= 0; i -= 8) {
+  for (int i = 56; i >= 0; i -= 8) {
     j = 0;
     while (j < 8) {
       if (*epd >= '1' && *epd <= '8')
@@ -36,14 +32,10 @@ void SetPosition(POS *p, char *epd) {
         p->pc[i + j] = pc;
         p->cl_bb[Cl(pc)] ^= SqBb(i + j);
         p->tp_bb[Tp(pc)] ^= SqBb(i + j);
-
         if (Tp(pc) == K)
           p->king_sq[Cl(pc)] = i + j;
-
-        p->mg_sc[Cl(pc)] += Par.mg_pst[Cl(pc)][Tp(pc)][i + j];
-		p->eg_sc[Cl(pc)] += Par.eg_pst[Cl(pc)][Tp(pc)][i + j];
-		p->phase += ph_value[Tp(pc)];
-		p->cnt[Cl(pc)][Tp(pc)]++;
+        p->mat[Cl(pc)] += tp_value[Tp(pc)];
+        p->pst[Cl(pc)] += pst[Tp(pc)][i + j];
         j++;
       }
       epd++;
@@ -80,9 +72,8 @@ void SetPosition(POS *p, char *epd) {
     p->ep_sq = NO_SQ;
   else {
     p->ep_sq = Sq(*epd - 'a', *(epd + 1) - '1');
-    if (!(BB.PawnAttacks(Opp(p->side),p->ep_sq) & p->Pawns(p->side)))
+    if (!(p_attacks[Opp(p->side)][p->ep_sq] & PcBb(p, p->side, P)))
       p->ep_sq = NO_SQ;
   }
-  p->hash_key = InitHashKey(p);
-  p->pawn_key = InitPawnKey(p);
+  p->key = Key(p);
 }

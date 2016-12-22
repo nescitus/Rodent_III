@@ -5,7 +5,7 @@
 #  include <unistd.h>
 #  include <sys/time.h>
 #endif
-#include "skeleton.h"
+#include "rodent.h"
 
 int InputAvailable(void) {
 
@@ -44,13 +44,6 @@ int InputAvailable(void) {
 #endif
 }
 
-int Clip(int sc, int lim) {
-
-  if (sc < -lim) return -lim;
-  if (sc > lim) return lim;
-  return sc;
-}
-
 int GetMS(void) {
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -71,33 +64,20 @@ U64 Random64(void) {
   return next;
 }
 
-U64 InitHashKey(POS *p) {
+U64 Key(POS *p) {
 
-  U64 key = 0;
+  int i;
+  U64 key;
 
-  for (int i = 0; i < 64; i++)
+  key = 0;
+  for (i = 0; i < 64; i++)
     if (p->pc[i] != NO_PC)
       key ^= zob_piece[p->pc[i]][i];
-
   key ^= zob_castle[p->c_flags];
   if (p->ep_sq != NO_SQ)
     key ^= zob_ep[File(p->ep_sq)];
-
   if (p->side == BC)
     key ^= SIDE_RANDOM;
-
-  return key;
-}
-
-U64 InitPawnKey(POS *p) {
-
-  U64 key = 0;
-
-  for (int i = 0; i < 64; i++) {
-    if ((p->tp_bb[P] & SqBb(i)) || (p->tp_bb[K] & SqBb(i)))
-      key ^= zob_piece[p->pc[i]][i];
-  }
-
   return key;
 }
 
@@ -124,6 +104,7 @@ int StrToMove(POS *p, char *move_str) {
 
   if (TpOnSq(p, from) == K && Abs(to - from) == 2)
     type = CASTLE;
+
   else if (TpOnSq(p, from) == P) {
     if (to == p->ep_sq) 
       type = EP_CAP;

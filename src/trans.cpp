@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "skeleton.h"
+#include "rodent.h"
 
 void AllocTrans(int mbsize) {
 
@@ -43,11 +43,9 @@ int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth
           *score += ply;
         else if (*score > MAX_EVAL)
           *score -= ply;
-        if ((entry->flags & UPPER && *score <= alpha)
-        ||  (entry->flags & LOWER && *score >= beta)) {
-          //entry->date = tt_date; // refreshing entry TODO: test at 4 threads, at 1 thread it's a wash
+        if ((entry->flags & UPPER && *score <= alpha) ||
+            (entry->flags & LOWER && *score >= beta))
           return 1;
-		}
       }
       break;
     }
