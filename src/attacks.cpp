@@ -1,39 +1,39 @@
-#include "rodent.h"
+#include "skeleton.h"
 
 U64 AttacksFrom(POS *p, int sq) {
 
   switch (TpOnSq(p, sq)) {
   case P:
-    return p_attacks[Cl(p->pc[sq])][sq];
+    return BB.PawnAttacks(Cl(p->pc[sq]),sq);
   case N:
-    return n_attacks[sq];
+    return BB.KnightAttacks(sq);
   case B:
-    return BAttacks(OccBb(p), sq);
+    return BB.BishAttacks(OccBb(p), sq);
   case R:
-    return RAttacks(OccBb(p), sq);
+    return BB.RookAttacks(OccBb(p), sq);
   case Q:
-    return QAttacks(OccBb(p), sq);
+    return BB.QueenAttacks(OccBb(p), sq);
   case K:
-    return k_attacks[sq];
+    return BB.KingAttacks(sq);
   }
   return 0;
 }
 
 U64 AttacksTo(POS *p, int sq) {
 
-  return (PcBb(p, WC, P) & p_attacks[BC][sq]) |
-         (PcBb(p, BC, P) & p_attacks[WC][sq]) |
-         (p->tp_bb[N] & n_attacks[sq]) |
-         ((p->tp_bb[B] | p->tp_bb[Q]) & BAttacks(OccBb(p), sq)) |
-         ((p->tp_bb[R] | p->tp_bb[Q]) & RAttacks(OccBb(p), sq)) |
-         (p->tp_bb[K] & k_attacks[sq]);
+  return (p->Pawns(WC) & BB.PawnAttacks(BC,sq)) |
+         (p->Pawns(BC) & BB.PawnAttacks(WC,sq)) |
+         (p->tp_bb[N] & BB.KnightAttacks(sq)) |
+         ((p->tp_bb[B] | p->tp_bb[Q]) & BB.BishAttacks(OccBb(p), sq)) |
+         ((p->tp_bb[R] | p->tp_bb[Q]) & BB.RookAttacks(OccBb(p), sq)) |
+         (p->tp_bb[K] & BB.KingAttacks(sq));
 }
 
 int Attacked(POS *p, int sq, int sd) {
 
-  return (PcBb(p, sd, P) & p_attacks[Opp(sd)][sq]) ||
-         (PcBb(p, sd, N) & n_attacks[sq]) ||
-         ((PcBb(p, sd, B) | PcBb(p, sd, Q)) & BAttacks(OccBb(p), sq)) ||
-         ((PcBb(p, sd, R) | PcBb(p, sd, Q)) & RAttacks(OccBb(p), sq)) ||
-         (PcBb(p, sd, K) & k_attacks[sq]);
+  return (p->Pawns(sd) & BB.PawnAttacks(Opp(sd),sq)) ||
+         (p->Knights(sd) & BB.KnightAttacks(sq)) ||
+         (p->DiagMovers(sd) & BB.BishAttacks(OccBb(p), sq)) ||
+         (p->StraightMovers(sd)) & BB.RookAttacks(OccBb(p), sq) ||
+         (p->Kings(sd) & BB.KingAttacks(sq));
 }

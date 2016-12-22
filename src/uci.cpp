@@ -3,10 +3,11 @@
 #include <string.h>
 #include <thread>
 #include <iostream>
+#include "skeleton.h"
 using namespace std;
-#include "rodent.h"
 
 void ReadLine(char *str, int n) {
+
   char *ptr;
 
   if (fgets(str, n, stdin) == NULL)
@@ -25,14 +26,6 @@ char *ParseToken(char *string, char *token) {
   return string;
 }
 
-int BulletCorrection(int time) {
-
-  if (time < 200)       return (time * 23) / 32;
-  else if (time <  400) return (time * 26) / 32;
-  else if (time < 1200) return (time * 29) / 32;
-  else return time;
-}
-
 void UciLoop(void) {
 
   char command[4096], token[80], *ptr;
@@ -46,11 +39,20 @@ void UciLoop(void) {
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.016\n");
-      printf("id author Pablo Vazquez, Pawel Koziol\n");
-	  printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
+      printf("id name Skeleton 0.124\n");
+      printf("id author Pawel Koziol\n");
       printf("option name Hash type spin default 16 min 1 max 4096\n");
+	  printf("option name Threads type spin default %d min 1 max 4\n", Glob.thread_no);
       printf("option name Clear Hash type button\n");
+	  printf("option name OwnAttack type spin default %d min 0 max 500\n", Par.own_att);
+	  printf("option name OppAttack type spin default %d min 0 max 500\n", Par.opp_att);
+	  printf("option name OwnMobility type spin default %d min 0 max 500\n", Par.own_mob);
+	  printf("option name OppMobility type spin default %d min 0 max 500\n", Par.opp_mob);
+	  printf("option name KingTropism type spin default %d min 0 max 500\n", Par.tropism);
+	  printf("option name Forwardness type spin default %d min 0 max 500\n", Par.forwardness);
+	  printf("option name PassedPawns type spin default %d min 0 max 500\n", Par.passers);
+	  printf("option name Lines type spin default %d min 0 max 500\n", Par.lines);
+
       printf("uciok\n");
     } else if (strcmp(token, "isready") == 0) {
       printf("readyok\n");
@@ -92,11 +94,27 @@ void ParseSetoption(char *ptr) {
     value[strlen(value) - 1] = '\0';
   }
   if (strcmp(name, "Hash") == 0) {
-    AllocTrans(atoi(value));
+	  AllocTrans(atoi(value));
+  } else if (strcmp(name, "Threads") == 0) {
+      Glob.thread_no = (atoi(value));
   } else if (strcmp(name, "Clear Hash") == 0) {
     ClearTrans();
-  } else if (strcmp(name, "Threads") == 0) {
-    thread_no = (atoi(value));
+  } else if (strcmp(name, "OwnAttack") == 0) {
+	 Par.own_att = atoi(value);
+  } else if (strcmp(name, "OppAttack") == 0) {
+     Par.opp_att = atoi(value);
+  } else if (strcmp(name, "OwnMobility") == 0) {
+     Par.own_mob = atoi(value);
+  } else if (strcmp(name, "OppMobility") == 0) {
+     Par.opp_mob = atoi(value);
+  } else if (strcmp(name, "KingTropism") == 0) {
+     Par.tropism = atoi(value);
+  } else if (strcmp(name, "Forwardness") == 0) {
+     Par.forwardness = atoi(value);
+  } else if (strcmp(name, "PassedPawns") == 0) {
+	  Par.passers = atoi(value);
+  } else if (strcmp(name, "Lines") == 0) {
+	  Par.lines = atoi(value);
   }
 }
 
@@ -139,23 +157,27 @@ void task2(POS * p, int *pv) {
   Engine2.Think(p, pv);
 }
 
-void ExtractMove(int pv[MAX_PLY]) {
+void task3(POS * p, int *pv) {
+  Engine3.Think(p, pv);
+}
 
-  char bestmove_str[6], ponder_str[6];
+void task4(POS * p, int *pv) {
+  Engine4.Think(p, pv);
+}
 
-  MoveToStr(pv[0], bestmove_str);
-  if (pv[1]) {
-    MoveToStr(pv[1], ponder_str);
-    printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
-  }
-  else
-    printf("bestmove %s\n", bestmove_str);
+int BulletCorrection(int time) {
+
+  if (time < 200)       return (time * 23) / 32;
+  else if (time <  400) return (time * 26) / 32;
+  else if (time < 1200) return (time * 29) / 32;
+  else return time;
 }
 
 void ParseGo(POS *p, char *ptr) {
 
-  char token[80];
-  int wtime, btime, winc, binc, movestogo, time, inc, pv[MAX_PLY], pv2[MAX_PLY];
+  char token[80], bestmove_str[6], ponder_str[6];
+  int wtime, btime, winc, binc, movestogo, time, inc;
+  int pv[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY];
 
   move_time = -1;
   pondering = 0;
@@ -165,13 +187,14 @@ void ParseGo(POS *p, char *ptr) {
   binc = 0;
   movestogo = 40;
   search_depth = 64;
+
   for (;;) {
     ptr = ParseToken(ptr, token);
     if (*token == '\0')
       break;
     if (strcmp(token, "ponder") == 0) {
       pondering = 1;
-   } else if (strcmp(token, "depth") == 0) {
+    } else if (strcmp(token, "depth") == 0) {
       ptr = ParseToken(ptr, token);
       search_depth = atoi(token);
     } else if (strcmp(token, "wtime") == 0) {
@@ -201,37 +224,101 @@ void ParseGo(POS *p, char *ptr) {
     move_time -= 10;
     if (move_time < 0)
       move_time = 0;
+	move_time = BulletCorrection(move_time);
   }
 
-  time = BulletCorrection(time);
+  // set global variables
 
-  // thread-independent stuff to be done before searching
-
+  start_time = GetMS();
   tt_date = (tt_date + 1) & 255;
   nodes = 0;
   abort_search = 0;
-  start_time = GetMS();
-  Engine1.depth_reached = 0;
-  Engine2.depth_reached = 0;
+  Glob.ClearData();
+  Par.InitAsymmetric(p);
 
-  if (thread_no == 1) {
-    Engine1.Think(p, pv);
-	ExtractMove(pv);
-	return;
+  // set engine-dependent variables
+
+  Engine1.dp_completed = 0;
+  Engine2.dp_completed = 0;
+  Engine3.dp_completed = 0;
+  Engine3.dp_completed = 0;
+  int best_eng = 1;
+  int best_depth = 0;
+
+  if (Glob.thread_no == 1) {
+	  thread t1(task1, p, pv);
+	  t1.join();
   }
 
-  if (thread_no == 2) {
-    thread t1(task1, p, pv);
-    thread t2(task2, p, pv2);
-    t1.join();
-    t2.join();
+  if (Glob.thread_no == 2) {
+	  thread t1(task1, p, pv);
+	  thread t2(task2, p, pv2);
+	  t1.join();
+	  t2.join();
   }
 
-  if (thread_no == 2 && Engine2.depth_reached > Engine1.depth_reached) {
-  // if second thread managed to search to the greater depth than the first thread
-	  ExtractMove(pv2);
-  } else { 
-  // we are searching single-threaded or the first thread got at least the same depth as the second thread
-	  ExtractMove(pv);
+  if (Glob.thread_no == 3) {
+	  thread t1(task1, p, pv);
+	  thread t2(task2, p, pv2);
+	  thread t3(task2, p, pv3);
+	  t1.join();
+	  t2.join();
+	  t3.join();
+  }
+
+  if (Glob.thread_no == 4) {
+	  thread t1(task1, p, pv);
+	  thread t2(task2, p, pv2);
+	  thread t3(task2, p, pv3);
+	  thread t4(task2, p, pv4);
+	  t1.join();
+	  t2.join();
+	  t3.join();
+	  t4.join();
+  }
+
+  best_depth = Engine1.dp_completed;
+  if (Engine2.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 2; }
+  if (Engine3.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 3; }
+  if (Engine4.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 4; }
+
+  if (best_eng == 4) {
+	  MoveToStr(pv4[0], bestmove_str);
+	  if (pv4[1]) {
+		  MoveToStr(pv4[1], ponder_str);
+		  printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+	  }
+	  else
+		  printf("bestmove %s\n", bestmove_str);
+  }
+
+  if (best_eng == 3) {
+	  MoveToStr(pv3[0], bestmove_str);
+	  if (pv3[1]) {
+		  MoveToStr(pv3[1], ponder_str);
+		  printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+	  }
+	  else
+		  printf("bestmove %s\n", bestmove_str);
+  }
+
+  if (best_eng == 2) {
+	  MoveToStr(pv2[0], bestmove_str);
+	  if (pv2[1]) {
+		  MoveToStr(pv2[1], ponder_str);
+		  printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+	  }
+	  else
+		  printf("bestmove %s\n", bestmove_str);
+  }
+  
+  if (best_eng == 1) {
+	  MoveToStr(pv[0], bestmove_str);
+	  if (pv[1]) {
+		  MoveToStr(pv[1], ponder_str);
+		  printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+	  }
+	  else
+		  printf("bestmove %s\n", bestmove_str);
   }
 }

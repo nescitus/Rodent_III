@@ -1,16 +1,8 @@
-#include "rodent.h"
+#include "skeleton.h"
 
-int thread_no;
-U64 line_mask[4][64];
-U64 attacks[4][64][64];
-U64 p_attacks[2][64];
-U64 n_attacks[64];
-U64 k_attacks[64];
-U64 passed_mask[2][64];
-U64 support_mask[2][64];
-U64 adjacent_mask[8];
-int pst[6][64];
+int max_depth_completed;
 int c_mask[64];
+
 const int bit_table[64] = {
    0,  1,  2,  7,  3, 13,  8, 19,
    4, 25, 14, 28,  9, 34, 20, 40,
@@ -22,9 +14,8 @@ const int bit_table[64] = {
   61, 22, 43, 51, 60, 42, 59, 58
 };
 
-const int tp_value[7] = {
-  100, 325, 325, 500, 1000, 0, 0
-};
+const int tp_value[7] = { 100, 325, 325, 500, 1000,  0,   0 };
+const int ph_value[7] = {   0,   1,   1,   2,   4,   0,   0 };
 
 U64 zob_piece[12][64];
 U64 zob_castle[16];
@@ -32,7 +23,7 @@ U64 zob_ep[8];
 int move_time;
 int pondering;
 int search_depth;
-int nodes;
+U64 nodes;
 int abort_search;
 int start_time;
 ENTRY *tt;

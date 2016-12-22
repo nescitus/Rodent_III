@@ -1,4 +1,4 @@
-#include "rodent.h"
+#include "skeleton.h"
 
 int Swap(POS *p, int from, int to) {
 
@@ -10,10 +10,10 @@ int Swap(POS *p, int from, int to) {
   score[0] = tp_value[TpOnSq(p, to)];
   type = TpOnSq(p, from);
   occ ^= SqBb(from);
-  attackers |= (BAttacks(occ, to) & (p->tp_bb[B] | p->tp_bb[Q])) |
-               (RAttacks(occ, to) & (p->tp_bb[R] | p->tp_bb[Q]));
+  attackers |= (BB.BishAttacks(occ, to) & (p->tp_bb[B] | p->tp_bb[Q])) |
+               (BB.RookAttacks(occ, to) & (p->tp_bb[R] | p->tp_bb[Q]));
   attackers &= occ;
-  side = Opp(p->side);
+  side = ((SqBb(from) & p->cl_bb[BC]) == 0); // so that we can call Swap() out of turn
   ply = 1;
   while (attackers & p->cl_bb[side]) {
     if (type == K) {
@@ -25,8 +25,8 @@ int Swap(POS *p, int from, int to) {
       if ((type_bb = PcBb(p, side, type) & attackers))
         break;
     occ ^= type_bb & -type_bb;
-    attackers |= (BAttacks(occ, to) & (p->tp_bb[B] | p->tp_bb[Q])) |
-                 (RAttacks(occ, to) & (p->tp_bb[R] | p->tp_bb[Q]));
+    attackers |= (BB.BishAttacks(occ, to) & (p->tp_bb[B] | p->tp_bb[Q])) |
+                 (BB.RookAttacks(occ, to) & (p->tp_bb[R] | p->tp_bb[Q]));
     attackers &= occ;
     side ^= 1;
     ply++;
