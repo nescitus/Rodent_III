@@ -1,5 +1,5 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2202 lines
+// 2204 lines
 // d.20: 80.6 -> 79,1
 
 enum {WC, BC, NO_CL};
