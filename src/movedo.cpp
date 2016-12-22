@@ -26,12 +26,14 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->key ^= zob_ep[File(p->ep_sq)];
     p->ep_sq = NO_SQ;
   }
+
   p->pc[fsq] = NO_PC;
   p->pc[tsq] = Pc(sd, ftp);
   p->key ^= zob_piece[Pc(sd, ftp)][fsq] ^ zob_piece[Pc(sd, ftp)][tsq];
   p->cl_bb[sd] ^= SqBb(fsq) | SqBb(tsq);
   p->tp_bb[ftp] ^= SqBb(fsq) | SqBb(tsq);
-  p->pst[sd] += pst[ftp][tsq] - pst[ftp][fsq];
+  p->mg_sc[sd] += Par.mg_pst[sd][ftp][tsq] - Par.mg_pst[sd][ftp][fsq];
+  p->eg_sc[sd] += Par.eg_pst[sd][ftp][tsq] - Par.eg_pst[sd][ftp][fsq];
 
   if (ftp == K)
     p->king_sq[sd] = tsq;
@@ -41,8 +43,10 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->cl_bb[op] ^= SqBb(tsq);
     p->tp_bb[ttp] ^= SqBb(tsq);
     p->mat[op] -= tp_value[ttp];
-    p->pst[op] -= pst[ttp][tsq];
+	p->mg_sc[op] -= Par.mg_pst[op][ttp][tsq];
+	p->eg_sc[op] -= Par.eg_pst[op][ttp][tsq];
   }
+
   switch (MoveType(move)) {
   case NORMAL:
     break;
@@ -59,7 +63,8 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->key ^= zob_piece[Pc(sd, R)][fsq] ^ zob_piece[Pc(sd, R)][tsq];
     p->cl_bb[sd] ^= SqBb(fsq) | SqBb(tsq);
     p->tp_bb[R] ^= SqBb(fsq) | SqBb(tsq);
-    p->pst[sd] += pst[R][tsq] - pst[R][fsq];
+	p->mg_sc[sd] += Par.mg_pst[sd][R][tsq] - Par.mg_pst[sd][R][fsq];
+	p->eg_sc[sd] += Par.eg_pst[sd][R][tsq] - Par.eg_pst[sd][R][fsq];
     break;
 
   case EP_CAP:
@@ -69,7 +74,8 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->cl_bb[op] ^= SqBb(tsq);
     p->tp_bb[P] ^= SqBb(tsq);
     p->mat[op] -= tp_value[P];
-    p->pst[op] -= pst[P][tsq];
+	p->mg_sc[op] -= Par.mg_pst[op][P][tsq];
+	p->eg_sc[op] -= Par.eg_pst[op][P][tsq];
     break;
 
   case EP_SET:
@@ -87,7 +93,8 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->tp_bb[P] ^= SqBb(tsq);
     p->tp_bb[ftp] ^= SqBb(tsq);
     p->mat[sd] += tp_value[ftp] - tp_value[P];
-    p->pst[sd] += pst[ftp][tsq] - pst[P][tsq];
+	p->mg_sc[sd] += Par.mg_pst[sd][ftp][tsq] - Par.mg_pst[sd][P][tsq];
+	p->eg_sc[sd] += Par.eg_pst[sd][ftp][tsq] - Par.eg_pst[sd][P][tsq];
     break;
   }
   p->side ^= 1;

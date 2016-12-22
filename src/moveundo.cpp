@@ -18,7 +18,8 @@ void UndoMove(POS *p, int move, UNDO *u) {
   p->pc[tsq] = NO_PC;
   p->cl_bb[sd] ^= SqBb(fsq) | SqBb(tsq);
   p->tp_bb[ftp] ^= SqBb(fsq) | SqBb(tsq);
-  p->pst[sd] += pst[ftp][fsq] - pst[ftp][tsq];
+  p->mg_sc[sd] += Par.mg_pst[sd][ftp][fsq] - Par.mg_pst[sd][ftp][tsq];
+  p->eg_sc[sd] += Par.eg_pst[sd][ftp][fsq] - Par.eg_pst[sd][ftp][tsq];
 
   if (ftp == K)
     p->king_sq[sd] = fsq;
@@ -28,7 +29,8 @@ void UndoMove(POS *p, int move, UNDO *u) {
     p->cl_bb[op] ^= SqBb(tsq);
     p->tp_bb[ttp] ^= SqBb(tsq);
     p->mat[op] += tp_value[ttp];
-    p->pst[op] += pst[ttp][tsq];
+	p->mg_sc[op] += Par.mg_pst[op][ttp][tsq];
+	p->eg_sc[op] += Par.eg_pst[op][ttp][tsq];
   }
   switch (MoveType(move)) {
   case NORMAL:
@@ -46,7 +48,8 @@ void UndoMove(POS *p, int move, UNDO *u) {
     p->pc[fsq] = Pc(sd, R);
     p->cl_bb[sd] ^= SqBb(fsq) | SqBb(tsq);
     p->tp_bb[R] ^= SqBb(fsq) | SqBb(tsq);
-    p->pst[sd] += pst[R][fsq] - pst[R][tsq];
+	p->mg_sc[sd] += Par.mg_pst[sd][R][fsq] - Par.mg_pst[sd][R][tsq];
+	p->eg_sc[sd] += Par.eg_pst[sd][R][fsq] - Par.eg_pst[sd][R][tsq];
     break;
 
   case EP_CAP:
@@ -55,7 +58,8 @@ void UndoMove(POS *p, int move, UNDO *u) {
     p->cl_bb[op] ^= SqBb(tsq);
     p->tp_bb[P] ^= SqBb(tsq);
     p->mat[op] += tp_value[P];
-    p->pst[op] += pst[P][tsq];
+	p->mg_sc[op] += Par.mg_pst[op][P][tsq];
+	p->eg_sc[op] += Par.eg_pst[op][P][tsq];
     break;
 
   case EP_SET:
@@ -66,7 +70,8 @@ void UndoMove(POS *p, int move, UNDO *u) {
     p->tp_bb[P] ^= SqBb(fsq);
     p->tp_bb[ftp] ^= SqBb(fsq);
     p->mat[sd] += tp_value[P] - tp_value[ftp];
-    p->pst[sd] += pst[P][fsq] - pst[ftp][fsq];
+	p->mg_sc[sd] += Par.mg_pst[sd][P][fsq] - Par.mg_pst[sd][ftp][fsq];
+	p->eg_sc[sd] += Par.eg_pst[sd][P][fsq] - Par.eg_pst[sd][ftp][fsq];
     break;
   }
   p->side ^= 1;

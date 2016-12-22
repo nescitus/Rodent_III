@@ -64,8 +64,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
   int op, sq, ksq, cnt;
   int att = 0;
   int wood = 0;
-  e->mg_sc[sd] = 0;
-  e->eg_sc[sd] = 0;
+  e->mg_sc[sd] = p->mg_sc[sd];
+  e->eg_sc[sd] = p->eg_sc[sd];
 
   // Init variables
 
@@ -97,10 +97,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     cnt = PopCnt(bb_control);
 	Add(e, sd, 4 * (cnt-4), 4 * (cnt-4));
 
-    // knight piece/square score
-
-    Add(e, sd, Par.mg_pst[sd][N][sq], Par.eg_pst[sd][N][sq]);
-
     e->phase += 1;
   }
 
@@ -123,9 +119,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     cnt = PopCnt(BAttacks(OccBb(p), sq));
     Add(e, sd, 5 * (cnt - 7),  5 * (cnt - 7));
 
-    // bishop piece/square score
-
-	Add(e, sd, Par.mg_pst[sd][B][sq], Par.eg_pst[sd][B][sq]);
     e->phase += 1;
   }
 
@@ -148,9 +141,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     cnt = PopCnt(RAttacks(OccBb(p), sq));
     Add(e, sd, 2 * (cnt - 7), 4 * (cnt - 7));
 
-    // rook piece/square score
-
-	Add(e, sd, Par.mg_pst[sd][R][sq], Par.eg_pst[sd][R][sq]);
     e->phase += 2;
   }
 
@@ -174,9 +164,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     cnt = PopCnt(QAttacks(OccBb(p), sq));
     Add(e, sd, 1 * (cnt - 14), 2 * (cnt - 14));
 
-    // queen piece/square score
-
-	Add(e, sd, Par.mg_pst[sd][Q][sq], Par.eg_pst[sd][Q][sq]);
     e->phase += 4;
   }
 
@@ -197,10 +184,6 @@ void cEngine::ScorePawns(POS *p, eData *e, int sd) {
   pieces = PcBb(p, sd, P);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-
-	// PIECE SQUARE TABLE
-
-	Add(e, sd, Par.mg_pst[sd][P][sq], Par.eg_pst[sd][P][sq]);
 
     // PASSED PAWNS
 
@@ -232,8 +215,6 @@ void cEngine::ScoreKing(POS *p, eData *e, int sd) {
   const int kCastle[2] = { G1, G8 };
 
   int sq = KingSq(p, sd);
-  e->mg_sc[sd] += Par.mg_pst[sd][K][sq];
-  e->eg_sc[sd] += Par.eg_pst[sd][K][sq];
 
   // Normalize king square for pawn shield evaluation,
   // to discourage shuffling the king between g1 and h1.
@@ -310,16 +291,16 @@ int cEngine::Evaluate(POS *p, eData *e) {
     return p->side == WC ? sc : -sc;
   }
 
-	e->phase = 0;
+  e->phase = 0;
 
-	ScorePieces(p, e, WC);
-	ScorePieces(p, e, BC);
-	ScorePawns(p, e, WC);
-	ScorePawns(p, e, BC);
-	ScoreKing(p, e, WC);
-	ScoreKing(p, e, BC);
+  ScorePieces(p, e, WC);
+  ScorePieces(p, e, BC);
+  ScorePawns(p, e, WC);
+  ScorePawns(p, e, BC);
+  ScoreKing(p, e, WC);
+  ScoreKing(p, e, BC);
 
-	int score = Interpolate(p,e);
+  int score = Interpolate(p,e);
 
   // Make sure eval does not exceed mate score
 

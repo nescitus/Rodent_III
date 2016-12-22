@@ -46,7 +46,7 @@ void UciLoop(void) {
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.016\n");
+      printf("id name Rodent III 0.017 2cores\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
 	  printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
       printf("option name Hash type spin default 16 min 1 max 4096\n");
@@ -129,10 +129,6 @@ void ParsePosition(POS *p, char *ptr) {
       if (p->rev_moves == 0)
         p->head = 0;
     }
-}
-
-void task1(POS * p, int *pv) {
-  Engine1.Think(p, pv);
 }
 
 void task2(POS * p, int *pv) {
@@ -221,9 +217,8 @@ void ParseGo(POS *p, char *ptr) {
   }
 
   if (thread_no == 2) {
-    thread t1(task1, p, pv);
     thread t2(task2, p, pv2);
-    t1.join();
+	Engine1.Think(p, pv);
     t2.join();
   }
 

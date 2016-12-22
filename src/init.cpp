@@ -63,6 +63,7 @@ void Init(void) {
         k_attacks[i] |= SqBb(Unmap0x88(x));
     }
   }
+
   for (i = 0; i < 64; i++) {
     passed_mask[WC][i] = 0;
     for (j = File(i) - 1; j <= File(i) + 1; j++) {
@@ -73,6 +74,7 @@ void Init(void) {
         passed_mask[WC][i] |= SqBb(Sq(j, k));
     }
   }
+
   for (i = 0; i < 64; i++) {
     passed_mask[BC][i] = 0;
     for (j = File(i) - 1; j <= File(i) + 1; j++) {
@@ -83,21 +85,13 @@ void Init(void) {
         passed_mask[BC][i] |= SqBb(Sq(j, k));
     }
   }
+
   for (i = 0; i < 8; i++) {
     adjacent_mask[i] = 0;
     if (i > 0)
       adjacent_mask[i] |= FILE_A_BB << (i - 1);
     if (i < 7)
       adjacent_mask[i] |= FILE_A_BB << (i + 1);
-  }
-  for (i = 0; i < 64; i++) {
-    j = line[File(i)] + line[Rank(i)];
-    pst[P][i] = j * 2;
-    pst[N][i] = j * 4;
-    pst[B][i] = j * 2;
-    pst[R][i] = line[File(i)];
-    pst[Q][i] = j;
-    pst[K][i] = j * 6;
   }
 
   for (i = 0; i < 64; i++)

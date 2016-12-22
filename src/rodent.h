@@ -1,6 +1,6 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2204 lines
-// d.20: 80.6 -> 79,1
+// 2198 lines
+// d.20: 80.6 -> 79,1 -> 78,7
 
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};
@@ -128,7 +128,8 @@ typedef struct {
   int pc[64];
   int king_sq[2];
   int mat[2];
-  int pst[2];
+  int mg_sc[2];
+  int eg_sc[2];
   int side;
   int c_flags;
   int ep_sq;
@@ -216,7 +217,7 @@ public:
   int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv);
   int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
   int IsDraw(POS *p);
-  void CheckTimeout(int ply);
+  void CheckTimeout(int ply, int *pv);
   void DisplayPv(int score, int *pv);
 
   void InitMoves(POS *p, MOVES *m, int trans_move, int ply);
@@ -290,7 +291,6 @@ extern U64 k_attacks[64];
 extern U64 passed_mask[2][64];
 extern U64 support_mask[2][64];
 extern U64 adjacent_mask[8];
-extern int pst[6][64];
 extern int c_mask[64];
 extern const int bit_table[64];
 extern const int passed_bonus[2][8];

@@ -8,7 +8,8 @@ void SetPosition(POS *p, char *epd) {
   for (int i = 0; i < 2; i++) {
     p->cl_bb[i] = 0;
     p->mat[i] = 0;
-    p->pst[i] = 0;
+    p->mg_sc[i] = 0;
+	p->eg_sc[i] = 0;
   }
 
   for (int i = 0; i < 6; i++)
@@ -35,7 +36,8 @@ void SetPosition(POS *p, char *epd) {
         if (Tp(pc) == K)
           p->king_sq[Cl(pc)] = i + j;
         p->mat[Cl(pc)] += tp_value[Tp(pc)];
-        p->pst[Cl(pc)] += pst[Tp(pc)][i + j];
+		p->mg_sc[Cl(pc)] += Par.mg_pst[Cl(pc)][Tp(pc)][i + j];
+		p->eg_sc[Cl(pc)] += Par.eg_pst[Cl(pc)][Tp(pc)][i + j];
         j++;
       }
       epd++;

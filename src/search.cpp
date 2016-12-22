@@ -43,8 +43,10 @@ void CopyPos(POS * old_pos, POS * new_pos) {
   new_pos->king_sq[WC] = old_pos->king_sq[WC];
   new_pos->king_sq[BC] = old_pos->king_sq[BC];
 
-  new_pos->pst[WC] = old_pos->pst[WC];
-  new_pos->pst[BC] = old_pos->pst[BC];
+  new_pos->mg_sc[WC] = old_pos->mg_sc[WC];
+  new_pos->mg_sc[BC] = old_pos->mg_sc[BC];
+  new_pos->eg_sc[WC] = old_pos->eg_sc[WC];
+  new_pos->eg_sc[BC] = old_pos->eg_sc[BC];
 
   new_pos->side = old_pos->side;
   new_pos->c_flags = old_pos->c_flags;
@@ -100,7 +102,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   nodes++;
   local_nodes++;
-  CheckTimeout(ply);
+  CheckTimeout(ply, pv);
   if (abort_search) return 0;
   if (ply) *pv = 0;
   if (IsDraw(p) && ply) return 0;
@@ -254,7 +256,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
   nodes++;
   local_nodes++;
-  CheckTimeout(ply);
+  CheckTimeout(ply, pv);
   if (abort_search) return 0;
   *pv = 0;
   if (IsDraw(p)) return 0;
@@ -318,9 +320,11 @@ void cEngine::DisplayPv(int score, int *pv) {
       root_depth, GetMS() - start_time, nodes, type, score, pv_str);
 }
 
-void cEngine::CheckTimeout(int ply) {
+void cEngine::CheckTimeout(int ply, int *pv) {
 
   char command[80];
+
+  if (pv[0] == 0) return; // search has to find a move
 
   if ((local_nodes & 4095 || root_depth == 1)
   && ply > 3) return;
