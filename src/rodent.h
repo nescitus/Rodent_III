@@ -1,6 +1,6 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2188 lines
-// d.19: 89.426.491 nodes in 50,9 s
+// 2183 lines
+// d.19: 89.426.491 nodes in 50,4 s
 
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};
@@ -127,7 +127,7 @@ typedef struct {
   U64 tp_bb[6];
   int pc[64];
   int king_sq[2];
-  int mat[2];
+  int phase;
   int mg_sc[2];
   int eg_sc[2];
   int side;
@@ -182,7 +182,6 @@ extern cParam Par;
 typedef struct {
   int mg_sc[2];
   int eg_sc[2];
-  int phase;
 } eData;
 
 struct sEvalHashEntry {
@@ -296,6 +295,7 @@ extern int c_mask[64];
 extern const int bit_table[64];
 extern const int passed_bonus[2][8];
 extern const int tp_value[7];
+extern const int ph_value[7];
 extern U64 zob_piece[12][64];
 extern U64 zob_castle[16];
 extern U64 zob_ep[8];

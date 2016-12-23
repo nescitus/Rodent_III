@@ -21,9 +21,8 @@ const int bit_table[64] = {
   61, 22, 43, 51, 60, 42, 59, 58
 };
 
-const int tp_value[7] = {
-  100, 325, 325, 500, 1000, 0, 0
-};
+const int tp_value[7] = { 100, 325, 325, 500, 1000, 0, 0 };
+const int ph_value[7] = {   0,   1,   1,   2,   4 , 0, 0 };
 
 U64 zob_piece[12][64];
 U64 zob_castle[16];

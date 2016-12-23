@@ -47,6 +47,7 @@ void CopyPos(POS * old_pos, POS * new_pos) {
   new_pos->mg_sc[BC] = old_pos->mg_sc[BC];
   new_pos->eg_sc[WC] = old_pos->eg_sc[WC];
   new_pos->eg_sc[BC] = old_pos->eg_sc[BC];
+  new_pos->phase = old_pos->phase;
 
   new_pos->side = old_pos->side;
   new_pos->c_flags = old_pos->c_flags;

@@ -110,8 +110,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     cnt = PopCnt(bb_control);
     Add(e, sd, 4 * (cnt-4), 4 * (cnt-4));
-
-    e->phase += 1;
   }
 
   // BISHOP EVAL
@@ -132,8 +130,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     cnt = PopCnt(BAttacks(OccBb(p), sq));
     Add(e, sd, 5 * (cnt - 7),  5 * (cnt - 7));
-
-    e->phase += 1;
   }
 
   // ROOK EVAL
@@ -154,8 +150,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     cnt = PopCnt(RAttacks(OccBb(p), sq));
     Add(e, sd, 2 * (cnt - 7), 4 * (cnt - 7));
-
-    e->phase += 2;
   }
 
   // QUEEN EVAL
@@ -177,8 +171,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     cnt = PopCnt(QAttacks(OccBb(p), sq));
     Add(e, sd, 1 * (cnt - 14), 2 * (cnt - 14));
-
-    e->phase += 4;
   }
 
   // king attack - 
@@ -296,7 +288,7 @@ int cEngine::Interpolate(POS * p, eData *e) {
 
   int mg_tot = e->mg_sc[WC] - e->mg_sc[BC];
   int eg_tot = e->eg_sc[WC] - e->eg_sc[BC];
-  int mg_phase = Min(e->phase, 24);
+  int mg_phase = Min(p->phase, 24);
   int eg_phase = 24 - mg_phase;
 
   return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
@@ -312,8 +304,6 @@ int cEngine::Evaluate(POS *p, eData *e) {
     int sc = EvalTT[addr].score;
     return p->side == WC ? sc : -sc;
   }
-
-  e->phase = 0;
 
   ScorePieces(p, e, WC);
   ScorePieces(p, e, BC);

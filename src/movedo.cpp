@@ -42,7 +42,7 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->key ^= zob_piece[Pc(op, ttp)][tsq];
     p->cl_bb[op] ^= SqBb(tsq);
     p->tp_bb[ttp] ^= SqBb(tsq);
-    p->mat[op] -= tp_value[ttp];
+    p->phase -= ph_value[ttp];
 	p->mg_sc[op] -= Par.mg_pst[op][ttp][tsq];
 	p->eg_sc[op] -= Par.eg_pst[op][ttp][tsq];
   }
@@ -73,7 +73,7 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->key ^= zob_piece[Pc(op, P)][tsq];
     p->cl_bb[op] ^= SqBb(tsq);
     p->tp_bb[P] ^= SqBb(tsq);
-    p->mat[op] -= tp_value[P];
+    p->phase -= ph_value[P];
 	p->mg_sc[op] -= Par.mg_pst[op][P][tsq];
 	p->eg_sc[op] -= Par.eg_pst[op][P][tsq];
     break;
@@ -92,7 +92,7 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->key ^= zob_piece[Pc(sd, P)][tsq] ^ zob_piece[Pc(sd, ftp)][tsq];
     p->tp_bb[P] ^= SqBb(tsq);
     p->tp_bb[ftp] ^= SqBb(tsq);
-    p->mat[sd] += tp_value[ftp] - tp_value[P];
+    p->phase += ph_value[ftp] - ph_value[P];
 	p->mg_sc[sd] += Par.mg_pst[sd][ftp][tsq] - Par.mg_pst[sd][P][tsq];
 	p->eg_sc[sd] += Par.eg_pst[sd][ftp][tsq] - Par.eg_pst[sd][P][tsq];
     break;
