@@ -150,6 +150,23 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     cnt = PopCnt(RAttacks(OccBb(p), sq));
     Add(e, sd, 2 * (cnt - 7), 4 * (cnt - 7));
+
+    // rook on (half) open file
+
+    U64 r_file = FillNorth(SqBb(sq)) | FillSouth(SqBb(sq));
+    if (!(r_file & PcBb(p, sd, P))) {
+      if (!(r_file & PcBb(p, op, P))) Add(e, sd, 12, 12);
+      else                            Add(e, sd,  6,  6);
+    }
+
+    // rook on 7th rank attacking pawns or cutting off enemy king
+
+    if (SqBb(sq) & bbRelRank[sd][RANK_7]) {
+      if (PcBb(p, op, P) & bbRelRank[sd][RANK_7]
+      ||  PcBb(p, op, K) & bbRelRank[sd][RANK_8]) {
+          Add(e, sd, 16, 32);
+      }
+    }
   }
 
   // QUEEN EVAL
