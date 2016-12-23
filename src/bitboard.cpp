@@ -55,3 +55,7 @@ U64 GetWPControl(U64 bb) {
 U64 GetBPControl(U64 bb) {
   return (ShiftSE(bb) | ShiftSW(bb));
 }
+
+U64 ShiftSideways(U64 bb) {
+  return (ShiftWest(bb) | ShiftEast(bb));
+}

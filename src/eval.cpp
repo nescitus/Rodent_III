@@ -12,7 +12,7 @@ const int passed_bonus_eg[2][8] = {
 };
 
 static const int att_weight[16] = {
-	0, 0, 128, 192, 224, 240, 248, 252, 254, 255, 256, 256, 256, 256, 256, 256,
+  0, 0, 128, 192, 224, 240, 248, 252, 254, 255, 256, 256, 256, 256, 256, 256,
 };
 
 #define REL_SQ(sq,cl)   ( sq ^ (cl * 56) )
@@ -55,6 +55,15 @@ void cParam::Init(void) {
 
     support_mask[BC][sq] = ShiftWest(SqBb(sq)) | ShiftEast(SqBb(sq));
     support_mask[BC][sq] |= FillNorth(support_mask[BC][sq]);
+  }
+
+  // Init mask for passed pawn detection
+
+  for (int sq = 0; sq < 64; sq++) {
+    passed_mask[WC][sq] = FillNorthExcl(SqBb(sq));
+    passed_mask[WC][sq] |= ShiftSideways(passed_mask[WC][sq]);
+    passed_mask[BC][sq] = FillSouthExcl(SqBb(sq));
+    passed_mask[BC][sq] |= ShiftSideways(passed_mask[BC][sq]);
   }
 }
 
@@ -100,7 +109,7 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     // knight mobility score
 
     cnt = PopCnt(bb_control);
-	Add(e, sd, 4 * (cnt-4), 4 * (cnt-4));
+    Add(e, sd, 4 * (cnt-4), 4 * (cnt-4));
 
     e->phase += 1;
   }
@@ -176,7 +185,7 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   if (PcBb(p, sd, Q)) {
     int att_score = (att * 20 * att_weight[wood]) / 256;
-	Add(e, sd, att_score, att_score);
+    Add(e, sd, att_score, att_score);
   }
 
 }
@@ -190,12 +199,12 @@ void cEngine::ScorePawns(POS *p, eData *e, int sd) {
   pieces = PcBb(p, sd, P);
   while (pieces) {
     sq = PopFirstBit(&pieces);
-	span = GetFrontSpan(SqBb(sq), sd);
-	fl_unopposed = ((span & PcBb(p, op, P)) == 0);
+    span = GetFrontSpan(SqBb(sq), sd);
+    fl_unopposed = ((span & PcBb(p, op, P)) == 0);
 
-	// DOUBLED PAWNS
+    // DOUBLED PAWNS
 
-	if (span & PcBb(p, sd, P))
+    if (span & PcBb(p, sd, P))
       Add(e, sd, -10, -20);
 
     // PASSED PAWNS
@@ -212,7 +221,7 @@ void cEngine::ScorePawns(POS *p, eData *e, int sd) {
       e->eg_sc[sd] -= 20;
     }
 
-	// WEAK PAWNS
+    // WEAK PAWNS
 
     else if ((support_mask[sd][sq] & PcBb(p, sd, P)) == 0) {
       e->mg_sc[sd] -= (8 + 8 * fl_unopposed);
