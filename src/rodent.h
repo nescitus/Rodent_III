@@ -1,5 +1,5 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2183 lines
+// 2206 lines
 // d.19: 89.426.491 nodes in 50,4 s
 
 enum {WC, BC, NO_CL};
@@ -264,11 +264,13 @@ U64 Key(POS *p);
 int Legal(POS *p, int move);
 void MoveToStr(int move, char *move_str);
 void ParseGo(POS *p, char *ptr);
+void ParseMoves(POS *p, char *ptr);
 void ParsePosition(POS *p, char *ptr);
 void ParseSetoption(char *ptr);
 char *ParseToken(char *string, char *token);
 int PopCnt(U64 bb);
 int PopFirstBit(U64 * bb);
+void PrintBoard(POS *p);
 void PvToStr(int *pv, char *pv_str);
 U64 Random64(void);
 void ReadLine(char *str, int n);

@@ -60,6 +60,10 @@ void UciLoop(void) {
       ParsePosition(p, ptr);
     } else if (strcmp(token, "go") == 0) {
       ParseGo(p, ptr);
+    } else if (strcmp(token, "step") == 0) {
+      ParseMoves(p, ptr);
+    } else if (strcmp(token, "print") == 0) {
+      PrintBoard(p);
     } else if (strcmp(token, "quit") == 0) {
       exit(0);
     }
@@ -121,6 +125,14 @@ void ParsePosition(POS *p, char *ptr) {
     SetPosition(p, START_POS);
   }
   if (strcmp(token, "moves") == 0)
+    ParseMoves(p, ptr);
+}
+
+void ParseMoves(POS *p, char *ptr) {
+
+	char token[80];
+	UNDO u[1];
+
     for (;;) {
       ptr = ParseToken(ptr, token);
       if (*token == '\0')
@@ -229,4 +241,17 @@ void ParseGo(POS *p, char *ptr) {
   // we are searching single-threaded or the first thread got at least the same depth as the second thread
 	  ExtractMove(pv);
   }
+}
+
+void PrintBoard(POS *p) {
+
+  char *piece_name[] = { "P ", "p ", "N ", "n ", "B ", "b ", "R ", "r ", "Q ", "q ", "K ", "k ", ". " };
+
+  printf("--------------------------------------------\n");
+  for (int sq = 0; sq < 64; sq++) { 
+    printf(piece_name[p->pc[sq ^ (BC * 56)]]);
+    if ((sq + 1) % 8 == 0) printf(" %d\n", 9 - ((sq + 1) / 8));
+  }
+
+  printf("\na b c d e f g h\n\n--------------------------------------------\n");
 }
