@@ -28,21 +28,24 @@ static const U64 bbCentralFile = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
 void cParam::Init(void) {
 
+  int pst_type = 1;
+  int perc = 100;
+
   for (int sq = 0; sq < 64; sq++) {
     for (int sd = 0; sd < 2; sd++) {
 
-      mg_pst[sd][P][REL_SQ(sq, sd)] = 70 + pstPawnMg[sq];
-      eg_pst[sd][P][REL_SQ(sq, sd)] = 90 + pstPawnEg[sq];
-      mg_pst[sd][N][REL_SQ(sq, sd)] = 325 + pstKnightMg[sq];
-      eg_pst[sd][N][REL_SQ(sq, sd)] = 325 + pstKnightEg[sq];
-      mg_pst[sd][B][REL_SQ(sq, sd)] = 325 + pstBishopMg[sq];
-      eg_pst[sd][B][REL_SQ(sq, sd)] = 325 + pstBishopEg[sq];
-      mg_pst[sd][R][REL_SQ(sq, sd)] = 500 + pstRookMg[sq];
-      eg_pst[sd][R][REL_SQ(sq, sd)] = 500 + pstRookEg[sq];
-      mg_pst[sd][Q][REL_SQ(sq, sd)] = 975 + pstQueenMg[sq];
-      eg_pst[sd][Q][REL_SQ(sq, sd)] = 975 + pstQueenEg[sq];
-      mg_pst[sd][K][REL_SQ(sq, sd)] = pstKingMg[sq];
-      eg_pst[sd][K][REL_SQ(sq, sd)] = pstKingEg[sq];
+      mg_pst[sd][P][REL_SQ(sq, sd)] = 70 + ((pstPawnMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][P][REL_SQ(sq, sd)] = 90 + ((pstPawnEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][N][REL_SQ(sq, sd)] = 325 + ((pstKnightMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][N][REL_SQ(sq, sd)] = 325 + ((pstKnightEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][B][REL_SQ(sq, sd)] = 325 + ((pstBishopMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][B][REL_SQ(sq, sd)] = 325 + ((pstBishopEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][R][REL_SQ(sq, sd)] = 500 + ((pstRookMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][R][REL_SQ(sq, sd)] = 500 + ((pstRookEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][Q][REL_SQ(sq, sd)] = 975 + ((pstQueenMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][Q][REL_SQ(sq, sd)] = 975 + ((pstQueenEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingEg[pst_type][sq] * perc) / 100);
 
     }
   }
