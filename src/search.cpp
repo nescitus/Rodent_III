@@ -67,7 +67,16 @@ void cEngine::Think(POS *p, int *pv) {
   POS curr[1];
   pv[0] = 0;
   pv[1] = 0;
+
   CopyPos(p, curr);
+
+  // copy move from transposition table to pv slot
+
+  int move = 0;
+  int score;
+  TransRetrieve(curr->key, &move, &score, -INF, INF, 1, 0);
+  if (Legal(curr, move)) pv[0] = move;
+
   ClearHist();
   local_nodes = 0;
   Iterate(curr, pv);
