@@ -28,7 +28,7 @@ static const U64 bbCentralFile = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
 void cParam::Init(void) {
 
-  int pst_type = 1; // 2 is potentially better, but test it under eqal conditions
+  int pst_type = 1; // try 2 with higher pawn value
   int perc = 100;
 
   for (int sq = 0; sq < 64; sq++) {

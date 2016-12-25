@@ -50,14 +50,16 @@ void DoMove(POS *p, int move, UNDO *u) {
   switch (MoveType(move)) {
   case NORMAL:
     break;
+
   case CASTLE:
-    if (tsq > fsq) {
-      fsq += 3;
-      tsq -= 1;
-    } else {
-      fsq -= 4;
-      tsq += 1;
+
+    switch (tsq) {
+      case C1: { fsq = A1; tsq = D1; break; }
+	  case G1: { fsq = H1; tsq = F1; break; }
+	  case C8: { fsq = A8; tsq = D8; break; }
+	  case G8: { fsq = H8; tsq = F8; break; }
     }
+
     p->pc[fsq] = NO_PC;
     p->pc[tsq] = Pc(sd, R);
     p->key ^= zob_piece[Pc(sd, R)][fsq] ^ zob_piece[Pc(sd, R)][tsq];
