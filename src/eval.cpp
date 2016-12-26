@@ -111,7 +111,7 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     // knight mobility score
 
-    cnt = PopCnt(bb_control);
+    cnt = PopCnt(bb_control &~e->pawn_takes[op]);
     Add(e, sd, 4 * (cnt-4), 4 * (cnt-4));
   }
 
@@ -324,6 +324,13 @@ int cEngine::Evaluate(POS *p, eData *e) {
     int sc = EvalTT[addr].score;
     return p->side == WC ? sc : -sc;
   }
+
+  // init helper bitboards
+
+  e->pawn_takes[WC] = GetWPControl(PcBb(p, WC, P));
+  e->pawn_takes[BC] = GetWPControl(PcBb(p, BC, P));
+
+  // run eval subroutines
 
   ScorePieces(p, e, WC);
   ScorePieces(p, e, BC);

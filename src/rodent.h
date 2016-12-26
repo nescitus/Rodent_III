@@ -182,6 +182,7 @@ extern cParam Par;
 typedef struct {
   int mg_sc[2];
   int eg_sc[2];
+  int pawn_takes[2];
 } eData;
 
 struct sEvalHashEntry {
