@@ -188,6 +188,18 @@ void cEngine::TrimHist(void) {
       history[i][j] /= 2;
 }
 
+void cEngine::DecreaseHist(POS *p, int move, int depth) {
+
+  // Increment history counter
+
+  history[p->pc[Fsq(move)]][Tsq(move)] -= depth * depth;
+
+  // Prevent history counters from growing too high
+
+  if (history[p->pc[Fsq(move)]][Tsq(move)] < -MAX_HIST)
+    TrimHist();
+}
+
 void cEngine::UpdateHist(POS *p, int move, int depth, int ply) {
 
   // don't update history score if the move is not quiet
@@ -197,7 +209,7 @@ void cEngine::UpdateHist(POS *p, int move, int depth, int ply) {
 
   // increase move's history score
 
-  history[p->pc[Fsq(move)]][Tsq(move)] += depth * depth;
+  history[p->pc[Fsq(move)]][Tsq(move)] += 2 * depth * depth;
 
   // keep history score within the right limit
 

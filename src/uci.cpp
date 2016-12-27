@@ -204,14 +204,24 @@ void ParseGo(POS *p, char *ptr) {
   if (time >= 0) {
     if (movestogo == 1) time -= Min(1000, time / 10);
     move_time = (time + inc * (movestogo - 1)) / movestogo;
-    if (move_time > time)
-      move_time = time;
-    move_time -= 10;
-    if (move_time < 0)
-      move_time = 0;
-  }
+    if (move_time > time) move_time = time;
 
-  time = BulletCorrection(time);
+	// assign less time per move while using extremely short time controls
+
+	move_time = BulletCorrection(move_time);
+
+	// while in time trouble, try to save a bit on increment
+
+	if (move_time < inc)  move_time -= ((inc * 4) / 5);
+
+	// safeguard against a lag
+
+    move_time -= 10;
+
+	// ensure that we have non-zero time
+
+    if (move_time < 1) move_time = 1;
+  }
 
   // thread-independent stuff to be done before searching
 

@@ -230,6 +230,7 @@ public:
   int BadCapture(POS *p, int move);
   int MvvLva(POS *p, int move);
   void ClearHist(void);
+  void DecreaseHist(POS *p, int move, int depth);
   void UpdateHist(POS *p, int move, int depth, int ply);
   void TrimHist(void);
 } cEngine;
