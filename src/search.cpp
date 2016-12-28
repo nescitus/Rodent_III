@@ -3,6 +3,7 @@
 #include <math.h>
 #include "rodent.h"
 
+int razor_margin[5] = { 0, 300, 360, 420, 480 };
 double lmr_size[2][MAX_PLY][MAX_MOVES];
 
 void InitSearch(void) {
@@ -149,6 +150,23 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
       }
     }
   }
+
+  if (!was_null
+  && !fl_check
+  && !move
+  && alpha > -MAX_EVAL
+  && beta < MAX_EVAL
+  && !(PcBb(p, p->side, P) & bbRelRank[p->side][RANK_7]) // no pawns to promote in one move
+  && depth <= 4) {
+	int eval = Evaluate(p, &e);
+    int threshold = beta - razor_margin[depth];
+    if (eval < threshold) {
+      score = Quiesce(p, ply, alpha, beta, pv);
+      if (score < threshold) return score;
+    }
+  }
+
+// end of razoring code 
 
   // MAIN LOOP
 

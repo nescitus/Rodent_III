@@ -1,6 +1,6 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 2206 lines
-// d.19: 89.426.491 nodes in 50,4 s
+// d.19: 92.785.714 nodes in 55,2 s
 
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};

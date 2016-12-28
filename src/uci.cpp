@@ -46,7 +46,7 @@ void UciLoop(void) {
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.023\n");
+      printf("id name Rodent III 0.024\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
 	  printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
       printf("option name Hash type spin default 16 min 1 max 4096\n");
@@ -218,9 +218,9 @@ void ParseGo(POS *p, char *ptr) {
 
     move_time -= 10;
 
-	// ensure that we have non-zero time
+	// ensure that we have non-negative time
 
-    if (move_time < 1) move_time = 1;
+    if (move_time < 0) move_time = 0;
   }
 
   // thread-independent stuff to be done before searching

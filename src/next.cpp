@@ -209,7 +209,7 @@ void cEngine::UpdateHist(POS *p, int move, int depth, int ply) {
 
   // increase move's history score
 
-  history[p->pc[Fsq(move)]][Tsq(move)] += 2 * depth * depth;
+  history[p->pc[Fsq(move)]][Tsq(move)] += depth * depth;
 
   // keep history score within the right limit
 
