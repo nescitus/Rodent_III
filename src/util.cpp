@@ -66,18 +66,20 @@ U64 Random64(void) {
 
 U64 Key(POS *p) {
 
-  int i;
-  U64 key;
+  U64 key = 0;
 
-  key = 0;
-  for (i = 0; i < 64; i++)
+  for (int i = 0; i < 64; i++)
     if (p->pc[i] != NO_PC)
       key ^= zob_piece[p->pc[i]][i];
+
   key ^= zob_castle[p->c_flags];
+
   if (p->ep_sq != NO_SQ)
     key ^= zob_ep[File(p->ep_sq)];
+
   if (p->side == BC)
     key ^= SIDE_RANDOM;
+
   return key;
 }
 

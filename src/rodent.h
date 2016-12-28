@@ -213,7 +213,8 @@ public:
   void Add(eData *e, int sd, int mg, int eg);
 
   void Think(POS *p, int *pv);
-  void Iterate(POS *curr, int *pv);
+  void Iterate(POS *p, int *pv);
+  int Widen(POS *p, int depth, int * pv, int lastScore);
   int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv);
   int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
   int IsDraw(POS *p);
