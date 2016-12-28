@@ -72,7 +72,7 @@ void cParam::Init(void) {
 
 void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
-  U64 pieces, bb_attacks, bb_control;
+  U64 bb_pieces, bb_attacks, bb_control;
   int op, sq, ksq, cnt;
   int att = 0;
   int wood = 0;
@@ -97,13 +97,14 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   // KNIGHT EVAL
 
-  pieces = PcBb(p, sd, N);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
+  bb_pieces = PcBb(p, sd, N);
+  while (bb_pieces) {
+    sq = PopFirstBit(&bb_pieces);
 
     // knight king attack score
 
     bb_control = n_attacks[sq] & ~p->cl_bb[sd];
+
     if (bb_control & bb_zone) {
       wood++;
       att += 1;
@@ -117,9 +118,9 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   // BISHOP EVAL
 
-  pieces = PcBb(p, sd, B);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
+  bb_pieces = PcBb(p, sd, B);
+  while (bb_pieces) {
+    sq = PopFirstBit(&bb_pieces);
 
     // bishop king attack score
 
@@ -131,15 +132,16 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     // bishop mobility score
 
-    cnt = PopCnt(BAttacks(OccBb(p), sq));
+    bb_control = BAttacks(OccBb(p), sq);
+    cnt = PopCnt(bb_control);
     Add(e, sd, 5 * (cnt - 7),  5 * (cnt - 7));
   }
 
   // ROOK EVAL
 
-  pieces = PcBb(p, sd, R);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
+  bb_pieces = PcBb(p, sd, R);
+  while (bb_pieces) {
+    sq = PopFirstBit(&bb_pieces);
 
    // rook king attack score
 
@@ -151,7 +153,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     // rook mobility score
 
-    cnt = PopCnt(RAttacks(OccBb(p), sq));
+    bb_control = RAttacks(OccBb(p), sq);
+    cnt = PopCnt(bb_control);
     Add(e, sd, 2 * (cnt - 7), 4 * (cnt - 7));
 
     // rook on (half) open file
@@ -174,9 +177,9 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   // QUEEN EVAL
   
-  pieces = PcBb(p, sd, Q);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
+  bb_pieces = PcBb(p, sd, Q);
+  while (bb_pieces) {
+    sq = PopFirstBit(&bb_pieces);
 
     // queen king attack score
 
@@ -189,7 +192,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     // queen mobility score
 
-    cnt = PopCnt(QAttacks(OccBb(p), sq));
+	bb_control = QAttacks(OccBb(p), sq);
+    cnt = PopCnt(bb_control);
     Add(e, sd, 1 * (cnt - 14), 2 * (cnt - 14));
   }
 
@@ -204,19 +208,19 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
 void cEngine::ScorePawns(POS *p, eData *e, int sd) {
 
-  U64 pieces, span;
+  U64 bb_pieces, bb_span;
   int op = Opp(sd);
   int sq, fl_unopposed;
 
-  pieces = PcBb(p, sd, P);
-  while (pieces) {
-    sq = PopFirstBit(&pieces);
-    span = GetFrontSpan(SqBb(sq), sd);
-    fl_unopposed = ((span & PcBb(p, op, P)) == 0);
+  bb_pieces = PcBb(p, sd, P);
+  while (bb_pieces) {
+    sq = PopFirstBit(&bb_pieces);
+    bb_span = GetFrontSpan(SqBb(sq), sd);
+    fl_unopposed = ((bb_span & PcBb(p, op, P)) == 0);
 
     // DOUBLED PAWNS
 
-    if (span & PcBb(p, sd, P))
+    if (bb_span & PcBb(p, sd, P))
       Add(e, sd, -10, -20);
 
     // PASSED PAWNS
