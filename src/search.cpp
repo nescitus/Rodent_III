@@ -62,7 +62,6 @@ void CopyPos(POS * old_pos, POS * new_pos) {
   }
 }
 
-
 void cEngine::Think(POS *p, int *pv) {
 
   POS curr[1];
@@ -270,6 +269,14 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     if (score >= beta) {
       UpdateHist(p, move, depth, ply);
       TransStore(p->key, move, score, LOWER, depth, ply);
+
+      // At root, change the best move and show the new pv
+
+      if (!ply) {
+        BuildPv(pv, new_pv, move);
+        DisplayPv(score, pv);
+      }
+
       return score;
     }
 
