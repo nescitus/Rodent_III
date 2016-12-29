@@ -358,9 +358,18 @@ int cEngine::IsDraw(POS *p) {
   return 0;
 }
 
+int GetNps(int elapsed) {
+
+  U64 nps = 0;
+  if (elapsed) nps = ((U64)nodes * 1000) / elapsed;
+  return (int)nps;
+}
+
 void cEngine::DisplayPv(int score, int *pv) {
 
   char *type, pv_str[512];
+  int elapsed = GetMS() - start_time;
+  int nps = GetNps(elapsed);
 
   type = "mate";
   if (score < -MAX_EVAL)
@@ -370,8 +379,8 @@ void cEngine::DisplayPv(int score, int *pv) {
   else
     type = "cp";
   PvToStr(pv, pv_str);
-  printf("info depth %d time %d nodes %d score %s %d pv %s\n",
-      root_depth, GetMS() - start_time, nodes, type, score, pv_str);
+  printf("info depth %d time %d nodes %d nps %d score %s %d pv %s\n",
+      root_depth, elapsed, nodes, nps, type, score, pv_str);
 }
 
 void cEngine::CheckTimeout(int ply, int *pv) {

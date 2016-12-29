@@ -258,6 +258,7 @@ U64 GetFrontSpan(U64 bb, int sd);
 int *GenerateCaptures(POS *p, int *list);
 int *GenerateQuiet(POS *p, int *list);
 int GetMS(void);
+int GetNps(int elapsed);
 U64 GetWPControl(U64 bb);
 U64 GetBPControl(U64 bb);
 void Init(void);
