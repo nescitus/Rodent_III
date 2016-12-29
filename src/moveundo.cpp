@@ -29,6 +29,7 @@ void UndoMove(POS *p, int move, UNDO *u) {
     p->cl_bb[op] ^= SqBb(tsq);
     p->tp_bb[ttp] ^= SqBb(tsq);
     p->phase += ph_value[ttp];
+	p->cnt[op][ttp]++;
 	p->mg_sc[op] += Par.mg_pst[op][ttp][tsq];
 	p->eg_sc[op] += Par.eg_pst[op][ttp][tsq];
   }
@@ -59,6 +60,7 @@ void UndoMove(POS *p, int move, UNDO *u) {
     p->cl_bb[op] ^= SqBb(tsq);
     p->tp_bb[P] ^= SqBb(tsq);
     p->phase += ph_value[P];
+	p->cnt[op][P]++;
 	p->mg_sc[op] += Par.mg_pst[op][P][tsq];
 	p->eg_sc[op] += Par.eg_pst[op][P][tsq];
     break;
@@ -71,6 +73,8 @@ void UndoMove(POS *p, int move, UNDO *u) {
     p->tp_bb[P] ^= SqBb(fsq);
     p->tp_bb[ftp] ^= SqBb(fsq);
     p->phase += ph_value[P] - ph_value[ftp];
+	p->cnt[sd][P]++;
+	p->cnt[sd][ftp]--;
 	p->mg_sc[sd] += Par.mg_pst[sd][P][fsq] - Par.mg_pst[sd][ftp][fsq];
 	p->eg_sc[sd] += Par.eg_pst[sd][P][fsq] - Par.eg_pst[sd][ftp][fsq];
     break;

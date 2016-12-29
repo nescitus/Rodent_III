@@ -35,6 +35,8 @@ void CopyPos(POS * old_pos, POS * new_pos) {
 
   for (int tp = 0; tp < 6; tp++) {
     new_pos->tp_bb[tp] = old_pos->tp_bb[tp];
+    new_pos->cnt[WC][tp] = old_pos->cnt[WC][tp];
+    new_pos->cnt[BC][tp] = old_pos->cnt[BC][tp];
   }
 
   for (int sq = 0; sq < 64; sq++) {

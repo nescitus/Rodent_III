@@ -1,6 +1,6 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 2206 lines
-// d.19: 92.785.714 nodes in 55,2 s
+// d.18: 37.807.290 nodes in 23,5 s
 
 enum {WC, BC, NO_CL};
 enum {P, N, B, R, Q, K, NO_TP};
@@ -128,6 +128,7 @@ typedef struct {
   int pc[64];
   int king_sq[2];
   int phase;
+  int cnt[2][6];
   int mg_sc[2];
   int eg_sc[2];
   int side;
@@ -209,6 +210,7 @@ public:
   int EvalKingFile(POS * p, int sd, U64 bbFile);
   int EvalFileShelter(U64 bbOwnPawns, int sd);
   int EvalFileStorm(U64 bbOppPawns, int sd);
+  int GetDrawFactor(POS * p, int sd);
   int Interpolate(POS * p, eData *e);
   void Add(eData *e, int sd, int mg, int eg);
 

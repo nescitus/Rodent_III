@@ -12,8 +12,11 @@ void SetPosition(POS *p, char *epd) {
 	p->eg_sc[i] = 0;
   }
 
-  for (int i = 0; i < 6; i++)
-    p->tp_bb[i] = 0;
+  for (int pc = 0; pc < 6; pc++) {
+    p->tp_bb[pc] = 0ULL;
+    p->cnt[WC][pc] = 0;
+    p->cnt[BC][pc] = 0;
+  }
 
   p->c_flags = 0;
   p->rev_moves = 0;
@@ -33,11 +36,14 @@ void SetPosition(POS *p, char *epd) {
         p->pc[i + j] = pc;
         p->cl_bb[Cl(pc)] ^= SqBb(i + j);
         p->tp_bb[Tp(pc)] ^= SqBb(i + j);
+
         if (Tp(pc) == K)
           p->king_sq[Cl(pc)] = i + j;
+
         p->phase += ph_value[Tp(pc)];
 		p->mg_sc[Cl(pc)] += Par.mg_pst[Cl(pc)][Tp(pc)][i + j];
 		p->eg_sc[Cl(pc)] += Par.eg_pst[Cl(pc)][Tp(pc)][i + j];
+		p->cnt[Cl(pc)][Tp(pc)]++;
         j++;
       }
       epd++;

@@ -45,6 +45,7 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->phase -= ph_value[ttp];
 	p->mg_sc[op] -= Par.mg_pst[op][ttp][tsq];
 	p->eg_sc[op] -= Par.eg_pst[op][ttp][tsq];
+	p->cnt[op][ttp]--;
   }
 
   switch (MoveType(move)) {
@@ -76,6 +77,7 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->cl_bb[op] ^= SqBb(tsq);
     p->tp_bb[P] ^= SqBb(tsq);
     p->phase -= ph_value[P];
+	p->cnt[op][P]--;
 	p->mg_sc[op] -= Par.mg_pst[op][P][tsq];
 	p->eg_sc[op] -= Par.eg_pst[op][P][tsq];
     break;
@@ -95,6 +97,8 @@ void DoMove(POS *p, int move, UNDO *u) {
     p->tp_bb[P] ^= SqBb(tsq);
     p->tp_bb[ftp] ^= SqBb(tsq);
     p->phase += ph_value[ftp] - ph_value[P];
+    p->cnt[sd][P]--;
+    p->cnt[sd][ftp]++;
 	p->mg_sc[sd] += Par.mg_pst[sd][ftp][tsq] - Par.mg_pst[sd][P][tsq];
 	p->eg_sc[sd] += Par.eg_pst[sd][ftp][tsq] - Par.eg_pst[sd][P][tsq];
     break;

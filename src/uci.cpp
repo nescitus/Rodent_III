@@ -46,7 +46,7 @@ void UciLoop(void) {
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.027\n");
+      printf("id name Rodent III 0.028\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
 	  printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
       printf("option name Hash type spin default 16 min 1 max 4096\n");
@@ -264,4 +264,5 @@ void PrintBoard(POS *p) {
   }
 
   printf("\na b c d e f g h\n\n--------------------------------------------\n");
+  printf("%d%d", p->cnt[WC][P], p->cnt[BC][P]);
 }

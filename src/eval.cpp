@@ -304,6 +304,7 @@ int cEngine::EvalFileStorm(U64 bbOppPawns, int sd) {
 }
 
 void cEngine::Add(eData * e, int sd, int mg, int eg) {
+
   e->mg_sc[sd] += mg;
   e->eg_sc[sd] += eg;
 }
@@ -318,9 +319,18 @@ int cEngine::Interpolate(POS * p, eData *e) {
   return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
 }
 
+int cEngine::GetDrawFactor(POS * p, int sd) {
+
+  int op = Opp(sd);
+
+  if (p->phase < 2 && p->cnt[sd][P] == 0) return 0;
+
+  return 64;
+}
+
 int cEngine::Evaluate(POS *p, eData *e) {
 
-  // try retrieving score from per-thread eval hashtable
+  // Try retrieving score from per-thread eval hashtable
 
   int addr = p->key % EVAL_HASH_SIZE;
 
@@ -329,12 +339,12 @@ int cEngine::Evaluate(POS *p, eData *e) {
     return p->side == WC ? sc : -sc;
   }
 
-  // init helper bitboards
+  // Init helper bitboards
 
   e->pawn_takes[WC] = GetWPControl(PcBb(p, WC, P));
   e->pawn_takes[BC] = GetWPControl(PcBb(p, BC, P));
 
-  // run eval subroutines
+  // Run eval subroutines
 
   ScorePieces(p, e, WC);
   ScorePieces(p, e, BC);
@@ -343,7 +353,16 @@ int cEngine::Evaluate(POS *p, eData *e) {
   ScoreKing(p, e, WC);
   ScoreKing(p, e, BC);
 
-  int score = Interpolate(p,e);
+  // Interpolate between midgame and endgame score
+
+  int score = Interpolate(p, e);
+
+  // Take care of drawish positions
+
+  int scale = 64;
+  if (score > 0) scale = GetDrawFactor(p, WC);
+  if (score < 0) scale = GetDrawFactor(p, BC);
+  score = (score * scale) / 64;
 
   // Make sure eval does not exceed mate score
 
