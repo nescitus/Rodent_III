@@ -363,6 +363,17 @@ int cEngine::IsDraw(POS *p) {
     if (p->key == p->rep_list[p->head - i])
       return 1;
 
+  // DRAW BY INSUFFICIENT MATERIAL
+
+ if (p->cnt[WC][Q] + p->cnt[BC][Q] + p->cnt[WC][R] + p->cnt[BC][R] == 0) {
+
+    if (!Illegal(p)) {
+      if (p->cnt[WC][P] + p->cnt[BC][P] == 0) {
+        if (p->cnt[WC][N] + p->cnt[BC][N] + p->cnt[WC][B] + p->cnt[BC][B] < 2) return 1; // KK, KmK
+      }
+    }
+  }
+
   // DEFAULT: NO DRAW
 
   return 0;
