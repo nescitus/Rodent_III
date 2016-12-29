@@ -161,7 +161,8 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   // NULL MOVE
 
   if (depth > 1 
-  && !was_null 
+  && !was_null
+  && !is_pv
   && !fl_check 
   && MayNull(p)) {
     if (beta <= Evaluate(p, &e)) {
