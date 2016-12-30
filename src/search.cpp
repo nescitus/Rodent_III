@@ -161,6 +161,19 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   fl_check = InCheck(p);
 
+  // Beta pruning / static null move
+
+  if (!fl_check
+	  && !is_pv
+	  && alpha > -MAX_EVAL
+	  && beta < MAX_EVAL
+  && depth <= 3                  // TODO: Tune me!
+  && !was_null) {
+	  int eval = Evaluate(p, &e);
+    int sc = eval - 120 * depth; // TODO: Tune me!
+    if (sc > beta) return sc;
+  }
+
   // NULL MOVE
 
   if (depth > 1 
