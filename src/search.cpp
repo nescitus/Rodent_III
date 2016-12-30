@@ -150,6 +150,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   move = 0;
 
   if (TransRetrieve(p->key, &move, &score, alpha, beta, depth, ply)) {
+    if (score > beta && move > 0) UpdateHist(p, move, depth, ply);
     if (!is_pv) return score;
   }
 
