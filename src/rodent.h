@@ -175,6 +175,8 @@ typedef class {
 public:
   int mg_pst[2][6][64];
   int eg_pst[2][6][64];
+  int np_table[9];
+  int rp_table[9];
   void Init(void);
 } cParam;
 

@@ -46,8 +46,15 @@ void cParam::Init(void) {
       eg_pst[sd][Q][REL_SQ(sq, sd)] = 975 + ((pstQueenEg[pst_type][sq] * perc) / 100);
       mg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingMg[pst_type][sq] * perc) / 100);
       eg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingEg[pst_type][sq] * perc) / 100);
-
     }
+  }
+
+  // Init tables for adjusting piece values 
+  // according to the number of own pawns
+
+  for (int i = 0; i < 9; i++) {
+    np_table[i] = adj[i] * 6; // TODO: make 6 a variable
+    rp_table[i] = adj[i] * 3; // TODO: make 3 a varialbe
   }
 
   // Init support mask (for detecting weak pawns)
@@ -76,13 +83,22 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
   int op, sq, ksq, cnt;
   int att = 0;
   int wood = 0;
+
+  // Init score with data from board class
+
   e->mg_sc[sd] = p->mg_sc[sd];
   e->eg_sc[sd] = p->eg_sc[sd];
 
-  // Bishop pair
+  // Material adjustment
 
-  if (PopCnt(PcBb(p, sd, B)) == 2)
-    Add(e, sd, 50, 50);
+  int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]   // knights lose value as pawns disappear
+	      - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];  // rooks gain value as pawns disappear
+
+  if (p->cnt[sd][B] == 2) tmp += 50;                      // bishop pair
+  if (p->cnt[sd][N] == 2) tmp -= 10;                      // knight pair
+  if (p->cnt[sd][R] == 2) tmp -= 5;                       // rook pair
+
+  Add(e, sd, tmp, tmp);
 
   // Init variables
 
