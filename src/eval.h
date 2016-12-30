@@ -416,3 +416,26 @@ static const int pstKingEg[3][64] = {
  -53, -30, -14,  -8,  -8, -14, -30, -53 }
 //A8                                 H8
 };
+
+// parameters for evaluating material imbalance [5+9+2]
+
+#define A  80 // advantage in both major and minor pieces
+#define Rk 60 // advantage in major pieces only
+#define Nt 45 // advantage in minor pieces only
+#define Ex 25 // exchange disadvantage
+#define Mm 60 // two minors for a rook 
+
+static const int adj[9] = { -4, -3, -2, -1, 0,  1,  2,  3,  4 };
+
+static const int imbalance[9][9] = {
+    /* n=-4  n=-3  n=-2  n=-1  n=0   n=+1  n=+2  n=+3  n=+4 */
+    {  -A,   -A,   -A,   -A,  -Rk,    0,    0,    0,    0 }, // R = -4
+    {  -A,   -A,   -A,   -A,  -Rk,    0,    0,    0,    0 }, // R = -3
+    {  -A,   -A,   -A,   -A,  -Rk,    0,    0,    0,    0 }, // R = -2
+    {  -A,   -A,   -A,   -A,  -Rk,  -Ex,   Mm,    0,    0 }, // R = -1
+    { -Nt,   -Nt, -Nt,  -Nt,    0,   Nt,   Nt,   Nt,   Nt }, // R =  0
+    {   0,    0,  -Mm,   Ex,   Rk,    A,    A,    A,    A }, // R = +1
+    {   0,    0,    0,    0,   Rk,    A,    A,    A,    A }, // R = +2
+    {   0,    0,    0,    0,   Rk,    A,    A,    A,    A }, // R = +3
+    {   0,    0,    0,    0,   Rk,    A,    A,    A,    A }  // R = +4
+};

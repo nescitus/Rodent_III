@@ -34,8 +34,8 @@ void cParam::Init(void) {
   for (int sq = 0; sq < 64; sq++) {
     for (int sd = 0; sd < 2; sd++) {
 
-      mg_pst[sd][P][REL_SQ(sq, sd)] = 70 + ((pstPawnMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][P][REL_SQ(sq, sd)] = 90 + ((pstPawnEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][P][REL_SQ(sq, sd)] = 100 + ((pstPawnMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][P][REL_SQ(sq, sd)] = 100 + ((pstPawnEg[pst_type][sq] * perc) / 100);
       mg_pst[sd][N][REL_SQ(sq, sd)] = 325 + ((pstKnightMg[pst_type][sq] * perc) / 100);
       eg_pst[sd][N][REL_SQ(sq, sd)] = 325 + ((pstKnightEg[pst_type][sq] * perc) / 100);
       mg_pst[sd][B][REL_SQ(sq, sd)] = 325 + ((pstBishopMg[pst_type][sq] * perc) / 100);
@@ -356,6 +356,19 @@ int cEngine::Evaluate(POS *p, eData *e) {
   // Interpolate between midgame and endgame score
 
   int score = Interpolate(p, e);
+
+  // Material imbalance evaluation
+
+  int minorBalance = p->cnt[WC][N] - p->cnt[BC][N] + p->cnt[WC][B] - p->cnt[BC][B];
+  int majorBalance = p->cnt[WC][R] - p->cnt[BC][R] + 2 * p->cnt[WC][Q] - 2 * p->cnt[BC][Q];
+
+  int x = Max(majorBalance + 4, 0);
+  if (x > 8) x = 8;
+
+  int y = Max(minorBalance + 4, 0);
+  if (y > 8) y = 8;
+
+  score += imbalance[x][y];
 
   // Take care of drawish positions
 
