@@ -417,6 +417,30 @@ static const int pstKingEg[3][64] = {
 //A8                                 H8
 };
 
+static const int pstKnightOutpost[64] =
+{
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   2,   3,   6,   6,   3,   2,   0,
+  0,   2,   6,   9,   9,   6,   2,   0,
+  0,   3,   9,  12,  12,   9,   3,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0
+};
+
+static const int pstBishopOutpost[64] =
+{
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   1,   2,   4,   4,   2,   1,   0,
+  0,   1,   4,   6,   6,   4,   1,   0,
+  0,   2,   6,   8,   8,   6,   2,   0,
+  0,   0,   0,   0,   0,   0,   0,   0,
+  0,   0,   0,   0,   0,   0,   0,   0
+};
+
 // parameters for evaluating material imbalance [5+9+2]
 
 #define A  80 // advantage in both major and minor pieces

@@ -46,10 +46,12 @@ void UciLoop(void) {
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.034\n");
+      printf("id name Rodent III 0.035\n");
+	  //printf("id name Skeleton 1.0\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
+	  printf("option name Hash type spin default 16 min 1 max 4096\n");
 	  printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
-      printf("option name Hash type spin default 16 min 1 max 4096\n");
+	  printf("option name Material type spin default %d min 0 max 500\n", Par.mat_weight);
       printf("option name Clear Hash type button\n");
       printf("uciok\n");
     } else if (strcmp(token, "isready") == 0) {
@@ -101,6 +103,9 @@ void ParseSetoption(char *ptr) {
     ClearTrans();
   } else if (strcmp(name, "Threads") == 0) {
     thread_no = (atoi(value));
+  } else if (strcmp(name, "Material") == 0) {
+    Par.mat_weight = (atoi(value));
+	Par.Init();
   }
 }
 

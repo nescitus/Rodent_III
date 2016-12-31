@@ -3,6 +3,7 @@
 #include <math.h>
 #include "rodent.h"
 
+int search_skill = 100;
 int razor_margin[5] = { 0, 300, 360, 420, 480 };
 double lmr_size[2][MAX_PLY][MAX_MOVES];
 
@@ -90,7 +91,10 @@ void cEngine::Iterate(POS *p, int *pv) {
 
   for (root_depth = 1; root_depth <= search_depth; root_depth++) {
     printf("info depth %d\n", root_depth);
-	cur_val = Widen(p, root_depth, pv, val);
+
+	if (search_skill > 6) cur_val = Widen(p, root_depth, pv, val);
+	else                  cur_val = Search(p, 0, -INF, INF, root_depth, 0, pv);
+
     if (abort_search) break;
 	else depth_reached = root_depth;
 	val = cur_val;
@@ -151,7 +155,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   if (TransRetrieve(p->key, &move, &score, alpha, beta, depth, ply)) {
     if (score > beta && move > 0) UpdateHist(p, move, depth, ply);
-    if (!is_pv) return score;
+    if (!is_pv && search_skill > 0) return score;
   }
 
   // SAFEGUARD AGAINST REACHING MAX_PLY LIMIT
@@ -164,12 +168,13 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   // Beta pruning / static null move
 
   if (!fl_check
-	  && !is_pv
-	  && alpha > -MAX_EVAL
-	  && beta < MAX_EVAL
+  && !is_pv
+  && search_skill > 4
+  && alpha > -MAX_EVAL
+  && beta < MAX_EVAL
   && depth <= 3                  // TODO: Tune me!
   && !was_null) {
-	  int eval = Evaluate(p, &e);
+    int eval = Evaluate(p, &e);
     int sc = eval - 120 * depth; // TODO: Tune me!
     if (sc > beta) return sc;
   }
@@ -178,6 +183,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   if (depth > 1 
   && !was_null
+  && search_skill > 1
   && !is_pv
   && !fl_check 
   && MayNull(p)) {
@@ -195,6 +201,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   if (!was_null
   && !fl_check
+  && search_skill > 5
   && !move
   && alpha > -MAX_EVAL
   && beta < MAX_EVAL
@@ -233,6 +240,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     && !is_pv
     && alpha > -MAX_EVAL
     && beta < MAX_EVAL
+    && search_skill > 3
     && depth < 4
     && quiet_tried > 3 * depth
     && !InCheck(p)
@@ -247,6 +255,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     if (depth > 2
     && mv_tried > 3
+    && search_skill > 2
     && !fl_check
 	&& lmr_size[is_pv][depth][mv_tried] > 0
     && !InCheck(p)

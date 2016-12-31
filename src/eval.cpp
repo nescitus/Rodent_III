@@ -26,6 +26,10 @@ static const U64 bbKSCastle[2] = { SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | S
 
 static const U64 bbCentralFile = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
+void cParam::Default(void) {
+  mat_weight = 100;
+}
+
 void cParam::Init(void) {
 
   int pst_type = 1; // try 2 with higher pawn value
@@ -34,18 +38,21 @@ void cParam::Init(void) {
   for (int sq = 0; sq < 64; sq++) {
     for (int sd = 0; sd < 2; sd++) {
 
-      mg_pst[sd][P][REL_SQ(sq, sd)] = 100 + ((pstPawnMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][P][REL_SQ(sq, sd)] = 100 + ((pstPawnEg[pst_type][sq] * perc) / 100);
-      mg_pst[sd][N][REL_SQ(sq, sd)] = 325 + ((pstKnightMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][N][REL_SQ(sq, sd)] = 325 + ((pstKnightEg[pst_type][sq] * perc) / 100);
-      mg_pst[sd][B][REL_SQ(sq, sd)] = 325 + ((pstBishopMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][B][REL_SQ(sq, sd)] = 325 + ((pstBishopEg[pst_type][sq] * perc) / 100);
-      mg_pst[sd][R][REL_SQ(sq, sd)] = 500 + ((pstRookMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][R][REL_SQ(sq, sd)] = 500 + ((pstRookEg[pst_type][sq] * perc) / 100);
-      mg_pst[sd][Q][REL_SQ(sq, sd)] = 975 + ((pstQueenMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][Q][REL_SQ(sq, sd)] = 975 + ((pstQueenEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][P][REL_SQ(sq, sd)] = ((100 * Par.mat_weight) / 100) + ((pstPawnMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][P][REL_SQ(sq, sd)] = ((100 * Par.mat_weight) / 100) + ((pstPawnEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][N][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstKnightMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][N][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstKnightEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][B][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstBishopMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][B][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstBishopEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][R][REL_SQ(sq, sd)] = ((500 * Par.mat_weight) / 100) + ((pstRookMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][R][REL_SQ(sq, sd)] = ((500 * Par.mat_weight) / 100) + ((pstRookEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][Q][REL_SQ(sq, sd)] = ((975 * Par.mat_weight) / 100) + ((pstQueenMg[pst_type][sq] * perc) / 100);
+      eg_pst[sd][Q][REL_SQ(sq, sd)] = ((975 * Par.mat_weight) / 100) + ((pstQueenEg[pst_type][sq] * perc) / 100);
       mg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingMg[pst_type][sq] * perc) / 100);
       eg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingEg[pst_type][sq] * perc) / 100);
+
+	  sp_pst[sd][N][REL_SQ(sq, sd)] = pstKnightOutpost[sq];
+	  sp_pst[sd][B][REL_SQ(sq, sd)] = pstBishopOutpost[sq];
     }
   }
 
@@ -98,6 +105,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
   if (p->cnt[sd][N] == 2) tmp -= 10;                      // knight pair
   if (p->cnt[sd][R] == 2) tmp -= 5;                       // rook pair
 
+  tmp = ((tmp * Par.mat_weight) / 100);
+
   Add(e, sd, tmp, tmp);
 
   // Init variables
@@ -130,6 +139,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     cnt = PopCnt(bb_control &~e->pawn_takes[op]);
     Add(e, sd, 4 * (cnt-4), 4 * (cnt-4));
+
+	ScoreOutpost(p, e, sd, N, sq);
   }
 
   // BISHOP EVAL
@@ -151,6 +162,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     bb_control = BAttacks(OccBb(p), sq);
     cnt = PopCnt(bb_control);
     Add(e, sd, 5 * (cnt - 7),  5 * (cnt - 7));
+
+	ScoreOutpost(p, e, sd, B, sq);
   }
 
   // ROOK EVAL
@@ -319,6 +332,30 @@ int cEngine::EvalFileStorm(U64 bbOppPawns, int sd) {
   return 0;
 }
 
+void cEngine::ScoreOutpost(POS * p, eData * e, int sd, int pc, int sq) {
+
+  int mul = 0;
+  int tmp = Par.sp_pst[sd][pc][sq];
+  if (tmp) {
+    if (SqBb(sq) & ~e->pawn_can_take[Opp(sd)]) mul += 2;  // in the hole of enemy pawn structure
+    if (SqBb(sq) & e->pawn_takes[sd]) mul += 1;           // defended by own pawn
+    if (SqBb(sq) & e->two_pawns_take[sd]) mul += 1;       // defended by two pawns
+
+    tmp *= mul;
+    tmp /= 2;
+
+    Add(e, sd, tmp);
+  }
+
+  // Pawn in front of a minor
+
+  if (SqBb(sq) & bbHomeZone[sd]) {
+    U64 bbStop = ShiftFwd(SqBb(sq), sd);
+    if (bbStop & PcBb(p, sd, P))
+      Add(e, sd, 5);
+  }
+}
+
 void cEngine::ScorePatterns(POS * p, eData * e) {
 
   U64 king_mask, rook_mask;
@@ -475,7 +512,11 @@ int cEngine::Evaluate(POS *p, eData *e) {
   // Init helper bitboards
 
   e->pawn_takes[WC] = GetWPControl(PcBb(p, WC, P));
-  e->pawn_takes[BC] = GetWPControl(PcBb(p, BC, P));
+  e->pawn_takes[BC] = GetBPControl(PcBb(p, BC, P));
+  e->two_pawns_take[WC] = GetDoubleWPControl(PcBb(p, WC, P));
+  e->two_pawns_take[BC] = GetDoubleBPControl(PcBb(p, BC, P));
+  e->pawn_can_take[WC] = FillNorth(e->pawn_takes[WC]);
+  e->pawn_can_take[BC] = FillSouth(e->pawn_takes[BC]);
 
   // Run eval subroutines
 

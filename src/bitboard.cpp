@@ -56,6 +56,20 @@ U64 GetBPControl(U64 bb) {
   return (ShiftSE(bb) | ShiftSW(bb));
 }
 
+U64 GetDoubleWPControl(U64 bb) {
+	return (ShiftNE(bb) & ShiftNW(bb));
+}
+
+U64 GetDoubleBPControl(U64 bb) {
+	return (ShiftSE(bb) & ShiftSW(bb));
+}
+
+U64 ShiftFwd(U64 bb, int sd) {
+
+	if (sd == WC) return ShiftNorth(bb);
+	return ShiftSouth(bb);
+}
+
 U64 ShiftSideways(U64 bb) {
   return (ShiftWest(bb) | ShiftEast(bb));
 }

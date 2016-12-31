@@ -1,6 +1,7 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 2206 lines
 // d.18: 30.661.567 nodes in 19,4 s
+// 38,5/100 vs Fruit 2.1
 
 enum eColor {WC, BC, NO_CL};
 enum ePieceType {P, N, B, R, Q, K, NO_TP};
@@ -124,6 +125,12 @@ typedef unsigned long long U64;
 static const U64 bbRelRank[2][8] = { { RANK_1_BB, RANK_2_BB, RANK_3_BB, RANK_4_BB, RANK_5_BB, RANK_6_BB, RANK_7_BB, RANK_8_BB },
                                      { RANK_8_BB, RANK_7_BB, RANK_6_BB, RANK_5_BB, RANK_4_BB, RANK_3_BB, RANK_2_BB, RANK_1_BB } };
 
+static const U64 bbHomeZone[2] = { RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB,
+                                   RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB };
+
+static const U64 bbAwayZone[2] = { RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB,
+                                   RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB };
+
 typedef struct {
   U64 cl_bb[2];
   U64 tp_bb[6];
@@ -177,9 +184,12 @@ typedef class {
 public:
   int mg_pst[2][6][64];
   int eg_pst[2][6][64];
+  int sp_pst[2][6][64];
   int np_table[9];
   int rp_table[9];
+  int mat_weight;
   void Init(void);
+  void Default(void);
 } cParam;
 
 extern cParam Par;
@@ -188,6 +198,8 @@ typedef struct {
   int mg_sc[2];
   int eg_sc[2];
   int pawn_takes[2];
+  int pawn_can_take[2];
+  int two_pawns_take[2];
 } eData;
 
 struct sEvalHashEntry {
@@ -211,6 +223,7 @@ public:
   void ScoreKing(POS *p, eData *e, int sd);
   void ScorePawns(POS *p, eData *e, int sd);
   void ScorePieces(POS *p, eData *e, int sd);
+  void ScoreOutpost(POS * p, eData * e, int sd, int pc, int sq);
   void ScorePatterns(POS * p, eData * e);
   int EvalKingFile(POS * p, int sd, U64 bbFile);
   int EvalFileShelter(U64 bbOwnPawns, int sd);
@@ -269,6 +282,9 @@ int GetMS(void);
 int GetNps(int elapsed);
 U64 GetWPControl(U64 bb);
 U64 GetBPControl(U64 bb);
+U64 GetDoubleWPControl(U64 bb);
+U64 GetDoubleBPControl(U64 bb);
+U64 ShiftFwd(U64 bb, int sd);
 void Init(void);
 void InitSearch(void);
 int InputAvailable(void);
