@@ -2,13 +2,14 @@
 // 2206 lines
 // d.18: 30.661.567 nodes in 19,4 s
 
-enum {WC, BC, NO_CL};
-enum {P, N, B, R, Q, K, NO_TP};
-enum {WP, BP, WN, BN, WB, BB, WR, BR, WQ, BQ, WK, BK, NO_PC};
+enum eColor {WC, BC, NO_CL};
+enum ePieceType {P, N, B, R, Q, K, NO_TP};
+enum ePiece {WP, BP, WN, BN, WB, BB, WR, BR, WQ, BQ, WK, BK, NO_PC};
 enum eFile {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H};
 enum eRank {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8};
 enum eMoveType  {NORMAL, CASTLE, EP_CAP, EP_SET, N_PROM, B_PROM, R_PROM, Q_PROM};
 enum eMoveFlag  { MV_NORMAL, MV_HASH, MV_CAPTURE, MV_KILLER, MV_BADCAPT };
+enum eCastleFlag { W_KS = 1, W_QS = 2, B_KS = 4, B_QS = 8 };
 enum eHashEntry {NONE, UPPER, LOWER, EXACT};
 enum {
   A1, B1, C1, D1, E1, F1, G1, H1,
@@ -89,6 +90,7 @@ enum {
 #define UnoccBb(p)      (~OccBb(p))
 #define TpOnSq(p, x)    (Tp((p)->pc[x]))
 #define KingSq(p, x)    ((p)->king_sq[x])
+#define IsOnSq(p, sd, pc, sq) ( PcBb(p, sd, pc) & SqBb(sq) )
 
 #define RankIndex(o, x) (((o) >> ((070 & (x)) + 1)) & 63)
 #define FileIndex(o, x) (((FILE_A_BB & ((o) >> File(x))) * DIAG_B8H2_BB) >> 58)
@@ -209,12 +211,14 @@ public:
   void ScoreKing(POS *p, eData *e, int sd);
   void ScorePawns(POS *p, eData *e, int sd);
   void ScorePieces(POS *p, eData *e, int sd);
+  void ScorePatterns(POS * p, eData * e);
   int EvalKingFile(POS * p, int sd, U64 bbFile);
   int EvalFileShelter(U64 bbOwnPawns, int sd);
   int EvalFileStorm(U64 bbOppPawns, int sd);
   int GetDrawFactor(POS * p, int sd);
   int Interpolate(POS * p, eData *e);
   void Add(eData *e, int sd, int mg, int eg);
+  void Add(eData *e, int sd, int val);
 
   void Think(POS *p, int *pv);
   void Iterate(POS *p, int *pv);
