@@ -126,7 +126,7 @@ int cEngine::Widen(POS *p, int depth, int * pv, int lastScore) {
 
 int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv) {
 
-  int best, score, move, new_depth, reduction, fl_check, new_pv[MAX_PLY];
+  int best, score, move, new_depth, reduction, fl_check, fl_prunable_node, new_pv[MAX_PLY];
   int is_pv = (alpha != beta - 1);
   int mv_type;
   int mv_tried = 0;
@@ -165,13 +165,17 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   fl_check = InCheck(p);
 
-  // Beta pruning / static null move
+  // CAN WE PRUNE THIS NODE?
 
-  if (!fl_check
-  && !is_pv
+  fl_prunable_node = !fl_check 
+                   && !is_pv 
+                   && alpha > -MAX_EVAL
+                   && beta < MAX_EVAL;
+
+  // BETA PRUNUNG / STATIC NULL MOVE
+
+  if (fl_prunable_node
   && search_skill > 4
-  && alpha > -MAX_EVAL
-  && beta < MAX_EVAL
   && depth <= 3                  // TODO: Tune me!
   && !was_null) {
     int eval = Evaluate(p, &e);
@@ -199,12 +203,12 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     }
   }
 
-  if (!was_null
-  && !fl_check
+  // RAZORING
+
+  if (fl_prunable_node
+  && !was_null
   && search_skill > 5
   && !move
-  && alpha > -MAX_EVAL
-  && beta < MAX_EVAL
   && !(PcBb(p, p->side, P) & bbRelRank[p->side][RANK_7]) // no pawns to promote in one move
   && depth <= 4) {
 	int eval = Evaluate(p, &e);
@@ -236,10 +240,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     // LATE MOVE PRUNING
 
-    if (!fl_check
-    && !is_pv
-    && alpha > -MAX_EVAL
-    && beta < MAX_EVAL
+    if (fl_prunable_node
     && search_skill > 3
     && depth < 4
     && quiet_tried > 3 * depth

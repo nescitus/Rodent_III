@@ -1,7 +1,7 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2206 lines
-// d.18: 30.661.567 nodes in 19,4 s
-// 38,5/100 vs Fruit 2.1
+// 2708 lines
+// d.18: 14.780.442 nodes in 9,9 s
+// 46,5% vs Fruit 2.1
 
 enum eColor {WC, BC, NO_CL};
 enum ePieceType {P, N, B, R, Q, K, NO_TP};

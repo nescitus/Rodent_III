@@ -32,7 +32,7 @@ void cParam::Default(void) {
 
 void cParam::Init(void) {
 
-  int pst_type = 1; // try 2 with higher pawn value
+  int pst_type = 2;
   int perc = 100;
 
   for (int sq = 0; sq < 64; sq++) {
