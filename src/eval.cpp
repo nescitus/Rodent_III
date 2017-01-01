@@ -28,32 +28,39 @@ static const U64 bbCentralFile = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
 void cParam::Default(void) {
   mat_weight = 100;
+  placement_weight = 100;
 }
 
 void cParam::Init(void) {
 
   int pst_type = 2;
-  int perc = 100;
 
   for (int sq = 0; sq < 64; sq++) {
     for (int sd = 0; sd < 2; sd++) {
 
-      mg_pst[sd][P][REL_SQ(sq, sd)] = ((100 * Par.mat_weight) / 100) + ((pstPawnMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][P][REL_SQ(sq, sd)] = ((100 * Par.mat_weight) / 100) + ((pstPawnEg[pst_type][sq] * perc) / 100);
-      mg_pst[sd][N][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstKnightMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][N][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstKnightEg[pst_type][sq] * perc) / 100);
-      mg_pst[sd][B][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstBishopMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][B][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstBishopEg[pst_type][sq] * perc) / 100);
-      mg_pst[sd][R][REL_SQ(sq, sd)] = ((500 * Par.mat_weight) / 100) + ((pstRookMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][R][REL_SQ(sq, sd)] = ((500 * Par.mat_weight) / 100) + ((pstRookEg[pst_type][sq] * perc) / 100);
-      mg_pst[sd][Q][REL_SQ(sq, sd)] = ((975 * Par.mat_weight) / 100) + ((pstQueenMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][Q][REL_SQ(sq, sd)] = ((975 * Par.mat_weight) / 100) + ((pstQueenEg[pst_type][sq] * perc) / 100);
-      mg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingMg[pst_type][sq] * perc) / 100);
-      eg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingEg[pst_type][sq] * perc) / 100);
+      mg_pst[sd][P][REL_SQ(sq, sd)] = ((100 * Par.mat_weight) / 100) + ((pstPawnMg[pst_type][sq] * Par.placement_weight) / 100);
+      eg_pst[sd][P][REL_SQ(sq, sd)] = ((100 * Par.mat_weight) / 100) + ((pstPawnEg[pst_type][sq] * Par.placement_weight) / 100);
+      mg_pst[sd][N][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstKnightMg[pst_type][sq] * Par.placement_weight) / 100);
+      eg_pst[sd][N][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstKnightEg[pst_type][sq] * Par.placement_weight) / 100);
+      mg_pst[sd][B][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstBishopMg[pst_type][sq] * Par.placement_weight) / 100);
+      eg_pst[sd][B][REL_SQ(sq, sd)] = ((325 * Par.mat_weight) / 100) + ((pstBishopEg[pst_type][sq] * Par.placement_weight) / 100);
+      mg_pst[sd][R][REL_SQ(sq, sd)] = ((500 * Par.mat_weight) / 100) + ((pstRookMg[pst_type][sq] * Par.placement_weight) / 100);
+      eg_pst[sd][R][REL_SQ(sq, sd)] = ((500 * Par.mat_weight) / 100) + ((pstRookEg[pst_type][sq] * Par.placement_weight) / 100);
+      mg_pst[sd][Q][REL_SQ(sq, sd)] = ((975 * Par.mat_weight) / 100) + ((pstQueenMg[pst_type][sq] * Par.placement_weight) / 100);
+      eg_pst[sd][Q][REL_SQ(sq, sd)] = ((975 * Par.mat_weight) / 100) + ((pstQueenEg[pst_type][sq] * Par.placement_weight) / 100);
+      mg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingMg[pst_type][sq] * Par.placement_weight) / 100);
+      eg_pst[sd][K][REL_SQ(sq, sd)] = ((pstKingEg[pst_type][sq] * Par.placement_weight) / 100);
 
 	  sp_pst[sd][N][REL_SQ(sq, sd)] = pstKnightOutpost[sq];
 	  sp_pst[sd][B][REL_SQ(sq, sd)] = pstBishopOutpost[sq];
     }
+  }
+
+  // Init king attack table
+
+  for (int t = 0, i = 1; i < 511; ++i) {
+    t = Min(1280.0, Min(int(0.027 * i * i), t + 8.0));
+    danger[i] = (t * 100) / 256; // rescale to centipawns
   }
 
   // Init tables for adjusting piece values 
@@ -89,7 +96,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
   U64 bb_pieces, bb_attacks, bb_control;
   int op, sq, ksq, cnt;
   int att = 0;
-  int wood = 0;
 
   // Init score with data from board class
 
@@ -113,6 +119,10 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   op = Opp(sd);
   ksq = KingSq(p, op);
+  U64 n_checks = n_attacks[ksq] & ~p->cl_bb[sd] & ~e->pawn_takes[op];
+  U64 b_checks = BAttacks(OccBb(p), ksq) & ~p->cl_bb[sd] & ~e->pawn_takes[op];
+  U64 r_checks = RAttacks(OccBb(p), ksq) & ~p->cl_bb[sd] & ~e->pawn_takes[op];
+  U64 q_checks = r_checks & b_checks;
 
   // Init enemy king zone for attack evaluation. We mark squares where the king
   // can move plus two or three more squares facing enemy position.
@@ -129,11 +139,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     // knight king attack score
 
     bb_control = n_attacks[sq] & ~p->cl_bb[sd];
-
-    if (bb_control & bb_zone) {
-      wood++;
-      att += 1;
-    }
+	att += 6 * PopCnt(bb_control & bb_zone);
+	if (bb_control & ~p->cl_bb[sd] & n_checks) att += 4;                   // check threats
 
     // knight mobility score
 
@@ -152,14 +159,12 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     // bishop king attack score
 
     bb_attacks = BAttacks(OccBb(p) ^ PcBb(p, sd, Q), sq);
-    if (bb_attacks & bb_zone) {
-      wood++;
-      att += 1;
-    }
+	att += 6 * PopCnt(bb_attacks & bb_zone);
 
     // bishop mobility score
 
     bb_control = BAttacks(OccBb(p), sq);
+	if (bb_control & ~p->cl_bb[sd] & b_checks) att += 4;
     cnt = PopCnt(bb_control);
     Add(e, sd, 5 * (cnt - 7),  5 * (cnt - 7));
 
@@ -175,14 +180,12 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
    // rook king attack score
 
     bb_attacks = RAttacks(OccBb(p) ^ PcBb(p, sd, Q) ^ PcBb(p, sd, R), sq);
-    if (bb_attacks & bb_zone) {
-      wood++;
-      att += 2;
-    }
+	att += 9 * PopCnt(bb_attacks & bb_zone);
 
     // rook mobility score
 
     bb_control = RAttacks(OccBb(p), sq);
+	if (bb_control & ~p->cl_bb[sd] & r_checks) att += 9;
     cnt = PopCnt(bb_control);
     Add(e, sd, 2 * (cnt - 7), 4 * (cnt - 7));
 
@@ -214,22 +217,20 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     bb_attacks  = BAttacks(OccBb(p) ^ PcBb(p, sd, B) ^ PcBb(p, sd, Q), sq);
     bb_attacks |= RAttacks(OccBb(p) ^ PcBb(p, sd, R) ^ PcBb(p, sd, Q), sq);
-    if (bb_attacks & bb_zone) {
-      wood++;
-      att += 4;
-    }
+	att += 15 * PopCnt(bb_attacks & bb_zone);
 
     // queen mobility score
 
 	bb_control = QAttacks(OccBb(p), sq);
+	if (bb_control & ~p->cl_bb[sd] & q_checks) att += 12;
     cnt = PopCnt(bb_control);
     Add(e, sd, 1 * (cnt - 14), 2 * (cnt - 14));
   }
 
-  // king attack - 
+  // king attack
 
   if (PcBb(p, sd, Q)) {
-    int att_score = (att * 20 * att_weight[wood]) / 256;
+    int att_score = Par.danger[att];
     Add(e, sd, att_score, att_score);
   }
 

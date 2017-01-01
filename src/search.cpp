@@ -176,20 +176,19 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   if (fl_prunable_node
   && search_skill > 4
-  && depth <= 3                  // TODO: Tune me!
+  && depth <= 3
   && !was_null) {
     int eval = Evaluate(p, &e);
-    int sc = eval - 120 * depth; // TODO: Tune me!
+    int sc = eval - 120 * depth;
     if (sc > beta) return sc;
   }
 
   // NULL MOVE
 
-  if (depth > 1 
-  && !was_null
+  if (fl_prunable_node
   && search_skill > 1
-  && !is_pv
-  && !fl_check 
+  && depth > 1
+  && !was_null
   && MayNull(p)) {
     if (beta <= Evaluate(p, &e)) {
       DoNull(p, u);
