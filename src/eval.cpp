@@ -94,7 +94,7 @@ void cParam::Init(void) {
 void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   U64 bb_pieces, bb_attacks, bb_control;
-  int op, sq, ksq, cnt;
+  int op, sq, ksq, cnt, own_pawn_cnt, opp_pawn_cnt;
   int att = 0;
 
   // Init score with data from board class
@@ -168,7 +168,21 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     cnt = PopCnt(bb_control);
     Add(e, sd, 5 * (cnt - 7),  5 * (cnt - 7));
 
+	// bishop outpost
+
 	ScoreOutpost(p, e, sd, B, sq);
+
+    // pawns on the same square color as our bishop
+  
+    if (bbWhiteSq & SqBb(sq)) {
+      own_pawn_cnt = PopCnt(bbWhiteSq & PcBb(p, sd, P)) - 4;
+      opp_pawn_cnt = PopCnt(bbWhiteSq & PcBb(p, op, P)) - 4;
+    } else {
+      own_pawn_cnt = PopCnt(bbBlackSq & PcBb(p, sd, P)) - 4;
+      opp_pawn_cnt = PopCnt(bbBlackSq & PcBb(p, op, P)) - 4;
+    }
+
+	Add(e, sd, -3 * own_pawn_cnt - opp_pawn_cnt);
   }
 
   // ROOK EVAL
