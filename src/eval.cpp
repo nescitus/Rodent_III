@@ -28,12 +28,12 @@ static const U64 bbCentralFile = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
 void cParam::Default(void) {
   mat_weight = 100;
-  placement_weight = 100;
+  placement_weight = 80;
 }
 
 void cParam::Init(void) {
 
-  int pst_type = 2;
+  int pst_type = 0;
 
   for (int sq = 0; sq < 64; sq++) {
     for (int sd = 0; sd < 2; sd++) {
