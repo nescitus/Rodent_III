@@ -33,6 +33,7 @@ void cParam::InitPst(void) {
     }
   }
 }
+
 void cParam::Init(void) {
 
   int pst_type = 0;

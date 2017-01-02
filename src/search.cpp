@@ -126,9 +126,9 @@ int cEngine::Widen(POS *p, int depth, int * pv, int lastScore) {
 
 int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv) {
 
-  int best, score, move, new_depth, reduction, fl_check, fl_prunable_node, new_pv[MAX_PLY];
+  int best, score, null_score, move, new_depth, reduction, new_pv[MAX_PLY];
   int is_pv = (alpha != beta - 1);
-  int mv_type;
+  int fl_check, fl_prunable_node, mv_type;
   int eval = 0;
   int mv_tried = 0;
   int quiet_tried = 0;
@@ -197,8 +197,15 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   && !was_null
   && MayNull(p)
   && beta <= eval) {
+
+    new_depth = depth - 3;
+
+    if (TransRetrieve(p->key, &move, &null_score, alpha, beta, new_depth, ply)) {
+      if (null_score < beta) goto avoid_null;
+    }
+
     DoNull(p, u);
-    score = -Search(p, ply + 1, -beta, -beta + 1, depth - 3, 1, new_pv);
+    score = -Search(p, ply + 1, -beta, -beta + 1, new_depth, 1, new_pv);
     UndoNull(p, u);
     if (abort_search) return 0;
     if (score >= beta) {
@@ -206,6 +213,8 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
       return score;
     }
   }
+
+  avoid_null:
 
   // RAZORING
 
