@@ -1,6 +1,6 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 2712 lines
-// d.18: 23.095.122 nodes in 16,6 s
+// d.18: 23.095.122 nodes in 16,4 s
 // 50,0% vs Fruit 2.1
 
 enum eColor {WC, BC, NO_CL};
@@ -61,6 +61,7 @@ enum {
 #define START_POS       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -"
 
 #define SqBb(x)         ((U64)1 << (x))
+#define REL_SQ(sq,cl)   ( sq ^ (cl * 56) )
 
 #define Cl(x)           ((x) & 1)
 #define Tp(x)           ((x) >> 1)
@@ -193,7 +194,10 @@ public:
   int danger[512];
   int mat_weight;
   int placement_weight;
+  int np_bonus;
+  int rp_malus;
   void Init(void);
+  void InitPst(void);
   void Default(void);
 } cParam;
 

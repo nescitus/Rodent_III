@@ -106,10 +106,10 @@ void ParseSetoption(char *ptr) {
     thread_no = (atoi(value));
   } else if (strcmp(name, "Material") == 0) {
     Par.mat_weight = (atoi(value));
-	Par.Init();
+	Par.InitPst();
   } else if (strcmp(name, "PiecePlacement") == 0) {
     Par.placement_weight = (atoi(value));
-	Par.Init();
+	Par.InitPst();
   }
 }
 
