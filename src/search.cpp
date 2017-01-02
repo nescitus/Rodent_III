@@ -128,7 +128,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   int best, score, null_score, move, new_depth, reduction, new_pv[MAX_PLY];
   int is_pv = (alpha != beta - 1);
-  int fl_check, fl_prunable_node, mv_type;
+  int fl_check, fl_prunable_node, fl_prunable_move, mv_type;
   int eval = 0;
   int mv_tried = 0;
   int quiet_tried = 0;
@@ -231,8 +231,6 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     }
   }
 
-// end of razoring code 
-
   // MAIN LOOP
 
   best = -INF;
@@ -246,6 +244,11 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 	mv_tried++;
 	if (mv_type == MV_NORMAL) quiet_tried++;
 
+	// CAN WE PRUNE THIS MOVE?
+
+	fl_prunable_move = !InCheck(p)
+		            && (mv_type == MV_NORMAL);
+
     // SET NEW DEPTH
 
     new_depth = depth - 1 + InCheck(p);
@@ -256,8 +259,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     && search_skill > 3
     && depth < 4
     && quiet_tried > 3 * depth
-    && !InCheck(p)
-    && mv_type == MV_NORMAL) {
+    && fl_prunable_move) {
       UndoMove(p, move, u); continue;
     }
 
@@ -271,8 +273,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     && search_skill > 2
     && !fl_check
 	&& lmr_size[is_pv][depth][mv_tried] > 0
-    && !InCheck(p)
-    && mv_type == MV_NORMAL
+    && fl_prunable_move
     && MoveType(move) != CASTLE) {
       reduction = lmr_size[is_pv][depth][mv_tried];
       new_depth = new_depth - reduction;
