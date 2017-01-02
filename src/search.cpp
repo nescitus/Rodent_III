@@ -129,6 +129,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   int best, score, move, new_depth, reduction, fl_check, fl_prunable_node, new_pv[MAX_PLY];
   int is_pv = (alpha != beta - 1);
   int mv_type;
+  int eval = 0;
   int mv_tried = 0;
   int quiet_tried = 0;
   MOVES m[1];
@@ -172,13 +173,18 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
                    && alpha > -MAX_EVAL
                    && beta < MAX_EVAL;
 
+  // GET NODE EVAL IF WE EXPECT TO PRUNE OR REDUCE
+
+  if (fl_prunable_node
+  && (!was_null || depth <= 4))
+    eval = Evaluate(p, &e);
+
   // BETA PRUNUNG / STATIC NULL MOVE
 
   if (fl_prunable_node
   && search_skill > 4
   && depth <= 3
   && !was_null) {
-    int eval = Evaluate(p, &e);
     int sc = eval - 120 * depth;
     if (sc > beta) return sc;
   }
@@ -189,28 +195,26 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   && search_skill > 1
   && depth > 1
   && !was_null
-  && MayNull(p)) {
-    if (beta <= Evaluate(p, &e)) {
-      DoNull(p, u);
-      score = -Search(p, ply + 1, -beta, -beta + 1, depth - 3, 1, new_pv);
-      UndoNull(p, u);
-      if (abort_search) return 0;
-      if (score >= beta) {
-        TransStore(p->key, 0, score, LOWER, depth, ply);
-        return score;
-      }
+  && MayNull(p)
+  && beta <= eval) {
+    DoNull(p, u);
+    score = -Search(p, ply + 1, -beta, -beta + 1, depth - 3, 1, new_pv);
+    UndoNull(p, u);
+    if (abort_search) return 0;
+    if (score >= beta) {
+      TransStore(p->key, 0, score, LOWER, depth, ply);
+      return score;
     }
   }
 
   // RAZORING
 
   if (fl_prunable_node
-  && !was_null
   && search_skill > 5
+  && !was_null
   && !move
   && !(PcBb(p, p->side, P) & bbRelRank[p->side][RANK_7]) // no pawns to promote in one move
   && depth <= 4) {
-	int eval = Evaluate(p, &e);
     int threshold = beta - razor_margin[depth];
     if (eval < threshold) {
       score = Quiesce(p, ply, alpha, beta, pv);
