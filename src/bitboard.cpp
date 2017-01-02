@@ -1,7 +1,24 @@
 #include "rodent.h"
 
-int PopCnt(U64 bb) {
+#define USE_MM_POPCNT
 
+#if defined(__GNUC__)
+
+int PopCnt(U64 bb) {
+  return __builtin_popcountll(bb);
+}
+
+#elif defined(USE_MM_POPCNT) && defined(_M_AMD64)  // 64 bit windows
+#include <nmmintrin.h>
+
+int PopCnt(U64 bb) {
+  return (int)_mm_popcnt_u64(bb);
+}
+
+#else
+
+int PopCnt(U64 bb) // general purpose population count
+{
   U64 k1 = (U64)0x5555555555555555;
   U64 k2 = (U64)0x3333333333333333;
   U64 k3 = (U64)0x0F0F0F0F0F0F0F0F;
@@ -12,6 +29,8 @@ int PopCnt(U64 bb) {
   bb = (bb + (bb >> 4)) & k3;
   return (bb * k4) >> 56;
 }
+
+#endif
 
 int PopFirstBit(U64 * bb) {
 
@@ -57,17 +76,17 @@ U64 GetBPControl(U64 bb) {
 }
 
 U64 GetDoubleWPControl(U64 bb) {
-	return (ShiftNE(bb) & ShiftNW(bb));
+  return (ShiftNE(bb) & ShiftNW(bb));
 }
 
 U64 GetDoubleBPControl(U64 bb) {
-	return (ShiftSE(bb) & ShiftSW(bb));
+  return (ShiftSE(bb) & ShiftSW(bb));
 }
 
 U64 ShiftFwd(U64 bb, int sd) {
 
-	if (sd == WC) return ShiftNorth(bb);
-	return ShiftSouth(bb);
+  if (sd == WC) return ShiftNorth(bb);
+  return ShiftSouth(bb);
 }
 
 U64 ShiftSideways(U64 bb) {
