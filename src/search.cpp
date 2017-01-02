@@ -5,6 +5,7 @@
 
 int search_skill = 100;
 int razor_margin[5] = { 0, 300, 360, 420, 480 };
+int fut_margin[7] = { 0, 100, 150, 200, 250, 300, 350 };
 double lmr_size[2][MAX_PLY][MAX_MOVES];
 
 void InitSearch(void) {
@@ -96,8 +97,8 @@ void cEngine::Iterate(POS *p, int *pv) {
 	else                  cur_val = Search(p, 0, -INF, INF, root_depth, 0, pv);
 
     if (abort_search) break;
-	else depth_reached = root_depth;
-	val = cur_val;
+    else depth_reached = root_depth;
+    val = cur_val;
   }
 }
 
@@ -129,6 +130,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   int best, score, null_score, move, new_depth, reduction, new_pv[MAX_PLY];
   int is_pv = (alpha != beta - 1);
   int fl_check, fl_prunable_node, fl_prunable_move, mv_type;
+  int fl_futility = 0;
   int eval = 0;
   int mv_tried = 0;
   int quiet_tried = 0;
@@ -176,7 +178,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   // GET NODE EVAL IF WE EXPECT TO PRUNE OR REDUCE
 
   if (fl_prunable_node
-  && (!was_null || depth <= 4))
+  && (!was_null || depth <= 6))
     eval = Evaluate(p, &e);
 
   // BETA PRUNUNG / STATIC NULL MOVE
@@ -237,21 +239,39 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   InitMoves(p, m, move, ply);
   while ((move = NextMove(m, &mv_type))) {
 
+    // SET FUTILITY PRUNING FLAG BEFORE TRYING THE FIRST QUIET MOVE
+
+    if (mv_type == MV_NORMAL 
+    && quiet_tried == 0) {
+      if (fl_prunable_node
+      && depth <= 6) {
+        if (eval + fut_margin[depth] < beta) fl_futility = 1;
+      }
+    }
+
     // MAKE MOVE AND GATHER MOVE STATISTICS
 
     DoMove(p, move, u);
     if (Illegal(p)) { UndoMove(p, move, u); continue; }
-	mv_tried++;
-	if (mv_type == MV_NORMAL) quiet_tried++;
+    mv_tried++;
+    if (mv_type == MV_NORMAL) quiet_tried++;
 
-	// CAN WE PRUNE THIS MOVE?
+    // CAN WE PRUNE THIS MOVE?
 
-	fl_prunable_move = !InCheck(p)
-		            && (mv_type == MV_NORMAL);
+    fl_prunable_move = !InCheck(p)
+                    && (mv_type == MV_NORMAL);
 
     // SET NEW DEPTH
 
     new_depth = depth - 1 + InCheck(p);
+
+    // FUTILITY PRUNINGg
+
+    if (fl_futility
+    &&  fl_prunable_move
+    &&  mv_tried > 1) {
+      UndoMove(p, move, u); continue;
+    }
 
     // LATE MOVE PRUNING
 
@@ -264,7 +284,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     }
 
     // LMR 1: NORMAL MOVES
-	// TODO: alpha/beta <> MAX_EVAL conditions
+    // TODO: alpha/beta <> MAX_EVAL conditions
 
     reduction = 0;
 
@@ -272,7 +292,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     && mv_tried > 3
     && search_skill > 2
     && !fl_check
-	&& lmr_size[is_pv][depth][mv_tried] > 0
+    && lmr_size[is_pv][depth][mv_tried] > 0
     && fl_prunable_move
     && MoveType(move) != CASTLE) {
       reduction = lmr_size[is_pv][depth][mv_tried];
@@ -281,7 +301,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     research:
 
-	// PVS
+    // PVS
 
     if (best == -INF)
       score = -Search(p, ply + 1, -beta, -alpha, new_depth, 0, new_pv);
@@ -291,20 +311,20 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
         score = -Search(p, ply + 1, -beta, -alpha, new_depth, 0, new_pv);
     }
 
-	// DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
+    // DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
 
-	if (score > alpha && reduction) {
-		new_depth = new_depth + reduction;
-		reduction = 0;
-		goto research;
-	}
+    if (score > alpha && reduction) {
+      new_depth = new_depth + reduction;
+      reduction = 0;
+      goto research;
+    }
 
-	// UNMAKE MOVE
+    // UNMAKE MOVE
 
     UndoMove(p, move, u);
     if (abort_search) return 0;
 
-	// BETA CUTOFF
+    // BETA CUTOFF
 
     if (score >= beta) {
       UpdateHist(p, move, depth, ply);
