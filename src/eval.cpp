@@ -474,6 +474,7 @@ int cEngine::Evaluate(POS *p, eData *e) {
   ScorePawns(p, e, BC);
   ScoreKing(p, e, WC);
   ScoreKing(p, e, BC);
+  ScorePatterns(p, e);
 
   // Interpolate between midgame and endgame score
 
