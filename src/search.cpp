@@ -3,6 +3,7 @@
 #include <math.h>
 #include "rodent.h"
 
+int good_hist = 24576;
 int search_skill = 100;
 int razor_margin[5] = { 0, 300, 360, 420, 480 };
 int fut_margin[7] = { 0, 100, 150, 200, 250, 300, 350 };
@@ -129,10 +130,11 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   int best, score, null_score, move, new_depth, reduction, new_pv[MAX_PLY];
   int is_pv = (alpha != beta - 1);
-  int fl_check, fl_prunable_node, fl_prunable_move, mv_type;
+  int fl_check, fl_prunable_node, fl_prunable_move, mv_type, mv_hist_score;
   int fl_futility = 0;
   int eval = 0;
   int mv_tried = 0;
+  int mv_list[256];
   int quiet_tried = 0;
   MOVES m[1];
   UNDO u[1];
@@ -251,15 +253,18 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     // MAKE MOVE AND GATHER MOVE STATISTICS
 
+	mv_hist_score = history[p->pc[Fsq(move)]][Tsq(move)];
     DoMove(p, move, u);
     if (Illegal(p)) { UndoMove(p, move, u); continue; }
+	mv_list[mv_tried] = move;
     mv_tried++;
     if (mv_type == MV_NORMAL) quiet_tried++;
 
     // CAN WE PRUNE THIS MOVE?
 
     fl_prunable_move = !InCheck(p)
-                    && (mv_type == MV_NORMAL);
+                    && (mv_type == MV_NORMAL)
+                    && (mv_hist_score < good_hist);
 
     // SET NEW DEPTH
 
@@ -294,6 +299,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     && !fl_check
     && lmr_size[is_pv][depth][mv_tried] > 0
     && fl_prunable_move
+    && (mv_hist_score < good_hist)
     && MoveType(move) != CASTLE) {
       reduction = lmr_size[is_pv][depth][mv_tried];
       new_depth = new_depth - reduction;
@@ -328,6 +334,8 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     if (score >= beta) {
       UpdateHist(p, move, depth, ply);
+	  for (int mv = 0; mv < mv_tried; mv++)
+		  DecreaseHist(p, mv_list[mv], depth);
       TransStore(p->key, move, score, LOWER, depth, ply);
 
       // At root, change the best move and show the new pv
@@ -361,6 +369,8 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   if (*pv) {
     UpdateHist(p, *pv, depth, ply);
+	for (int mv = 0; mv < mv_tried; mv++)
+      DecreaseHist(p, mv_list[mv], depth);
     TransStore(p->key, *pv, best, EXACT, depth, ply);
   } else
     TransStore(p->key, 0, best, UPPER, depth, ply);
@@ -467,7 +477,7 @@ void cEngine::CheckTimeout(int ply, int *pv) {
 
   if (pv[0] == 0) return; // search has to find a move
 
-  if ((local_nodes & 4095 || root_depth == 1)
+  if ((local_nodes & 2047 || root_depth == 1)
   && ply > 3) return;
 
   if (InputAvailable()) {
