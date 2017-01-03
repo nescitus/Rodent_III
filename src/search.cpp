@@ -477,7 +477,7 @@ void cEngine::CheckTimeout(int ply, int *pv) {
 
   if (pv[0] == 0) return; // search has to find a move
 
-  if ((local_nodes & 2047 || root_depth == 1)
+  if ((local_nodes & 1023 || root_depth == 1)
   && ply > 3) return;
 
   if (InputAvailable()) {

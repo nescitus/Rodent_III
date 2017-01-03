@@ -11,10 +11,6 @@ const int passed_bonus_eg[2][8] = {
   { 0, 156, 104, 65, 39, 16, 16, 0 }
 };
 
-static const int att_weight[16] = {
-  0, 0, 128, 192, 224, 240, 248, 252, 254, 255, 256, 256, 256, 256, 256, 256,
-};
-
 static const U64 bbQSCastle[2] = { SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2),
                                    SqBb(A8) | SqBb(B8) | SqBb(C8) | SqBb(A7) | SqBb(B7) | SqBb(C7)
                                  };
@@ -73,7 +69,7 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     bb_control = n_attacks[sq] & ~p->cl_bb[sd];
 	att += 6 * PopCnt(bb_control & bb_zone);
-	if (bb_control & ~p->cl_bb[sd] & n_checks) att += 4;                   // check threats
+	if (bb_control & ~p->cl_bb[sd] & n_checks) att += 4;  // check threats
 
     // knight mobility score
 
@@ -140,8 +136,9 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
     U64 r_file = FillNorth(SqBb(sq)) | FillSouth(SqBb(sq));
     if (!(r_file & PcBb(p, sd, P))) {
-      if (!(r_file & PcBb(p, op, P))) Add(e, sd, 12, 12);
-      else                            Add(e, sd,  6,  6);
+      int fl_on_king = ((r_file && bb_zone) != 0);
+      if (!(r_file & PcBb(p, op, P))) Add(e, sd, 12 + 6 * fl_on_king, 12);
+      else                            Add(e, sd,  6 + 3 * fl_on_king,  6);
     }
 
     // rook on 7th rank attacking pawns or cutting off enemy king
