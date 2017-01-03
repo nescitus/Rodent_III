@@ -171,7 +171,7 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     Add(e, sd, 1 * (cnt - 14), 2 * (cnt - 14));
   }
 
-  // king attack
+  // final calculation of king attack score
 
   if (PcBb(p, sd, Q)) {
     int att_score = Par.danger[att];

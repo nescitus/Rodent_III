@@ -72,15 +72,30 @@ void cEngine::Think(POS *p, int *pv) {
   POS curr[1];
   pv[0] = 0;
   pv[1] = 0;
+  int move = 0;
+  int score, mv_type;
+  MOVES m[1];
 
   CopyPos(p, curr);
 
-  // copy move from transposition table to pv slot
+  // Safeguard against pathological situations at ultra-short
+  // time control when search does not return a move.
+  // First, copy move from transposition table to pv slot.
+  // If that fails, just pick the first generated move.
 
-  int move = 0;
-  int score;
   TransRetrieve(curr->key, &move, &score, -INF, INF, 1, 0);
   if (Legal(curr, move)) pv[0] = move;
+  else {
+    InitMoves(p, m, move, 0);
+    while ((move = NextMove(m, &mv_type))) {
+      if (Legal(curr, move)) {
+        pv[0] = move;
+        break;
+      }
+    }
+  }
+
+  // Conduct real search that will overwrite 
 
   ClearHist();
   local_nodes = 0;
