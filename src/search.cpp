@@ -302,6 +302,11 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     && (mv_hist_score < good_hist)
     && MoveType(move) != CASTLE) {
       reduction = lmr_size[is_pv][depth][mv_tried];
+
+	  if (new_depth - reduction > 2
+		  && mv_hist_score < 0)
+		  reduction += 1;
+
       new_depth = new_depth - reduction;
     }
 
