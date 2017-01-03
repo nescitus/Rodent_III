@@ -231,6 +231,7 @@ public:
   int Evaluate(POS *p, eData *e);
   void ScoreKing(POS *p, eData *e, int sd);
   void ScorePawns(POS *p, eData *e, int sd);
+  void ScorePassers(POS *p, eData *e, int sd);
   void ScorePieces(POS *p, eData *e, int sd);
   void ScoreOutpost(POS * p, eData * e, int sd, int pc, int sq);
   void ScorePatterns(POS * p, eData * e);
