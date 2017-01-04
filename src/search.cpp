@@ -121,6 +121,11 @@ void cEngine::Iterate(POS *p, int *pv) {
       if (maxMateDepth <= root_depth) break;
     }
 
+	// Don't start a new iteration if 90% of time has elapsed
+
+	if (GetMS() - start_time >= (move_time * 9) / 10)
+      abort_search = true;
+
     if (abort_search) break;
     else depth_reached = root_depth;
 

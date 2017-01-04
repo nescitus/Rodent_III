@@ -1,7 +1,7 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 2712 lines
-// d.18: 11.016.785 nodes in 8,1 s
-// 65,0% vs Fruit 2.1
+// 2837 lines
+// d.18: 7.251.325 nodes in 5,7 s
+// 40/100 vs Rodent II 0.9.67
 
 enum eColor {WC, BC, NO_CL};
 enum ePieceType {P, N, B, R, Q, K, NO_TP};
@@ -225,7 +225,7 @@ typedef class {
 public:
 
   sEvalHashEntry EvalTT[EVAL_HASH_SIZE];
-  int history[12][64];
+  int history[12+1][64];
   int killer[MAX_PLY][2];
   int local_nodes;
   int depth_reached;
