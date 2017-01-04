@@ -217,7 +217,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   && MayNull(p)
   && beta <= eval) {
 
-    new_depth = depth - 3;
+    new_depth = depth - 3 - depth / 4;
 
     if (TransRetrieve(p->key, &move, &null_score, alpha, beta, new_depth, ply)) {
       if (null_score < beta) goto avoid_null;
@@ -285,7 +285,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     new_depth = depth - 1 + InCheck(p);
 
-    // FUTILITY PRUNINGg
+    // FUTILITY PRUNING
 
     if (fl_futility
     &&  fl_prunable_move
