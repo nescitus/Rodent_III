@@ -109,8 +109,8 @@ void cEngine::Iterate(POS *p, int *pv) {
   for (root_depth = 1; root_depth <= search_depth; root_depth++) {
     printf("info depth %d\n", root_depth);
 
-    if (search_skill > 6) cur_val = Widen(p, root_depth, pv, val);
-    else                  cur_val = Search(p, 0, -INF, INF, root_depth, 0, pv);
+   if (search_skill > 6) cur_val = Widen(p, root_depth, pv, val);
+   else                  cur_val = Search(p, 0, -INF, INF, root_depth, 0, pv);
 
     // Abort search on finding checkmate score
 
@@ -120,11 +120,6 @@ void cEngine::Iterate(POS *p, int *pv) {
       maxMateDepth /= 3;
       if (maxMateDepth <= root_depth) break;
     }
-
-	// Don't start a new iteration if 90% of time has elapsed
-
-	if (GetMS() - start_time >= (move_time * 9) / 10)
-      abort_search = true;
 
     if (abort_search) break;
     else depth_reached = root_depth;
@@ -512,7 +507,7 @@ void cEngine::CheckTimeout(int ply, int *pv) {
 
   if (pv[0] == 0) return; // search has to find a move
 
-  if ((local_nodes & 31 || root_depth == 1)
+  if ((local_nodes & 1023 || root_depth == 1)
   && ply > 4) return;
 
   if (InputAvailable()) {
@@ -522,6 +517,4 @@ void cEngine::CheckTimeout(int ply, int *pv) {
     else if (strcmp(command, "ponderhit") == 0)
       pondering = 0;
   }
-  if (!pondering && move_time >= 0 && GetMS() - start_time >= move_time)
-    abort_search = 1;
 }

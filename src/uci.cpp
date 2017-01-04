@@ -46,7 +46,7 @@ void UciLoop(void) {
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.049\n");
+      printf("id name Rodent III 0.050\n");
 	  //printf("id name Skeleton 1.0\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
 	  printf("option name Hash type spin default 16 min 1 max 4096\n");
@@ -153,6 +153,19 @@ void ParseMoves(POS *p, char *ptr) {
     }
 }
 
+void Timeout() {
+  if (!pondering && move_time >= 0 && GetMS() - start_time >= move_time)
+    abort_search = 1;
+}
+
+void timer_task() {
+	abort_search = 0;
+	while (abort_search == 0) {
+		_sleep(5);
+		Timeout();
+	}
+}
+
 void task2(POS * p, int *pv) {
   Engine2.Think(p, pv);
 }
@@ -243,15 +256,19 @@ void ParseGo(POS *p, char *ptr) {
   Engine2.depth_reached = 0;
 
   if (thread_no == 1) {
+	  thread t(timer_task);
     Engine1.Think(p, pv);
+	t.join();
 	ExtractMove(pv);
 	return;
   }
 
   if (thread_no == 2) {
+	  thread t(timer_task);
     thread t2(task2, p, pv2);
 	Engine1.Think(p, pv);
     t2.join();
+	t.join();
   }
 
   if (thread_no == 2 && Engine2.depth_reached > Engine1.depth_reached) {
