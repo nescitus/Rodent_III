@@ -174,7 +174,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   nodes++;
   local_nodes++;
-  CheckTimeout(ply, pv);
+  CheckCommand(ply, pv);
   if (abort_search) return 0;
   if (ply) *pv = 0;
   if (IsDraw(p) && ply) return 0;
@@ -238,7 +238,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     UndoNull(p, u);
     if (abort_search) return 0;
     if (score >= beta) {
-      TransStore(p->key, 0, score, LOWER, depth, ply);
+      TransStore(p->key, 0, score, LOWER, depth, ply); // TODO: try without
       return score;
     }
   }
@@ -417,7 +417,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
   nodes++;
   local_nodes++;
-  CheckTimeout(ply, pv);
+  CheckCommand(ply, pv);
   if (abort_search) return 0;
   *pv = 0;
   if (IsDraw(p)) return 0;
@@ -501,7 +501,7 @@ void cEngine::DisplayPv(int score, int *pv) {
       root_depth, elapsed, nodes, nps, type, score, pv_str);
 }
 
-void cEngine::CheckTimeout(int ply, int *pv) {
+void cEngine::CheckCommand(int ply, int *pv) {
 
   char command[80];
 

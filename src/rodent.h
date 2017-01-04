@@ -252,7 +252,7 @@ public:
   int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int *pv);
   int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
   int IsDraw(POS *p);
-  void CheckTimeout(int ply, int *pv);
+  void CheckCommand(int ply, int *pv);
   void DisplayPv(int score, int *pv);
 
   void InitMoves(POS *p, MOVES *m, int trans_move, int ply);

@@ -47,13 +47,13 @@ void UciLoop(void) {
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
       printf("id name Rodent III 0.050\n");
-	  //printf("id name Skeleton 1.0\n");
+    //printf("id name Skeleton 1.0\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
-	  printf("option name Hash type spin default 16 min 1 max 4096\n");
-	  printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
+      printf("option name Hash type spin default 16 min 1 max 4096\n");
+      printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
       printf("option name Material type spin default %d min 0 max 500\n", Par.mat_weight);
       printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.placement_weight);
-	  printf("option name KingTropism type spin default %d min 0 max 500\n", Par.tropism_weight);
+      printf("option name KingTropism type spin default %d min 0 max 500\n", Par.tropism_weight);
       printf("option name Clear Hash type button\n");
       printf("uciok\n");
     } else if (strcmp(token, "isready") == 0) {
@@ -107,10 +107,10 @@ void ParseSetoption(char *ptr) {
     thread_no = (atoi(value));
   } else if (strcmp(name, "Material") == 0) {
     Par.mat_weight = (atoi(value));
-	Par.InitPst();
+    Par.InitPst();
   } else if (strcmp(name, "PiecePlacement") == 0) {
     Par.placement_weight = (atoi(value));
-	Par.InitPst();
+    Par.InitPst();
   }
 }
 
@@ -140,17 +140,17 @@ void ParsePosition(POS *p, char *ptr) {
 
 void ParseMoves(POS *p, char *ptr) {
 
-	char token[80];
-	UNDO u[1];
+  char token[80];
+  UNDO u[1];
 
-    for (;;) {
-      ptr = ParseToken(ptr, token);
-      if (*token == '\0')
-        break;
-      DoMove(p, StrToMove(p, token), u);
-      if (p->rev_moves == 0)
-        p->head = 0;
-    }
+  for (;;) {
+    ptr = ParseToken(ptr, token);
+    if (*token == '\0')
+      break;
+    DoMove(p, StrToMove(p, token), u);
+    if (p->rev_moves == 0)
+      p->head = 0;
+  }
 }
 
 void Timeout() {
@@ -159,11 +159,12 @@ void Timeout() {
 }
 
 void timer_task() {
-	abort_search = 0;
-	while (abort_search == 0) {
-		_sleep(5);
-		Timeout();
-	}
+
+  abort_search = 0;
+  while (abort_search == 0) {
+    _sleep(5);
+    Timeout();
+  }
 }
 
 void task2(POS * p, int *pv) {
@@ -229,19 +230,19 @@ void ParseGo(POS *p, char *ptr) {
     move_time = (time + inc * (movestogo - 1)) / movestogo;
     if (move_time > time) move_time = time;
 
-	// assign less time per move while using extremely short time controls
+    // assign less time per move while using extremely short time controls
 
-	move_time = BulletCorrection(move_time);
+    move_time = BulletCorrection(move_time);
 
-	// while in time trouble, try to save a bit on increment
+    // while in time trouble, try to save a bit on increment
 
-	if (move_time < inc)  move_time -= ((inc * 4) / 5);
+    if (move_time < inc)  move_time -= ((inc * 4) / 5);
 
-	// safeguard against a lag
+    // safeguard against a lag
 
     move_time -= 10;
 
-	// ensure that we have non-zero time
+    // ensure that we have non-zero time
 
     if (move_time < 1) move_time = 1;
   }
@@ -256,27 +257,27 @@ void ParseGo(POS *p, char *ptr) {
   Engine2.depth_reached = 0;
 
   if (thread_no == 1) {
-	  thread t(timer_task);
+    thread t(timer_task);
     Engine1.Think(p, pv);
-	t.join();
-	ExtractMove(pv);
-	return;
+    t.join();
+    ExtractMove(pv);
+    return;
   }
 
   if (thread_no == 2) {
-	  thread t(timer_task);
+    thread t(timer_task);
     thread t2(task2, p, pv2);
-	Engine1.Think(p, pv);
+    Engine1.Think(p, pv);
     t2.join();
-	t.join();
+    t.join();
   }
 
   if (thread_no == 2 && Engine2.depth_reached > Engine1.depth_reached) {
   // if second thread managed to search to the greater depth than the first thread
-	  ExtractMove(pv2);
+     ExtractMove(pv2);
   } else { 
   // we are searching single-threaded or the first thread got at least the same depth as the second thread
-	  ExtractMove(pv);
+     ExtractMove(pv);
   }
 }
 
