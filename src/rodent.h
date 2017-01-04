@@ -189,10 +189,13 @@ public:
   int mg_pst[2][6][64];
   int eg_pst[2][6][64];
   int sp_pst[2][6][64];
+  int danger[512];
+  int dist[64][64];
+  int chebyshev_dist[64][64];
   int np_table[9];
   int rp_table[9];
-  int danger[512];
   int mat_weight;
+  int tropism_weight;
   int placement_weight;
   int np_bonus;
   int rp_malus;

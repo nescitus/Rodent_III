@@ -24,6 +24,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   U64 bb_pieces, bb_attacks, bb_control;
   int op, sq, ksq, cnt, own_pawn_cnt, opp_pawn_cnt;
+  int tropism_mg = 0;
+  int tropism_eg = 0;
   int att = 0;
 
   // Init score with data from board class
@@ -76,6 +78,13 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     cnt = PopCnt(bb_control &~e->pawn_takes[op]);
     Add(e, sd, 4 * (cnt-4), 4 * (cnt-4));
 
+	// knight king tropism score
+
+	tropism_mg += 3 * Par.dist[sq][ksq];
+	tropism_eg += 3 * Par.dist[sq][ksq];
+
+	// knight outpost
+
 	ScoreOutpost(p, e, sd, N, sq);
   }
 
@@ -96,6 +105,11 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 	if (bb_control & ~p->cl_bb[sd] & b_checks) att += 4;
     cnt = PopCnt(bb_control);
     Add(e, sd, 5 * (cnt - 7),  5 * (cnt - 7));
+
+    // bishop king tropism score
+
+	tropism_mg += 2 * Par.dist[sq][ksq];
+	tropism_eg += 1 * Par.dist[sq][ksq];
 
 	// bishop outpost
 
@@ -149,6 +163,11 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
           Add(e, sd, 16, 32);
       }
     }
+
+	// rook king tropism score
+
+	tropism_mg += 2 * Par.dist[sq][ksq];
+	tropism_eg += 1 * Par.dist[sq][ksq];
   }
 
   // QUEEN EVAL
@@ -169,6 +188,11 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 	if (bb_control & ~p->cl_bb[sd] & q_checks) att += 12;
     cnt = PopCnt(bb_control);
     Add(e, sd, 1 * (cnt - 14), 2 * (cnt - 14));
+
+	// queen king tropism score
+
+	tropism_mg += 2 * Par.dist[sq][ksq];
+	tropism_eg += 4 * Par.dist[sq][ksq];
   }
 
   // final calculation of king attack score
@@ -177,6 +201,10 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     int att_score = Par.danger[att];
     Add(e, sd, att_score, att_score);
   }
+
+  // final calculation of other factors
+
+  Add(e, sd, (Par.tropism_weight * tropism_mg) / 100, (Par.tropism_weight * tropism_eg) / 100);
 
 }
 

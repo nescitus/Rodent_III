@@ -4,6 +4,7 @@
 void cParam::Default(void) {
   mat_weight = 100;
   placement_weight = 80;
+  tropism_weight = 0;
   np_bonus = 6;
   rp_malus = 3;
 }
@@ -36,13 +37,24 @@ void cParam::InitPst(void) {
 
 void cParam::Init(void) {
 
-  int pst_type = 0;
+  int r_delta, f_delta;
 
   // Init king attack table
 
   for (int t = 0, i = 1; i < 511; ++i) {
     t = Min(1280.0, Min(int(0.027 * i * i), t + 8.0));
     danger[i] = (t * 100) / 256; // rescale to centipawns
+  }
+
+  // Init distance tables (for evaluating king tropism and unstoppable passers)
+
+  for (int sq1 = 0; sq1 < 64; ++sq1) {
+	  for (int sq2 = 0; sq2 < 64; ++sq2) {
+		  r_delta = Abs(Rank(sq1) - Rank(sq2));
+		  f_delta = Abs(File(sq1) - File(sq2));
+		  dist[sq1][sq2] = 14 - (r_delta + f_delta);
+		  chebyshev_dist[sq1][sq2] = Max(r_delta, f_delta);
+	  }
   }
 
   // Init tables for adjusting piece values 

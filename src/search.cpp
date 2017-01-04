@@ -278,10 +278,10 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     // MAKE MOVE AND GATHER MOVE STATISTICS
 
-	mv_hist_score = history[p->pc[Fsq(move)]][Tsq(move)];
+    mv_hist_score = history[p->pc[Fsq(move)]][Tsq(move)];
     DoMove(p, move, u);
     if (Illegal(p)) { UndoMove(p, move, u); continue; }
-	mv_list[mv_tried] = move;
+    mv_list[mv_tried] = move;
     mv_tried++;
     if (mv_type == MV_NORMAL) quiet_tried++;
 
@@ -328,9 +328,9 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     && MoveType(move) != CASTLE) {
       reduction = lmr_size[is_pv][depth][mv_tried];
 
-	  if (new_depth - reduction > 2
-		  && mv_hist_score < 0)
-		  reduction += 1;
+      if (new_depth - reduction > 2
+      && mv_hist_score < 0)
+        reduction += 1;
 
       new_depth = new_depth - reduction;
     }
@@ -364,8 +364,8 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     if (score >= beta) {
       UpdateHist(p, move, depth, ply);
-	  for (int mv = 0; mv < mv_tried; mv++)
-		  DecreaseHist(p, mv_list[mv], depth);
+      for (int mv = 0; mv < mv_tried; mv++)
+        DecreaseHist(p, mv_list[mv], depth);
       TransStore(p->key, move, score, LOWER, depth, ply);
 
       // At root, change the best move and show the new pv
@@ -378,7 +378,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
       return score;
     }
 
-	// BEST MOVE CHANGE
+    // BEST MOVE CHANGE
 
     if (score > best) {
       best = score;
@@ -399,7 +399,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   if (*pv) {
     UpdateHist(p, *pv, depth, ply);
-	for (int mv = 0; mv < mv_tried; mv++)
+    for (int mv = 0; mv < mv_tried; mv++)
       DecreaseHist(p, mv_list[mv], depth);
     TransStore(p->key, *pv, best, EXACT, depth, ply);
   } else
@@ -507,8 +507,8 @@ void cEngine::CheckTimeout(int ply, int *pv) {
 
   if (pv[0] == 0) return; // search has to find a move
 
-  if ((local_nodes & 1023 || root_depth == 1)
-  && ply > 3) return;
+  if ((local_nodes & 31 || root_depth == 1)
+  && ply > 4) return;
 
   if (InputAvailable()) {
     ReadLine(command, sizeof(command));
