@@ -109,11 +109,21 @@ void cEngine::Iterate(POS *p, int *pv) {
   for (root_depth = 1; root_depth <= search_depth; root_depth++) {
     printf("info depth %d\n", root_depth);
 
-	if (search_skill > 6) cur_val = Widen(p, root_depth, pv, val);
-	else                  cur_val = Search(p, 0, -INF, INF, root_depth, 0, pv);
+    if (search_skill > 6) cur_val = Widen(p, root_depth, pv, val);
+    else                  cur_val = Search(p, 0, -INF, INF, root_depth, 0, pv);
+
+    // Abort search on finding checkmate score
+
+    if (cur_val > MAX_EVAL || cur_val < -MAX_EVAL) {
+      int maxMateDepth = (MATE - Abs(cur_val) + 1) + 1;
+      maxMateDepth *= 4;
+      maxMateDepth /= 3;
+      if (maxMateDepth <= root_depth) break;
+    }
 
     if (abort_search) break;
     else depth_reached = root_depth;
+
     val = cur_val;
   }
 }
