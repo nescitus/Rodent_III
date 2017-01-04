@@ -1,4 +1,5 @@
 #include "rodent.h"
+
 int cEngine::GetDrawFactor(POS * p, int sd) {
 
   int op = Opp(sd);
