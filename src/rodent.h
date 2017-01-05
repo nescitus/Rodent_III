@@ -1,6 +1,6 @@
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 2837 lines
-// d.18: 7.251.325 nodes in 5,7 s
+// d.18: 12.139.824 nodes in 9,3 s
 // 40/100 vs Rodent II 0.9.67
 
 enum eColor {WC, BC, NO_CL};
@@ -241,6 +241,7 @@ public:
 
   int Evaluate(POS *p, eData *e);
   void ScoreKing(POS *p, eData *e, int sd);
+  void ScoreMaterial(POS *p, eData *e, int sd);
   void ScorePawns(POS *p, eData *e, int sd);
   void ScorePassers(POS *p, eData *e, int sd);
   void ScorePieces(POS *p, eData *e, int sd);

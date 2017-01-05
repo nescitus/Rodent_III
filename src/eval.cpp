@@ -20,6 +20,21 @@ static const U64 bbKSCastle[2] = { SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | S
 
 static const U64 bbCentralFile = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
+void cEngine::ScoreMaterial(POS *p, eData *e, int sd) {
+
+  int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]   // knights lose value as pawns disappear
+	      - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];  // rooks gain value as pawns disappear
+
+  if (p->cnt[sd][B] == 2) tmp += 50;                      // bishop pair
+  if (p->cnt[sd][N] == 2) tmp -= 10;                      // knight pair
+  if (p->cnt[sd][R] == 2) tmp -= 5;                       // rook pair
+
+  tmp = ((tmp * Par.mat_weight) / 100);
+
+  Add(e, sd, tmp, tmp);
+
+}
+
 void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   U64 bb_pieces, bb_attacks, bb_control;
@@ -34,19 +49,6 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 
   e->mg_sc[sd] = p->mg_sc[sd];
   e->eg_sc[sd] = p->eg_sc[sd];
-
-  // Material adjustment
-
-  int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]   // knights lose value as pawns disappear
-	      - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];  // rooks gain value as pawns disappear
-
-  if (p->cnt[sd][B] == 2) tmp += 50;                      // bishop pair
-  if (p->cnt[sd][N] == 2) tmp -= 10;                      // knight pair
-  if (p->cnt[sd][R] == 2) tmp -= 5;                       // rook pair
-
-  tmp = ((tmp * Par.mat_weight) / 100);
-
-  Add(e, sd, tmp, tmp);
 
   // Init variables
 
@@ -391,6 +393,8 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
   // Run eval subroutines
 
+  ScoreMaterial(p, e, WC);
+  ScoreMaterial(p, e, BC);
   ScorePieces(p, e, WC);
   ScorePieces(p, e, BC);
   ScorePawns(p, e, WC);
