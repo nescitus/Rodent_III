@@ -46,12 +46,16 @@ void UciLoop(void) {
     ReadLine(command, sizeof(command));
     ptr = ParseToken(command, token);
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.050\n");
+      printf("id name Rodent III 0.052\n");
     //printf("id name Skeleton 1.0\n");
       printf("id author Pablo Vazquez, Pawel Koziol\n");
       printf("option name Hash type spin default 16 min 1 max 4096\n");
       printf("option name Threads type spin default %d min 1 max 2\n", thread_no);
       printf("option name Material type spin default %d min 0 max 500\n", Par.mat_weight);
+	  printf("option name OwnAttack type spin default %d min 0 max 500\n", Par.own_att);
+	  printf("option name OppAttack type spin default %d min 0 max 500\n", Par.opp_att);
+	  printf("option name OwnMobility type spin default %d min 0 max 500\n", Par.own_mob);
+	  printf("option name OppMobility type spin default %d min 0 max 500\n", Par.opp_mob);
       printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.placement_weight);
       printf("option name KingTropism type spin default %d min 0 max 500\n", Par.tropism_weight);
       printf("option name Clear Hash type button\n");
@@ -108,6 +112,14 @@ void ParseSetoption(char *ptr) {
   } else if (strcmp(name, "Material") == 0) {
     Par.mat_weight = (atoi(value));
     Par.InitPst();
+  } else if (strcmp(name, "OwnAttack") == 0) {
+    Par.own_att = (atoi(value));
+  } else if (strcmp(name, "OppAttack") == 0) {
+    Par.opp_att = (atoi(value));
+  } else if (strcmp(name, "OwnMobility") == 0) {
+    Par.own_mob = (atoi(value));
+  } else if (strcmp(name, "OppMobility") == 0) {
+    Par.opp_mob = (atoi(value));
   } else if (strcmp(name, "PiecePlacement") == 0) {
     Par.placement_weight = (atoi(value));
     Par.InitPst();
@@ -253,6 +265,7 @@ void ParseGo(POS *p, char *ptr) {
   nodes = 0;
   abort_search = 0;
   start_time = GetMS();
+  Par.InitAsymmetric(p);
   Engine1.depth_reached = 0;
   Engine2.depth_reached = 0;
 

@@ -5,6 +5,10 @@ void cParam::Default(void) {
   mat_weight = 100;
   placement_weight = 80;
   tropism_weight = 0;
+  own_att = 100;
+  opp_att = 100;
+  own_mob = 100;
+  opp_mob = 100;
   np_bonus = 6;
   rp_malus = 3;
 }
@@ -82,5 +86,22 @@ void cParam::Init(void) {
     passed_mask[WC][sq] |= ShiftSideways(passed_mask[WC][sq]);
     passed_mask[BC][sq] = FillSouthExcl(SqBb(sq));
     passed_mask[BC][sq] |= ShiftSideways(passed_mask[BC][sq]);
+  }
+}
+
+void cParam::InitAsymmetric(POS * p) {
+
+  prog_side = p->side;
+
+  if (prog_side == WC) {
+    sd_att[WC] = own_att;
+    sd_att[BC] = opp_att;
+    sd_mob[WC] = own_mob;
+    sd_mob[BC] = opp_mob;
+  } else {
+    sd_att[BC] = own_att;
+    sd_att[WC] = opp_att;
+    sd_mob[BC] = own_mob;
+    sd_mob[WC] = opp_mob;
   }
 }

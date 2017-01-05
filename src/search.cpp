@@ -237,10 +237,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     score = -Search(p, ply + 1, -beta, -beta + 1, new_depth, 1, new_pv);
     UndoNull(p, u);
     if (abort_search) return 0;
-    if (score >= beta) {
-      TransStore(p->key, 0, score, LOWER, depth, ply); // TODO: try without
-      return score;
-    }
+    if (score >= beta) return score;
   }
 
   avoid_null:

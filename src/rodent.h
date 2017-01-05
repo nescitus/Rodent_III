@@ -186,6 +186,7 @@ typedef struct {
 
 typedef class {
 public:
+  int prog_side;
   int mg_pst[2][6][64];
   int eg_pst[2][6][64];
   int sp_pst[2][6][64];
@@ -197,11 +198,18 @@ public:
   int mat_weight;
   int tropism_weight;
   int placement_weight;
+  int sd_att[2];
+  int sd_mob[2];
+  int own_att;
+  int opp_att;
+  int own_mob;
+  int opp_mob;
   int np_bonus;
   int rp_malus;
   void Init(void);
   void InitPst(void);
   void Default(void);
+  void InitAsymmetric(POS * p);
 } cParam;
 
 extern cParam Par;

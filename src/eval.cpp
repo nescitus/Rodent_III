@@ -26,6 +26,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
   int op, sq, ksq, cnt, own_pawn_cnt, opp_pawn_cnt;
   int tropism_mg = 0;
   int tropism_eg = 0;
+  int mob_mg = 0;
+  int mob_eg = 0;
   int att = 0;
 
   // Init score with data from board class
@@ -76,7 +78,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     // knight mobility score
 
     cnt = PopCnt(bb_control &~e->pawn_takes[op]);
-    Add(e, sd, 4 * (cnt-4), 4 * (cnt-4));
+	mob_mg += 4 * (cnt - 4);
+	mob_eg += 4 * (cnt - 4);
 
 	// knight king tropism score
 
@@ -104,7 +107,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     bb_control = BAttacks(OccBb(p), sq);
 	if (bb_control & ~p->cl_bb[sd] & b_checks) att += 4;
     cnt = PopCnt(bb_control);
-    Add(e, sd, 5 * (cnt - 7),  5 * (cnt - 7));
+	mob_mg += 5 * (cnt - 7);
+	mob_eg += 5 * (cnt - 7);
 
     // bishop king tropism score
 
@@ -144,7 +148,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
     bb_control = RAttacks(OccBb(p), sq);
 	if (bb_control & ~p->cl_bb[sd] & r_checks) att += 9;
     cnt = PopCnt(bb_control);
-    Add(e, sd, 2 * (cnt - 7), 4 * (cnt - 7));
+	mob_mg += 2 * (cnt - 7);
+	mob_eg += 4 * (cnt - 7);
 
     // rook on (half) open file
 
@@ -187,7 +192,8 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
 	bb_control = QAttacks(OccBb(p), sq);
 	if (bb_control & ~p->cl_bb[sd] & q_checks) att += 12;
     cnt = PopCnt(bb_control);
-    Add(e, sd, 1 * (cnt - 14), 2 * (cnt - 14));
+	mob_mg += 1 * (cnt - 14);
+	mob_eg += 2 * (cnt - 14);
 
 	// queen king tropism score
 
@@ -198,12 +204,13 @@ void cEngine::ScorePieces(POS *p, eData *e, int sd) {
   // final calculation of king attack score
 
   if (PcBb(p, sd, Q)) {
-    int att_score = Par.danger[att];
+    int att_score = (Par.danger[att] * Par.sd_att[sd]) / 100;
     Add(e, sd, att_score, att_score);
   }
 
   // final calculation of other factors
 
+  Add(e, sd, (Par.sd_mob[sd] * mob_mg) / 100, (Par.sd_mob[sd] * mob_eg) / 100);
   Add(e, sd, (Par.tropism_weight * tropism_mg) / 100, (Par.tropism_weight * tropism_eg) / 100);
 
 }
