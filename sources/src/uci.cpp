@@ -72,7 +72,7 @@ void UciLoop(void) {
       Par.use_book = (strstr(command, "value true") != 0);
 
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.159\n");  
+      printf("id name Rodent III 0.160\n");  
 	  Glob.is_console = 0;
       printf("id author Pawel Koziol\n");
       PrintUciOptions();
@@ -445,6 +445,7 @@ void cEngine::Bench(int depth) {
     printf(test[i]);
     SetPosition(p, test[i]);
     printf("\n");
+	Glob.depth_reached = 0;
     Iterate(p, pv);
   }
 

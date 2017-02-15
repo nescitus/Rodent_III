@@ -171,7 +171,6 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     }
 
     Add(e, sd, -3 * own_p_cnt - opp_p_cnt);
-
   }
 
   // Rook eval

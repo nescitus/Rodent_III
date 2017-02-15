@@ -219,6 +219,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
     return Evaluate(p, &e);
 
   best = Evaluate(p, &e);
+
   int floor = best;
   int alpha_floor = alpha;
   if (best >= beta) return best;
