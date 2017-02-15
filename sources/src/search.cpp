@@ -145,6 +145,18 @@ void cEngine::Iterate(POS *p, int *pv) {
 	else                      cur_val = Search(p, 0, -INF, INF, root_depth, 0, -1, -1, pv);
     if (Glob.abort_search) break;
 
+    // Abort search on finding checkmate score
+
+    if (cur_val > MAX_EVAL || cur_val < -MAX_EVAL) {
+      int max_mate_depth = (MATE - Abs(cur_val) + 1) + 1;
+      max_mate_depth *= 4;
+      max_mate_depth /= 3;
+	  if (max_mate_depth <= root_depth) {
+        dp_completed = root_depth;
+        break;
+	  }
+    }
+
 	// Set information about depth
 
     dp_completed = root_depth;
