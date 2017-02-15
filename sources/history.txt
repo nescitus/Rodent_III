@@ -1,0 +1,358 @@
+2017-02-14
+
+- thread that is lagging behind will skip iteration
+
+2017-02-12
+
+- no delta pruning in late endgame
+
+2017-02-11
+
+- loading personalities from file
+
+2017-02-04
+
+- delta pruning in qs
+- moving see pruning after delta pruning in qs
+
+2017-02-02
+
+- polyglot opening book
+
+2017-01-31
+
+- KBNK checkmate helper
+- more drawish positions scaled down
+
+2017-01-30
+
+- one more pst table
+
+2017-01-29
+
+- TransRetrieveMove function (speedup for internal iterative deepening)
+
+2017-01-26
+
+- reintroducing pawn options
+
+2017-01-22
+
+- info currmove (single processor only)
+- trapped bishop at A6/H6
+
+2017-01-21
+
+- contempt, eval blur
+
+2017-01-19
+
+- reinstating pawn chain eval from Rodent II 0.9.64
+
+2017-01-16
+
+- king attacks on squares defended by pawns not counted
+- better endgame phalanx/defended tables
+
+2016-12-10
+
+- GenerateSpecial() does not generate castling moves
+
+2016-12-07
+
+- KBP vs K draw detected
+
+2016-11-30
+
+- candidate passers + phalanx and defended pawns finally working
+
+2016-11-26
+
+- default mobility retuned
+
+2016-11-23
+
+- OwnAttack, OppAttack, OwnMobility and OppMobility options
+
+2016-11-19
+
+- mate distance pruning
+
+2016-11-18
+
+- fianchetto related patterns reintroduced
+
+2016-11-17
+
+- rudimentary castling rights eval
+
+2016-11-16
+
+- three sets of pst tables
+
+26-11-11
+
+- almost retired PcBb macro
+
+2016-11-08
+
+- trapped knight code
+- partial fix of ShiftSideways() - candidate passers now evaluated correctly
+- retuning phalanx/defended is the next task
+
+2016-11-07
+
+- partial fix of ShiftSideways() concerning weak pawns
+- CCRL rating estimation on single core: 2890 (22 to 0.9.64)
+
+2016-11-06
+
+- partial fix of ShiftSideways() concerning pawn endgame draw detection
+-partial fix of ShiftSideways() concerning generating of check moves
+
+2016-11-05
+
+- magic bitboard
+- ShiftSideways() bug identified
+
+2016-11-04
+
+- beta cutoff at root changes pv
+
+2016-11-03
+
+- fix to KPKDraw()
+- estimated CCRL Elo on one core: 2868 (60-90 to go)
+
+2016-11-02
+
+- limiting check extension
+- penalty for a king on a pawnless wing
+- first take on King's Indian pawn chain
+- renaming files to *.cpp
+
+2016-11-01
+
+- separating cMask class that holds bitboard masks
+
+2016-10-31
+
+- penalty for a minor piece that cannot reach enemy half of the board
+
+2016-10-30
+
+- tempo eval
+- the first version of check-aware quiescence search
+(first ply only, not all checks taken into account)
+- 2825 CCRL approx. on one core (100 more to go)
+
+2016-10-29
+
+- normalising king's square in pawn shield eval
+
+2016-10-28
+
+- null move refutation sorted higher
+
+2016-10-27
+
+- bugfix of pawn control maps
+- minor piece mobility excludes squares controlled by enemy pawns
+
+2016-10-26
+
+- more concise pruning/reduction code with evaluation done beforehand
+- switched off pawn hash, as it is buggy
+
+2016-10-25
+
+- better QuiesceFlee()
+- no razoring if there is a pawn about to promote
+
+2016-10-24
+
+- marginal speedup by using QuiesceFlee()
+
+2016-10-22
+
+- forwardness (disabled)
+
+2016-10-21
+
+- king tropism
+
+2016-10-20
+
+- incrementally updated pst score
+- odd threads start at depth + 1
+
+2016-10-19
+
+- moving variables to cParam struct
+- queen attack eval bug fixed
+- KBPKm and KNNK draws
+
+2016-10-18
+
+- more endgame knowledge
+- separating cParam struct
+- estimated strength at 2 CPU: 2830 (120 to go)
+
+2016-10-17
+
+- futility pruning bugfix
+- futility pruning also controlled by history limit
+- more detailed rook on open file open file eval
+
+2015-10-16
+
+- attack bitboards
+- evaluation of attacked pieces
+- more refined passers evaluation
+- different history sorting algorithm
+- history limit on lmp/lmr
+
+2016-10-15
+
+- speed bugfix
+
+2016-10-14
+
+- lmr of bad captures
+
+2016-10-13
+
+- pawn hash
+
+2016-10-12
+
+- unstoppable passers
+- separating passer eval (a preparatory move towards pawn hashing)
+
+2016-10-11
+
+- distance of passer to enemy king
+- futility pruning
+- rating estimate for 2 threads: 2760 (on par with Rodent 1.4)
+
+2016-10-10
+
+- multiple fixes regarding major pieces eval, incl. rook on 7th and queen on 7th
+- pawns on bishop's color
+
+2016-10-09
+
+- piece count variable in board class
+- material imbalance evaluation
+- static draw detection in search (KK, KmK, some KPK positions)
+- stub of a function for scaling down dra scores
+
+2016-10-08
+
+- futility pruning
+- rating estimate for 2 threads: 2700-2750
+
+2016-10-07
+
+- outpost defended by two pawns
+
+2016-10-06
+
+- pawn in front of a minor bonus
+- razoring added
+- successfully transplanted king safety code
+
+2016-10-05
+
+- KK, KmK, KmKp, KmKpp draws evaluated as such
+- faster popcnt
+- faster FirstOne()
+- bitboards for cumulated attack evaluation
+- rating estimate for 2 threads: 2664
+
+2016-10-03
+
+- better null move implementation
+
+2016-10-02
+
+- iterative widening
+
+2016-10-01
+
+- basic outpost code
+- incrementally updated game phase
+
+2016-09-30
+
+- tuning bishop value
+- separating bitboard.c
+
+2016-09-29
+
+- draw by 50 moves rule and by bare kings
+- rook trapped by uncastled king eval
+- timing fixes (more testing needed)
+
+2016-09-28
+
+- mp stability fixes
+- better lmr
+- uncovered bug - timeout in drawn positions
+- nps reporting
+
+2016-09-27
+
+- per-thread evaluation hash table
+- basic elements of pawn eval all in place
+- lmr in pv nodes
+- bishop pair
+- option to pick 1 to 4 threads
+
+2016-09-26
+
+- was_null variable as a parameter of Search()
+- static null move pruning
+- faster play at hyperbullet time control
+- history counter incremented by depth * depth
+
+2016-09-25
+
+- first multicore version
+- tweak: using pv from the second core if deeper
+- rook on (half) open file
+
+2016-09-19
+
+- passers retuned
+- EvaluatePawns() is now void
+
+2016-09-17
+
+- lmr depth retuning
+- shift helper macros added
+- FillNorth(), FillSouth(), bbRelRank[]
+- king's pawn shield and pawn storm added
+
+2016-09-16
+- basic king attack function
+
+2016-09-15
+
+- interpolated pst score
+
+2016-09-14
+
+- 1 ply late move reduction in non-pv nodes with re-search
+- NextMove() returns move flag
+- we count moves tried and quiet moves tried
+- we determine if node is pv-node
+
+2016-09-13
+-Sungorus port
+-renamed to Skeleton 0.000
+-added "go depth" command
+-removed lazy eval
+-renamed "Mobility" to "EvaluatePieces"
+-function PopFirstBit() added
+-shrinking eval and mgen because of that

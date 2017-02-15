@@ -1,3 +1,21 @@
+/*
+Rodent, a UCI chess playing engine derived from Sungorus 1.4
+Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
+Copyright (C) 2011-2017 Pawel Koziol
+
+Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+Rodent is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.
+If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <stdio.h>
 #include <string.h>
 #if defined(_WIN32) || defined(_WIN64)
 #  include <windows.h>
@@ -44,6 +62,13 @@ int InputAvailable(void) {
 #endif
 }
 
+int Clip(int sc, int lim) {
+
+  if (sc < -lim) return -lim;
+  if (sc > lim) return lim;
+  return sc;
+}
+
 int GetMS(void) {
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -64,7 +89,7 @@ U64 Random64(void) {
   return next;
 }
 
-U64 Key(POS *p) {
+U64 InitHashKey(POS *p) {
 
   U64 key = 0;
 
@@ -73,7 +98,6 @@ U64 Key(POS *p) {
       key ^= zob_piece[p->pc[i]][i];
 
   key ^= zob_castle[p->c_flags];
-
   if (p->ep_sq != NO_SQ)
     key ^= zob_ep[File(p->ep_sq)];
 
@@ -83,11 +107,28 @@ U64 Key(POS *p) {
   return key;
 }
 
+U64 InitPawnKey(POS *p) {
+
+  U64 key = 0;
+
+  for (int i = 0; i < 64; i++) {
+    if ((p->tp_bb[P] & SqBb(i)) || (p->tp_bb[K] & SqBb(i)))
+      key ^= zob_piece[p->pc[i]][i];
+  }
+
+  return key;
+}
+
+void PrintMove(int move) {
+
+  char moveString[6];
+  MoveToStr(move, moveString);
+  printf("%s", moveString);
+}
+
 void MoveToStr(int move, char *move_str) {
 
   static const char prom_char[5] = "nbrq";
-
-  // Get move coordinates
 
   move_str[0] = File(Fsq(move)) + 'a';
   move_str[1] = Rank(Fsq(move)) + '1';
@@ -101,8 +142,6 @@ void MoveToStr(int move, char *move_str) {
   if (strcmp(move_str, "a1a1") == 0) {
     strcpy(move_str, "0000");
   }
-
-  // Add promoted piece, if any
 
   if (IsProm(move)) {
     move_str[4] = prom_char[(move >> 12) & 3];
@@ -118,7 +157,6 @@ int StrToMove(POS *p, char *move_str) {
 
   if (TpOnSq(p, from) == K && Abs(to - from) == 2)
     type = CASTLE;
-
   else if (TpOnSq(p, from) == P) {
     if (to == p->ep_sq) 
       type = EP_CAP;
@@ -161,4 +199,13 @@ void BuildPv(int *dst, int *src, int move) {
   *dst++ = move;
   while ((*dst++ = *src++))
     ;
+}
+
+void WasteTime(int miliseconds) {
+
+#if defined(_WIN32) || defined(_WIN64)
+	Sleep(miliseconds);
+#else
+	usleep(miliseconds * 1000);
+#endif
 }

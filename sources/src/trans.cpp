@@ -1,3 +1,20 @@
+/*
+Rodent, a UCI chess playing engine derived from Sungorus 1.4
+Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
+Copyright (C) 2011-2017 Pawel Koziol
+
+Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+Rodent is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.
+If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <stdlib.h>
 #include "rodent.h"
 
@@ -43,15 +60,32 @@ int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth
           *score += ply;
         else if (*score > MAX_EVAL)
           *score -= ply;
-        if ((entry->flags & UPPER && *score <= alpha) ||
-            (entry->flags & LOWER && *score >= beta))
+        if ((entry->flags & UPPER && *score <= alpha)
+        ||  (entry->flags & LOWER && *score >= beta)) {
+          //entry->date = tt_date; // refreshing entry TODO: test at 4 threads, at 1 thread it's a wash
           return 1;
+		}
       }
       break;
     }
     entry++;
   }
   return 0;
+}
+
+void TransRetrieveMove(U64 key, int *move, int ply) {
+
+  ENTRY *entry;
+
+  entry = tt + (key & tt_mask);
+  for (int i = 0; i < 4; i++) {
+    if (entry->key == key) {
+      entry->date = tt_date; // TODO: test without this line (very low priority, long test)
+      *move = entry->move;
+      break;
+    }
+    entry++;
+  }
 }
 
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
