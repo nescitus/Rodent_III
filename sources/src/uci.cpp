@@ -164,8 +164,13 @@ void task4(POS * p, int *pv) {
 void timer_task() {
 
   Glob.abort_search = 0;
+
   while (Glob.abort_search == 0) {
+  #if defined(_WIN32) || defined(_WIN64)
     _sleep(5);
+  #else
+    usleep(5 * 1000);
+  #endif
     CheckTimeout(2);
   }
 }
