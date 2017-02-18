@@ -296,6 +296,9 @@ void ParseGo(POS *p, char *ptr) {
     Glob.ClearData(); // options has been changed and old tt scores are no longer reliable
   Par.InitAsymmetric(p);
 
+  int best_eng = 1;
+  int best_depth = 0;
+
   // get book move
 
   if (Par.use_book) {
@@ -311,14 +314,14 @@ void ParseGo(POS *p, char *ptr) {
     }
   }
 
-  // set engine-dependent variables
+  // Set engine-dependent variables
 
   Engine1.dp_completed = 0;
   Engine2.dp_completed = 0;
   Engine3.dp_completed = 0;
   Engine4.dp_completed = 0;
-  int best_eng = 1;
-  int best_depth = 0;
+
+  // Search using the designated number of threads
 
   if (Glob.thread_no == 1) {
     thread t(timer_task);
