@@ -87,6 +87,15 @@ void cEngine::EvaluatePatterns(POS * p, eData * e) {
     }
   }
 
+  // knight blocking c pawn
+
+  if (IsOnSq(p, WC, P, C2) && IsOnSq(p, WC, P, D4) && IsOnSq(p, WC, N, C3)) {
+     if ((p->Pawns(WC) & SqBb(E4)) == 0) Add (e, WC, -20, 0);
+  }
+  if (IsOnSq(p, BC, P, C7) && IsOnSq(p, BC, P, D5) && IsOnSq(p, BC, N, C6)) {
+	  if ((p->Pawns(BC) & SqBb(E5)) == 0) Add(e, BC, -20, 0);
+  }
+
   // trapped knight
 
   if (IsOnSq(p, WC, N, A7) && IsOnSq(p, BC, P, A6) && IsOnSq(p, BC, P, B7)) Add(e, WC, -150);
@@ -118,12 +127,14 @@ void cEngine::EvaluatePatterns(POS * p, eData * e) {
       if (IsOnSq(p, WC, P, C3)) Add(e, WC, -10, -20);
       if (IsOnSq(p, WC, P, B3) && (IsOnSq(p, WC, P, A2) || IsOnSq(p, WC, P, C2))) Add(e, WC,  4);
       if (IsOnSq(p, BC, P, D4) && (IsOnSq(p, BC, P, E5) || IsOnSq(p, BC, P, C5))) Add(e, WC, -20);
+	  if (p->Kings(WC) & Mask.qs_castle[WC]) Add(e, WC, Par.protecting_bishop, 0);
     }
 
     if (IsOnSq(p, WC, B, G2)) {
       if (IsOnSq(p, WC, P, F3)) Add(e, WC, -10, -20);
       if (IsOnSq(p, WC, P, G3) && (IsOnSq(p, WC, P, H2) || IsOnSq(p, WC, P, F2))) Add(e, WC,  4);
       if (IsOnSq(p, BC, P, E4) && (IsOnSq(p, BC, P, D5) || IsOnSq(p, BC, P, F5))) Add(e, WC, -20);
+	  if (p->Kings(WC) & Mask.ks_castle[WC]) Add(e, WC, Par.protecting_bishop, 0);
     }
   }
 
@@ -151,11 +162,13 @@ void cEngine::EvaluatePatterns(POS * p, eData * e) {
       if (IsOnSq(p, BC, P, C6)) Add(e, BC, -10, -20);
       if (IsOnSq(p, BC, P, B6) && (IsOnSq(p, BC, P, A7) || IsOnSq(p, BC, P, C7))) Add(e, BC,  4);
       if (IsOnSq(p, WC, P, D5) && (IsOnSq(p, WC, P, E4) || IsOnSq(p, WC, P, C4))) Add(e, BC, -20); 
+	  if (p->Kings(BC) & Mask.qs_castle[BC]) Add(e, BC, Par.protecting_bishop, 0);
     }
     if (IsOnSq(p, BC, B, G7)) {
       if (IsOnSq(p, BC, P, F6)) Add(e, BC, -10, -20);
       if (IsOnSq(p, BC, P, G6) && (IsOnSq(p, BC, P, H7) || IsOnSq(p, BC, P, G6))) Add(e, BC,  4);
       if (IsOnSq(p, WC, P, E5) && (IsOnSq(p, WC, P, D4) || IsOnSq(p, WC, P, F4))) Add(e, BC, -20);
+	  if (p->Kings(BC) & Mask.ks_castle[BC]) Add(e, BC, Par.protecting_bishop, 0);
     }
   }
 

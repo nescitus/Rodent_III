@@ -49,6 +49,7 @@ void cParam::DefaultWeights(void) {
    keep_pc[K+1] = 0;
 
    bish_pair = 50;
+   protecting_bishop = 0; // NOTE: even ludicrously high value of 50 tests well
    exchange_imbalance = 25;
    n_likes_closed = 6;
    r_likes_open = 3;

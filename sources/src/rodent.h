@@ -440,6 +440,7 @@ public:
   int dist[64][64];
   int chebyshev_dist[64][64];
   int backward_malus_mg[8];
+  int protecting_bishop;
   void InitPst(void);
   void InitMobility(void);
   void InitBackward(void);
