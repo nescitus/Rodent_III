@@ -43,6 +43,20 @@ void cEngine::EvaluatePatterns(POS * p, eData * e) {
 
   if (p->Kings(WC) & RANK_1_BB) {
 
+    // White castled king that cannot escape upwards
+  
+    if (IsOnSq(p, WC, K, H1) && IsOnSq(p, WC, P, H2) && IsOnSq(p, WC, P, G2))
+      Add(e, WC, -15);
+
+    if (IsOnSq(p, WC, K, G1) && IsOnSq(p, WC, P, H2) && IsOnSq(p, WC, P, G2) && IsOnSq(p, WC, P, F2))
+      Add(e, WC, -15);
+
+    if (IsOnSq(p, WC, K, A1) && IsOnSq(p, WC, P, A2) && IsOnSq(p, WC, P, B2))
+      Add(e, WC, -15);
+
+    if (IsOnSq(p, WC, K, B1) && IsOnSq(p, WC, P, A2) && IsOnSq(p, WC, P, B2) && IsOnSq(p, WC, P, C2))
+      Add(e, WC, -15);
+
     // White rook blocked by uncastled king
 
     king_mask = SqBb(F1) | SqBb(G1);
@@ -65,6 +79,20 @@ void cEngine::EvaluatePatterns(POS * p, eData * e) {
   }
 
   if (p->Kings(BC) | RANK_8_BB) {
+
+    // Black castled king that cannot escape upwards
+
+    if (IsOnSq(p, BC, K, H8) && IsOnSq(p, BC, P, H7) && IsOnSq(p, BC, P, G7))
+      Add(e, BC, -15);
+
+    if (IsOnSq(p, BC, K, G8) && IsOnSq(p, BC, P, H7) && IsOnSq(p, BC, P, G7) && IsOnSq(p, BC, P, F7))
+      Add(e, BC, -15);
+
+    if (IsOnSq(p, BC, K, A8) && IsOnSq(p, BC, P, A7) && IsOnSq(p, BC, P, B7))
+      Add(e, BC, -15);
+
+    if (IsOnSq(p, BC, K, B8) && IsOnSq(p, BC, P, A7) && IsOnSq(p, BC, P, B7) && IsOnSq(p, BC, P, C7))
+      Add(e, BC, -15);
 
     // Black rook blocked by uncastled king
 

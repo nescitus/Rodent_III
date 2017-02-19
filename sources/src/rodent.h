@@ -642,7 +642,6 @@ extern int tt_date;
 // TODO: single move speedup
 // TODO: easy move code
 // TODO: stress test of ExtractMove at many threads
-// TODO: no luft penalty
 // TODO: cleanup of uci.cpp
 // TODO: setting path to opening book
 // TODO: no book moves in analyze mode
