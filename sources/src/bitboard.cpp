@@ -56,6 +56,8 @@ void cBitBoard::Init() {
     k_attacks[sq] |= (ShiftNorth(k_attacks[sq]) | ShiftSouth(k_attacks[sq]));
   }
 
+  // init table of rays between squares
+
   for (int sq1 = 0; sq1 < 64; sq1++) {
     for (int sq2 = 0; sq2 < 64; sq2++) {
       bbBetween[sq1][sq2] = GetBetween(sq1, sq2);
@@ -64,7 +66,7 @@ void cBitBoard::Init() {
 
 }
 
-// from chessprogramming wiki
+// from Laser, originally from chessprogramming wiki
 
 U64 cBitBoard::GetBetween(int sq1, int sq2) {
 
@@ -100,8 +102,8 @@ int cBitBoard::PopCnt(U64 bb) {
 
 #else
 
-int cBitBoard::PopCnt(U64 bb) // general purpose population count
-{
+int cBitBoard::PopCnt(U64 bb) { // general purpose population count
+
   U64 k1 = (U64)0x5555555555555555;
   U64 k2 = (U64)0x3333333333333333;
   U64 k3 = (U64)0x0F0F0F0F0F0F0F0F;

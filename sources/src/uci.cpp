@@ -22,6 +22,13 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include "rodent.h"
 #include "book.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#  define WINDOWS_BUILD
+#else
+#  include <unistd.h>
+#endif
+
 using namespace std;
 
 void ReadLine(char *str, int n) {

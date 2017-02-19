@@ -3,16 +3,18 @@ EXTERNAL CODE USAGE:
 test positions used in Bench() taken from DiscoCheck by Lucas Braesch
 hanging piece evaluation based on DiscoCheck by Lucas Braesch (expanded to defended pieces)
 material imbalance evaluation based on Crafty by Robert Hyatt
-king tropism based on GambitFruit by Ryan Benitez (who has modified Fruit by Fabien Letouzey)
+king tropism formula from GambitFruit by Ryan Benitez (who has modified Fruit by Fabien Letouzey)
 forwardness eval term is based on space evaluation from Toga II 3.0 (another Fruit derivative by Thomas Gaksch and Jerry Donald)
 razoring code is based on Toga II 3.0
 aspiration search based on Senpai 1.0 by Fabien Letouzey
 late move reduction formula is based on that of Stockfish
-pawn island evaluation is based on Texel by Peter Österlund
+pawn island evaluation from Texel by Peter Österlund
+GetBetween() function used to generate discovered checks from Chessprogramming Wiki via code of Laser by Jeffrey An and Michael An
+non-magic move generation from Chesprogramming Wiki (occluded attacks)
+magic bitboard move generator by Pradyumna Kannan
 
 CONTRIBUTIONS FROM OTHER PEOPLE
 
-first of all, Pablo Vazquez has kindly allowed me to use the codebase of Sungorus to start this project 
 Jim Ablett supplied Android compiles
 Graham Banks made a funny, cartoon-like logo
 Matthew R. Brades, Denis Mendoza and Martin Sedlak supplied Linux compiles of some 1.x versions
@@ -26,3 +28,4 @@ Denis Mendoza created a logo featuring Speedy Gonzales
 Ferdinand Mosca created very funny KingHunter personality
 Brendan J. Norman created Henny and Remy personalities and reviewed Rodent
 Frank Quasinsky tested Rodent for FCP rating list
+Pablo Vazquez has kindly allowed me to use the codebase of Sungorus to start this project 
