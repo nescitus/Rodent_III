@@ -178,7 +178,7 @@ void timer_task() {
   #else
     usleep(5 * 1000);
   #endif
-    CheckTimeout(2);
+    CheckTimeout();
   }
 }
 

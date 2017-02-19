@@ -567,7 +567,7 @@ void cEngine::DisplayPv(int score, int *pv) {
 #endif
 }
 
-void CheckTimeout(int ply) {
+void CheckTimeout(void) {
 
   char command[80];
 
@@ -586,8 +586,8 @@ void CheckTimeout(int ply) {
 void cEngine::Slowdown() {
 
   if (move_nodes > 0) {
-	  if (move_nodes > 0 && Glob.nodes >= move_nodes)
-		  Glob.abort_search = 1;
+    if (move_nodes > 0 && Glob.nodes >= move_nodes)
+      Glob.abort_search = 1;
   }
 
   if (Par.nps_limit == 0) return;

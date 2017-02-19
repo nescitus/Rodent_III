@@ -490,7 +490,7 @@ public:
 
 extern cGlobals Glob;
 
-void CheckTimeout(int ply);
+void CheckTimeout(void);
 
 #define EVAL_HASH_SIZE 512 * 512 / 4
 #define PAWN_HASH_SIZE 512 * 512 / 4
