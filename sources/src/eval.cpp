@@ -263,6 +263,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
       fwd_weight += 4;
       fwd_cnt += 1;
     }
+
     bb_control = BB.QueenAttacks(OccBb(p), sq);         // get control bitboard
     e->all_att[sd] |= bb_control;                       // update attack map
     if (bb_control & q_checks) {                        // check threat bonus

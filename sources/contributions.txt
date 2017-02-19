@@ -1,0 +1,28 @@
+EXTERNAL CODE USAGE:
+
+test positions used in Bench() taken from DiscoCheck by Lucas Braesch
+hanging piece evaluation based on DiscoCheck by Lucas Braesch (expanded to defended pieces)
+material imbalance evaluation based on Crafty by Robert Hyatt
+king tropism based on GambitFruit by Ryan Benitez (who has modified Fruit by Fabien Letouzey)
+forwardness eval term is based on space evaluation from Toga II 3.0 (another Fruit derivative by Thomas Gaksch and Jerry Donald)
+razoring code is based on Toga II 3.0
+aspiration search based on Senpai 1.0 by Fabien Letouzey
+late move reduction formula is based on that of Stockfish
+pawn island evaluation is based on Texel by Peter Österlund
+
+CONTRIBUTIONS FROM OTHER PEOPLE
+
+first of all, Pablo Vazquez has kindly allowed me to use the codebase of Sungorus to start this project 
+Jim Ablett supplied Android compiles
+Graham Banks made a funny, cartoon-like logo
+Matthew R. Brades, Denis Mendoza and Martin Sedlak supplied Linux compiles of some 1.x versions
+Lucas Braesch prompted me repeteadly to maintain Linux compatibility
+Dann Corbit has sent a patch allowing to use popcount intrinsics and fast 64-bit compiles, pointed some bugs.
+Jon Dart supplied a Linux patch of some bitboard functions
+Kestutis Gasaitis made a thorough code inspection of 0.xx versions, spotting bugs and suggesting improvements.
+Raimar Goldschmidt supplied several bugfixes and created personality testing framework
+Dave Kaye prepared Rodent II to be compiled under Linux
+Denis Mendoza created a logo featuring Speedy Gonzales
+Ferdinand Mosca created very funny KingHunter personality
+Brendan J. Norman created Henny and Remy personalities and reviewed Rodent
+Frank Quasinsky tested Rodent for FCP rating list

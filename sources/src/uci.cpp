@@ -475,4 +475,3 @@ void PrintBoard(POS *p) {
 
   printf("\na b c d e f g h\n\n--------------------------------------------\n");
 }
-
