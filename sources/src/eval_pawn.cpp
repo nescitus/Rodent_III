@@ -172,12 +172,17 @@ int cEngine::ScoreFileStorm(U64 bb_opp_pawns, int sd) {
 #define OWN_PAWN(sq) (p->Pawns(sd) & RelSqBb(sq,sd))
 #define OPP_PAWN(sq) (p->Pawns(op) & RelSqBb(sq,sd))
 #define CONTAINS(bb, s1, s2) (bb & SQ(s1)) && (bb & SQ(s2))
-static const int bigChainScore = 18;
-static const int smallChainScore = 13;
+static const int bigChainScore = 18;    // substracted
+static const int smallChainScore = 13;  // substracted
+static const int chainStorm1 = 4;       // substracted
+static const int chainStorm2 = 12;      // substracted, consider raising
+static const int failedChainScore = 10; // added
 
-int cEngine::ScoreChains(POS *p, int sd)
-{
-  int mgResult = 0;
+// @ScoreChains() gives a penalty to side being at the receiving end of the pawn chain
+
+int cEngine::ScoreChains(POS *p, int sd) {
+
+  int mg_result = 0;
   int sq = p->king_sq[sd];
   int op = Opp(sd);
 
@@ -187,28 +192,28 @@ int cEngine::ScoreChains(POS *p, int sd)
 
     if (OPP_PAWN(E4)) {
       if (CONTAINS(opPawns, D5, C6)) { // c6-d5-e4 triad
-        mgResult -= (CONTAINS(sdPawns, D4, E3)) ? bigChainScore : smallChainScore;
+        mg_result -= (CONTAINS(sdPawns, D4, E3)) ? bigChainScore : smallChainScore;
       }
 
       if (CONTAINS(opPawns, D5, F3)) { // d5-e4-f3 triad
-        mgResult -= (OWN_PAWN(E3)) ? bigChainScore : smallChainScore;
+        mg_result -= (OWN_PAWN(E3)) ? bigChainScore : smallChainScore;
       }
     }
 
     if (OPP_PAWN(E5)) {
       if (CONTAINS(opPawns, F4, D6)) { // d6-e5-f4 triad
         // storm of a "g" pawn in the King's Indian
-      if (OPP_PAWN(G5)) {
-            mgResult -= 4; 
-            if (OPP_PAWN(H4)) return 10; // opponent did us a favour!
-      }
-        if (OPP_PAWN(G4)) mgResult -= 12;
+        if (OPP_PAWN(G5)) {
+          mg_result -= chainStorm1; 
+          if (OPP_PAWN(H4)) return failedChainScore; // opponent did us a favour, rendering his chain immobile
+        }
+        if (OPP_PAWN(G4)) mg_result -= chainStorm2;
 
-        mgResult -= (CONTAINS(sdPawns, E4, D5)) ? bigChainScore : smallChainScore;
+        mg_result -= (CONTAINS(sdPawns, E4, D5)) ? bigChainScore : smallChainScore;
       }
 
       if (CONTAINS(opPawns, G3, F4)) { // e5-f4-g3 triad
-        mgResult -= (OWN_PAWN(F3)) ? bigChainScore : smallChainScore;
+        mg_result -= (OWN_PAWN(F3)) ? bigChainScore : smallChainScore;
       }
     }
   }
@@ -219,11 +224,11 @@ int cEngine::ScoreChains(POS *p, int sd)
 
     if (OPP_PAWN(D4)) {
       if (CONTAINS(opPawns, E5, F6)) {
-        mgResult -= (CONTAINS(sdPawns, E4, D3)) ? bigChainScore : smallChainScore;
+        mg_result -= (CONTAINS(sdPawns, E4, D3)) ? bigChainScore : smallChainScore;
       }
       
       if (CONTAINS(opPawns, F5, C3)) {
-        mgResult -= (SQ(D3) & sdPawns) ? bigChainScore : smallChainScore;
+        mg_result -= (SQ(D3) & sdPawns) ? bigChainScore : smallChainScore;
       }
     }
 
@@ -231,19 +236,19 @@ int cEngine::ScoreChains(POS *p, int sd)
       if (CONTAINS(opPawns, C4, E6)) {
         // storm of a "b" pawn
         if (OPP_PAWN(B5)) {
-          mgResult -= 4;
-          if (OPP_PAWN(A4)) return 0; // this is not how you handle pawn chains
+          mg_result -= chainStorm1;
+          if (OPP_PAWN(A4)) return failedChainScore; // opponent did us a favour, rendering his chain immobile
         }
-        if (OPP_PAWN(B4)) mgResult -= 12;
+        if (OPP_PAWN(B4)) mg_result -= chainStorm2;
 
-        mgResult -= (CONTAINS(sdPawns, E4, D5)) ? bigChainScore : smallChainScore;
+        mg_result -= (CONTAINS(sdPawns, E4, D5)) ? bigChainScore : smallChainScore;
       }
 
       if (CONTAINS(opPawns, B3, C4)) {
-        mgResult -= (OWN_PAWN(C3)) ? bigChainScore : smallChainScore;
+        mg_result -= (OWN_PAWN(C3)) ? bigChainScore : smallChainScore;
       }
     }
   }
 
-  return mgResult;
+  return mg_result;
 }

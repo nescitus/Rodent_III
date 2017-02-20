@@ -51,9 +51,9 @@ void cMask::Init(void) {
   // Init mask for passed pawn detection
 
   for (int sq = 0; sq < 64; sq++) {
-	  passed[WC][sq] = BB.FillNorthExcl(SqBb(sq));
-	  passed[WC][sq] |= BB.ShiftSideways(passed[WC][sq]);
-	  passed[BC][sq] = BB.FillSouthExcl(SqBb(sq));
-	  passed[BC][sq] |= BB.ShiftSideways(passed[BC][sq]);
+    passed[WC][sq] = BB.FillNorthExcl(SqBb(sq));
+    passed[WC][sq] |= BB.ShiftSideways(passed[WC][sq]);
+    passed[BC][sq] = BB.FillSouthExcl(SqBb(sq));
+    passed[BC][sq] |= BB.ShiftSideways(passed[BC][sq]);
   }
 }
