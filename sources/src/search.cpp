@@ -59,8 +59,6 @@ void InitSearch(void) {
     for (int mv = 0; mv < MAX_MOVES; mv++) {
 
       double r = log((double)dp) * log((double)Min(mv, 63)) / 2;
-      if (r < 0.80) r = 0; // TODO: test without
-
       lmr_size[0][dp][mv] = r;             // zero window node
       lmr_size[1][dp][mv] = Max(r - 1, 0); // principal variation node
 
@@ -135,14 +133,14 @@ void cEngine::Iterate(POS *p, int *pv) {
     // If a thread is lagging behind too much, which makes it unlikely
     // to contribute to the final result, skip the iteration.
 
-	if (Glob.depth_reached > dp_completed+1) {
+    if (Glob.depth_reached > dp_completed+1) {
       dp_completed++;
-	  continue;
-	}
+      continue;
+    }
 
     printf("info depth %d\n", root_depth);
-	if (Par.search_skill > 6) cur_val = Widen(p, root_depth, pv, cur_val);
-	else                      cur_val = Search(p, 0, -INF, INF, root_depth, 0, -1, -1, pv);
+    if (Par.search_skill > 6) cur_val = Widen(p, root_depth, pv, cur_val);
+    else                      cur_val = Search(p, 0, -INF, INF, root_depth, 0, -1, -1, pv);
     if (Glob.abort_search) break;
 
     // Abort search on finding checkmate score
@@ -151,16 +149,16 @@ void cEngine::Iterate(POS *p, int *pv) {
       int max_mate_depth = (MATE - Abs(cur_val) + 1) + 1;
       max_mate_depth *= 4;
       max_mate_depth /= 3;
-	  if (max_mate_depth <= root_depth) {
+      if (max_mate_depth <= root_depth) {
         dp_completed = root_depth;
         break;
-	  }
+      }
     }
 
-	// Set information about depth
+    // Set information about depth
 
     dp_completed = root_depth;
-	if (Glob.depth_reached < dp_completed)
+    if (Glob.depth_reached < dp_completed)
       Glob.depth_reached = dp_completed;
   }
 
@@ -297,7 +295,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     if (null_refutation > 0) ref_sq = Tsq(null_refutation);
     p->UndoNull(u);
 
-	if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && root_depth > 1) return 0;
 
     if (score >= beta) {
 
@@ -306,7 +304,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
       if (new_depth > 6 && Par.search_skill > 9)
       score = Search(p, ply, alpha, beta, new_depth-5, 1, last_move, last_capt_sq, pv);
 
-	  if (Glob.abort_search && root_depth > 1) return 0;
+      if (Glob.abort_search && root_depth > 1) return 0;
       if (score >= beta) return score;
     }
   } // end of null move code
@@ -359,9 +357,9 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     // MAKE MOVE    
 
     mv_hist_score = history[p->pc[Fsq(move)]][Tsq(move)];
-	victim = TpOnSq(p, Tsq(move));
-	if (victim != NO_TP) last_capt = Tsq(move);
-	else last_capt = -1;
+    victim = TpOnSq(p, Tsq(move));
+    if (victim != NO_TP) last_capt = Tsq(move);
+    else last_capt = -1;
     p->DoMove(move, u);
     if (Illegal(p)) { p->UndoMove(move, u); continue; }
 
@@ -370,7 +368,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     mv_played[mv_tried] = move;
     mv_tried++;
     if (mv_type == MV_NORMAL) quiet_tried++;
-	if ( ply == 0 && !Par.shut_up && depth > 16 && Glob.thread_no == 1) 
+    if ( ply == 0 && !Par.shut_up && depth > 16 && Glob.thread_no == 1) 
        DisplayCurrmove(move, mv_tried);
 
     // SET NEW SEARCH DEPTH
@@ -413,7 +411,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     reduction = 0;
 
     if (depth > 2
-	&& Par.search_skill > 2
+    && Par.search_skill > 2
     && mv_tried > 3
     && !fl_check
     && !InCheck(p)
@@ -469,7 +467,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     // UNDO MOVE
 
     p->UndoMove(move, u);
-	if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && root_depth > 1) return 0;
 
     // BETA CUTOFF
 

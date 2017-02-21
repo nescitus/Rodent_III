@@ -49,7 +49,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
   // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
   if (TransRetrieve(p->hash_key, &move, &score, alpha, beta, 0, ply)) {
-    if (score >= beta) UpdateHistory(p, -1, move, 1, ply); // TODO: try wihout here and in other qs
+    if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
     if (!is_pv) return score;
   }
 
@@ -74,19 +74,19 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
 
-	// UNDO MOVE
+    // UNDO MOVE
 
     p->UndoMove(move, u);
-	if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && root_depth > 1) return 0;
 
-	// BETA CUTOFF
+    // BETA CUTOFF
 
     if (score >= beta) {
       TransStore(p->hash_key, move, score, LOWER, 0, ply);
       return score;
     }
 
-	// NEW BEST MOVE
+    // NEW BEST MOVE
 
     if (score > best) {
       best = score;
@@ -133,7 +133,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
   // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
   if (TransRetrieve(p->hash_key, &move, &score, alpha, beta, 0, ply)) {
-    if (score >= beta) UpdateHistory(p, -1, move, 1, ply); // TODO: try wihout here and in other qs
+    if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
     if (!is_pv) return score;
   }
 
@@ -157,21 +157,21 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     p->DoMove(move, u);
     if (Illegal(p)) { p->UndoMove(move, u); continue; }
 
-	score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
+    score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
 
-	// UNDO MOVE
+    // UNDO MOVE
 
     p->UndoMove(move, u);
-	if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && root_depth > 1) return 0;
 
-	// BETA CUTOFF
+    // BETA CUTOFF
 
     if (score >= beta) {
       TransStore(p->hash_key, move, score, LOWER, 0, ply);
       return score;
     }
 
-	// NEW BEST MOVE
+    // NEW BEST MOVE
 
     if (score > best) {
       best = score;
@@ -230,17 +230,16 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // Prune insufficient captures. This is done in two stages:
 
-	if (p->cnt[op][N] + p->cnt[op][B] + p->cnt[op][R] + p->cnt[op][Q] > 1) {
+    if (p->cnt[op][N] + p->cnt[op][B] + p->cnt[op][R] + p->cnt[op][Q] > 1) {
 
       // 1. Prune captures that are unlikely to raise alpha even if opponent does not recapture
 
       if (floor + tp_value[TpOnSq(p, Tsq(move))] + 150 < alpha_floor) continue;
 
-	  // 2. Prune captures that probably lose material
+      // 2. Prune captures that probably lose material
 
-	  if (BadCapture(p, move)) continue;
-
-	}
+      if (BadCapture(p, move)) continue;
+    }
 
     p->DoMove(move, u);
     if (Illegal(p)) { p->UndoMove(move, u); continue; }
