@@ -23,8 +23,8 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "book.h"
 
 // Random numbers from PolyGlot, used to compute book hash keys
-const U64 PG[781]
-= {
+
+const U64 PG[781] = {
   0x9D39247E33776D41ULL, 0x2AF7398005AAA5C7ULL, 0x44DB015024623547ULL,
   0x9C15F73E62A76AE2ULL, 0x75834465489C0C89ULL, 0x3290AC3A203001BFULL,
   0x0FBBAD1F61042279ULL, 0xE83A908FF2FB60CAULL, 0x0D7E765D58755C10ULL,
@@ -289,8 +289,8 @@ const U64 PG[781]
 };
 
 
-U64 sBook::GetPolyglotKey(POS *p)
-{
+U64 sBook::GetPolyglotKey(POS *p) {
+
   U64 key = 0;
 
   for (int sq = 0; sq < 64; sq++) {
@@ -333,10 +333,11 @@ U64 sBook::GetPolyglotKey(POS *p)
   return key;
 }
 
-void sBook::OpenPolyglot(void)
-{
-  // check if string contains a line ending information from personality file
-  // if found replace with C string termination
+void sBook::OpenPolyglot(void) {
+
+  // check if string contains a line ending information from personality file;
+  // if found, replace with C string termination
+
   size_t ln = strlen(bookName) - 1;
   if (*bookName && bookName[ln] == '\n') 
     bookName[ln] = '\0';
@@ -357,8 +358,8 @@ void sBook::OpenPolyglot(void)
   }
 }
 
-int my_random(int n)
-{
+int my_random(int n) {
+
   double r;
   r = double(rand()) / (double(RAND_MAX) + 1.0);
   return int(floor(r*double(n)));
@@ -392,16 +393,19 @@ int sBook::GetPolyglotMove(POS *p, int printOutput)
       score = entry->weight;
 
       // ugly hack to convert polyglot move to a real one
+
       int fsq = Tsq(move);
       int tsq = Fsq(move);
 
       // correction for castling moves
+
       if (fsq == E1 && tsq == H1 && p->king_sq[WC] == E1) tsq = G1;
       if (fsq == E8 && tsq == H8 && p->king_sq[BC] == E8) tsq = G8;
       if (fsq == E1 && tsq == A1 && p->king_sq[WC] == E1) tsq = C1;
       if (fsq == E8 && tsq == A8 && p->king_sq[BC] == E8) tsq = C8;
 
       // now we want to get a move with full data, not only from and to squares
+
       int realMove = (tsq << 6) | fsq;
       MoveToStr(realMove, moveString);
       realMove = StrToMove(p, moveString);
@@ -438,8 +442,8 @@ int sBook::GetPolyglotMove(POS *p, int printOutput)
   return bestMove;
 }
 
-int sBook::FindPos(U64 key)
-{
+int sBook::FindPos(U64 key) {
+
   int left, right, mid;
   polyglot_move entry[1];
 
@@ -461,8 +465,8 @@ int sBook::FindPos(U64 key)
   return (entry->key == key) ? left : bookSize;
 }
 
-void sBook::ReadEntry(polyglot_move * entry, int n)
-{
+void sBook::ReadEntry(polyglot_move * entry, int n) {
+
   fseek(bookFile, n * 16, SEEK_SET);
   entry->key = ReadInteger(8);
   entry->move = (int)ReadInteger(2);
@@ -471,8 +475,8 @@ void sBook::ReadEntry(polyglot_move * entry, int n)
   entry->learn = (int)ReadInteger(2);
 }
 
-U64 sBook::ReadInteger(int size)
-{
+U64 sBook::ReadInteger(int size) {
+
   U64 n = 0;
   int b;
 
@@ -484,22 +488,22 @@ U64 sBook::ReadInteger(int size)
   return n;
 }
 
-void sBook::ClosePolyglot(void)
-{
+void sBook::ClosePolyglot(void) {
+
   if (bookFile != NULL) {
     fclose(bookFile);
     bookFile = NULL;
   }
 }
 
-void sBook::Init(POS * p)
-{
+void sBook::Init(POS * p) {
+
   bookFile = NULL;
   bookSize = 0;
 }
 
-int sBook::IsInfrequent(int val, int maxFreq)
-{
+int sBook::IsInfrequent(int val, int maxFreq) {
+
   if (maxFreq > 2 && val < 2) return 1;     // if possible, pick a move tried at least twice
   if (val < ((maxFreq * Par.book_filter) / 100)) return 1; // rare moves get filtered out
   return 0;
