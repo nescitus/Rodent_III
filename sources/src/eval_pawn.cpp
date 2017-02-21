@@ -70,6 +70,22 @@ void cEngine::ScorePawnStruct(POS * p, eData * e) {
   EvaluateKing(p, e, WC);
   EvaluateKing(p, e, BC);
 
+  // Center binds
+
+  int tmp = 0;
+  if (e->two_pawns_take[WC] & SqBb(D5)) tmp += 5;
+  if (e->two_pawns_take[WC] & SqBb(E5)) tmp += 5;
+  if (e->two_pawns_take[WC] & SqBb(D6)) tmp += 5;
+  if (e->two_pawns_take[WC] & SqBb(E6)) tmp += 5;
+  Add(e, WC, tmp, 0);
+
+  tmp = 0;
+  if (e->two_pawns_take[BC] & SqBb(D4)) tmp += 5;
+  if (e->two_pawns_take[BC] & SqBb(E4)) tmp += 5;
+  if (e->two_pawns_take[BC] & SqBb(D3)) tmp += 5;
+  if (e->two_pawns_take[BC] & SqBb(E3)) tmp += 5;
+  Add(e, BC, tmp, 0);
+
   // King on a wing without pawns
 
   U64 bb_all_pawns = p->Pawns(WC) | p->Pawns(BC);
