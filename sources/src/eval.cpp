@@ -519,6 +519,11 @@ void cEngine::ScoreThreats(POS *p, eData *e, int sd) {
   bb_defended &= ~e->p_takes[sd];  // no defense against pawn attack
   bb_defended &= ~p->Pawns(op);    // currently we don't evaluate threats against pawns
 
+  U64 bb_undefended = p->cl_bb[op];
+  bb_undefended &= ~p->Pawns(op);
+  bb_undefended &= ~e->all_att[sd];
+  bb_undefended &= ~e->all_att[op];
+
   // hanging pieces (attacked and undefended, based on DiscoCheck)
 
   while (bb_hanging) {
@@ -537,6 +542,14 @@ void cEngine::ScoreThreats(POS *p, eData *e, int sd) {
     sc = tp_value[pc] / 96;
     mg += 5 + sc;
     eg += 9 + sc;
+  }
+
+  // unattacked and undefended
+
+  while (bb_undefended) {
+    sq = BB.PopFirstBit(&bb_undefended);
+    mg += 5;
+    eg += 9;
   }
 
   Add(e, sd, (Par.threats * mg) / 100, (Par.threats * eg) / 100);
