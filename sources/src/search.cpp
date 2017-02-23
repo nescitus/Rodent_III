@@ -542,6 +542,10 @@ void DisplayCurrmove(int move, int tried) {
 
 void cEngine::DisplayPv(int score, int *pv) {
 
+  // don't display information from threads that are late
+
+  if (root_depth < Glob.depth_reached) return;
+
   char *type, pv_str[512];
   int elapsed = GetMS() - start_time;
   U64 nps = GetNps(elapsed);
