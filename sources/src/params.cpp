@@ -135,7 +135,7 @@ void cParam::InitPst(void) {
 
 void cParam::InitMobility(void) {
 
- for (int i = 0; i < 9; i++) {
+  for (int i = 0; i < 9; i++) {
     n_mob_mg[i] = 4 * (i-4);
     n_mob_eg[i] = 4 * (i-4);
   }

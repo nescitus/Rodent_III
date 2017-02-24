@@ -70,6 +70,7 @@ int Legal(POS *p, int move) {
         return 1;
     return 0;
   }
+
   if (ftp == P) {
     if (side == WC) {
       if (Rank(fsq) == RANK_7 && !IsProm(move))
@@ -94,7 +95,9 @@ int Legal(POS *p, int move) {
     }
     return 0;
   }
+
   if (IsProm(move))
     return 0;
+
   return (AttacksFrom(p, fsq) & SqBb(tsq)) != 0;
 }

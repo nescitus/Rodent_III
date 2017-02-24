@@ -547,7 +547,7 @@ void cEngine::ScoreThreats(POS *p, eData *e, int sd) {
   // unattacked and undefended
 
   while (bb_undefended) {
-    sq = BB.PopFirstBit(&bb_undefended);
+    bb_undefended &= (bb_undefended - 1);
     mg += 5;
     eg += 9;
   }
