@@ -365,19 +365,18 @@ int my_random(int n) {
   return int(floor(r*double(n)));
 }
 
-int sBook::GetPolyglotMove(POS *p, int printOutput)
-{
-  int bestMove = 0;
-  int bestScore = 0;
-  int maxWeight = 0;
-  int sumOfWeights = 0;
+int sBook::GetPolyglotMove(POS *p, int printOutput) {
+
+  int best_move = 0;
+  int max_weight = 0;
+  int weight_sum = 0;
   int pos;
   polyglot_move entry[1];
   int move;
   int score;
   int values[100];
   U64 key = GetPolyglotKey(p);
-  char moveString[6];
+  char move_string[6];
 
   nOfChoices = 0;
 
@@ -388,7 +387,6 @@ int sBook::GetPolyglotMove(POS *p, int printOutput)
 
       ReadEntry(entry, pos);
       if (entry->key != key) break;
-
       move = entry->move;
       score = entry->weight;
 
@@ -406,40 +404,41 @@ int sBook::GetPolyglotMove(POS *p, int printOutput)
 
       // now we want to get a move with full data, not only from and to squares
 
-      int realMove = (tsq << 6) | fsq;
-      MoveToStr(realMove, moveString);
-      realMove = StrToMove(p, moveString);
+      int internal_move = (tsq << 6) | fsq;
+      MoveToStr(internal_move, move_string);
+      internal_move = StrToMove(p, move_string);
 
-      if (maxWeight < score) maxWeight = score;
-      sumOfWeights += score;
-      moves[nOfChoices] = realMove;
+      if (max_weight < score) max_weight = score;
+      weight_sum += score;
+      moves[nOfChoices] = internal_move;
       values[nOfChoices] = score;
       nOfChoices++;
     }
 
     // pick a move, filtering out those with significantly lower weight
     for (int i = 0; i<nOfChoices; i++) {
+      int best_score = 0;
 
       // report about possible choices and rejected moves
-      if (values[i] > -1 || maxWeight == 1) {
+      if (values[i] > -1 || max_weight == 1) {
         if (printOutput) {
           printf("info string ");
           PrintMove(moves[i]);
-          if (IsInfrequent(values[i], maxWeight)) printf("?! ");
-          else printf(" %d %%", (values[i] * 100) / sumOfWeights);
+          if (IsInfrequent(values[i], max_weight)) printf("?! ");
+          else printf(" %d %%", (values[i] * 100) / weight_sum);
           printf("\n");
         }
       }
 
       // shall we pick this move?
-      if (!IsInfrequent(values[i], maxWeight)) {
-        bestScore += values[i];
-        if (my_random(bestScore) < values[i]) bestMove = moves[i];
+      if (!IsInfrequent(values[i], max_weight)) {
+        best_score += values[i];
+        if (my_random(best_score) < values[i]) best_move = moves[i];
       }
     }
   }
 
-  return bestMove;
+  return best_move;
 }
 
 int sBook::FindPos(U64 key) {
@@ -478,10 +477,9 @@ void sBook::ReadEntry(polyglot_move * entry, int n) {
 U64 sBook::ReadInteger(int size) {
 
   U64 n = 0;
-  int b;
 
   for (int i = 0; i < size; i++) {
-    b = fgetc(bookFile);
+    int b = fgetc(bookFile);
     n = (n << 8) | b;
   }
 

@@ -118,7 +118,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     mob_mg += Par.n_mob_mg[cnt];
     mob_eg += Par.n_mob_eg[cnt];
 
-    ScoreOutpost(p, e, sd, N, sq, &outpost);            // outpost
+    EvaluateOutpost(p, e, sd, N, sq, &outpost);         // outpost
   }
 
   // Bishop eval
@@ -151,7 +151,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     mob_mg += Par.b_mob_mg[cnt];
     mob_eg += Par.b_mob_eg[cnt];
 
-    ScoreOutpost(p, e, sd, B, sq, &outpost);           // outpost
+    EvaluateOutpost(p, e, sd, B, sq, &outpost);        // outpost
 
     // Bishops side by side
 
@@ -324,7 +324,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
 }
 
-void cEngine::ScoreOutpost(POS *p, eData *e, int sd, int pc, int sq, int *outpost) {
+void cEngine::EvaluateOutpost(POS *p, eData *e, int sd, int pc, int sq, int *outpost) {
 
   if (SqBb(sq) & Mask.home[sd]) {
     U64 stop = BB.ShiftFwd(SqBb(sq), sd);             // get square in front of a minor
@@ -420,7 +420,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
   Add(e, sd, (mg_tot * Par.passers) / 100, (eg_tot * Par.passers) / 100);
 }
 
-void cEngine::ScoreUnstoppable(eData *e, POS * p) {
+void cEngine::EvaluateUnstoppable(eData *e, POS * p) {
 
   U64 bb_pieces, bb_span;
   int w_dist = 8;
@@ -502,7 +502,7 @@ int cEngine::Interpolate(POS * p, eData * e) {
    return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
 }
 
-void cEngine::ScoreThreats(POS *p, eData *e, int sd) {
+void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
 
   int pc, sq, sc;
   int mg = 0;
@@ -594,13 +594,13 @@ int cEngine::Evaluate(POS *p, eData *e) {
   EvaluateMaterial(p, e, BC);
   EvaluatePieces(p, e, WC);
   EvaluatePieces(p, e, BC);
-  ScorePawnStruct(p, e);
+  EvaluatePawnStruct(p, e);
   EvaluatePassers(p, e, WC);
   EvaluatePassers(p, e, BC);
   EvaluatePatterns(p, e);
-  ScoreUnstoppable(e, p);
-  ScoreThreats(p, e, WC);
-  ScoreThreats(p, e, BC);
+  EvaluateUnstoppable(e, p);
+  EvaluateThreats(p, e, WC);
+  EvaluateThreats(p, e, BC);
   Add(e, p->side, 14, 7); // tempo bonus
 
   e->mg[WC] += e->mg_pawns[WC];

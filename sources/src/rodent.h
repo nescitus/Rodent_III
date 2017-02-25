@@ -542,19 +542,19 @@ public:
 
   void Init(int th);
   int Evaluate(POS * p, eData *e);
-  int ScoreChains(POS *p, int sd);
+  int EvaluateChains(POS *p, int sd);
   void EvaluateMaterial(POS * p, eData *e, int sd);
   void EvaluatePieces(POS *p, eData *e, int sd);
+  void EvaluateOutpost(POS *p, eData *e, int pc, int sd, int sq, int * outpost);
   void EvaluatePawns(POS *p, eData *e, int sd);
   void EvaluatePassers(POS *p, eData *e, int sd);
   void EvaluateKing(POS *p, eData *e, int sd);
-  void ScoreKingFile(POS * p, int sd, U64 bb_file, int * shield, int * storm);
-  void ScoreOutpost(POS *p, eData *e, int pc, int sd, int sq, int * outpost);
-  int ScoreFileShelter(U64 bb_own_pawns, int sd);
-  int ScoreFileStorm(U64 bb_opp_pawns, int sd);
-  void ScorePawnStruct(POS * p, eData * e);
-  void ScoreUnstoppable(eData *e, POS * p);
-  void ScoreThreats(POS *p, eData *e, int sd);
+  void EvaluateKingFile(POS * p, int sd, U64 bb_file, int * shield, int * storm);
+  int EvaluateFileShelter(U64 bb_own_pawns, int sd);
+  int EvaluateFileStorm(U64 bb_opp_pawns, int sd);
+  void EvaluatePawnStruct(POS * p, eData * e);
+  void EvaluateUnstoppable(eData *e, POS * p);
+  void EvaluateThreats(POS *p, eData *e, int sd);
   void EvaluatePatterns(POS * p, eData * e);
   int Interpolate(POS * p, eData * e);
   int GetDrawFactor(POS * p, int sd);

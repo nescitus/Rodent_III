@@ -78,7 +78,7 @@ void cEngine::EvaluatePatterns(POS * p, eData * e) {
     }
   }
 
-  if (p->Kings(BC) | RANK_8_BB) {
+  if (p->Kings(BC) & RANK_8_BB) {
 
     // Black castled king that cannot escape upwards
 

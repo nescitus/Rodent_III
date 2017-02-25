@@ -46,7 +46,7 @@ void cEngine::ClearPawnHash(void) {
   }
 }
 
-void cEngine::ScorePawnStruct(POS * p, eData * e) {
+void cEngine::EvaluatePawnStruct(POS * p, eData * e) {
 
   // Try to retrieve score from pawn hashtable
 
@@ -140,28 +140,28 @@ void cEngine::EvaluateKing(POS *p, eData *e, int sd) {
   // Evaluate shielding and storming pawns on each file.
 
   bb_king_file = BB.FillNorth(SqBb(sq)) | BB.FillSouth(SqBb(sq));
-  ScoreKingFile(p, sd, bb_king_file, &shield, &storm);
+  EvaluateKingFile(p, sd, bb_king_file, &shield, &storm);
 
   bb_next_file = ShiftEast(bb_king_file);
-  if (bb_next_file) ScoreKingFile(p, sd, bb_next_file, &shield, &storm);
+  if (bb_next_file) EvaluateKingFile(p, sd, bb_next_file, &shield, &storm);
 
   bb_next_file = ShiftWest(bb_king_file);
-  if (bb_next_file) ScoreKingFile(p, sd, bb_next_file, &shield, &storm);
+  if (bb_next_file) EvaluateKingFile(p, sd, bb_next_file, &shield, &storm);
 
   AddPawns(e, sd, ((Par.shield_weight * shield) / 100) + ((Par.storm_weight * storm) / 100), 0);
-  AddPawns(e, sd, ScoreChains(p, sd), 0);
+  AddPawns(e, sd, EvaluateChains(p, sd), 0);
 }
 
-void cEngine::ScoreKingFile(POS * p, int sd, U64 bb_file, int *shield, int *storm) {
+void cEngine::EvaluateKingFile(POS * p, int sd, U64 bb_file, int *shield, int *storm) {
 
-  int shelter = ScoreFileShelter(bb_file &  p->Pawns(sd), sd);
+  int shelter = EvaluateFileShelter(bb_file &  p->Pawns(sd), sd);
   if (p->Kings(sd) & bb_file) shelter = ((shelter * 120) / 100);
   if (bb_file & bbCentralFile) shelter /= 2;
   *shield += shelter;
-  *storm += ScoreFileStorm(bb_file & p->Pawns(Opp(sd)), sd);
+  *storm += EvaluateFileStorm(bb_file & p->Pawns(Opp(sd)), sd);
 }
 
-int cEngine::ScoreFileShelter(U64 bb_own_pawns, int sd) {
+int cEngine::EvaluateFileShelter(U64 bb_own_pawns, int sd) {
 
   if (!bb_own_pawns) return -36;
   if (bb_own_pawns & bbRelRank[sd][RANK_2]) return    2;
@@ -170,16 +170,16 @@ int cEngine::ScoreFileShelter(U64 bb_own_pawns, int sd) {
   if (bb_own_pawns & bbRelRank[sd][RANK_5]) return  -27;
   if (bb_own_pawns & bbRelRank[sd][RANK_6]) return  -32;
   if (bb_own_pawns & bbRelRank[sd][RANK_7]) return  -35;
-	return 0;
+  return 0;
 }
 
-int cEngine::ScoreFileStorm(U64 bb_opp_pawns, int sd) {
+int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
 
   if (!bb_opp_pawns) return -16;
   if (bb_opp_pawns & bbRelRank[sd][RANK_3]) return -32;
   if (bb_opp_pawns & bbRelRank[sd][RANK_4]) return -16;
   if (bb_opp_pawns & bbRelRank[sd][RANK_5]) return -8;
-	return 0;
+  return 0;
 }
 
 #define SQ(sq) RelSqBb(sq,sd)
@@ -194,9 +194,9 @@ static const int chainStorm1 = 4;       // substracted
 static const int chainStorm2 = 12;      // substracted, consider raising
 static const int failedChainScore = 10; // added
 
-// @ScoreChains() gives a penalty to side being at the receiving end of the pawn chain
+// @brief EvaluateChains() gives a penalty to side being at the receiving end of the pawn chain
 
-int cEngine::ScoreChains(POS *p, int sd) {
+int cEngine::EvaluateChains(POS *p, int sd) {
 
   int mg_result = 0;
   int sq = p->king_sq[sd];

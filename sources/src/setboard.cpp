@@ -39,13 +39,13 @@ void ClearPosition(POS *p) {
 
 void SetPosition(POS *p, char *epd) {
 
-  int i, j, pc;
+  int pc;
   static const char pc_char[13] = "PpNnBbRrQqKk";
 
   ClearPosition(p);
 
-  for (i = 56; i >= 0; i -= 8) {
-    j = 0;
+  for (int i = 56; i >= 0; i -= 8) {
+    int j = 0;
     while (j < 8) {
       if (*epd >= '1' && *epd <= '8')
         for (pc = 0; pc < *epd - '0'; pc++) {

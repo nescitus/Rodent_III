@@ -296,7 +296,6 @@ void ReadPersonality(char *fileName) {
 
   FILE *personalityFile;
   char line[256];
-  int lineNo = 0;
   char token[180], *ptr;
 
   // exit if this personality file doesn't exist
