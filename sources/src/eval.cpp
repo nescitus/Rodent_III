@@ -508,21 +508,23 @@ void cEngine::ScoreThreats(POS *p, eData *e, int sd) {
   int mg = 0;
   int eg = 0;
   int op = Opp(sd);
-  U64 bb_hanging = p->cl_bb[op]    & ~e->p_takes[op];
-  U64 bb_threatened = p->cl_bb[op] & e->p_takes[sd];
+
+  U64 bb_undefended = p->cl_bb[op];
+  U64 bb_threatened = bb_undefended & e->p_takes[sd];
+  U64 bb_defended = bb_undefended & e->all_att[op];
+  U64 bb_hanging = bb_undefended & ~e->p_takes[op];
+
+  bb_undefended &= ~p->Pawns(op);
+  bb_undefended &= ~e->all_att[sd];
+  bb_undefended &= ~e->all_att[op];
+
   bb_hanging |= bb_threatened;     // piece attacked by our pawn isn't well defended
   bb_hanging &= e->all_att[sd];    // hanging piece has to be attacked
   bb_hanging &= ~p->Pawns(op);     // currently we don't evaluate threats against pawns
 
-  U64 bb_defended = p->cl_bb[op] & e->all_att[op];
   bb_defended &= e->ev_att[sd];    // N, B, R attacks (pieces attacked by pawns are scored as hanging)
   bb_defended &= ~e->p_takes[sd];  // no defense against pawn attack
   bb_defended &= ~p->Pawns(op);    // currently we don't evaluate threats against pawns
-
-  U64 bb_undefended = p->cl_bb[op];
-  bb_undefended &= ~p->Pawns(op);
-  bb_undefended &= ~e->all_att[sd];
-  bb_undefended &= ~e->all_att[op];
 
   // hanging pieces (attacked and undefended, based on DiscoCheck)
 
@@ -547,7 +549,7 @@ void cEngine::ScoreThreats(POS *p, eData *e, int sd) {
   // unattacked and undefended
 
   while (bb_undefended) {
-    bb_undefended &= (bb_undefended - 1);
+	bb_undefended &= (bb_undefended - 1);
     mg += 5;
     eg += 9;
   }
