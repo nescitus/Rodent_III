@@ -112,24 +112,7 @@ int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
   if (p->phase == 4 && p->cnt[sd][R] == 1 && p->cnt[op][R] == 1) {
 
     if (p->cnt[sd][P] == 0 && p->cnt[op][P] == 0) return 8;                                          // KRKR
-
-    if (p->cnt[sd][P] == 1 && p->cnt[op][P] == 0) {                                                  // KRPKR
-
-      if ((RelSqBb(A7, sd) & p->Pawns(sd))
-      && ( RelSqBb(A8, sd) & p->Rooks(sd))
-      && ( FILE_A_BB & p->Rooks(op))
-      && ((RelSqBb(H7, sd) & p->Kings(op)) || (RelSqBb(G7, sd) & p->Kings(op)))
-      ) return 0; // dead draw
-
-      if ((RelSqBb(H7, sd) & p->Pawns(sd))
-      && ( RelSqBb(H8, sd) & p->Rooks(sd))
-      && ( FILE_H_BB & p->Rooks(op))
-      && ((RelSqBb(A7, sd) & p->Kings(op)) || (RelSqBb(B7, sd) & p->Kings(op)))
-      ) return 0; // dead draw
-
-      if ((SqBb(p->king_sq[op]) & BB.GetFrontSpan(p->Pawns(sd), sd)))
-         return 32; // defending king on pawn's path: 1/2
-    }
+	if (p->cnt[sd][P] == 1 && p->cnt[op][P] == 0) return ScaleKRPKR(p, sd, op);                      // KRPKR, see below
   }
 
   if (p->phase == 5 && p->cnt[sd][P] == 0) {
@@ -146,6 +129,26 @@ int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
   }
 
   return 64;
+}
+
+int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
+
+  if ((RelSqBb(A7, sd) & p->Pawns(sd))
+  && ( RelSqBb(A8, sd) & p->Rooks(sd))
+  && ( FILE_A_BB & p->Rooks(op))
+  && ((RelSqBb(H7, sd) & p->Kings(op)) || (RelSqBb(G7, sd) & p->Kings(op)))
+  ) return 0; // dead draw
+
+  if ((RelSqBb(H7, sd) & p->Pawns(sd))
+  && ( RelSqBb(H8, sd) & p->Rooks(sd))
+  && ( FILE_H_BB & p->Rooks(op))
+  && ((RelSqBb(A7, sd) & p->Kings(op)) || (RelSqBb(B7, sd) & p->Kings(op)))
+  ) return 0; // dead draw
+
+  if ((SqBb(p->king_sq[op]) & BB.GetFrontSpan(p->Pawns(sd), sd)))
+    return 32; // defending king on pawn's path: 1/2
+
+  return 64;   // default: no scaling
 }
 
 int cEngine::NotOnBishColor(POS * p, int bishSide, int sq) {

@@ -91,6 +91,8 @@ void cParam::DefaultWeights(void) {
    hist_limit = 24576;
    draw_score = 0;
    shut_up = 0;
+
+   // when testing a personality, place changes in relation to original here
 }
 
 void cParam::InitBackward(void) {

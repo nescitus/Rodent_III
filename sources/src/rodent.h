@@ -555,6 +555,7 @@ public:
   void EvaluatePawnStruct(POS * p, eData * e);
   void EvaluateUnstoppable(eData *e, POS * p);
   void EvaluateThreats(POS *p, eData *e, int sd);
+  int ScaleKRPKR(POS *p, int sd, int op);
   void EvaluatePatterns(POS * p, eData * e);
   int Interpolate(POS * p, eData * e);
   int GetDrawFactor(POS * p, int sd);
