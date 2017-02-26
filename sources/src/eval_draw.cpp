@@ -45,7 +45,7 @@ static const int BN_bb[64] = {
     0,   0,   15,  30,  45,  60,  85, 100
 };
 
-int cEngine::GetDrawFactor(POS * p, int sd) {
+int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
 
   int op = Opp(sd); // weaker side
 

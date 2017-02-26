@@ -56,6 +56,9 @@ void cParam::DefaultWeights(void) {
 
    mat_weight = 100;
    pst_weight = 80;
+   pst_style = 0;
+   mob_style = 0; // 1 is only marginally behind
+
    own_att = 110;
    opp_att = 100;
    own_mob = 100;
@@ -78,9 +81,6 @@ void cParam::DefaultWeights(void) {
    backward_mg = -8;
    backward_eg = -8;
    backward_open = -8;
-
-   mob_style = 0; // 1 is only marginally behind
-   pst_style = 0;
 
    InitPst();
    InitMobility();

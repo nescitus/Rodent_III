@@ -17,7 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-void cEngine::EvaluatePatterns(POS * p, eData * e) {
+void cEngine::EvaluatePatterns(POS * p, eData * e) { // refactoring may be needed
 
   U64 king_mask, rook_mask;
   static const U64 wb_mask = { SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2) };
