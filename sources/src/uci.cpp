@@ -131,7 +131,6 @@ void ParseMoves(POS *p, char *ptr) {
 void ParsePosition(POS *p, char *ptr) {
 
   char token[80], fen[80];
-  UNDO u[1];
 
   ptr = ParseToken(ptr, token);
   if (strcmp(token, "fen") == 0) {
@@ -457,7 +456,7 @@ void cEngine::Bench(int depth) {
   search_depth = depth;
 
   for (int i = 0; test[i]; ++i) {
-    printf(test[i]);
+    printf("%s", test[i]);
     SetPosition(p, test[i]);
     printf("\n");
 	Glob.depth_reached = 0;
@@ -476,7 +475,7 @@ void PrintBoard(POS *p) {
 
   printf("--------------------------------------------\n");
   for (int sq = 0; sq < 64; sq++) {
-    printf(piece_name[p->pc[sq ^ (BC * 56)]]);
+    printf("%s", piece_name[p->pc[sq ^ (BC * 56)]]);
     if ((sq + 1) % 8 == 0) printf(" %d\n", 9 - ((sq + 1) / 8));
   }
 

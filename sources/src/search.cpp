@@ -588,7 +588,7 @@ void CheckTimeout(void) {
 void cEngine::Slowdown() {
 
   if (move_nodes > 0) {
-    if (move_nodes > 0 && Glob.nodes >= move_nodes)
+    if (Glob.nodes >= move_nodes)
       Glob.abort_search = 1;
   }
 
