@@ -16,7 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 6615 lines
+// 6609 lines
 
 // b15: 40.941.318 / 32,4 / 2.929
 
@@ -287,35 +287,35 @@ public:
   U64 pawn_key;
   U64 rep_list[256];
 
-  U64 Pawns(int sd) { 
+  U64 Pawns(int sd) const { 
     return (cl_bb[sd] & tp_bb[P]);
   }
 
-  U64 Knights(int sd) {
+  U64 Knights(int sd) const {
     return (cl_bb[sd] & tp_bb[N]);
   }
 
-  U64 Bishops(int sd) {
+  U64 Bishops(int sd) const {
     return (cl_bb[sd] & tp_bb[B]);
   }
 
-  U64 Rooks(int sd) {
+  U64 Rooks(int sd) const {
     return (cl_bb[sd] & tp_bb[R]);
   }
 
-  U64 Queens(int sd) {
+  U64 Queens(int sd) const {
     return (cl_bb[sd] & tp_bb[Q]);
   }
 
-  U64 Kings(int sd) {
+  U64 Kings(int sd) const {
     return (cl_bb[sd] & tp_bb[K]);
   }
 
-  U64 StraightMovers(int sd) {
+  U64 StraightMovers(int sd) const {
     return (cl_bb[sd] & (tp_bb[R] | tp_bb[Q]));
   }
 
-  U64 DiagMovers(int sd) {
+  U64 DiagMovers(int sd) const {
     return (cl_bb[sd] & (tp_bb[B] | tp_bb[Q]));
   }
 
