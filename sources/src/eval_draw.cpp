@@ -49,31 +49,10 @@ int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
 
   int op = Opp(sd); // weaker side
 
-  if (p->phase == 0) {
-    if (p->cnt[sd][P] == 1    // TODO: all pawns of a stronger side on a rim
-    && p->cnt[op][P] == 0) {  // TODO: accept pawns for a weaker side
+  if (p->phase == 0) return ScalePawnsOnly(p, sd, op);
 
-      if (p->Pawns(sd) & FILE_H_BB
-      &&  p->Kings(op) & bbKingBlockH[sd]) return 0;
-
-      if (p->Pawns(sd) & FILE_A_BB
-      &&  p->Kings(op) & bbKingBlockA[sd]) return 0;
-    }
-  }
-
-  if (p->phase == 1) {
-    if ( p->cnt[sd][B] == 1
-    && p->cnt[sd][P] == 1) { // TODO: all pawns of a stronger side on a rim
-
-      if (p->Pawns(sd) & FILE_H_BB
-      && NotOnBishColor(p, sd, REL_SQ(H8, sd))
-      && p->Kings(op)  & bbKingBlockH[sd]) return 0;
-
-      if (p->Pawns(sd) & FILE_A_BB
-      && NotOnBishColor(p, sd, REL_SQ(A8, sd))
-      && p->Kings(op)  & bbKingBlockA[sd]) return 0;
-    }
-  }
+  if (p->phase == 1 && p->cnt[sd][B] == 1)                                                           // KBPK, see below
+    return ScaleKBPK(p, sd, op);
 
   if (p->phase < 2) {
     if (p->Pawns(sd) == 0) return 0;                                                                 // KK, KmK, KmKp, KmKpp
@@ -129,6 +108,37 @@ int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
   }
 
   return 64;
+}
+
+int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
+
+  if (p->cnt[sd][P] == 1    // TODO: all pawns of a stronger side on a rim
+  && p->cnt[op][P] == 0) {  // TODO: accept pawns for a weaker side
+
+    if (p->Pawns(sd) & FILE_H_BB
+    &&  p->Kings(op) & bbKingBlockH[sd]) return 0;
+
+    if (p->Pawns(sd) & FILE_A_BB
+    &&  p->Kings(op) & bbKingBlockA[sd]) return 0;
+  }
+
+  return 64; // default
+}
+
+int cEngine::ScaleKBPK(POS *p, int sd, int op) {
+
+  if (p->cnt[sd][P] == 1) { // TODO: change condition to all pawns on the rim
+
+    if (p->Pawns(sd) & FILE_H_BB
+    && NotOnBishColor(p, sd, REL_SQ(H8, sd))
+    && p->Kings(op)  & bbKingBlockH[sd]) return 0;
+
+    if (p->Pawns(sd) & FILE_A_BB
+    && NotOnBishColor(p, sd, REL_SQ(A8, sd))
+    && p->Kings(op)  & bbKingBlockA[sd]) return 0;
+  }
+
+  return 64; // default
 }
 
 int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
