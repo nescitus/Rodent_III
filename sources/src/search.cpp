@@ -28,16 +28,16 @@ void cParam::InitAsymmetric(POS * p) {
 
   prog_side = p->side;
 
-  if (prog_side == WC) {
-    sd_att[WC] = own_att;
-    sd_att[BC] = opp_att;
-    sd_mob[WC] = own_mob;
-    sd_mob[BC] = opp_mob;
+  if (prog_side == WC) { // TODO: no if/else, but progside/op_side
+    sd_att[WC] = own_att_weight;
+    sd_att[BC] = opp_att_weight;
+    sd_mob[WC] = own_mob_weight;
+    sd_mob[BC] = opp_mob_weight;
   } else {
-    sd_att[BC] = own_att;
-    sd_att[WC] = opp_att;
-    sd_mob[BC] = own_mob;
-    sd_mob[WC] = opp_mob;
+    sd_att[BC] = own_att_weight;
+    sd_att[WC] = opp_att_weight;
+    sd_mob[BC] = own_mob_weight;
+    sd_mob[WC] = opp_mob_weight;
   }
 }
 

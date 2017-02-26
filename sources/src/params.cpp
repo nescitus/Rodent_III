@@ -59,16 +59,16 @@ void cParam::DefaultWeights(void) {
    pst_style = 0;
    mob_style = 0; // 1 is only marginally behind
 
-   own_att = 110;
-   opp_att = 100;
-   own_mob = 100;
-   opp_mob = 110;
-   threats = 100;
-   tropism = 20;
-   forwardness = 0;
-   passers = 100;
-   outposts = 100;
-   lines = 100;
+   own_att_weight = 110;
+   opp_att_weight = 100;
+   own_mob_weight = 100;
+   opp_mob_weight = 110;
+   threats_weight = 100;
+   tropism_weight = 20;
+   forward_weight = 0;
+   passers_weight = 100;
+   outposts_weight = 100;
+   lines_weight = 100;
    struct_weight = 100;
    shield_weight = 120;
    storm_weight = 100;
@@ -92,7 +92,8 @@ void cParam::DefaultWeights(void) {
    draw_score = 0;
    shut_up = 0;
 
-   // when testing a personality, place changes in relation to original here
+   // when testing a personality, place changes in relation to default here
+
 }
 
 void cParam::InitBackward(void) {

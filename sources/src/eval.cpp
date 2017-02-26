@@ -309,10 +309,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   }
 
   Add(e, sd, (Par.sd_mob[sd] * mob_mg)  / 100, (Par.sd_mob[sd] * mob_eg)  / 100);
-  Add(e, sd, (Par.tropism * tropism_mg) / 100, (Par.tropism * tropism_eg) / 100);
-  Add(e, sd, (Par.lines * lines_mg)     / 100, (Par.lines * lines_eg)     / 100);
-  Add(e, sd, (Par.forwardness * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
-  Add(e, sd, (Par.outposts * outpost) / 100);
+  Add(e, sd, (Par.tropism_weight * tropism_mg) / 100, (Par.tropism_weight * tropism_eg) / 100);
+  Add(e, sd, (Par.lines_weight * lines_mg)     / 100, (Par.lines_weight * lines_eg)     / 100);
+  Add(e, sd, (Par.forward_weight * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
+  Add(e, sd, (Par.outposts_weight * outpost) / 100);
 
   // King attack eval
 
@@ -417,7 +417,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
     }
   }
 
-  Add(e, sd, (mg_tot * Par.passers) / 100, (eg_tot * Par.passers) / 100);
+  Add(e, sd, (mg_tot * Par.passers_weight) / 100, (eg_tot * Par.passers_weight) / 100);
 }
 
 void cEngine::EvaluateUnstoppable(eData *e, POS * p) {
@@ -554,7 +554,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
     eg += 9;
   }
 
-  Add(e, sd, (Par.threats * mg) / 100, (Par.threats * eg) / 100);
+  Add(e, sd, (Par.threats_weight * mg) / 100, (Par.threats_weight * eg) / 100);
 }
 
 int cEngine::Evaluate(POS *p, eData *e) {

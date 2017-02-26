@@ -50,20 +50,20 @@ void PrintUciOptions(void) {
 
     printf("option name Material type spin default %d min 0 max 500\n", Par.mat_weight);
     printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.pst_weight);
-    printf("option name OwnAttack type spin default %d min 0 max 500\n", Par.own_att);
-    printf("option name OppAttack type spin default %d min 0 max 500\n", Par.opp_att);
-    printf("option name OwnMobility type spin default %d min 0 max 500\n", Par.own_mob);
-    printf("option name OppMobility type spin default %d min 0 max 500\n", Par.opp_mob);
-    printf("option name KingTropism type spin default %d min 0 max 500\n", Par.tropism);
-    printf("option name Forwardness type spin default %d min 0 max 500\n", Par.forwardness);
-    printf("option name PiecePressure type spin default %d min 0 max 500\n", Par.threats);
+    printf("option name OwnAttack type spin default %d min 0 max 500\n", Par.own_att_weight);
+    printf("option name OppAttack type spin default %d min 0 max 500\n", Par.opp_att_weight);
+    printf("option name OwnMobility type spin default %d min 0 max 500\n", Par.own_mob_weight);
+    printf("option name OppMobility type spin default %d min 0 max 500\n", Par.opp_mob_weight);
+    printf("option name KingTropism type spin default %d min 0 max 500\n", Par.tropism_weight);
+    printf("option name Forwardness type spin default %d min 0 max 500\n", Par.forward_weight);
+    printf("option name PiecePressure type spin default %d min 0 max 500\n", Par.threats_weight);
 
-    printf("option name PassedPawns type spin default %d min 0 max 500\n", Par.passers);
+    printf("option name PassedPawns type spin default %d min 0 max 500\n", Par.passers_weight);
     printf("option name PaswnStructure type spin default %d min 0 max 500\n", Par.struct_weight);
     printf("option name PawnShield type spin default %d min 0 max 500\n", Par.shield_weight);
     printf("option name PawnStorm type spin default %d min 0 max 500\n", Par.storm_weight);
-    printf("option name Outposts type spin default %d min 0 max 500\n", Par.outposts);
-    printf("option name Lines type spin default %d min 0 max 500\n", Par.lines);
+    printf("option name Outposts type spin default %d min 0 max 500\n", Par.outposts_weight);
+    printf("option name Lines type spin default %d min 0 max 500\n", Par.lines_weight);
 	printf("option name Fianchetto type spin default %d min 0 max 100\n", Par.protecting_bishop);
 
     printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
@@ -178,28 +178,28 @@ void ParseSetoption(char *ptr) {
     Par.InitPst();
     Glob.should_clear = 1;
   } else if (strcmp(name, "OwnAttack") == 0         || strcmp(name, "ownattack") == 0)      {
-    Par.own_att = atoi(value);
+    Par.own_att_weight = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "OppAttack") == 0         || strcmp(name, "oppattack") == 0)      {
-    Par.opp_att = atoi(value);
+    Par.opp_att_weight = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "OwnMobility") == 0       || strcmp(name, "ownmobility") == 0)    {
-    Par.own_mob = atoi(value);
+    Par.own_mob_weight = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "OppMobility") == 0       || strcmp(name, "oppmobility") == 0)    {
-    Par.opp_mob = atoi(value);
+    Par.opp_mob_weight = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "KingTropism") == 0       || strcmp(name, "kingtropism") == 0)    {
-    Par.tropism = atoi(value);
+    Par.tropism_weight = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "Forwardness") == 0       || strcmp(name, "forwardness") == 0)    {
-    Par.forwardness = atoi(value);
+    Par.forward_weight = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "PiecePressure") == 0     || strcmp(name, "piecepressure") == 0)  {
-    Par.threats = atoi(value);
+    Par.threats_weight = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "PassedPawns") == 0       || strcmp(name, "passedpawns") == 0)    {
-    Par.passers = atoi(value);
+    Par.passers_weight = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "PawnStructure") == 0     || strcmp(name, "pawnstructure") == 0)  {
     Par.struct_weight = atoi(value);
@@ -211,10 +211,10 @@ void ParseSetoption(char *ptr) {
     Par.storm_weight = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "Outposts") == 0          || strcmp(name, "outposts") == 0)       {
-    Par.outposts = atoi(value);
+    Par.outposts_weight = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "Lines") == 0             || strcmp(name, "lines") == 0)          {
-    Par.lines = atoi(value);
+    Par.lines_weight = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "Fianchetto") == 0        || strcmp(name, "fianchetto") == 0)          {
     Par.protecting_bishop = atoi(value);
