@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<script>
+
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+function inputToOption(name) {
+  var el = document.getElementById(name);
+  var val = el.value;
+  return "setoption name "+name+ " value "+ val;
+}
+
+function savePersonality() {
+  var out = '';
+  out += inputToOption("PawnValue") + '\r\n';
+  out += inputToOption("KnightValue")+ '\r\n';
+  out += inputToOption("BishopValue")+ '\r\n';
+  out += inputToOption("RookValue")+ '\r\n';
+  out += inputToOption("QueenValue")+ '\r\n';
+  
+  out += inputToOption("KeepPawn") + '\r\n';
+  out += inputToOption("KeepKnight") + '\r\n';
+  out += inputToOption("KeepBishop") + '\r\n';
+  out += inputToOption("KeepRook") + '\r\n';
+  out += inputToOption("KeepQueen") + '\r\n';
+  
+  out += inputToOption("BishopPair") + '\r\n';
+  out += inputToOption("KnightPair") + '\r\n';
+  out += inputToOption("ExchangeImbalance") + '\r\n';
+  out += inputToOption("KnightLikesClosed") + '\r\n';
+  out += inputToOption("RookLikesOpen") + '\r\n';
+  
+  out += inputToOption("Material") + '\r\n';
+  out += inputToOption("OwnAttack") + '\r\n';
+  out += inputToOption("OppAttack") + '\r\n';
+  out += inputToOption("OwnMobility") + '\r\n';
+  out += inputToOption("OppMobility") + '\r\n';
+  
+  out += inputToOption("KingTropism") + '\r\n';
+  out += inputToOption("PiecePlacement") + '\r\n';
+  out += inputToOption("PiecePressure") + '\r\n';
+  out += inputToOption("PassedPawns") + '\r\n';
+  out += inputToOption("PawnStructure") + '\r\n';
+  
+  out += inputToOption("Lines") + '\r\n';
+  out += inputToOption("Outposts") + '\r\n';
+  out += inputToOption("PawnShield") + '\r\n';
+  out += inputToOption("PawnStorm") + '\r\n';
+  out += inputToOption("Forwardness") + '\r\n';
+  
+  out += inputToOption("DoubledPawnMg") + '\r\n';
+  out += inputToOption("DoubledPawnEg") + '\r\n';
+  out += inputToOption("IsolatedPawnMg") + '\r\n';
+  out += inputToOption("IsolatedPawnEg") + '\r\n';
+  out += inputToOption("IsolatedOnOpenMg") + '\r\n';
+  out += inputToOption("BackwardPawnMg") + '\r\n';
+  out += inputToOption("BackwardPawnEg") + '\r\n';
+  out += inputToOption("BackwardOnOpenMg") + '\r\n';
+  
+  out += inputToOption("Fianchetto") + '\r\n';
+  
+  var pst_name = document.getElementById("pst").value;
+  if (pst_name == "quirky")
+    out += "setoption name PstStyle value 0\r\n"
+  if (pst_name == "classic")
+    out += "setoption name PstStyle value 1\r\n"
+  if (pst_name == "normal")
+    out += "setoption name PstStyle value 2\r\n"
+  if (pst_name == "blunt")
+    out += "setoption name PstStyle value 3\r\n"
+	
+  var mob_name = document.getElementById("mob").value;
+  if (mob_name == "linear")
+    out += "steoption name MobilityStyle value 0\r\n"
+  if (mob_name == "decreasing")
+    out += "steoption name MobilityStyle value 1\r\n"
+	
+  out += inputToOption("NpsLimit") + '\r\n';
+  out += inputToOption("EvalBlur") + '\r\n';
+  out += inputToOption("Contempt") + '\r\n';
+  out += inputToOption("SlowMover") + '\r\n';
+  out += inputToOption("Selectivity") + '\r\n';
+  out += inputToOption("SearchSkill") + '\r\n';
+  
+  out += inputToOption("BookFilter") + '\r\n';
+  
+  download("personality.txt",out);
+}
+
+</script>
+
+<body>
+
+<h3>Rodent personality creator  <button onclick="savePersonality()">Save personality</button></h3>
+
+<div style="width: 18em; float:left; margin:1em;">
+<p><b>Material</b></p>
+<p class="mono"> Pawn value<input type="number" id="PawnValue" value="100" min="0" max="1200" style="float:right";> </p>
+<p class="mono"> Knight value<input type="number" id="KnightValue" value="325" min="0" max="1200" style="float:right";> </p>
+<p class="mono"> Bishop value<input type="number" id="BishopValue" value="335" min="0" max="1200" style="float:right";> </p>
+<p class="mono"> Rook value<input type="number" id="RookValue" value="500" min="0" max="1200" style="float:right";> </p>
+<p class="mono"> Queen value<input type="number" id="QueenValue" value="1000" min="0" max="1200" style="float:right";> </p>
+<br>
+<p class="mono"> Keep pawn<input type="number" id="KeepPawn" value="0" min="-200" max="200" style="float:right";> </p>
+<p class="mono"> Keep knight<input type="number" id="KeepKnight" value="0" min="-200" max="200" style="float:right";> </p>
+<p class="mono"> Keep bishop<input type="number" id="KeepBishop" value="0" min="-200" max="200" style="float:right";> </p>
+<p class="mono"> Keep rook<input type="number" id="KeepRook" value="0" min="-200" max="200" style="float:right";> </p>
+<p class="mono"> Keep queen<input type="number" id="KeepQueen" value="0" min="-200" max="200" style="float:right";> </p>
+<br>
+<p class="mono"> Bishop Pair<input type="number" id="BishopPair" value="50" min="-100" max="100" style="float:right";> </p>
+<p class="mono"> Knight Pair<input type="number" id="KnightPair" value="-10" min="-100" max="100" style="float:right";> </p>
+<p class="mono"> Exchange Adv<input type="number" id="ExchangeImbalance" value="25" min="-100" max="100" style="float:right";> </p>
+<p class="mono"> N likes closed<input type="number" id="KnightLikesClosed" value="6" min="0" max="10" style="float:right";> </p>
+<p class="mono"> R likes open<input type="number" id="RookLikesOpen" value="3" min="0" max="10" style="float:right";> </p>
+
+</div>
+
+<div style="width: 18em; float:left; margin:1em;">
+<p><b>Weights</b></p>
+<p class="mono"> Material<input type="number" id="Material" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Own attack<input type="number" id="OwnAttack" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Opp attack<input type="number" id="OppAttack" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Own mobility<input type="number" id="OwnMobility" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Opp mobility<input type="number" id="OppMobility" value="100" min="0" max="500" style="float:right";> </p>
+<br>
+<p class="mono"> King tropism<input type="number" id="KingTropism" value="20" min="-50" max="500" style="float:right";> </p>
+<p class="mono"> Piece placement<input type="number" id="PiecePlacement" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Piece pressure<input type="number" id="PiecePressure" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Passed pawns<input type="number" id="PassedPawns" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Pawn structure<input type="number" id="PawnStructure" value="100" min="0" max="500" style="float:right";> </p>
+<br>
+<p class="mono"> Lines<input type="number" id="Lines" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Outposts<input type="number" id="Outposts" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Pawn shield<input type="number" id="PawnShield" value="120" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Pawn storm<input type="number" id="PawnStorm" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> Forwardness<input type="number" id="Forwardness" value="0" min="0" max="500" style="float:right";> </p>
+</div>
+
+<div style="width: 18em; float:left; margin:1em;">
+<p><b>Pawns</b></p>
+<p class="mono"> Doubled midgame<input type="number" id="DoubledPawnMg" value="-12" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Doubled endgame<input type="number" id="DoubledPawnEg" value="-24" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Isolated midgame<input type="number" id="IsolatedPawnMg" value="-10" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Isolated endgame<input type="number" id="IsolatedPawnEg" value="-20" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Isolated on open<input type="number" id="IsolatedOnOpenMg" value="-10" min="-100" max="0" style="float:right";> </p>
+<br>
+<p class="mono"> Backward midgame<input type="number" id="BackwardPawnMg" value="-8" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Backward endgame<input type="number" id="BackwardPawnEg" value="-10" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Backward on open<input type="number" id="BackwardOnOpenMg" value="-8" min="-100" max="0" style="float:right";> </p>
+<br>
+
+<p><b>Patterns</b></p>
+<p class="mono"> Fianchetto<input type="number" id="Fianchetto" value="0" min="0" max="100" style="float:right";> </p>
+<br>
+
+<p><b>Switches</b></p>
+<br>
+
+<p class="mono"> Piece play style
+
+<select id="pst" style="float:right";>
+  <option value="quirky" selected="selected">quirky</option>
+  <option value="classic">classic</option>
+  <option value="normal">normal</option>
+  <option value="normal">blunt</option>
+</select>
+</p>
+<p class="mono"> Mobility style
+
+<select id="mob" style="float:right";>
+  <option value="linear" selected="selected">linear</option>
+  <option value="decreasing">decreasing</option>
+</select>
+</p>
+
+</div>
+
+<div style="width: 18em; float:left; margin:1em;">
+<p><b>Others</b></p>
+<p class="mono"> NPS limit<input type="number" id="NpsLimit" value="0" min="0" max="5000000" style="float:right";> </p>
+<p class="mono"> Eval blur<input type="number" id="EvalBlur" value="0" min="0" max="5000000" style="float:right";> </p>
+<p class="mono"> Contempt<input type="number" id="Contempt" value="0" min="-250" max="250" style="float:right";> </p>
+<p class="mono"> SlowMover<input type="number" id="SlowMover" value="100" min="10" max="500" style="float:right";> </p>
+<p class="mono"> Selectivity<input type="number" id="Selectivity" value="175" min="0" max="200" style="float:right";> </p>
+<p class="mono"> SearchSkill<input type="number" id="SearchSkill" value="10" min="0" max="10" style="float:right";> </p>
+<br>
+<p><b>Opening book</b></p>
+<p class="mono"> Book filter<input type="number" id="BookFilter" value="20" min="0" max="100" style="float:right";> </p>
+
+</div>
+
+
+<p id="demo"></p>
+
+</body>
+</html>
