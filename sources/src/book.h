@@ -38,8 +38,7 @@ private:
     int bookSize;
     FILE * bookFile;
     int moves[100];
-    int nOfChoices;
-    char testString [12];
+    int n_of_choices;
     int IsInfrequent(int val, int maxFreq);
     void ParseBookEntry(char * ptr, int line_no);
     int FindPos(U64 key);
@@ -51,7 +50,7 @@ public:
     U64 GetPolyglotKey(POS *p);
     void OpenPolyglot(void);
     void ClosePolyglot(void);
-    void Init(POS *p);
+    void Init(void);
 };
 
 extern sBook GuideBook;

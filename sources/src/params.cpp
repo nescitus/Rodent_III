@@ -27,7 +27,7 @@ void cParam::DefaultWeights(void) {
    fl_weakening = 0;
 
    elo = 2800;
-   int use_book = 1;
+   use_book = 1;
    book_filter = 20;
    eval_blur = 0;
    time_percentage = 100;
@@ -214,7 +214,7 @@ void cParam::InitTables(void) {
   // Init king attack table
 
   for (int t = 0, i = 1; i < 511; ++i) {
-    t = Min(1280.0, Min(int(0.027 * i * i), t + 8.0));
+    t = (int)Min(1280.0, Min((0.027 * i * i), t + 8.0));
     danger[i] = (t * 100) / 256; // rescale to centipawns
   }
 

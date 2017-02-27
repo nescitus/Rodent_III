@@ -73,7 +73,7 @@ int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth
   return 0;
 }
 
-void TransRetrieveMove(U64 key, int *move, int ply) {
+void TransRetrieveMove(U64 key, int *move) {
 
   ENTRY *entry;
 

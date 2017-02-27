@@ -331,7 +331,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   if (is_pv && !fl_check && !move && depth > 6) {
      Search(p, ply, alpha, beta, depth-2, 0, -1, last_capt_sq, pv);
-     TransRetrieveMove(p->hash_key, &move, ply);
+     TransRetrieveMove(p->hash_key, &move);
   }
 
   // PREPARE FOR MAIN SEARCH
@@ -419,7 +419,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     && mv_type == MV_NORMAL
     && mv_hist_score < Par.hist_limit
     && MoveType(move) != CASTLE) {
-      reduction = lmr_size[is_pv][depth][mv_tried];
+      reduction = (int)lmr_size[is_pv][depth][mv_tried];
 
       // increase reduction on bad history score
 

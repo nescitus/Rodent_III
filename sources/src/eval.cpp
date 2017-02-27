@@ -57,7 +57,7 @@ void cEngine::EvaluateMaterial(POS * p, eData *e, int sd) {
 void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
   U64 bb_pieces, bb_attack, bb_control, bb_contact, bb_zone, bb_file;
-  int sq, cnt, tmp, mul, own_p_cnt, opp_p_cnt;
+  int sq, cnt, own_p_cnt, opp_p_cnt;
   int r_on_7th = 0;
   int mob_mg = 0;
   int mob_eg = 0;
@@ -389,7 +389,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
 void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
 
   U64 bb_pieces, stop, mul;
-  int sq, mg_tmp, eg_tmp, fl_unopposed;
+  int sq, mg_tmp, eg_tmp;
   int op = Opp(sd);
   int mg_tot = 0;
   int eg_tot = 0;

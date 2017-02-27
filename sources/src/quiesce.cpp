@@ -23,7 +23,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
-  int best, score, null_score, move, new_pv[MAX_PLY];
+  int best, score, move, new_pv[MAX_PLY];
   int mv_type, fl_check;
   int is_pv = (alpha != beta - 1);
   MOVES m[1];
@@ -113,7 +113,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
 int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
-  int best, score, null_score, move, new_pv[MAX_PLY];
+  int best, score, move, new_pv[MAX_PLY];
   int mv_type, fl_check;
   int is_pv = (alpha != beta - 1);
   MOVES m[1];
@@ -199,7 +199,6 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
   int best, score, move, new_pv[MAX_PLY];
-  int is_pv = (alpha != beta - 1);
   int op = Opp(p->side);
   MOVES m[1];
   UNDO u[1];

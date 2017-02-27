@@ -378,7 +378,7 @@ int sBook::GetPolyglotMove(POS *p, int printOutput) {
   U64 key = GetPolyglotKey(p);
   char move_string[6];
 
-  nOfChoices = 0;
+  n_of_choices = 0;
 
   if (bookFile != NULL && bookSize != 0) {
     srand(GetMS());
@@ -410,13 +410,13 @@ int sBook::GetPolyglotMove(POS *p, int printOutput) {
 
       if (max_weight < score) max_weight = score;
       weight_sum += score;
-      moves[nOfChoices] = internal_move;
-      values[nOfChoices] = score;
-      nOfChoices++;
+      moves[n_of_choices] = internal_move;
+      values[n_of_choices] = score;
+	  n_of_choices++;
     }
 
     // pick a move, filtering out those with significantly lower weight
-    for (int i = 0; i<nOfChoices; i++) {
+    for (int i = 0; i<n_of_choices; i++) {
       int best_score = 0;
 
       // report about possible choices and rejected moves
@@ -494,7 +494,7 @@ void sBook::ClosePolyglot(void) {
   }
 }
 
-void sBook::Init(POS * p) {
+void sBook::Init(void) {
 
   bookFile = NULL;
   bookSize = 0;
