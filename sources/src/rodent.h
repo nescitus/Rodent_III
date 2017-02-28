@@ -558,7 +558,10 @@ public:
   int ScalePawnsOnly(POS *p, int sd, int op);
   int ScaleKBPK(POS *p, int sd, int op);
   int ScaleKRPKR(POS *p, int sd, int op);
-  void EvaluatePatterns(POS * p, eData * e);
+  void EvaluateBishopPatterns(POS * p, eData * e);
+  void EvaluateKnightPatterns(POS * p, eData * e);
+  void EvaluateCentralPatterns(POS * p, eData * e);
+  void EvaluateKingPatterns(POS * p, eData * e);
   int Interpolate(POS * p, eData * e);
   int GetDrawFactor(POS * p, int sd);
   int CheckmateHelper(POS *p);

@@ -597,11 +597,15 @@ int cEngine::Evaluate(POS *p, eData *e) {
   EvaluatePawnStruct(p, e);
   EvaluatePassers(p, e, WC);
   EvaluatePassers(p, e, BC);
-  EvaluatePatterns(p, e);
   EvaluateUnstoppable(e, p);
   EvaluateThreats(p, e, WC);
   EvaluateThreats(p, e, BC);
   Add(e, p->side, 14, 7); // tempo bonus
+
+  EvaluateKnightPatterns(p, e);
+  EvaluateBishopPatterns(p, e);
+  EvaluateKingPatterns(p, e);
+  EvaluateCentralPatterns(p, e);
 
   e->mg[WC] += e->mg_pawns[WC];
   e->mg[BC] += e->mg_pawns[BC];
