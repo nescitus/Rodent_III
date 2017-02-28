@@ -202,6 +202,40 @@ void ExtractMove(int pv[MAX_PLY]) {
     printf("bestmove %s\n", bestmove_str);
 }
 
+void SetMoveTime(POS * p, int wtime, int btime, int winc, int binc, int movestogo) {
+
+  int time = p->side == WC ? wtime : btime;
+  int inc  = p->side == WC ? winc : binc;
+  
+  if (time >= 0) {
+    if (movestogo == 1) time -= Min(1000, time / 10);
+    move_time = (time + inc * (movestogo - 1)) / movestogo;
+
+	// make a percentage correction to playing speed (unless too risky)
+
+	if (2 * move_time > time) {
+	  move_time *= Par.time_percentage;
+	  move_time /= 100;
+	}
+
+    // ensure that our limit does not exceed total time available
+    
+	if (move_time > time) move_time = time;
+
+    // safeguard against a lag
+    
+	move_time -= 10;
+
+    // ensure that we have non-negative time
+
+    if (move_time < 0) move_time = 0;
+
+    // assign less time per move on extremely short time controls
+    
+	move_time = BulletCorrection(move_time);
+  }
+}
+
 void ParseGo(POS *p, char *ptr) {
 
   char token[80], bestmove_str[6], ponder_str[6];
@@ -258,38 +292,7 @@ void ParseGo(POS *p, char *ptr) {
     }
   }
 
-  if (!strict_time) {
-    time = p->side == WC ? wtime : btime;
-    inc = p->side == WC ? winc : binc;
-  
-    if (time >= 0) {
-      if (movestogo == 1) time -= Min(1000, time / 10);
-      move_time = (time + inc * (movestogo - 1)) / movestogo;
-
-	  // make a percentage correction to playing speed (unless too risky)
-
-	  if (2 * move_time > time) {
-	    move_time *= Par.time_percentage;
-	    move_time /= 100;
-	  }
-
-      // ensure that our limit does not exceed total time available
-    
-	  if (move_time > time) move_time = time;
-
-      // safeguard against a lag
-    
-	  move_time -= 10;
-
-      // ensure that we have non-negative time
-
-      if (move_time < 0) move_time = 0;
-
-      // assign less time per move on extremely short time controls
-    
-	  move_time = BulletCorrection(move_time);
-	}
-  }
+  if (!strict_time) SetMoveTime(p, wtime, btime, winc, binc, movestogo);
 
   // set global variables
 
