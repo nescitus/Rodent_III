@@ -309,9 +309,6 @@ void ReadPersonality(char *fileName) {
   while (fgets(line, 256, personalityFile)) {
     ptr = ParseToken(line, token);
 
-	/*
-    if (strstr(line, "FULL_OPTIONS")) panel_style = 2;
-	*/
     if (strstr(line, "PERSONALITY_BOOKS")) Glob.separate_books = 0;
     if (strstr(line, "GENERAL_BOOKS")) Glob.separate_books = 1;
 
