@@ -19,21 +19,21 @@ If not, see <http://www.gnu.org/licenses/>.
 
 int Legal(POS *p, int move) {
 
-  int side = p->side;
+  int sd = p->side;
   int fsq = Fsq(move);
   int tsq = Tsq(move);
   int ftp = TpOnSq(p, fsq);
   int ttp = TpOnSq(p, tsq);
 
-  if (ftp == NO_TP || Cl(p->pc[fsq]) != side)
+  if (ftp == NO_TP || Cl(p->pc[fsq]) != sd)
     return 0;
-  if (ttp != NO_TP && Cl(p->pc[tsq]) == side)
+  if (ttp != NO_TP && Cl(p->pc[tsq]) == sd)
     return 0;
   switch (MoveType(move)) {
   case NORMAL:
     break;
   case CASTLE:
-    if (side == WC) {
+    if (sd == WC) {
       if (fsq != E1)
         return 0;
       if (tsq > fsq) {
@@ -65,14 +65,14 @@ int Legal(POS *p, int move) {
     return 0;
   case EP_SET:
     if (ftp == P && ttp == NO_TP && p->pc[tsq ^ 8] == NO_PC)
-      if ((tsq > fsq && side == WC) ||
-          (tsq < fsq && side == BC))
+      if ((tsq > fsq && sd == WC) ||
+          (tsq < fsq && sd == BC))
         return 1;
     return 0;
   }
 
   if (ftp == P) {
-    if (side == WC) {
+    if (sd == WC) {
       if (Rank(fsq) == RANK_7 && !IsProm(move))
         return 0;
       if (tsq - fsq == 8)

@@ -365,7 +365,7 @@ int my_random(int n) {
   return int(floor(r*double(n)));
 }
 
-int sBook::GetPolyglotMove(POS *p, int printOutput) {
+int sBook::GetPolyglotMove(POS *p, int print_output) {
 
   int best_move = 0;
   int max_weight = 0;
@@ -421,7 +421,7 @@ int sBook::GetPolyglotMove(POS *p, int printOutput) {
 
       // report about possible choices and rejected moves
       if (values[i] > -1 || max_weight == 1) {
-        if (printOutput) {
+        if (print_output) {
           printf("info string ");
           PrintMove(moves[i]);
           if (IsInfrequent(values[i], max_weight)) printf("?! ");
@@ -500,9 +500,9 @@ void sBook::Init(void) {
   bookSize = 0;
 }
 
-int sBook::IsInfrequent(int val, int maxFreq) {
+int sBook::IsInfrequent(int val, int max_freq) {
 
-  if (maxFreq > 2 && val < 2) return 1;     // if possible, pick a move tried at least twice
-  if (val < ((maxFreq * Par.book_filter) / 100)) return 1; // rare moves get filtered out
+  if (max_freq > 2 && val < 2) return 1;     // if possible, pick a move tried at least twice
+  if (val < ((max_freq * Par.book_filter) / 100)) return 1; // rare moves get filtered out
   return 0;
 }

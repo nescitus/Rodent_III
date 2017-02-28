@@ -39,14 +39,14 @@ private:
     FILE * bookFile;
     int moves[100];
     int n_of_choices;
-    int IsInfrequent(int val, int maxFreq);
+    int IsInfrequent(int val, int max_freq);
     void ParseBookEntry(char * ptr, int line_no);
     int FindPos(U64 key);
     void ReadEntry(polyglot_move * entry, int n);
     U64 ReadInteger(int size);
 public:
     char *bookName;
-    int GetPolyglotMove(POS *p, int printOutput);
+    int GetPolyglotMove(POS *p, int print_output);
     U64 GetPolyglotKey(POS *p);
     void OpenPolyglot(void);
     void ClosePolyglot(void);

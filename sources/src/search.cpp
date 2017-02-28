@@ -219,17 +219,17 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   // MATE DISTANCE PRUNING
 
   if (ply) {
-    int checkmatingScore = MATE - ply;
-    if (checkmatingScore < beta) {
-      beta = checkmatingScore;
-      if (alpha >= checkmatingScore)
+    int checkmating_score = MATE - ply;
+    if (checkmating_score < beta) {
+      beta = checkmating_score;
+      if (alpha >= checkmating_score)
         return alpha;
     }
 
-    int checkmatedScore = -MATE + ply;
-    if (checkmatedScore > alpha) {
-      alpha = checkmatedScore;
-      if (beta <= checkmatedScore)
+    int checkmated_score = -MATE + ply;
+    if (checkmated_score > alpha) {
+      alpha = checkmated_score;
+      if (beta <= checkmated_score)
         return beta;
     }
   }
