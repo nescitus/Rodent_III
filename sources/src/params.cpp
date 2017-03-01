@@ -22,7 +22,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void cParam::DefaultWeights(void) {
  
-   search_skill = 100;
+   search_skill = 10;
    nps_limit = 0;
    fl_weakening = 0;
 
