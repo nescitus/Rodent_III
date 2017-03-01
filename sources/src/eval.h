@@ -30,7 +30,7 @@ static const int passed_bonus_eg[2][8] = {
 /*
 Rodent can use several sets of piece/square tables (currently 4).
 
-0) Values based on Hakapeliitta by Mike Aarnos (https://github.com/mAarnos/Hakkapeliitta).
+0) Values based on Hakkapeliitta by Mike Aarnos (https://github.com/mAarnos/Hakkapeliitta).
    The original set was highly asymmetric, so probably auto-tuned. Rodent uses symmetric
    average of the values from both wings, that has been subsequently tweaked.
 
@@ -47,8 +47,8 @@ Rodent can use several sets of piece/square tables (currently 4).
 */
 
 static const int pstPawnMg[4][64] = {
- //A1                                H1
-{ 0,   0,   0,   0,   0,   0,   0,   0,
+ //A1                                H1 Midgame pawn table - wing-neutral average of Hakkapeliitta table
+{ 0,   0,   0,   0,   0,   0,   0,   0, 
 -30, -16, -17, -27, -27, -17, -16, -30,
 -25, -16, -16, -18, -18, -16, -16, -25,
 -20, -17,  -7,  -2,  -2,  -7, -17, -20,
@@ -58,7 +58,7 @@ static const int pstPawnMg[4][64] = {
   0,   0,   0,   0,   0,   0,   0,   0 },
 //A8                                H8
 
-//A1                                H1
+//A1                                H1  Midgame pawn table based on Fruit
 { 0,   0,   0,   0,   0,   0,   0,   0,
 -15,  -5,   5,   5,   5,   5,  -5, -15,
 -15,  -5,   5,  15,  15,   5,  -5, -15,
@@ -69,8 +69,8 @@ static const int pstPawnMg[4][64] = {
   0,   0,   0,   0,   0,   0,   0,   0},
 //A8                                H8
 
-//A1                                H1
-{ 0,   0,   0,   0,   0,   0,   0,   0,
+//A1                                H1  Midgame pawn table based on Ippolit
+{ 0,   0,   0,   0,   0,   0,   0,   0, 
 -23, -11,  -5,   2,   2,  -5, -11, -23,
 -22, -10,  -4,   3,   3,  -4, -10, -22,
 -21,  -9,  -3,   4,   4,  -3,  -9, -21,
@@ -80,6 +80,7 @@ static const int pstPawnMg[4][64] = {
   0,   0,   0,   0,   0,   0,   0,   0},
 //A8                                H8
 
+//A1                                H1  Pawn table by Tomasz Michniewski
 { 0,   0,   0,   0,   0,   0,   0,  0,
   5,  10,  10, -20, -20,  10,  10,  5,
   5,  -5, -10,   0,   0, -10,  -5,  5,
@@ -87,12 +88,13 @@ static const int pstPawnMg[4][64] = {
   5,   5,  10,  25,  25,  10,   5,  5,
  10,  10,  20,  30,  30,  20,  10, 10,
  50,  50,  50,  50,  50,  50,  50, 50, 
-  0,   0,   0,   0,   0,   0,   0,   0
+  0,   0,   0,   0,   0,   0,   0,  0
+//A8                                H8
   }
- };
+};
 
 static const int pstPawnEg[4][64] = {
-//A1                                H1
+//A1                                H1 Endgame pawn table - wing-neutral average of Hakkapeliitta table
 { 0,   0,   0,   0,   0,   0,   0,   0,
 -16,  -8,  -9,   2,   2,  -9,  -8, -16,
 -20, -11, -18, -16, -16, -18, -11, -20,
@@ -114,7 +116,7 @@ static const int pstPawnEg[4][64] = {
   0,   0,   0,   0,   0,   0,   0,   0},
 //A8                                H8
 
-//A1                                H1
+//A1                                H1 Endgame pawn table based on Ippolit
 { 0,   0,   0,   0,   0,   0,   0,   0,
  -2,  -4,  -6,  -8,  -8,  -6,  -4,  -2,
  -4,  -6,  -8, -10, -10,  -8,  -6,  -4,
@@ -125,18 +127,21 @@ static const int pstPawnEg[4][64] = {
   0,   0,   0,   0,   0,   0,   0,   0 },
 //A8                                H8
 
+//A1                                H1  Pawn table by Tomasz Michniewski
 { 0,   0,   0,   0,   0,   0,   0,   0,
   5,  10,  10, -20, -20,  10,  10,   5,
   5,  -5, -10,   0,   0, -10,  -5,   5,
   0,   0,   0,  20,  20,   0,   0,   0,
   5,   5,  10,  25,  25,  10,   5,   5,
  10,  10,  20,  30,  30,  20,  10,  10,
- 50,  50,  50,  50,  50,  50,  50,  50 }
+ 50,  50,  50,  50,  50,  50,  50,  50,
+  0,   0,   0,   0,   0,   0,   0,   0 }
+//A8                                H8
  };
 
 static const int pstKnightMg[4][64] = {
 
-//A1                                 H1
+//A1                                 H1 Midgame knight table - wing-neutral average of Hakkapeliitta table
 {-62, -33, -30, -30, -30, -30, -33, -62,
  -25, -23, -10,  -7,  -7, -10, -23, -25,
  -19,  -2,   3,  22,  22,   3,  -2, -19,
@@ -147,7 +152,7 @@ static const int pstKnightMg[4][64] = {
  -84, -36,  -2,  18,  18,  -2, -36, -84},
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Midgame knight table based on Fruit
 {-50, -40, -30, -20, -20, -30, -40, -50,
  -35, -25, -15,   0,   0, -15, -25, -35,
  -20, -10,   0,  10,  10,   0, -10, -20,
@@ -158,7 +163,7 @@ static const int pstKnightMg[4][64] = {
 -135, -25, -15,  -5,  -5, -15, -25, -135},
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Midgame knight table based on Ippolit 
 {-58, -42, -31, -27, -27, -31, -42, -58,
  -36, -20,  -9,  -5,  -5,  -9, -20, -36,
  -20,  -4,   7,  11,  11,   7,  -4, -20,
@@ -168,8 +173,9 @@ static const int pstKnightMg[4][64] = {
  -16,  10,  11,  15,  15,  11,  10, -16,
 -120, -21, -10,  -6,  -6, -10, -21,-120 },
 //A8                                 H8
-{ // Knight mg
- -50,- 40, -30, -30, -30, -30, -40, -50,
+
+//A1                                 H1 Knight table by Tomasz Michniewski 
+{-50,- 40, -30, -30, -30, -30, -40, -50,
  -40, -20,   0,   5,   5,   0, -20, -40,
  -30,   5,  10,  15,  15,  10,   5, -30,
  -30,   0,  15,  20,  20,  15,   0, -30,
@@ -180,7 +186,7 @@ static const int pstKnightMg[4][64] = {
 };
 
 static const int pstKnightEg[4][64] = {
-//A1                                 H1
+//A1                                 H1 Endgame knight table - wing-neutral average of Hakkapeliitta table
 {-33, -44, -20, -10, -10, -20, -44, -33,
  -15,  -9,   1,   1,   1,   1,  -9, -15,
  -11,  -2,   7,  28,  28,   7,  -2, -11,
@@ -191,7 +197,7 @@ static const int pstKnightEg[4][64] = {
  -33,  10,   9,   2,   2,   9,  10, -33},
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Endgame knight table based on Fruit
 {-40, -30, -20, -10, -10, -20, -30, -40,
  -30, -20, -10,   0,   0, -10, -20, -30,
  -20, -10,   0,  10,  10,   0, -10, -20,
@@ -202,7 +208,7 @@ static const int pstKnightEg[4][64] = {
  -40, -30, -20, -10, -10, -20, -30, -40 },
 //A8                                 H8
 
-//A1                                H1
+//A1                                 H1 Endgame knight table based on Ippolit
 {-22, -17, -12,  -9,  -9, -12, -17, -22,
  -15,  -8,  -4,  -2,  -2,  -4,  -8, -15,
  -10,  -4,   1,   3,   3,   1,  -4, -10,
@@ -212,6 +218,8 @@ static const int pstKnightEg[4][64] = {
   -8,  -1,   3,   5,   5,   3,  -1,  -8,
  -15, -10,  -5,  -2,  -2,  -5, -10, -15 },
 //A8                                 H8
+
+//A1                                 H1 Knight table by Tomasz Michniewski
 {-50, -40, -30, -30, -30, -30, -40, -50,
  -40, -20,   0,   5,   5,   0, -20, -40,
  -30,   5,  10,  15,  15,  10,   5, -30,
@@ -220,10 +228,11 @@ static const int pstKnightEg[4][64] = {
  -30,   0,  10,  15,  15,  10,   0, -30,
  -40, -20,   0,   0,   0,   0, -20, -40,
  -50, -40, -30, -30, -30, -30, -40, -50 }
+//A8                                 H8
 };
 
 static const int pstBishopMg[4][64] = {
-//A1                                 H1
+//A1                                 H1 Midgame bishop table - wing-neutral average of Hakkapeliitta table
 { -9,  -1, -14, -12, -12, -14,  -1,  -9,
   -5,   2,   5,  -7,  -7,   5,   2,  -5,
   -8,   7,  -2,   1,   1,  -2,   7,  -8,
@@ -234,7 +243,7 @@ static const int pstBishopMg[4][64] = {
  -31, -42, -26, -48, -48, -26, -42, -31},
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Midgame bishop table based on Fruit
 { -2,  -5, -16,  -5,  -5, -16,  -5,  -2,
   -5,   6,   3,   6,   6,   3,   6,  -5,
   -5,   5,   8,  10,  10,   8,   5,  -5,
@@ -245,7 +254,7 @@ static const int pstBishopMg[4][64] = {
   -5,  -5,  -5,  -5,  -5,  -5,  -5,  -5 },
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Midgame bishop table based on Ippolit
 { -7,  -8, -11, -13, -13, -11,  -8,  -7,
   -3,   3,   0,  -2,  -2,   0,   3,  -3,
   -6,   0,   7,   6,   6,   7,   0,  -6,
@@ -256,6 +265,7 @@ static const int pstBishopMg[4][64] = {
   -2,  -3,  -6,  -8,  -8,  -6,  -3,  -2 },
 //A8                                 H8
 
+//A1                                 H1 Bishop table by Tomasz Michniewski
 {-20, -10, -10, -10, -10, -10, -10, -20,
  -10,   5,   0,   0,   0,   0,   5, -10,
  -10,  10,  10,  10,  10,  10,  10, -10,
@@ -264,10 +274,11 @@ static const int pstBishopMg[4][64] = {
  -10,   0,   5,  10,  10,   5,   0, -10,
  -10,   0,   0,   0,   0,   0,   0, -10,
  -20, -10, -10, -10, -10, -10, -10, -20}
+//A8                                 H8
 };
 
 static const int pstBishopEg[4][64] = {
-//A1                                 H1
+//A1                                 H1 Endgame bishop table - wing-neutral average of Hakkapeliitta table 
 {-29, -13,  -4,  -6,  -6,  -4, -13, -29,
  -11, -10,  -9,  -1,  -1,  -9, -10, -11,
   -1,   7,   5,  13,  13,   5,   7,  -1,
@@ -278,7 +289,7 @@ static const int pstBishopEg[4][64] = {
    6,  21,  19,  19,  19,  19,  21,   6},
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Endgame bishop table based on Fruit
 {-15, -10,  -8,  -5,  -5,  -8, -10, -15,
  -10,  -8,   0,   5,   5,   0,  -8, -10,
   -5,   0,   5,  10,  10,   5,   0,  -8,
@@ -289,7 +300,7 @@ static const int pstBishopEg[4][64] = {
   -15, -10, -8,  -5,  -5,  -8, -10, -15 },
  //A8                                 H8
 
- //A1                                 H1
+ //A1                                 H1 Endgame bishop table based on Ippolit
 {  0,  -1,  -2,  -2,  -2,  -2,  -1,   0,
   -1,   1,   0,   0,   0,   0,   1,  -1,
   -2,   0,   3,   2,   2,   3,   0,  -2,
@@ -300,7 +311,7 @@ static const int pstBishopEg[4][64] = {
    0,  -1,  -2,  -2,  -2,  -2,  -1,   0 },
  //A8                                 H8
 
- //A1                                 H1
+ //A1                                 H1 Bishop table by Tomasz Michniewski
 {-20, -10, -10, -10, -10, -10, -10, -20,
  -10,   5,   0,   0,   0,   0,   5, -10,
  -10,  10,  10,  10,  10,  10,  10, -10,
@@ -313,7 +324,7 @@ static const int pstBishopEg[4][64] = {
 };
 
 static const int pstRookMg[4][64] = {
-//A1                                H1
+//A1                                 H1 Midgame rook table - wing-neutral average of Hakkapeliitta table
 {-15,  -1,   0,   3,   3,   0,  -1, -15,
  -33, -11, -14, -11, -11, -14, -11, -33,
  -26, -13, -15,  -2,  -2, -15, -13, -26,
@@ -324,7 +335,7 @@ static const int pstRookMg[4][64] = {
   44,  39,  34,  16,  16,  34,  39,  44},
  //A8                                H8
 
- //A1                                H1
+ //A1                                H1 Midgame rook table based on Fruit
 {-3,  -1,   1,   3,   3,   1,  -1,  -3,
  -3,  -1,   1,   3,   3,   1,  -1,  -3,
  -3,  -1,   1,   3,   3,   1,  -1,  -3,
@@ -335,7 +346,7 @@ static const int pstRookMg[4][64] = {
  -3,  -1,   1,   3,   3,   1,  -1,  -3},
 //A8                                H8
 
-//A1                                H1
+//A1                                H1 Midgame rook table based on Ippolit
 {-4,   0,   4,   8,   8,   4,   0,  -4,
  -4,   0,   4,   8,   8,   4,   0,  -4,
  -4,   0,   4,   8,   8,   4,   0,  -4,
@@ -346,7 +357,7 @@ static const int pstRookMg[4][64] = {
  -4,   0,   4,   8,   8,   4,   0,  -4 },
 //A8                                H8
 
-//A1                                H1
+//A1                                H1 Rook table by Tomasz Michniewski
 { 0,   0,   0,   5,   5,   0,   0,   0,
  -5,   0,   0,   0,   0,   0,   0,  -5,
  -5,   0,   0,   0,   0,   0,   0,  -5,
@@ -359,18 +370,18 @@ static const int pstRookMg[4][64] = {
  };
 
 static const int pstRookEg[4][64] = {
-//A1                                H1
- {-12, -16, -10, -12, -12, -10, -16, -12,
-	0, -19,  -9, -12, -12,  -9, -19,   0,
-	1,  -4,  -5, -12, -12,  -5,  -4,   1,
-   22,  19,  21,  19,  19,  21,  19,  22,
-   17,  17,  23,  13,  13,  23,  17,  17,
-   22,  19,  21,  19,  19,  21,  19,  22,
-   14,  26,  18,  31,  31,  18,  26,  14,
-   13,  13,  18,  28,  28,  18,  13,  13 },
+//A1                                 H1 Endgame rook table - wing-neutral average of Hakkapeliitta table
+{-12, -16, -10, -12, -12, -10, -16, -12,
+   0, -19,  -9, -12, -12,  -9, -19,   0,
+   1,  -4,  -5, -12, -12,  -5,  -4,   1,
+  22,  19,  21,  19,  19,  21,  19,  22,
+  17,  17,  23,  13,  13,  23,  17,  17,
+  22,  19,  21,  19,  19,  21,  19,  22,
+  14,  26,  18,  31,  31,  18,  26,  14,
+  13,  13,  18,  28,  28,  18,  13,  13 },
  //A8                                H8
 
-//A1                                H1
+//A1                                 H1 Endgame rook table based on Fruit
 {  0,   0,   0,   0,   0,   0,   0,   0,
    0,   0,   0,   0,   0,   0,   0,   0,
    0,   0,   0,   0,   0,   0,   0,   0,
@@ -381,31 +392,31 @@ static const int pstRookEg[4][64] = {
    0,   0,   0,   0,   0,   0,   0,   0},
  //A8                                H8
 
- //A1                                H1
-{ 0,   0,   0,   0,   0,   0,   0,   0,
-  0,   0,   0,   0,   0,   0,   0,   0,
-  0,   0,   0,   0,   0,   0,   0,   0,
-  0,   0,   0,   0,   0,   0,   0,   0,
-  1,   1,   1,   1,   1,   1,   1,   1,
-  1,   1,   1,   1,   1,   1,   1,   1,
-  1,   1,   1,   1,   1,   1,   1,   1,
- -2,  -2,  -2   -2,  -2,  -2,  -2,  -2 },
- //A8                                H8
+ //A1                                H1 Endgame rook table based on Ippolit
+{  0,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,
+   0,   0,   0,   0,   0,   0,   0,   0,
+   1,   1,   1,   1,   1,   1,   1,   1,
+   1,   1,   1,   1,   1,   1,   1,   1,
+   1,   1,   1,   1,   1,   1,   1,   1,
+  -2,  -2,  -2   -2,  -2,  -2,  -2,  -2 },
+  //A8                                H8
 
- //A1                                H1
-{ 0,   0,   0,   5,   5,   0,   0,   0,
- -5,   0,   0,   0,   0,   0,   0,  -5,
- -5,   0,   0,   0,   0,   0,   0,  -5,
- -5,   0,   0,   0,   0,   0,   0,  -5,
- -5,   0,   0,   0,   0,   0,   0,  -5,
- -5,   0,   0,   0,   0,   0,   0,  -5,
- -5,   0,   0,   0,   0,   0,   0,  -5,
-  0,   0,   0,   0,   0,   0,   0,   0}
-//A8                                H8
+ //A1                                H1 Rook table by Tomasz Michniewski
+{  0,   0,   0,   5,   5,   0,   0,   0,
+  -5,   0,   0,   0,   0,   0,   0,  -5,
+  -5,   0,   0,   0,   0,   0,   0,  -5,
+  -5,   0,   0,   0,   0,   0,   0,  -5,
+  -5,   0,   0,   0,   0,   0,   0,  -5,
+  -5,   0,   0,   0,   0,   0,   0,  -5,
+  -5,   0,   0,   0,   0,   0,   0,  -5,
+   0,   0,   0,   0,   0,   0,   0,   0}
+ //A8                                H8
  };
 
 static const int pstQueenMg[4][64] = {
-//A1                                H1
+//A1                                H1 Midgame queen table - wing-neutral average of Hakkapeliitta table
 { 4,  -8,   3,  11,  11,   3,  -8,   4,
   2,  15,  13,  13,  13,  13,  15,   2,
   5,   5,  10,   2,   2,  10,   5,   5,
@@ -416,7 +427,7 @@ static const int pstQueenMg[4][64] = {
   5,  30,  11,  -8,  -8,  11,  30,   5},
 //A8                                H8
 
-//A1                                H1
+//A1                                H1 Midgame queen table based on Fruit
 {-5,  -5,  -5,  -5,  -5,  -5,  -5,  -5,
   0,   0,   0,   0,   0,   0,   0,   0,
   0,   0,   0,   0,   0,   0,   0,   0,
@@ -427,7 +438,7 @@ static const int pstQueenMg[4][64] = {
   0,   0,   0,   0,   0,   0,   0,   0},
 //A8                                H8
 
-//A1                                 H1
+//A1                                 H1 Midgame queen table based on Ippolit
 {-16, -12,  -9,  -7,  -7,  -9, -12, -16,
   -7,  -1,   1,   3,   3,   1,  -1,  -7,
   -4,   1,   5,   6,   6,   5,   1,  -4,
@@ -438,7 +449,7 @@ static const int pstQueenMg[4][64] = {
  -11,  -7,  -4,  -2,  -2,  -4,  -7, -11 },
  //A8                                H8
 
- //A1                                H1
+ //A1                                H1 Queen table by Tomasz Michniewski
 {-20, -10, -10,  -5,  -5, -10, -10, -20,
  -10,   0,   5,   0,   0,   0,   0, -10,
  -10,   5,   5,   5,   5,   5,   0, -10,
@@ -451,7 +462,7 @@ static const int pstQueenMg[4][64] = {
 };
 
 static const int pstQueenEg[4][64] = {
-//A1                                 H1
+//A1                                 H1 Endgame queen table - wing-neutral average of Hakkapeliitta table
 {-26, -37, -35, -14, -14, -35, -37, -26,
  -32, -34, -26,  -8,  -8, -26, -34, -32,
  -19,  -6,  -2,   0,   0,  -2,  -6, -19,
@@ -462,7 +473,7 @@ static const int pstQueenEg[4][64] = {
   15,  27,  22,  14,  14,  22,  27,  15},
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Endgame queen table based on Fruit
 {-24, -16, -12,  -8,  -8, -12, -16, -24,
  -16,  -8,  -4,   0,   0,  -4,  -8, -16,
  -12,  -4,   0,   4,   4,   0,  -4, -12,
@@ -473,7 +484,7 @@ static const int pstQueenEg[4][64] = {
  -24, -16, -12,  -8,  -8, -12, -16, -24 },
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Endgame queen table based on Ippolit
 {-15, -10,  -8,  -7,  -7,  -8, -10, -15,
  -10,  -5,  -3,  -2,  -2,  -3,  -5, -10,
   -8,  -3,   0,   2,   2,   0,  -3,  -8,
@@ -484,7 +495,7 @@ static const int pstQueenEg[4][64] = {
  -15, -10,  -8,  -7,  -7,  -8, -10, -15 },
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Queen table by Tomasz Michniewski
 {-20, -10, -10,  -5,  -5, -10, -10, -20,
  -10,   0,   5,   0,   0,   0,   0, -10,
  -10,   5,   5,   5,   5,   5,   0, -10,
@@ -497,7 +508,7 @@ static const int pstQueenEg[4][64] = {
 };
 
 static const int pstKingMg[4][64] = {
-//A1                                H1
+//A1                                 H1 Midgame king table - wing-neutral average of Hakkapeliitta table
 { 13,  31, -14, -33, -33, -14,  31,  13,
   28,  19,  -5, -21, -21,  -5,  19,  28,
  -31,   8,  -8, -30, -30,  -8,   8, -31,
@@ -506,9 +517,9 @@ static const int pstKingMg[4][64] = {
  -32,  28,  13, -39, -39,  13,  28, -32, // strange positive scores, retune manually
  -11,  17,   4, -18, -18,   4,  17, -11,
  -29,   1,  -5, -22, -22,  -5,   1, -29},
-//A8                                H8
+//A8                                 H8
 
-//A1                                H1
+//A1                                 H1 Midgame king table based on Fruit
 { 40,  50,  30,   0,   0,  30,  50,  40,
   30,  40,  20,   0,   0,  20,  40,  30,
   10,  20,   0, -20, -20,   0,  20,  10,
@@ -519,7 +530,7 @@ static const int pstKingMg[4][64] = {
  -40, -30, -50, -70, -70, -50, -30, -40},
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Midgame king table based on Ippolit
 { 44,  49,  19,  -1,  -1,  19,  49,  44,
   44,  49,  19,  -1,  -1,  19,  49,  44,
   38,  43,  13,  -7,  -7,  13,  43,  38,
@@ -529,6 +540,8 @@ static const int pstKingMg[4][64] = {
   15,  20, -10, -30, -30, -10,  20,  15,
    5,  10, -20, -40, -40, -20,  10,   5 },
 //A8                                 H8
+
+//A1                                 H1 Midgame king table by Tomasz Michniewski
 { 20,  30,  10,   0,   0,  10,  30,  20,
   20,  20,   0,   0,   0,   0,  20,  20,
  -10, -20, -20, -20, -20, -20, -20, -10,
@@ -541,7 +554,7 @@ static const int pstKingMg[4][64] = {
 };
 
 static const int pstKingEg[4][64] = {
-//A1                                 H1
+//A1                                 H1 Endgame king table - wing-neutral average of Hakkapeliitta table
 {-71, -29, -23, -32, -32, -23, -29, -71,
  -32, -14,  -3,   2,   2,  -3, -14, -32,
  -15,  -2,  11,  23,  23,  11,  -2, -15,
@@ -552,7 +565,7 @@ static const int pstKingEg[4][64] = {
  -19,  36,  51,  54,  54,  51,  36, -19},
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Endgame king table based on Fruit
 {-72, -48, -36, -24, -24, -36, -48, -72,
  -48, -24, -12,   0,   0, -12, -24, -48,
  -36, -12,   0,  12,  12,   0, -12, -36,
@@ -563,7 +576,7 @@ static const int pstKingEg[4][64] = {
  -72, -48, -36, -24, -24, -36, -48, -72 },
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Endgame king table based on Ippolit
 {-73, -50, -34, -28, -28, -34, -50, -73,
  -40, -15,  -3,   3,   3,  -3, -15, -40,
  -29,  -8,   7,  13,  13,   7,  -8, -29,
@@ -574,7 +587,7 @@ static const int pstKingEg[4][64] = {
  -53, -30, -14,  -8,  -8, -14, -30, -53 },
 //A8                                 H8
 
-//A1                                 H1
+//A1                                 H1 Endgame king table by Tomasz Michniewski
 {-50, -30, -30, -30, -30, -30, -30, -50,
  -30, -30,   0,   0,   0,   0, -30, -30,
  -30, -10,  20,  30,  30,  20, -10, -30,
