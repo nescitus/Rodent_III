@@ -239,7 +239,7 @@ void SetMoveTime(POS * p, int wtime, int btime, int winc, int binc, int movestog
 void ParseGo(POS *p, char *ptr) {
 
   char token[80], bestmove_str[6], ponder_str[6];
-  int wtime, btime, winc, binc, movestogo, time, inc, strict_time;
+  int wtime, btime, winc, binc, movestogo, strict_time;
   int pv[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY];
   int move_from_book = 0;
 

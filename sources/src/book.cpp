@@ -350,8 +350,8 @@ void sBook::OpenPolyglot(void) {
       return;
     }
 
-    bookSize = ftell(bookFile) / 16;
-    if (bookSize == -1) {
+    book_size = ftell(bookFile) / 16;
+    if (book_size == -1) {
       bookFile = NULL;
       return;
     }
@@ -380,10 +380,10 @@ int sBook::GetPolyglotMove(POS *p, int print_output) {
 
   n_of_choices = 0;
 
-  if (bookFile != NULL && bookSize != 0) {
+  if (bookFile != NULL && book_size != 0) {
     srand(GetMS());
 
-    for (pos = FindPos(key); pos < bookSize; pos++) {
+    for (pos = FindPos(key); pos < book_size; pos++) {
 
       ReadEntry(entry, pos);
       if (entry->key != key) break;
@@ -449,7 +449,7 @@ int sBook::FindPos(U64 key) {
   // binary search (finds the leftmost entry)
 
   left = 0;
-  right = bookSize - 1;
+  right = book_size - 1;
 
   while (left < right) {
     mid = (left + right) / 2;
@@ -461,7 +461,7 @@ int sBook::FindPos(U64 key) {
 
   ReadEntry(entry, left);
 
-  return (entry->key == key) ? left : bookSize;
+  return (entry->key == key) ? left : book_size;
 }
 
 void sBook::ReadEntry(polyglot_move * entry, int n) {
@@ -497,7 +497,7 @@ void sBook::ClosePolyglot(void) {
 void sBook::Init(void) {
 
   bookFile = NULL;
-  bookSize = 0;
+  book_size = 0;
 }
 
 int sBook::IsInfrequent(int val, int max_freq) {
