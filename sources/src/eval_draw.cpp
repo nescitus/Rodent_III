@@ -112,13 +112,12 @@ int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
 
 int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
 
-  if (p->cnt[sd][P] == 1    // TODO: all pawns of a stronger side on a rim
-  && p->cnt[op][P] == 0) {  // TODO: accept pawns for a weaker side
+  if (p->cnt[op][P] == 0) {  // TODO: accept pawns for a weaker side
 
-    if (p->Pawns(sd) & FILE_H_BB
+    if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_H_BB)) // all pawns on the h file
     &&  p->Kings(op) & bbKingBlockH[sd]) return 0;
 
-    if (p->Pawns(sd) & FILE_A_BB
+	if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_A_BB)) // all pawns on the a file
     &&  p->Kings(op) & bbKingBlockA[sd]) return 0;
   }
 
@@ -127,16 +126,13 @@ int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
 
 int cEngine::ScaleKBPK(POS *p, int sd, int op) {
 
-  if (p->cnt[sd][P] == 1) { // TODO: change condition to all pawns on the rim
+  if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_H_BB))
+  && NotOnBishColor(p, sd, REL_SQ(H8, sd))
+  && p->Kings(op)  & bbKingBlockH[sd]) return 0;
 
-    if (p->Pawns(sd) & FILE_H_BB
-    && NotOnBishColor(p, sd, REL_SQ(H8, sd))
-    && p->Kings(op)  & bbKingBlockH[sd]) return 0;
-
-    if (p->Pawns(sd) & FILE_A_BB
-    && NotOnBishColor(p, sd, REL_SQ(A8, sd))
-    && p->Kings(op)  & bbKingBlockA[sd]) return 0;
-  }
+  if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_A_BB))
+  && NotOnBishColor(p, sd, REL_SQ(A8, sd))
+  && p->Kings(op)  & bbKingBlockA[sd]) return 0;
 
   return 64; // default
 }
