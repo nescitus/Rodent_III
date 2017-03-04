@@ -202,7 +202,7 @@ void cEngine::EvaluateCentralPatterns(POS * p, eData * e) {
     if (p->Bishops(BC) & (SqBb(A7) | SqBb(B6) | SqBb(C5) | SqBb(B4) | SqBb(A5))) Add(e, BC, 10, 0);
   }
 
-  // knight blocking c pawn
+  // Knight blocking c pawn
 
   if (IsOnSq(p, WC, P, C2) && IsOnSq(p, WC, P, D4) && IsOnSq(p, WC, N, C3)) {
      if ((p->Pawns(WC) & SqBb(E4)) == 0) Add (e, WC, -20, 0);

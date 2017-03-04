@@ -351,14 +351,14 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
   bb_pieces = p->Pawns(sd);
   while (bb_pieces) {
 
-    // set data and flags
+    // Set data and flags
 
     sq = BB.PopFirstBit(&bb_pieces);
     front_span = BB.GetFrontSpan(SqBb(sq), sd);
     fl_unopposed = ((front_span & p->Pawns(op)) == 0);
     fl_phalanx = (BB.ShiftSideways(SqBb(sq)) & p->Pawns(sd));
 
-    // candidate passers
+    // Candidate passers
 
     if (fl_unopposed) {
       if (fl_phalanx) {
@@ -367,17 +367,17 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
       }
     }
 
-    // doubled pawn
+    // Doubled pawn
 
     if (front_span & p->Pawns(sd))
       AddPawns(e, sd, Par.doubled_mg, Par.doubled_eg);
 
-    // supported pawn
+    // Supported pawn
 
     if (fl_phalanx)                     AddPawns(e, sd, Par.sp_pst[sd][PHA_MG][sq], Par.sp_pst[sd][PHA_EG][sq]); // scores twice !!!
     else if (SqBb(sq) & e->p_takes[sd]) AddPawns(e, sd, Par.sp_pst[sd][DEF_MG][sq], Par.sp_pst[sd][DEF_EG][sq]);
 
-    // isolated and weak pawn
+    // Isolated and weak pawn
 
     if (!(Mask.adjacent[File(sq)] & p->Pawns(sd)))
       AddPawns(e, sd, Par.isolated_mg + Par.isolated_open * fl_unopposed, Par.isolated_eg);
@@ -559,7 +559,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
 
 int cEngine::Evaluate(POS *p, eData *e) {
 
-  // try retrieving score from per-thread eval hashtable
+  // Try retrieving score from per-thread eval hashtable
 
   int addr = p->hash_key % EVAL_HASH_SIZE;
 
@@ -568,14 +568,14 @@ int cEngine::Evaluate(POS *p, eData *e) {
     return p->side == WC ? sc : -sc;
   }
 
-  // clear eval data  
+  // Clear eval data  
 
   e->mg[WC] = p->mg_sc[WC];
   e->mg[BC] = p->mg_sc[BC];
   e->eg[WC] = p->eg_sc[WC];
   e->eg[BC] = p->eg_sc[BC];
 
-  // init helper bitboards
+  // Init helper bitboards (pawn info)
 
   e->p_takes[WC] = BB.GetWPControl(p->Pawns(WC));
   e->p_takes[BC] = BB.GetBPControl(p->Pawns(BC));
@@ -583,12 +583,15 @@ int cEngine::Evaluate(POS *p, eData *e) {
   e->p_can_take[BC] = BB.FillSouth(e->p_takes[BC]);
   e->two_pawns_take[WC] = BB.GetDoubleWPControl(p->Pawns(WC));
   e->two_pawns_take[BC] = BB.GetDoubleBPControl(p->Pawns(BC));
+
+  // Init or clear attack maps
+
   e->all_att[WC] = e->p_takes[WC] | BB.KingAttacks(KingSq(p, WC));
   e->all_att[BC] = e->p_takes[BC] | BB.KingAttacks(KingSq(p, BC));
   e->ev_att[WC] = 0ULL;
   e->ev_att[BC] = 0ULL;
 
-  // run all the evaluation subroutines
+  // Run all the evaluation subroutines
 
   EvaluateMaterial(p, e, WC);
   EvaluateMaterial(p, e, BC);
@@ -602,10 +605,14 @@ int cEngine::Evaluate(POS *p, eData *e) {
   EvaluateThreats(p, e, BC);
   Add(e, p->side, 14, 7); // tempo bonus
 
+  // Evaluate patterns
+
   EvaluateKnightPatterns(p, e);
   EvaluateBishopPatterns(p, e);
   EvaluateKingPatterns(p, e);
   EvaluateCentralPatterns(p, e);
+
+  // Add pawn score (which might come from hash)
 
   e->mg[WC] += e->mg_pawns[WC];
   e->mg[BC] += e->mg_pawns[BC];

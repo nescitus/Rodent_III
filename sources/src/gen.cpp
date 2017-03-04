@@ -294,7 +294,6 @@ int *GenerateSpecial(POS *p, int *list) {
   U64 n_check = BB.KnightAttacks(ksq);
   U64 r_check = BB.RookAttacks(OccBb(p), ksq);
   U64 b_check = BB.BishAttacks(OccBb(p), ksq);
-  U64 q_check = r_check | b_check;
   U64 p_check = BB.ShiftFwd(BB.ShiftSideways(SqBb(ksq)), op);
 
   // TODO: discovered checks by a pawn
@@ -357,8 +356,7 @@ int *GenerateSpecial(POS *p, int *list) {
 
 	// are straight discovered checks possible?
 
-	U64 bb_checkers = p->StraightMovers(sd);
-	int bish_discovers = CanDiscoverCheck(p, bb_checkers, op, from);
+	int bish_discovers = CanDiscoverCheck(p, p->StraightMovers(sd), op, from);
 
     moves = BB.BishAttacks(OccBb(p), from) & UnoccBb(p);
 	if (!bish_discovers) moves = moves & b_check;
@@ -376,8 +374,7 @@ int *GenerateSpecial(POS *p, int *list) {
 	
 	// are diagonal discovered checks possible?
 
-	U64 bb_checkers = p->DiagMovers(sd);
-	int rook_discovers = CanDiscoverCheck(p, bb_checkers, op, from);
+	int rook_discovers = CanDiscoverCheck(p, p->DiagMovers(sd), op, from);
     
     moves = BB.RookAttacks(OccBb(p), from) & UnoccBb(p);
 	if (!rook_discovers) moves = moves & r_check;
@@ -393,7 +390,7 @@ int *GenerateSpecial(POS *p, int *list) {
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
     moves = BB.QueenAttacks(OccBb(p), from) & UnoccBb(p);
-	moves = moves & q_check;
+	moves = moves & (r_check | b_check);
     while (moves) {
       to = BB.PopFirstBit(&moves);
       *list++ = (to << 6) | from;

@@ -152,7 +152,7 @@ void MoveToStr(int move, char *move_str) {
 int StrToMove(POS *p, char *move_str) {
 
   int from = Sq(move_str[0] - 'a', move_str[1] - '1');
-  int to = Sq(move_str[2] - 'a', move_str[3] - '1');
+  int to   = Sq(move_str[2] - 'a', move_str[3] - '1');
   int type = NORMAL;
 
   if (TpOnSq(p, from) == K && Abs(to - from) == 2)
@@ -163,6 +163,9 @@ int StrToMove(POS *p, char *move_str) {
     else if (Abs(to - from) == 16)
       type = EP_SET;
     else if (move_str[4] != '\0')
+
+      // record promotion piece
+
       switch (move_str[4]) {
       case 'n':
         type = N_PROM;
@@ -178,6 +181,9 @@ int StrToMove(POS *p, char *move_str) {
         break;
       }
   }
+
+  // return move
+
   return (type << 12) | (to << 6) | from;
 }
 

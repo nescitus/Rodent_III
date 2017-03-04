@@ -22,15 +22,22 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void cParam::DefaultWeights(void) {
  
+   // Switch off weakening parameters
+
    search_skill = 10;
    nps_limit = 0;
    fl_weakening = 0;
-
    elo = 2800;
+   eval_blur = 0;
+
+   // Opening book
+
    use_book = 1;
    book_filter = 20;
-   eval_blur = 0;
+
    time_percentage = 100;
+
+   // Piece values
 
    pc_value[P] = 100;
    pc_value[N] = 325;
@@ -40,6 +47,8 @@ void cParam::DefaultWeights(void) {
    pc_value[K] = 0;
    pc_value[K+1] = 0;
 
+   // Tendency to keep own pieces
+
    keep_pc[P] = 0;
    keep_pc[N] = 0;
    keep_pc[B] = 0;
@@ -48,16 +57,22 @@ void cParam::DefaultWeights(void) {
    keep_pc[K] = 0;
    keep_pc[K+1] = 0;
 
+   // Material adjustments
+
    bish_pair = 50;
-   protecting_bishop = 0; // NOTE: even ludicrously high value of 50 tests well
    exchange_imbalance = 25;
    n_likes_closed = 6;
    r_likes_open = 3;
+
+   // Varia
 
    mat_weight = 100;
    pst_weight = 80;
    pst_style = 0;
    mob_style = 0; // 1 is only marginally behind
+   protecting_bishop = 0; // NOTE: even ludicrously high value of 50 tests well
+
+   // Positional weights
 
    own_att_weight = 110;
    opp_att_weight = 100;
@@ -73,6 +88,8 @@ void cParam::DefaultWeights(void) {
    shield_weight = 120;
    storm_weight = 100;
 
+   // Pawn structure parameters
+
    doubled_mg = -12;
    doubled_eg = -24;
    isolated_mg = -10;
@@ -82,13 +99,18 @@ void cParam::DefaultWeights(void) {
    backward_eg = -8;
    backward_open = -8;
 
+   // Specialized functions
+
    InitPst();
    InitMobility();
    InitMaterialTweaks();
    InitBackward();
 
+   // History limit to prunings and reductions
+
    hist_perc = 175;
    hist_limit = 24576;
+
    draw_score = 0;
    shut_up = 0;
 

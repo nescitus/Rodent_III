@@ -18,19 +18,27 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "rodent.h"
 
 void cMask::Init(void) {
+
+  // Kingside/queenside
   
   k_side = FILE_F_BB | FILE_G_BB | FILE_H_BB;
   q_side = FILE_A_BB | FILE_B_BB | FILE_C_BB;
+
+  // Own/enemy half of the board
+
   home[WC] = RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB;
   home[BC] = RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB;
   away[WC] = RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB;
   away[BC] = RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB;
+
+  // Castling zones
+
   qs_castle[WC] = SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2);
   qs_castle[BC] = SqBb(A8) | SqBb(B8) | SqBb(C8) | SqBb(A7) | SqBb(B7) | SqBb(C7);
   ks_castle[WC] = SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | SqBb(G2) | SqBb(H2);
   ks_castle[BC] = SqBb(F8) | SqBb(G8) | SqBb(H8) | SqBb(F7) | SqBb(G7) | SqBb(H7);
 
-  // adjacent files (for isolated pawn detection)
+  // Adjacent files (for isolated pawn detection)
 
   for (int col = 0; col < 8; col++) {
     adjacent[col] = 0;
@@ -38,7 +46,7 @@ void cMask::Init(void) {
     if (col < 7) adjacent[col] |= FILE_A_BB << (col + 1);
   }
 
-  // supported mask for weak pawns detection
+  // Supported mask (for weak pawns detection)
 
   for (int sq = 0; sq < 64; sq++) {
     supported[WC][sq] = BB.ShiftSideways(SqBb(sq));

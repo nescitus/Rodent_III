@@ -53,6 +53,9 @@ void cEngine::EvaluatePawnStruct(POS * p, eData * e) {
   int addr = p->pawn_key % PAWN_HASH_SIZE;
 
   if (PawnTT[addr].key == p->pawn_key) {
+
+    // pawn hashtable contains delta of wite and black score
+
     e->mg_pawns[WC] = PawnTT[addr].mg_pawns;
     e->eg_pawns[WC] = PawnTT[addr].eg_pawns;
 	e->mg_pawns[BC] = 0;
@@ -60,13 +63,20 @@ void cEngine::EvaluatePawnStruct(POS * p, eData * e) {
     return;
   }
 
+  // Clear values
+
   e->mg_pawns[WC] = 0;
   e->mg_pawns[BC] = 0;
   e->eg_pawns[WC] = 0;
   e->eg_pawns[BC] = 0;
 
+  // Pawn structure
+
   EvaluatePawns(p, e, WC);
   EvaluatePawns(p, e, BC);
+
+  // King's pawn shield and pawn chains
+
   EvaluateKing(p, e, WC);
   EvaluateKing(p, e, BC);
 
@@ -102,7 +112,7 @@ void cEngine::EvaluatePawnStruct(POS * p, eData * e) {
     }
   }
 
-  // Evaluate pawn islands (based on Texel)
+  // Evaluate number of pawn islands (based on Texel)
 
   const U64 wPawns = p->Pawns(WC);
   const U64 wPawnFiles = BB.FillSouth(wPawns) & 0xff;
@@ -114,7 +124,9 @@ void cEngine::EvaluatePawnStruct(POS * p, eData * e) {
   e->mg_pawns[WC] -= (wIslands - bIslands) * 7;
   e->eg_pawns[WC] -= (wIslands - bIslands) * 7;
 	
-  // Save stuff in pawn hashtable
+  // Save stuff in pawn hashtable.
+  // Note that we save delta between white and black scores.
+  // It might become a problem if we decide to print detailed eval score.
 
   PawnTT[addr].key = p->pawn_key;
   PawnTT[addr].mg_pawns = (Par.struct_weight * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
