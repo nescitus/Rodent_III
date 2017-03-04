@@ -93,6 +93,7 @@ void cParam::DefaultWeights(void) {
    shut_up = 0;
 
    // when testing a personality, place changes in relation to default here
+
 }
 
 void cParam::InitBackward(void) {

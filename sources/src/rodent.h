@@ -616,7 +616,7 @@ U64 Random64(void);
 void ReadLine(char *, int);
 void ReadPersonality(char *fileName);
 void SetPosition(POS *p, char *epd);
-void SetMoveTime(POS * p, int wtime, int btime, int winc, int binc, int movestogo);
+void SetMoveTime(int base, int inc, int movestogo);
 int StrToMove(POS *p, char *move_str);
 int Swap(POS *p, int from, int to);
 int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);

@@ -202,25 +202,22 @@ void ExtractMove(int pv[MAX_PLY]) {
     printf("bestmove %s\n", bestmove_str);
 }
 
-void SetMoveTime(POS * p, int wtime, int btime, int winc, int binc, int movestogo) {
-
-  int time = p->side == WC ? wtime : btime;
-  int inc  = p->side == WC ? winc : binc;
+void SetMoveTime(int base, int inc, int movestogo) {
   
-  if (time >= 0) {
-    if (movestogo == 1) time -= Min(1000, time / 10);
-    move_time = (time + inc * (movestogo - 1)) / movestogo;
+  if (base >= 0) {
+    if (movestogo == 1) base -= Min(1000, base / 10);
+    move_time = (base + inc * (movestogo - 1)) / movestogo;
 
 	// make a percentage correction to playing speed (unless too risky)
 
-	if (2 * move_time > time) {
+	if (2 * move_time > base) {
 	  move_time *= Par.time_percentage;
 	  move_time /= 100;
 	}
 
     // ensure that our limit does not exceed total time available
     
-	if (move_time > time) move_time = time;
+	if (move_time > base) move_time = base;
 
     // safeguard against a lag
     
@@ -292,7 +289,13 @@ void ParseGo(POS *p, char *ptr) {
     }
   }
 
-  if (!strict_time) SetMoveTime(p, wtime, btime, winc, binc, movestogo);
+  // set move time
+
+  if (!strict_time) {
+    int base = p->side == WC ? wtime : btime;
+    int inc = p->side == WC ? winc : binc;
+    SetMoveTime(base, inc, movestogo);
+  }
 
   // set global variables
 
