@@ -251,7 +251,7 @@ int cParam::EloToSpeed(int elo) {
     return 50 + (80 * (elo - 1000) / 100);
   }
 
-  int result = 300 + pow(2, (elo - 799) / 85);
+  int result = 300 + (int) pow(2, (elo - 799) / 85);
   result *= 0.23;
 
   if (elo < 1400) result *= 0.95;

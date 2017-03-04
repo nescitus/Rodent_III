@@ -20,9 +20,11 @@ If not, see <http://www.gnu.org/licenses/>.
 int *GenerateCaptures(POS *p, int *list) {
 
   U64 pieces, moves;
-  int sd, from, to;
+  int from, to;
 
-  sd = p->side;
+  int sd = p->side;
+  int op = Opp(sd);
+
   if (sd == WC) {
     moves = ((p->Pawns(WC) & ~FILE_A_BB & RANK_7_BB) << 7) & p->cl_bb[BC];
     while (moves) {
@@ -117,6 +119,8 @@ int *GenerateCaptures(POS *p, int *list) {
     }
   }
 
+  // KNIGHT
+
   pieces = p->Knights(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
@@ -127,37 +131,45 @@ int *GenerateCaptures(POS *p, int *list) {
     }
   }
 
+  // BISHOP
+
   pieces = p->Bishops(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
-    moves = BB.BishAttacks(OccBb(p), from) & p->cl_bb[Opp(sd)];
+    moves = BB.BishAttacks(OccBb(p), from) & p->cl_bb[op];
     while (moves) {
       to = BB.PopFirstBit(&moves);
       *list++ = (to << 6) | from;
     }
   }
+
+  // ROOK
 
   pieces = p->Rooks(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
-    moves = BB.RookAttacks(OccBb(p), from) & p->cl_bb[Opp(sd)];
+    moves = BB.RookAttacks(OccBb(p), from) & p->cl_bb[op];
     while (moves) {
       to = BB.PopFirstBit(&moves);
       *list++ = (to << 6) | from;
     }
   }
+
+  // QUEEN
 
   pieces = p->Queens(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
-    moves = BB.QueenAttacks(OccBb(p), from) & p->cl_bb[Opp(sd)];
+    moves = BB.QueenAttacks(OccBb(p), from) & p->cl_bb[op];
     while (moves) {
       to = BB.PopFirstBit(&moves);
       *list++ = (to << 6) | from;
     }
   }
 
-  moves = BB.KingAttacks(KingSq(p, sd)) & p->cl_bb[Opp(sd)];
+  // KING
+
+  moves = BB.KingAttacks(KingSq(p, sd)) & p->cl_bb[op];
   while (moves) {
     to = BB.PopFirstBit(&moves);
     *list++ = (to << 6) | KingSq(p, sd);
@@ -211,6 +223,8 @@ int *GenerateQuiet(POS *p, int *list) {
     }
   }
 
+  // KNIGHT
+
   pieces = p->Knights(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
@@ -220,6 +234,8 @@ int *GenerateQuiet(POS *p, int *list) {
       *list++ = (to << 6) | from;
     }
   }
+
+  // BISHOP
 
   pieces = p->Bishops(sd);
   while (pieces) {
@@ -231,6 +247,8 @@ int *GenerateQuiet(POS *p, int *list) {
     }
   }
 
+  // ROOK
+
   pieces = p->Rooks(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
@@ -241,6 +259,8 @@ int *GenerateQuiet(POS *p, int *list) {
     }
   }
 
+  // QUEEN
+
   pieces = p->Queens(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
@@ -250,6 +270,8 @@ int *GenerateQuiet(POS *p, int *list) {
       *list++ = (to << 6) | from;
     }
   }
+
+  // KING
 
   moves = BB.KingAttacks(KingSq(p, sd)) & UnoccBb(p);
   while (moves) {
@@ -262,16 +284,20 @@ int *GenerateQuiet(POS *p, int *list) {
 int *GenerateSpecial(POS *p, int *list) {
 
   U64 pieces, moves;
-  int sd, from, to;
-  int ksq = KingSq(p, Opp(p->side));
+  int from, to;
+  int sd = p->side;
+  int op = Opp(sd);
+
+  // squares from which normal (non-discovered) checks are possible
+
+  int ksq = KingSq(p, op);
   U64 n_check = BB.KnightAttacks(ksq);
   U64 r_check = BB.RookAttacks(OccBb(p), ksq);
   U64 b_check = BB.BishAttacks(OccBb(p), ksq);
   U64 q_check = r_check | b_check;
-  U64 p_check = BB.ShiftFwd(BB.ShiftSideways(SqBb(ksq)), Opp(p->side));
+  U64 p_check = BB.ShiftFwd(BB.ShiftSideways(SqBb(ksq)), op);
 
-  sd = p->side;
-  int op = Opp(sd);
+  // TODO: discovered checks by a pawn
 
   if (sd == WC) {
 
@@ -304,23 +330,16 @@ int *GenerateSpecial(POS *p, int *list) {
     }
   }
 
+  // KNIGHT
+
   pieces = p->Knights(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
-	int knight_discovers = 0;
-	
-    U64 bb_checkers = p->Queens(sd) | p->Rooks(sd) | p->Bishops(sd);
-    while (bb_checkers) {
-      int checker = BB.PopFirstBit(&bb_checkers);
-      U64 bb_ray = BB.bbBetween[checker][p->king_sq[op]];
 
-      if (SqBb(from) & bb_ray) {
-        if (BB.PopCnt(bb_ray & OccBb(p)) == 1) {
-           knight_discovers = 1;
-           break;
-        }
-      }
-    }
+	// are discovered checks possible?
+
+	U64 bb_checkers = p->Queens(sd) | p->Rooks(sd) | p->Bishops(sd);
+	int knight_discovers = CanDiscoverCheck(p, bb_checkers, op, from);
    
 	moves = BB.KnightAttacks(from) & UnoccBb(p);
 	if (!knight_discovers) moves = moves & n_check;
@@ -330,24 +349,17 @@ int *GenerateSpecial(POS *p, int *list) {
     }
   }
 
+  // BISHOP
+
   pieces = p->Bishops(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
-	int bish_discovers = 0;
-	
-	U64 bb_checkers = p->StraightMovers(sd);
-    while (bb_checkers) {
-      int checker = BB.PopFirstBit(&bb_checkers);
-      U64 bb_ray = BB.bbBetween[checker][p->king_sq[op]];
 
-      if (SqBb(from) & bb_ray) {
-        if (BB.PopCnt(bb_ray & OccBb(p)) == 1) {
-           bish_discovers = 1;
-           break;
-        }
-      }
-    }
-    
+	// are straight discovered checks possible?
+
+	U64 bb_checkers = p->StraightMovers(sd);
+	int bish_discovers = CanDiscoverCheck(p, bb_checkers, op, from);
+
     moves = BB.BishAttacks(OccBb(p), from) & UnoccBb(p);
 	if (!bish_discovers) moves = moves & b_check;
     while (moves) {
@@ -356,23 +368,16 @@ int *GenerateSpecial(POS *p, int *list) {
     }
   }
 
+  // ROOK
+
   pieces = p->Rooks(sd);
   while (pieces) {
     from = BB.PopFirstBit(&pieces);
-	int rook_discovers = 0;
 	
-	U64 bb_checkers = p->DiagMovers(sd);
-    while (bb_checkers) {
-      int checker = BB.PopFirstBit(&bb_checkers);
-      U64 bb_ray = BB.bbBetween[checker][p->king_sq[op]];
+	// are diagonal discovered checks possible?
 
-      if (SqBb(from) & bb_ray) {
-        if (BB.PopCnt(bb_ray & OccBb(p)) == 1) {
-           rook_discovers = 1;
-           break;
-        }
-      }
-    }
+	U64 bb_checkers = p->DiagMovers(sd);
+	int rook_discovers = CanDiscoverCheck(p, bb_checkers, op, from);
     
     moves = BB.RookAttacks(OccBb(p), from) & UnoccBb(p);
 	if (!rook_discovers) moves = moves & r_check;
@@ -381,6 +386,8 @@ int *GenerateSpecial(POS *p, int *list) {
       *list++ = (to << 6) | from;
     }
   }
+
+  // QUEEN
 
   pieces = p->Queens(sd);
   while (pieces) {
@@ -394,6 +401,9 @@ int *GenerateSpecial(POS *p, int *list) {
   }
 
   /*
+
+  // TODO: discovered checks by a king
+
   moves = k_attacks[KingSq(p, sd)] & UnoccBb(p);
   while (moves) {
     to = BB.PopFirstBit(&moves);
@@ -401,4 +411,19 @@ int *GenerateSpecial(POS *p, int *list) {
   }
   */
   return list;
+}
+
+int CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from) {
+ 
+  while (bb_checkers) {
+    int checker = BB.PopFirstBit(&bb_checkers);
+    U64 bb_ray = BB.bbBetween[checker][p->king_sq[op]];
+
+    if (SqBb(from) & bb_ray) {
+      if (BB.PopCnt(bb_ray & OccBb(p)) == 1)
+        return 1;
+    }
+  }
+
+  return 0;
 }

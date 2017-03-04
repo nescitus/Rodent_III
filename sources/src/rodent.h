@@ -16,7 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 6619 lines
+// 6595 lines
 
 // b15: 40.941.318 / 32,7 / 2.905
 
@@ -595,6 +595,7 @@ void ExtractMove(int pv[MAX_PLY]);
 int *GenerateCaptures(POS *p, int *list);
 int *GenerateQuiet(POS *p, int *list);
 int *GenerateSpecial(POS *p, int *list);
+int CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for GenerateSpecial()
 int GetMS(void);
 U64 GetNps(int elapsed);
 void Init(void);

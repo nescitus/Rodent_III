@@ -299,8 +299,12 @@ void ReadPersonality(char *fileName) {
   char token[180], *ptr;
 
   // exit if this personality file doesn't exist
+
   if ((personalityFile = fopen(fileName, "r")) == NULL)
     return;
+
+  // set flag in case we want to disable some options while reading
+  // personality from a file
 
   Glob.reading_personality = 1;
 
@@ -309,11 +313,17 @@ void ReadPersonality(char *fileName) {
   while (fgets(line, 256, personalityFile)) {
     ptr = ParseToken(line, token);
 
+	// do we pick opening book within a personality?
+
     if (strstr(line, "PERSONALITY_BOOKS")) Glob.separate_books = 0;
     if (strstr(line, "GENERAL_BOOKS")) Glob.separate_books = 1;
 
+	// how we go about weakening the engine?
+
     if (strstr(line, "ELO_SLIDER")) Glob.elo_slider = 1;
     if (strstr(line, "NPS_BLUR")) Glob.elo_slider = 0;
+
+	// which UCI options are exposed to the user?
 
 	if (strstr(line, "HIDE_OPTIONS")) Glob.use_personality_files = 1;
 	if (strstr(line, "SHOW_OPTIONS")) Glob.use_personality_files = 0;
