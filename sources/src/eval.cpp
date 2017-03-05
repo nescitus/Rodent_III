@@ -74,16 +74,16 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   // Init king attack zone
 
   int op = Opp(sd);
-  int ksq = KingSq(p, op);
-  bb_zone = BB.KingAttacks(ksq);
+  int king_sq = KingSq(p, op);
+  bb_zone = BB.KingAttacks(king_sq);
   bb_zone = bb_zone |= BB.ShiftFwd(bb_zone, op);
   bb_zone = bb_zone &~e->p_takes[op];
 
   // Init helper bitboards
 
-  U64 n_checks = BB.KnightAttacks(ksq) & ~p->cl_bb[sd] & ~e->p_takes[op];
-  U64 b_checks = BB.BishAttacks(OccBb(p), ksq) & ~p->cl_bb[sd] & ~e->p_takes[op];
-  U64 r_checks = BB.RookAttacks(OccBb(p), ksq) & ~p->cl_bb[sd] & ~e->p_takes[op];
+  U64 n_checks = BB.KnightAttacks(king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
+  U64 b_checks = BB.BishAttacks(OccBb(p), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
+  U64 r_checks = BB.RookAttacks(OccBb(p), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
   U64 q_checks = r_checks & b_checks;
   U64 bb_excluded = p->Pawns(sd);
 
@@ -93,8 +93,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 3 * Par.dist[sq][ksq];                // king tropism (based on Gambit Fruit)
-    tropism_eg += 3 * Par.dist[sq][ksq];
+    tropism_mg += 3 * Par.dist[sq][king_sq];            // king tropism (based on Gambit Fruit)
+    tropism_eg += 3 * Par.dist[sq][king_sq];
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 1;
@@ -127,8 +127,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 2 * Par.dist[sq][ksq];                // king tropism (based on Gambit Fruit)
-    tropism_eg += 1 * Par.dist[sq][ksq];
+    tropism_mg += 2 * Par.dist[sq][king_sq];            // king tropism (based on Gambit Fruit)
+    tropism_eg += 1 * Par.dist[sq][king_sq];
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 1;
@@ -179,8 +179,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 2 * Par.dist[sq][ksq];                // king tropism (based on Gambit Fruit)
-    tropism_eg += 1 * Par.dist[sq][ksq];
+    tropism_mg += 2 * Par.dist[sq][king_sq];            // king tropism (based on Gambit Fruit)
+    tropism_eg += 1 * Par.dist[sq][king_sq];
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 2;
@@ -194,7 +194,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     if ((bb_control & ~p->cl_bb[sd] & r_checks)
     && p->Queens(sd)) {
       att += 9;                                         // check threat bonus
-      bb_contact = (bb_control & BB.KingAttacks(ksq)) & r_checks;  // get contact check bitboard
+      bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
 
       while (bb_contact) {
         int contactSq = BB.PopFirstBit(&bb_contact);    // find a potential contact check
@@ -257,8 +257,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 2 * Par.dist[sq][ksq];                // king tropism (based on Gambit Fruit)
-    tropism_eg += 4 * Par.dist[sq][ksq];                
+    tropism_mg += 2 * Par.dist[sq][king_sq];            // king tropism (based on Gambit Fruit)
+    tropism_eg += 4 * Par.dist[sq][king_sq];                
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 4;
@@ -270,7 +270,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     if (bb_control & q_checks) {                        // check threat bonus
       att += 12;
 
-      bb_contact = bb_control & BB.KingAttacks(ksq);    // queen contact checks
+      bb_contact = bb_control & BB.KingAttacks(king_sq);// queen contact checks
       while (bb_contact) {
         int contactSq = BB.PopFirstBit(&bb_contact);    // find potential contact check square 
         if (Swap(p, sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate
@@ -425,22 +425,22 @@ void cEngine::EvaluateUnstoppable(eData *e, POS * p) {
   U64 bb_pieces, bb_span;
   int w_dist = 8;
   int b_dist = 8;
-  int sq, ksq, psq, tempo, prom_dist;
+  int sq, king_sq, pawn_sq, tempo, prom_dist;
 
   // White unstoppable passers
 
   if (p->cnt[BC][N] + p->cnt[BC][B] + p->cnt[BC][R] + p->cnt[BC][Q] == 0) {
-    ksq = KingSq(p, BC);
+    king_sq = KingSq(p, BC);
     if (p->side == BC) tempo = 1; else tempo = 0;
     bb_pieces = p->Pawns(WC);
     while (bb_pieces) {
       sq = BB.PopFirstBit(&bb_pieces);
       if (!(Mask.passed[WC][sq] & p->Pawns(BC))) {
         bb_span = BB.GetFrontSpan(SqBb(sq), WC);
-        psq = ((WC - 1) & 56) + (sq & 7);
-        prom_dist = Min(5, Par.chebyshev_dist[sq][psq]);
+        pawn_sq = ((WC - 1) & 56) + (sq & 7);
+        prom_dist = Min(5, Par.chebyshev_dist[sq][pawn_sq]);
 
-        if (prom_dist < (Par.chebyshev_dist[ksq][psq] - tempo)) {
+        if (prom_dist < (Par.chebyshev_dist[king_sq][pawn_sq] - tempo)) {
           if (bb_span & p->Kings(WC)) prom_dist++;
           w_dist = Min(w_dist, prom_dist);
         }
@@ -451,17 +451,17 @@ void cEngine::EvaluateUnstoppable(eData *e, POS * p) {
   // Black unstoppable passers
 
   if (p->cnt[WC][N] + p->cnt[WC][B] + p->cnt[WC][R] + p->cnt[WC][Q] == 0) {
-    ksq = KingSq(p, WC);
+    king_sq = KingSq(p, WC);
     if (p->side == WC) tempo = 1; else tempo = 0;
     bb_pieces = p->Pawns(BC);
     while (bb_pieces) {
       sq = BB.PopFirstBit(&bb_pieces);
       if (!(Mask.passed[BC][sq] & p->Pawns(WC))) {
         bb_span = BB.GetFrontSpan(SqBb(sq), BC);
-        psq = ((BC - 1) & 56) + (sq & 7);
-        prom_dist = Min(5, Par.chebyshev_dist[sq][psq]);
+        pawn_sq = ((BC - 1) & 56) + (sq & 7);
+        prom_dist = Min(5, Par.chebyshev_dist[sq][pawn_sq]);
 
-        if (prom_dist < (Par.chebyshev_dist[ksq][psq] - tempo)) {
+        if (prom_dist < (Par.chebyshev_dist[king_sq][pawn_sq] - tempo)) {
           if (bb_span & p->Kings(BC)) prom_dist++;
           b_dist = Min(b_dist, prom_dist);
         }
