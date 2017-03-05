@@ -166,7 +166,7 @@ void cEngine::EvaluateKingPatterns(POS * p, eData * e) {
     && (p->Rooks(BC) & rook_mask)) Add(e, BC, -50, 0);
 
     king_mask = SqBb(B8) | SqBb(C8);
-    rook_mask = SqBb(C8) | SqBb(B8) | SqBb(B7);
+    rook_mask = SqBb(B8) | SqBb(A8) | SqBb(A7);
 
     if ((p->Kings(BC) & king_mask)
     && (p->Rooks(BC) & rook_mask)) Add(e, BC, -50, 0);
