@@ -161,47 +161,25 @@ void cParam::InitPst(void) {
 void cParam::InitMobility(void) {
 
   for (int i = 0; i < 9; i++) {
-    n_mob_mg[i] = 4 * (i-4);
-    n_mob_eg[i] = 4 * (i-4);
+    n_mob_mg[i] = Par.mob_style == 0 ? 4 * (i-4) : n_mob_mg_decreasing[i];
+    n_mob_eg[i] = Par.mob_style == 0 ? 4 * (i-4) : n_mob_eg_decreasing[i];
   }
     
   for (int i = 0; i < 14; i++) {
-    b_mob_mg[i] = 5 * (i-6);
-    b_mob_eg[i] = 5 * (i-6);
+    b_mob_mg[i] = Par.mob_style == 0 ? 5 * (i-6) : b_mob_mg_decreasing[i];
+    b_mob_eg[i] = Par.mob_style == 0 ? 5 * (i-6) : b_mob_eg_decreasing[i];
   }
 
   for (int i = 0; i < 15; i++) {
-    r_mob_mg[i] = 2 * (i-7);
-    r_mob_eg[i] = 4 * (i-7);
+    r_mob_mg[i] = Par.mob_style == 0 ? 2 * (i-7) : r_mob_mg_decreasing[i];
+    r_mob_eg[i] = Par.mob_style == 0 ? 4 * (i-7) : r_mob_eg_decreasing[i];
   }
 
   for (int i = 0; i < 28; i++) {
-    q_mob_mg[i] = 1 * (i-14);
-    q_mob_eg[i] = 2 * (i-14);
+    q_mob_mg[i] = Par.mob_style == 0 ? 1 * (i-14) : q_mob_mg_decreasing[i];
+    q_mob_eg[i] = Par.mob_style == 0 ? 2 * (i-14) : q_mob_mg_decreasing[i];
   }
 
-  if (mob_style == 1) {
-    for (int i = 0; i < 9; i++) {
-      n_mob_mg[i] = n_mob_mg_decreasing[i];
-      n_mob_eg[i] = n_mob_eg_decreasing[i];
-    }
-
-    for (int i = 0; i < 14; i++) {
-      b_mob_mg[i] = b_mob_mg_decreasing[i];
-      b_mob_eg[i] = b_mob_eg_decreasing[i];
-    }
-
-    for (int i = 0; i < 15; i++) {
-      r_mob_mg[i] = r_mob_mg_decreasing[i];
-      r_mob_eg[i] = r_mob_eg_decreasing[i];
-    }
-
-    for (int i = 0; i < 28; i++) {
-      q_mob_mg[i] = q_mob_mg_decreasing[i];
-      q_mob_eg[i] = q_mob_eg_decreasing[i];
-    }
-
-  }
 }
 
 void cParam::InitMaterialTweaks(void) {
