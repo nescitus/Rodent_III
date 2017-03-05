@@ -16,7 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 6560 lines
+// 6575 lines
 
 // b15: 40.941.318 / 32,7 / 2.905
 
@@ -236,6 +236,7 @@ public:
 	U64 ShiftSideways(U64 bb);
 	U64 GetWPControl(U64 bb);
 	U64 GetBPControl(U64 bb);
+	U64 GetPawnControl(U64 bb, int sd);
 	U64 GetDoubleWPControl(U64 bb);
 	U64 GetDoubleBPControl(U64 bb);
 	U64 GetFrontSpan(U64 bb, int sd);
@@ -558,6 +559,7 @@ public:
   int ScalePawnsOnly(POS *p, int sd, int op);
   int ScaleKBPK(POS *p, int sd, int op);
   int ScaleKRPKR(POS *p, int sd, int op);
+  int ScaleKQKRP(POS *p, int sd, int op);
   void EvaluateBishopPatterns(POS * p, eData * e);
   void EvaluateKnightPatterns(POS * p, eData * e);
   void EvaluateCentralPatterns(POS * p, eData * e);

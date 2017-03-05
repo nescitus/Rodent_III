@@ -162,6 +162,11 @@ U64 cBitBoard::GetBPControl(U64 bb) {
   return (ShiftSE(bb) | ShiftSW(bb));
 }
 
+U64 cBitBoard::GetPawnControl(U64 bb, int sd) {
+  if (sd == WC) return GetWPControl(bb);
+  else          return GetBPControl(bb);
+}
+
 U64 cBitBoard::GetDoubleWPControl(U64 bb) {
   return (ShiftNE(bb) & ShiftNW(bb));
 }

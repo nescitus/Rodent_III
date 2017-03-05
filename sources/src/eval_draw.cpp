@@ -98,6 +98,9 @@ int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
     if (p->cnt[sd][R] == 1 && p->cnt[sd][B] + p->cnt[sd][N] == 1 && p->cnt[op][R] == 1) return 16;   // KRMKR(p)
   }
 
+  if (p->phase == 6 && p->cnt[sd][Q] == 1 && p->cnt[op][R] == 1 && p->cnt[sd][P] == 0)
+    return ScaleKQKRP(p, sd, op);
+
   if (p->phase == 7 && p->cnt[sd][P] == 0) {
     if (p->cnt[sd][R] == 2 && p->cnt[op][B] + p->cnt[op][N] == 1 && p->cnt[op][R] == 1) return 16;   // KRRKRm(p)
   }
@@ -153,6 +156,17 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
 
   if ((SqBb(p->king_sq[op]) & BB.GetFrontSpan(p->Pawns(sd), sd)))
     return 32; // defending king on pawn's path: 1/2
+
+  return 64;   // default: no scaling
+}
+
+int cEngine::ScaleKQKRP(POS *p, int sd, int op) {
+
+  U64 bb_defended = p->Pawns(op) & bbRelRank[sd][RANK_7];
+  bb_defended &= BB.KingAttacks(p->king_sq[op]);
+
+  if (p->Rooks(op) & BB.GetPawnControl(bb_defended, op) )
+  return 8;
 
   return 64;   // default: no scaling
 }
