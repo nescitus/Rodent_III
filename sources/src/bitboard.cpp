@@ -119,9 +119,9 @@ int cBitBoard::PopCnt(U64 bb) { // general purpose population count
 
 int cBitBoard::PopFirstBit(U64 * bb) {
 
-  U64 bbLocal = *bb;
+  U64 bb_local = *bb;
   *bb &= (*bb - 1);
-  return FirstOne(bbLocal);
+  return FirstOne(bb_local);
 }
 
 U64 cBitBoard::FillNorth(U64 bb) {
@@ -195,129 +195,129 @@ U64 cBitBoard::PawnAttacks(int sd, int sq) {
   return p_attacks[sd][sq];
 }
 
-U64 cBitBoard::FillOcclSouth(U64 bbStart, U64 bbBlock) {
+U64 cBitBoard::FillOcclSouth(U64 bb_start, U64 bb_block) {
 
-  bbStart |= bbBlock & (bbStart >> 8);
-  bbBlock &= (bbBlock >> 8);
-  bbStart |= bbBlock & (bbStart >> 16);
-  bbBlock &= (bbBlock >> 16);
-  bbStart |= bbBlock & (bbStart >> 32);
-  return bbStart;
+  bb_start |= bb_block & (bb_start >> 8);
+  bb_block &= (bb_block >> 8);
+  bb_start |= bb_block & (bb_start >> 16);
+  bb_block &= (bb_block >> 16);
+  bb_start |= bb_block & (bb_start >> 32);
+  return bb_start;
 }
 
-U64 cBitBoard::FillOcclNorth(U64 bbStart, U64 bbBlock) {
+U64 cBitBoard::FillOcclNorth(U64 bb_start, U64 bb_block) {
 
-  bbStart |= bbBlock & (bbStart << 8);
-  bbBlock &= (bbBlock << 8);
-  bbStart |= bbBlock & (bbStart << 16);
-  bbBlock &= (bbBlock << 16);
-  bbStart |= bbBlock & (bbStart << 32);
-  return bbStart;
+  bb_start |= bb_block & (bb_start << 8);
+  bb_block &= (bb_block << 8);
+  bb_start |= bb_block & (bb_start << 16);
+  bb_block &= (bb_block << 16);
+  bb_start |= bb_block & (bb_start << 32);
+  return bb_start;
 }
 
-U64 cBitBoard::FillOcclEast(U64 bbStart, U64 bbBlock) {
+U64 cBitBoard::FillOcclEast(U64 bb_start, U64 bb_block) {
 
-  bbBlock &= bbNotA;
-  bbStart |= bbBlock & (bbStart << 1);
-  bbBlock &= (bbBlock << 1);
-  bbStart |= bbBlock & (bbStart << 2);
-  bbBlock &= (bbBlock << 2);
-  bbStart |= bbBlock & (bbStart << 4);
-  return bbStart;
+  bb_block &= bbNotA;
+  bb_start |= bb_block & (bb_start << 1);
+  bb_block &= (bb_block << 1);
+  bb_start |= bb_block & (bb_start << 2);
+  bb_block &= (bb_block << 2);
+  bb_start |= bb_block & (bb_start << 4);
+  return bb_start;
 }
 
-U64 cBitBoard::FillOcclNE(U64 bbStart, U64 bbBlock) {
+U64 cBitBoard::FillOcclNE(U64 bb_start, U64 bb_block) {
 
-  bbBlock &= bbNotA;
-  bbStart |= bbBlock & (bbStart << 9);
-  bbBlock &= (bbBlock << 9);
-  bbStart |= bbBlock & (bbStart << 18);
-  bbBlock &= (bbBlock << 18);
-  bbStart |= bbBlock & (bbStart << 36);
-  return bbStart;
+  bb_block &= bbNotA;
+  bb_start |= bb_block & (bb_start << 9);
+  bb_block &= (bb_block << 9);
+  bb_start |= bb_block & (bb_start << 18);
+  bb_block &= (bb_block << 18);
+  bb_start |= bb_block & (bb_start << 36);
+  return bb_start;
 }
 
-U64 cBitBoard::FillOcclSE(U64 bbStart, U64 bbBlock) {
+U64 cBitBoard::FillOcclSE(U64 bb_start, U64 bb_block) {
 
-  bbBlock &= bbNotA;
-  bbStart |= bbBlock & (bbStart >> 7);
-  bbBlock &= (bbBlock >> 7);
-  bbStart |= bbBlock & (bbStart >> 14);
-  bbBlock &= (bbBlock >> 14);
-  bbStart |= bbBlock & (bbStart >> 28);
-  return bbStart;
+  bb_block &= bbNotA;
+  bb_start |= bb_block & (bb_start >> 7);
+  bb_block &= (bb_block >> 7);
+  bb_start |= bb_block & (bb_start >> 14);
+  bb_block &= (bb_block >> 14);
+  bb_start |= bb_block & (bb_start >> 28);
+  return bb_start;
 }
 
-U64 cBitBoard::FillOcclWest(U64 bbStart, U64 bbBlock) {
+U64 cBitBoard::FillOcclWest(U64 bb_start, U64 bb_block) {
 
-  bbBlock &= bbNotH;
-  bbStart |= bbBlock & (bbStart >> 1);
-  bbBlock &= (bbBlock >> 1);
-  bbStart |= bbBlock & (bbStart >> 2);
-  bbBlock &= (bbBlock >> 2);
-  bbStart |= bbBlock & (bbStart >> 4);
-  return bbStart;
+  bb_block &= bbNotH;
+  bb_start |= bb_block & (bb_start >> 1);
+  bb_block &= (bb_block >> 1);
+  bb_start |= bb_block & (bb_start >> 2);
+  bb_block &= (bb_block >> 2);
+  bb_start |= bb_block & (bb_start >> 4);
+  return bb_start;
 }
 
-U64 cBitBoard::FillOcclSW(U64 bbStart, U64 bbBlock) {
+U64 cBitBoard::FillOcclSW(U64 bb_start, U64 bb_block) {
 
-  bbBlock &= bbNotH;
-  bbStart |= bbBlock & (bbStart >> 9);
-  bbBlock &= (bbBlock >> 9);
-  bbStart |= bbBlock & (bbStart >> 18);
-  bbBlock &= (bbBlock >> 18);
-  bbStart |= bbBlock & (bbStart >> 36);
-  return bbStart;
+  bb_block &= bbNotH;
+  bb_start |= bb_block & (bb_start >> 9);
+  bb_block &= (bb_block >> 9);
+  bb_start |= bb_block & (bb_start >> 18);
+  bb_block &= (bb_block >> 18);
+  bb_start |= bb_block & (bb_start >> 36);
+  return bb_start;
 }
 
-U64 cBitBoard::FillOcclNW(U64 bbStart, U64 bbBlock) {
+U64 cBitBoard::FillOcclNW(U64 bb_start, U64 bb_block) {
 
-  bbBlock &= bbNotH;
-  bbStart |= bbBlock & (bbStart << 7);
-  bbBlock &= (bbBlock << 7);
-  bbStart |= bbBlock & (bbStart << 14);
-  bbBlock &= (bbBlock << 14);
-  bbStart |= bbBlock & (bbStart << 28);
-  return bbStart;
+  bb_block &= bbNotH;
+  bb_start |= bb_block & (bb_start << 7);
+  bb_block &= (bb_block << 7);
+  bb_start |= bb_block & (bb_start << 14);
+  bb_block &= (bb_block << 14);
+  bb_start |= bb_block & (bb_start << 28);
+  return bb_start;
 }
 
 U64 cBitBoard::KnightAttacks(int sq) {
   return n_attacks[sq];
 }
 
-U64 cBitBoard::RookAttacks(U64 bbOcc, int sq) {
+U64 cBitBoard::RookAttacks(U64 bb_occ, int sq) {
 
 #ifdef USE_MAGIC
-  return Rmagic(sq, bbOcc);
+  return Rmagic(sq, bb_occ);
 #else
-  U64 bbStart = SqBb(sq);
-  U64 result = ShiftNorth(FillOcclNorth(bbStart, ~bbOcc))
-             | ShiftSouth(FillOcclSouth(bbStart, ~bbOcc))
-             | ShiftEast(FillOcclEast(bbStart, ~bbOcc))
-             | ShiftWest(FillOcclWest(bbStart, ~bbOcc));
+  U64 bb_start = SqBb(sq);
+  U64 result = ShiftNorth(FillOcclNorth(bb_start, ~bb_occ))
+             | ShiftSouth(FillOcclSouth(bb_start, ~bb_occ))
+             | ShiftEast(FillOcclEast(bb_start, ~bb_occ))
+             | ShiftWest(FillOcclWest(bb_start, ~bb_occ));
   return result;
 #endif
 }
 
-U64 cBitBoard::BishAttacks(U64 bbOcc, int sq) {
+U64 cBitBoard::BishAttacks(U64 bb_occ, int sq) {
 #ifdef USE_MAGIC
-  return Bmagic(sq, bbOcc);
+  return Bmagic(sq, bb_occ);
 #else
-  U64 bbStart = SqBb(sq);
-  U64 result = ShiftNE(FillOcclNE(bbStart, ~bbOcc))
-             | ShiftNW(FillOcclNW(bbStart, ~bbOcc))
-             | ShiftSE(FillOcclSE(bbStart, ~bbOcc))
-             | ShiftSW(FillOcclSW(bbStart, ~bbOcc));
+  U64 bb_start = SqBb(sq);
+  U64 result = ShiftNE(FillOcclNE(bb_start, ~bb_occ))
+             | ShiftNW(FillOcclNW(bb_start, ~bb_occ))
+             | ShiftSE(FillOcclSE(bb_start, ~bb_occ))
+             | ShiftSW(FillOcclSW(bb_start, ~bb_occ));
   return result;
 #endif
 }
 
-U64 cBitBoard::QueenAttacks(U64 bbOcc, int sq) {
+U64 cBitBoard::QueenAttacks(U64 bb_occ, int sq) {
 
 #ifdef USE_MAGIC
-  return Rmagic(sq, bbOcc) | Bmagic(sq, bbOcc);
+  return Rmagic(sq, bb_occ) | Bmagic(sq, bb_occ);
 #else
-  return RookAttacks(bbOcc, sq) | BishAttacks(bbOcc, sq);
+  return RookAttacks(bb_occ, sq) | BishAttacks(bb_occ, sq);
 #endif
 }
 

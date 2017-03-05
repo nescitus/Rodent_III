@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6575 lines
 
-// b15: 36.387.923 / 29,9 / 2.816
+// b15: 36.387.923 / 29,7 / 2.837
 
 #pragma once
 
@@ -218,14 +218,14 @@ private:
 	U64 n_attacks[64];
 	U64 k_attacks[64];
 
-	U64 FillOcclSouth(U64 bbStart, U64 bbBlock);
-	U64 FillOcclNorth(U64 bbStart, U64 bbBlock);
-	U64 FillOcclEast(U64 bbStart, U64 bbBlock);
-	U64 FillOcclWest(U64 bbStart, U64 bbBlock);
-	U64 FillOcclNE(U64 bbStart, U64 bbBlock);
-	U64 FillOcclNW(U64 bbStart, U64 bbBlock);
-	U64 FillOcclSE(U64 bbStart, U64 bbBlock);
-	U64 FillOcclSW(U64 bbStart, U64 bbBlock);
+	U64 FillOcclSouth(U64 bb_start, U64 bb_block);
+	U64 FillOcclNorth(U64 bb_start, U64 bb_block);
+	U64 FillOcclEast(U64 bb_start, U64 bb_block);
+	U64 FillOcclWest(U64 bb_start, U64 bb_block);
+	U64 FillOcclNE(U64 bb_start, U64 bb_block);
+	U64 FillOcclNW(U64 bb_start, U64 bb_block);
+	U64 FillOcclSE(U64 bb_start, U64 bb_block);
+	U64 FillOcclSW(U64 bb_start, U64 bb_block);
 	U64 GetBetween(int sq1, int sq2);
 
 public:
