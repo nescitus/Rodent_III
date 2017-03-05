@@ -75,12 +75,14 @@ void cEngine::EvaluatePawnStruct(POS * p, eData * e) {
   EvaluatePawns(p, e, WC);
   EvaluatePawns(p, e, BC);
 
-  // King's pawn shield and pawn chains
+  // King's pawn shield 
+  // (also includes pawn chains eval)
 
   EvaluateKing(p, e, WC);
   EvaluateKing(p, e, BC);
 
-  // Center binds
+  // Center binds 
+  // (important squares controlled by two pawns)
 
   int tmp = 0;
   if (e->two_pawns_take[WC] & SqBb(D5)) tmp += 5;
@@ -114,15 +116,15 @@ void cEngine::EvaluatePawnStruct(POS * p, eData * e) {
 
   // Evaluate number of pawn islands (based on Texel)
 
-  const U64 wPawns = p->Pawns(WC);
-  const U64 wPawnFiles = BB.FillSouth(wPawns) & 0xff;
-  const int wIslands = BB.PopCnt(((~wPawnFiles) >> 1) & wPawnFiles);
+  const U64 w_pawns = p->Pawns(WC);
+  const U64 w_pawn_files = BB.FillSouth(w_pawns) & 0xff;
+  const int w_islands = BB.PopCnt(((~w_pawn_files) >> 1) & w_pawn_files);
 
-  const U64 bPawns = p->Pawns(BC);
-  const U64 bPawnFiles = BB.FillSouth(bPawns) & 0xff;
-  const int bIslands = BB.PopCnt(((~bPawnFiles) >> 1) & bPawnFiles);
-  e->mg_pawns[WC] -= (wIslands - bIslands) * 7;
-  e->eg_pawns[WC] -= (wIslands - bIslands) * 7;
+  const U64 b_pawns = p->Pawns(BC);
+  const U64 b_pawn_files = BB.FillSouth(b_pawns) & 0xff;
+  const int b_islands = BB.PopCnt(((~b_pawn_files) >> 1) & b_pawn_files);
+  e->mg_pawns[WC] -= (w_islands - b_islands) * 7; // this would also break detailed score display
+  e->eg_pawns[WC] -= (w_islands - b_islands) * 7;
 	
   // Save stuff in pawn hashtable.
   // Note that we save delta between white and black scores.
@@ -131,7 +133,6 @@ void cEngine::EvaluatePawnStruct(POS * p, eData * e) {
   PawnTT[addr].key = p->pawn_key;
   PawnTT[addr].mg_pawns = (Par.struct_weight * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
   PawnTT[addr].eg_pawns = (Par.struct_weight * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
-
 }
 
 void cEngine::EvaluateKing(POS *p, eData *e, int sd) {

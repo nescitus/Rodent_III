@@ -468,6 +468,8 @@ public:
   U64 passed[2][64];
   U64 adjacent[8];
   U64 supported[2][64];
+  U64 wb_special;
+  U64 bb_special;
 } cMask;
 
 extern cMask Mask;

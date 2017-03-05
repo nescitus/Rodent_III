@@ -19,10 +19,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void cEngine::EvaluateBishopPatterns(POS * p, eData * e) {
 
-  static const U64 wb_mask = { SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2) };
-  static const U64 bb_mask = { SqBb(A2) | SqBb(A3) | SqBb(B1) | SqBb(H2) | SqBb(H3) | SqBb(G1) | SqBb(C8) | SqBb(F8) | SqBb(G7) | SqBb(B7) };
-
-  if (p->Bishops(WC) & wb_mask) {
+  if (p->Bishops(WC) & Mask.wb_special) {
 
     // white bishop trapped
 
@@ -57,7 +54,7 @@ void cEngine::EvaluateBishopPatterns(POS * p, eData * e) {
     }
   }
 
-  if (p->Bishops(BC) & bb_mask) {
+  if (p->Bishops(BC) & Mask.bb_special) {
 
     // black bishop trapped
 

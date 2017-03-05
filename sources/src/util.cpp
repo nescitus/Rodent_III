@@ -155,6 +155,8 @@ int StrToMove(POS *p, char *move_str) {
   int to   = Sq(move_str[2] - 'a', move_str[3] - '1');
   int type = NORMAL;
 
+  // change move type if necessary
+
   if (TpOnSq(p, from) == K && Abs(to - from) == 2)
     type = CASTLE;
   else if (TpOnSq(p, from) == P) {

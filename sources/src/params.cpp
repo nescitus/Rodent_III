@@ -35,6 +35,8 @@ void cParam::DefaultWeights(void) {
    use_book = 1;
    book_filter = 20;
 
+   // Timing
+
    time_percentage = 100;
 
    // Piece values
@@ -69,8 +71,10 @@ void cParam::DefaultWeights(void) {
    mat_weight = 100;
    pst_weight = 80;
    pst_style = 0;
-   mob_style = 0; // 1 is only marginally behind
-   protecting_bishop = 0; // NOTE: even ludicrously high value of 50 tests well
+   mob_style = 0;         // 1 is only marginally behind
+   protecting_bishop = 0; // even ludicrously high value of 50 tests well
+   draw_score = 0;
+   shut_up = 0;           // surpress displaing info currmove etc.
 
    // Positional weights
 
@@ -110,9 +114,6 @@ void cParam::DefaultWeights(void) {
 
    hist_perc = 175;
    hist_limit = 24576;
-
-   draw_score = 0;
-   shut_up = 0;
 
    // when testing a personality, place changes in relation to default here
 
