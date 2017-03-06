@@ -154,7 +154,29 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
   && ((RelSqBb(A7, sd) & p->Kings(op)) || (RelSqBb(B7, sd) & p->Kings(op)))
   ) return 0; // dead draw
 
-  if ((SqBb(p->king_sq[op]) & BB.GetFrontSpan(p->Pawns(sd), sd)))
+  U64 bb_span = BB.GetFrontSpan(p->Pawns(sd), sd);
+  U64 prom_sq = bbRelRank[sd][RANK_8] & bb_span;
+  int strong_king = p->king_sq[sd];
+  int weak_king = p->king_sq[op];
+  int strong_pawn = FirstOne(p->Pawns(sd));
+  int strong_rook = FirstOne(p->Rooks(sd));
+  int weak_rook = FirstOne(p->Rooks(op));
+  int tempo = (p->side == sd);
+  U64 bb_safe_zone = Mask.home[sd] ^ bbRelRank[sd][RANK_5];
+
+  if (p->Pawns(sd) & bb_safe_zone) {
+
+    // king of the weaker side blocks pawn
+
+    if (BB.ShiftFwd(p->Pawns(sd), sd) & p->Kings(op)
+    && Dist.metric[strong_king][strong_pawn] - tempo >= 2
+    && Dist.metric[strong_king][weak_rook] - tempo >= 2)
+    return 0;
+  }
+
+  // catch-all bonus for well-positioned defending king
+
+  if (p->Kings(op) & bb_span)
     return 32; // defending king on pawn's path: 1/2
 
   return 64;   // default: no scaling
@@ -164,6 +186,8 @@ int cEngine::ScaleKQKRP(POS *p, int sd, int op) {
 
   U64 bb_defended = p->Pawns(op) & bbRelRank[sd][RANK_7];
   bb_defended &= BB.KingAttacks(p->king_sq[op]);
+
+  // fortress: rook defended by a pawn on the third rank, pawn defended by the king
 
   if (p->Rooks(op) & BB.GetPawnControl(bb_defended, op) )
   return 8;
