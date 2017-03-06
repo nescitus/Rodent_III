@@ -210,24 +210,11 @@ void cParam::InitMaterialTweaks(void) {
 
 void cParam::InitTables(void) {
 
-  int r_delta, f_delta;
-
   // Init king attack table
 
   for (int t = 0, i = 1; i < 511; ++i) {
     t = (int)Min(1280.0, Min((0.027 * i * i), t + 8.0));
     danger[i] = (t * 100) / 256; // rescale to centipawns
-  }
-
-  // Init distance tables (for evaluating king tropism and unstoppable passers)
-
-  for (int sq1 = 0; sq1 < 64; ++sq1) {
-    for (int sq2 = 0; sq2 < 64; ++sq2) {
-      r_delta = Abs(Rank(sq1) - Rank(sq2));
-      f_delta = Abs(File(sq1) - File(sq2));
-      dist[sq1][sq2] = 14 - (r_delta + f_delta);
-      chebyshev_dist[sq1][sq2] = Max(r_delta, f_delta);
-    }
   }
 }
 
@@ -273,4 +260,18 @@ int cParam::EloToBlur(int elo) {
 void cEngine::Init(int th) {
 
   thread_id = th;
+}
+
+void cDistance::Init() {
+
+  // Init distance tables 
+
+  for (int sq1 = 0; sq1 < 64; ++sq1) {
+    for (int sq2 = 0; sq2 < 64; ++sq2) {
+      int r_delta = Abs(Rank(sq1) - Rank(sq2));
+      int f_delta = Abs(File(sq1) - File(sq2));
+      bonus[sq1][sq2] = 14 - (r_delta + f_delta);  // for king tropism evaluation
+      metric[sq1][sq2] = Max(r_delta, f_delta);    // chebyshev distance for unstoppable passers
+    }
+  }
 }

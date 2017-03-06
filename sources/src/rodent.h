@@ -16,7 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 6575 lines
+// 6585 lines
 
 // b15: 36.387.923 / 29,7 / 2.837
 
@@ -438,8 +438,6 @@ public:
   int danger[512];
   int np_table[9];
   int rp_table[9];
-  int dist[64][64];
-  int chebyshev_dist[64][64];
   int backward_malus_mg[8];
   int protecting_bishop;
   void InitPst(void);
@@ -455,6 +453,15 @@ public:
 } cParam;
 
 extern cParam Par;
+
+typedef class {
+  public:
+  int metric[64][64]; // chebyshev distance for unstoppable passers
+  int bonus[64][64];
+  void Init(void);
+} cDistance;
+
+extern cDistance Dist;
 
 typedef class {
 public:

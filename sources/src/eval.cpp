@@ -93,8 +93,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 3 * Par.dist[sq][king_sq];            // king tropism (based on Gambit Fruit)
-    tropism_eg += 3 * Par.dist[sq][king_sq];
+    tropism_mg += 3 * Dist.bonus[sq][king_sq];          // king tropism (based on Gambit Fruit)
+    tropism_eg += 3 * Dist.bonus[sq][king_sq];
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 1;
@@ -127,8 +127,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 2 * Par.dist[sq][king_sq];            // king tropism (based on Gambit Fruit)
-    tropism_eg += 1 * Par.dist[sq][king_sq];
+    tropism_mg += 2 * Dist.bonus[sq][king_sq];          // king tropism (based on Gambit Fruit)
+    tropism_eg += 1 * Dist.bonus[sq][king_sq];
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 1;
@@ -179,8 +179,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 2 * Par.dist[sq][king_sq];            // king tropism (based on Gambit Fruit)
-    tropism_eg += 1 * Par.dist[sq][king_sq];
+    tropism_mg += 2 * Dist.bonus[sq][king_sq];          // king tropism (based on Gambit Fruit)
+    tropism_eg += 1 * Dist.bonus[sq][king_sq];
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 2;
@@ -257,8 +257,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 2 * Par.dist[sq][king_sq];            // king tropism (based on Gambit Fruit)
-    tropism_eg += 4 * Par.dist[sq][king_sq];                
+    tropism_mg += 2 * Dist.bonus[sq][king_sq];          // king tropism (based on Gambit Fruit)
+    tropism_eg += 4 * Dist.bonus[sq][king_sq];                
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 4;
@@ -411,7 +411,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
 
       mg_tmp = passed_bonus_mg[sd][Rank(sq)];
       eg_tmp = passed_bonus_eg[sd][Rank(sq)] 
-             -((passed_bonus_eg[sd][Rank(sq)] * Par.dist[sq][p->king_sq[op]]) / 30);
+             -((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[op]]) / 30);
       mg_tot += (mg_tmp * mul) / 100;
       eg_tot += (eg_tmp * mul) / 100;
     }
@@ -438,9 +438,9 @@ void cEngine::EvaluateUnstoppable(eData *e, POS * p) {
       if (!(Mask.passed[WC][sq] & p->Pawns(BC))) {
         bb_span = BB.GetFrontSpan(SqBb(sq), WC);
         pawn_sq = ((WC - 1) & 56) + (sq & 7);
-        prom_dist = Min(5, Par.chebyshev_dist[sq][pawn_sq]);
+        prom_dist = Min(5, Dist.metric[sq][pawn_sq]);
 
-        if (prom_dist < (Par.chebyshev_dist[king_sq][pawn_sq] - tempo)) {
+        if (prom_dist < (Dist.metric[king_sq][pawn_sq] - tempo)) {
           if (bb_span & p->Kings(WC)) prom_dist++;
           w_dist = Min(w_dist, prom_dist);
         }
@@ -459,9 +459,9 @@ void cEngine::EvaluateUnstoppable(eData *e, POS * p) {
       if (!(Mask.passed[BC][sq] & p->Pawns(WC))) {
         bb_span = BB.GetFrontSpan(SqBb(sq), BC);
         pawn_sq = ((BC - 1) & 56) + (sq & 7);
-        prom_dist = Min(5, Par.chebyshev_dist[sq][pawn_sq]);
+        prom_dist = Min(5, Dist.metric[sq][pawn_sq]);
 
-        if (prom_dist < (Par.chebyshev_dist[king_sq][pawn_sq] - tempo)) {
+        if (prom_dist < (Dist.metric[king_sq][pawn_sq] - tempo)) {
           if (bb_span & p->Kings(BC)) prom_dist++;
           b_dist = Min(b_dist, prom_dist);
         }

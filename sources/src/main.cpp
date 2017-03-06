@@ -26,6 +26,7 @@ cEngine Engine4;
 cBitBoard BB;
 cParam Par;
 cMask Mask;
+cDistance Dist;
 sBook GuideBook;
 sBook MainBook;
 
@@ -38,6 +39,7 @@ int main() {
   Par.DefaultWeights();
   Par.InitTables();
   Mask.Init();
+  Dist.Init();
   Engine1.Init(0);
   Engine2.Init(1);
   Engine3.Init(2);
