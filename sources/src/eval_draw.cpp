@@ -159,7 +159,6 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
   int strong_king = p->king_sq[sd];
   int weak_king = p->king_sq[op];
   int strong_pawn = FirstOne(p->Pawns(sd));
-  int strong_rook = FirstOne(p->Rooks(sd));
   int weak_rook = FirstOne(p->Rooks(op));
   int tempo = (p->side == sd);
   U64 bb_safe_zone = Mask.home[sd] ^ bbRelRank[sd][RANK_5];
