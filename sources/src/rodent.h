@@ -22,6 +22,12 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+// define how Rodent is to be compiled
+
+#define USE_MAGIC
+#define USE_MM_POPCNT
+#define USE_FIRST_ONE_INTRINSICS
+
 enum eColor {WC, BC, NO_CL};
 enum ePieceType {P, N, B, R, Q, K, NO_TP};
 enum ePiece {WP, BP, WN, BN, WB, BBi, WR, BR, WQ, BQ, WK, BK, NO_PC};
@@ -136,8 +142,6 @@ static const U64 bbCentralFile = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 #define FORCEINLINE __inline
 #endif
 
-#define USE_FIRST_ONE_INTRINSICS
-
 // Compiler and architecture dependent versions of FirstOne() function,
 // triggered by defines at the top of this file.
 #ifdef USE_FIRST_ONE_INTRINSICS
@@ -218,6 +222,7 @@ private:
 	U64 n_attacks[64];
 	U64 k_attacks[64];
 
+#ifndef USE_MAGIC
 	U64 FillOcclSouth(U64 bb_start, U64 bb_block);
 	U64 FillOcclNorth(U64 bb_start, U64 bb_block);
 	U64 FillOcclEast(U64 bb_start, U64 bb_block);
@@ -226,6 +231,8 @@ private:
 	U64 FillOcclNW(U64 bb_start, U64 bb_block);
 	U64 FillOcclSE(U64 bb_start, U64 bb_block);
 	U64 FillOcclSW(U64 bb_start, U64 bb_block);
+#endif
+
 	U64 GetBetween(int sq1, int sq2);
 
 public:

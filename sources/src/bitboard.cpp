@@ -19,9 +19,6 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "magicmoves.h"
 #include <stdio.h>
 
-#define USE_MAGIC
-#define USE_MM_POPCNT
-
 void cBitBoard::Init() {
 
 #ifdef USE_MAGIC
@@ -195,6 +192,8 @@ U64 cBitBoard::PawnAttacks(int sd, int sq) {
   return p_attacks[sd][sq];
 }
 
+#ifndef USE_MAGIC
+
 U64 cBitBoard::FillOcclSouth(U64 bb_start, U64 bb_block) {
 
   bb_start |= bb_block & (bb_start >> 8);
@@ -280,6 +279,8 @@ U64 cBitBoard::FillOcclNW(U64 bb_start, U64 bb_block) {
   bb_start |= bb_block & (bb_start << 28);
   return bb_start;
 }
+
+#endif
 
 U64 cBitBoard::KnightAttacks(int sq) {
   return n_attacks[sq];
