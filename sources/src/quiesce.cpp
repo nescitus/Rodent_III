@@ -205,6 +205,8 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
   UNDO u[1];
   eData e;
 
+  // USE DEDICATED EVASION SEARCH WHEN IN CHECK
+
   if (InCheck(p)) return QuiesceFlee(p, ply, alpha, beta, pv);
 
   Glob.nodes++;
@@ -216,22 +218,27 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
   if (Glob.abort_search && root_depth > 1) return 0;
   *pv = 0;
   if (IsDraw(p)) return DrawScore(p);
+
+  // SAFEGUARD AGAINST HITTIMG MAX PLY LIMIT
+
   if (ply >= MAX_PLY - 1) return EvalScaleByDepth(p, ply, Evaluate(p, &e));
 
-  // GET STAND PAT SCORE, EXIT IF IT EXCEEDS BETA
+  // GET STAND PAT SCORE
 
   best = EvalScaleByDepth(p, ply, Evaluate(p, &e));
 
-  // Correct self-side score by depth for human opponent (code by Roman T. Sovanyan)
+  // CORRECTION OF SCORE FOR OWN SIDE IN RISKY MODE (Roman T. Sovanyan)
 
   if ((Par.riskydepth > 0) 
   && (ply >= Par.riskydepth) 
   && (p->side == Par.prog_side) 
   && (Abs(best) > 100) && (Abs(best) < 1000)) {
-	  int eval_adj = best<0 ? round(1.0*best*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth / ply) : round(1.0*best*(Glob.nodes > 100 ? 2 : 1)*ply / Par.riskydepth);
-	  if (eval_adj>1000) eval_adj = 1000;
-	  best = eval_adj;
+    int eval_adj = best<0 ? round(1.0*best*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth / ply) : round(1.0*best*(Glob.nodes > 100 ? 2 : 1)*ply / Par.riskydepth);
+    if (eval_adj>1000) eval_adj = 1000;
+    best = eval_adj;
   }
+
+  // SET VARIABLES FOR DELTA PRUNING, EXIT IF STAND PAT SCORE ABOVE BETA
 
   int floor = best;
   int alpha_floor = alpha;
@@ -239,9 +246,13 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
   if (best > alpha) alpha = best;
 
   InitCaptures(p, m);
+
+  // MAIN LOOP
+
   while ((move = NextCapture(m))) {
 
-    // Prune insufficient captures. This is done in two stages:
+    // DELTA PRUNING
+    // Prune insufficient captures (unless opponent has just one piece left). This is done in two stages:
 
     if (p->cnt[op][N] + p->cnt[op][B] + p->cnt[op][R] + p->cnt[op][Q] > 1) {
 
@@ -260,8 +271,12 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
     p->UndoMove(move, u);
 	if (Glob.abort_search && root_depth > 1) return 0;
 
+	// BETA CUTOFF
+
 	if (score >= beta) 
 		return score;
+
+	// ADJUST ALPHA AND SCORE
 	
     if (score > best) {
       best = score;

@@ -33,7 +33,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
   int move;
 
   switch (m->phase) {
-  case 0:
+  case 0: // return transposition table move, if legal
     move = m->trans_move;
     if (move && Legal(m->p, move)) {
       m->phase = 1;
@@ -41,14 +41,14 @@ int cEngine::NextMove(MOVES *m, int *flag) {
       return move;
     }
 
-  case 1:
+  case 1: // helper phase: generate captures
     m->last = GenerateCaptures(m->p, m->move);
     ScoreCaptures(m);
     m->next = m->move;
     m->badp = m->bad;
     m->phase = 2;
 
-  case 2:
+  case 2: // return good captures, save bad ones on the separate list
     while (m->next < m->last) {
       move = SelectBest(m);
       if (move == m->trans_move)
@@ -61,19 +61,21 @@ int cEngine::NextMove(MOVES *m, int *flag) {
       return move;
     }
 
-  case 3:
+  case 3: // first killer move
     move = m->killer1;
-    if (move && move != m->trans_move &&
-        m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
+    if (move && move != m->trans_move
+    && m->p->pc[Tsq(move)] == NO_PC 
+    && Legal(m->p, move)) {
       m->phase = 4;
 	  *flag = MV_KILLER;
       return move;
     }
 
-  case 4:
+  case 4: // second killer move
     move = m->killer2;
-    if (move && move != m->trans_move &&
-        m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
+    if (move && move != m->trans_move 
+    && m->p->pc[Tsq(move)] == NO_PC 
+    && Legal(m->p, move)) {
       m->phase = 5;
 	  *flag = MV_KILLER;
       return move;
@@ -91,20 +93,20 @@ int cEngine::NextMove(MOVES *m, int *flag) {
       return move;
     }
 
-  case 6:
+  case 6: // helper phase: generate quiet moves
     m->last = GenerateQuiet(m->p, m->move);
     ScoreQuiet(m);
     m->next = m->move;
     m->phase = 7;
 
-  case 7:
+  case 7: // return quiet moves
     while (m->next < m->last) {
       move = SelectBest(m);
-      if (move == m->trans_move ||
-          move == m->killer1 ||
-          move == m->killer2 ||
-		  move == m->ref_move )
-        continue;
+      if (move == m->trans_move
+      ||  move == m->killer1
+      ||  move == m->killer2
+      ||  move == m->ref_move )
+          continue;
 	  *flag = MV_NORMAL;
       return move;
     }
@@ -112,7 +114,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
     m->next = m->bad;
     m->phase = 8;
 
-  case 8:
+  case 8: // return bad captures
     if (m->next < m->badp) {
       *flag = MV_BADCAPT;
       return *m->next++;
@@ -126,7 +128,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
   int move;
 
   switch (m->phase) {
-  case 0:
+  case 0: // return transposition table move, if legal 
     move = m->trans_move;
     if (move && Legal(m->p, move)) {
       m->phase = 1;
@@ -134,14 +136,14 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
       return move;
     }
 
-  case 1:
+  case 1: // helper phase: generate captures
     m->last = GenerateCaptures(m->p, m->move);
     ScoreCaptures(m);
     m->next = m->move;
     m->badp = m->bad;
     m->phase = 2;
 
-  case 2:
+  case 2: // return good captures, prune bad ones
     while (m->next < m->last) {
       move = SelectBest(m);
       if (move == m->trans_move)
@@ -153,36 +155,37 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
       return move;
     }
 
-  case 3:
+  case 3: // first killer move
     move = m->killer1;
-    if (move && move != m->trans_move &&
-        m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
+    if (move && move != m->trans_move
+    && m->p->pc[Tsq(move)] == NO_PC 
+    && Legal(m->p, move)) {
       m->phase = 4;
 	  *flag = MV_KILLER;
       return move;
     }
 
-  case 4:
+  case 4: // second killer move
     move = m->killer2;
-    if (move && move != m->trans_move &&
-        m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
+    if (move && move != m->trans_move
+    && m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
       m->phase = 5;
 	  *flag = MV_KILLER;
       return move;
     }
 
-  case 5:
+  case 5: // helper phase: generate checking moves
     m->last = GenerateSpecial(m->p, m->move);
     ScoreQuiet(m);
     m->next = m->move;
     m->phase = 6;
 
-  case 6:
+  case 6: // return checking moves
     while (m->next < m->last) {
       move = SelectBest(m);
-      if (move == m->trans_move ||
-          move == m->killer1 ||
-          move == m->killer2)
+      if (move == m->trans_move
+      ||  move == m->killer1
+      ||  move == m->killer2)
         continue;
 	  *flag = MV_NORMAL;
       return move;
