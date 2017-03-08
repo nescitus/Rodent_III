@@ -48,6 +48,7 @@ setoption name EvalBlur value 50
 setoption name Contempt value 0
 setoption name SlowMover value 100
 setoption name SearchSkill value 10
+setoption name RiskyDepth value 0
 setoption name Selectivity value 175
 setoption name BookFilter value 20
 setoption name GuideBookFile value books/guide/mini.bin

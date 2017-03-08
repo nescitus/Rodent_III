@@ -16,6 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
+#include <math.h>
 
 // QuiescenceChecks() allows the engine to consider most of the checking moves
 // as well as special quiet moves (hash and killers). It improves engines'
@@ -42,7 +43,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
   if (IsDraw(p) && ply) return DrawScore(p);
   move = 0;
 
-  best = Evaluate(p, &e);
+  best = EvalScaleByDepth(p, ply, Evaluate(p, &e));
   if (best >= beta) return best;
   if (best > alpha) alpha = best;
 
@@ -55,7 +56,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
   // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
 
-  if (ply >= MAX_PLY - 1) return Evaluate(p, &e);
+  if (ply >= MAX_PLY - 1) return EvalScaleByDepth(p, ply, Evaluate(p, &e));
 
   fl_check = InCheck(p);
 
@@ -139,7 +140,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
   // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
 
-  if (ply >= MAX_PLY - 1) return Evaluate(p, &e);
+  if (ply >= MAX_PLY - 1) return EvalScaleByDepth(p, ply, Evaluate(p, &e));
 
   fl_check = InCheck(p);
 
@@ -210,14 +211,27 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
   local_nodes++;
   Slowdown();
 
+  // EARLY EXIT
+
   if (Glob.abort_search && root_depth > 1) return 0;
   *pv = 0;
   if (IsDraw(p)) return DrawScore(p);
+  if (ply >= MAX_PLY - 1) return EvalScaleByDepth(p, ply, Evaluate(p, &e));
 
-  if (ply >= MAX_PLY - 1)
-    return Evaluate(p, &e);
+  // GET STAND PAT SCORE, EXIT IF IT EXCEEDS BETA
 
-  best = Evaluate(p, &e);
+  best = EvalScaleByDepth(p, ply, Evaluate(p, &e));
+
+  // Correct self-side score by depth for human opponent (code by Roman T. Sovanyan)
+
+  if ((Par.riskydepth > 0) 
+  && (ply >= Par.riskydepth) 
+  && (p->side == Par.prog_side) 
+  && (Abs(best) > 100) && (Abs(best) < 1000)) {
+	  int eval_adj = best<0 ? round(1.0*best*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth / ply) : round(1.0*best*(Glob.nodes > 100 ? 2 : 1)*ply / Par.riskydepth);
+	  if (eval_adj>1000) eval_adj = 1000;
+	  best = eval_adj;
+  }
 
   int floor = best;
   int alpha_floor = alpha;

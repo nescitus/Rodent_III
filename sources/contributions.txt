@@ -28,4 +28,5 @@ Denis Mendoza created a logo featuring Speedy Gonzales
 Ferdinand Mosca created very funny KingHunter personality
 Brendan J. Norman created Henny and Remy personalities and reviewed Rodent
 Frank Quasinsky tested Rodent II for FCP rating list
+Roman T. Sovanyan created Rodent Risky branch, and his contribution has been accepted
 Pablo Vazquez has kindly allowed me to use the codebase of Sungorus to start this project 

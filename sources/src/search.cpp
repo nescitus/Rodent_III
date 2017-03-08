@@ -245,7 +245,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
 
-  if (ply >= MAX_PLY - 1) return Evaluate(p, &e);
+  if (ply >= MAX_PLY - 1) return EvalScaleByDepth(p, ply, Evaluate(p, &e));
 
   fl_check = InCheck(p);
 
@@ -260,7 +260,10 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   int eval = 0;
   if (fl_prunable_node
-  && (!was_null || depth <= 6)) eval = Evaluate(p, &e);
+  && (!was_null || depth <= 6)) {
+    eval = Evaluate(p, &e);
+	eval = EvalScaleByDepth(p, ply, eval); // 
+  }
 
   // BETA PRUNING / STATIC NULL MOVE
 

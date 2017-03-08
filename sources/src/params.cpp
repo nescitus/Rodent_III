@@ -72,7 +72,8 @@ void cParam::DefaultWeights(void) {
    pst_weight = 80;
    pst_style = 0;
    mob_style = 0;         // 1 is only marginally behind
-   protecting_bishop = 0; // even ludicrously high value of 50 tests well
+   protecting_bishop = 0; // flavour option
+   riskydepth = 0;
    draw_score = 0;
    shut_up = 0;           // surpress displaing info currmove etc.
 

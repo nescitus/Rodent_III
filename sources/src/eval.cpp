@@ -18,6 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "rodent.h"
 #include "eval.h"
 #include <stdio.h>
+#include <math.h> // round
 
 void cEngine::ClearAll(void) {
 
@@ -555,6 +556,33 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
   }
 
   Add(e, sd, (Par.threats_weight * mg) / 100, (Par.threats_weight * eg) / 100);
+}
+
+// from Rodent Risky code by Roman T. Sovanyan
+
+int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
+
+  int eval_adj = eval;
+
+  //Correct self-side score by depth for human opponent
+
+  if ((Par.riskydepth > 0) 
+  && (ply >= Par.riskydepth) 
+  && (p->side == Par.prog_side) 
+  && (Abs(eval) > Par.draw_score) 
+  && (Abs(eval) < 1000)){
+	  eval_adj = eval<0 ? round(1.0*eval*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth/ply) : round(1.0*eval*(Glob.nodes > 100 ? 2 : 1)*ply/Par.riskydepth);
+	  if (eval_adj>1000) eval_adj = 1000;
+  }
+  else if ((Par.riskydepth > 0)
+  && (ply >= Par.riskydepth) 
+  && (p->side != Par.prog_side) 
+  && (Abs(eval) > Par.draw_score) 
+  && (Abs(eval) < 1000)){
+	  eval_adj = eval<0 ? round(1.0*eval*(Glob.nodes > 100 ? 2 : 1)*ply/Par.riskydepth) : round(1.0*eval*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth/ply);
+	  if (eval_adj>1000) eval_adj = 1000;
+  }
+  return eval_adj;
 }
 
 int cEngine::Evaluate(POS *p, eData *e) {

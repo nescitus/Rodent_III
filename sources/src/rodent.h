@@ -440,6 +440,7 @@ public:
   int rp_table[9];
   int backward_malus_mg[8];
   int protecting_bishop;
+  int riskydepth;
   void InitPst(void);
   void InitMobility(void);
   void InitBackward(void);
@@ -552,6 +553,7 @@ public:
 
   void Init(int th);
   int Evaluate(POS * p, eData *e);
+  int EvalScaleByDepth(POS *p, int ply, int eval);
   int EvaluateChains(POS *p, int sd);
   void EvaluateMaterial(POS * p, eData *e, int sd);
   void EvaluatePieces(POS *p, eData *e, int sd);

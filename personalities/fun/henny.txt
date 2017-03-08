@@ -47,6 +47,7 @@ setoption name NpsLimit value 0
 setoption name EvalBlur value 0
 setoption name Contempt value 15
 setoption name SearchSkill value 10
+setoption name RiskyDepth value 0
 setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name BookFilter value 20
