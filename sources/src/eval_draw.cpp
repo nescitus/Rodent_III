@@ -49,15 +49,15 @@ int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
 
   int op = Opp(sd); // weaker side
 
+  if (p->phase < 2) {
+    if (p->Pawns(sd) == 0) return 0;                                                                 // KK, KmK, KmKp, KmKpp
+  }
+
   if (p->phase == 0) return ScalePawnsOnly(p, sd, op);
 
   if (p->phase == 1) {
 	if (p->cnt[sd][B] == 1) return ScaleKBPK(p, sd, op);                                             // KBPK, see below
 	if (p->cnt[sd][N] == 1) return ScaleKNPK(p, sd, op);                                             // KBPK, see below
-  }
-
-  if (p->phase < 2) {
-    if (p->Pawns(sd) == 0) return 0;                                                                 // KK, KmK, KmKp, KmKpp
   }
 
   if (p->phase == 2) {
