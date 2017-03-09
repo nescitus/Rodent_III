@@ -45,7 +45,7 @@ int main() {
   Engine3.Init(2);
   Engine4.Init(3);
 
-#ifdef _WIN32 || _WIN64
+#if defined(_WIN32) || defined(_WIN64)
   // if we are on Windows search for books and settings in same directory as rodentII.exe
   MainBook.bookName = "books/rodent.bin";
   GuideBook.bookName = "books/guide.bin";

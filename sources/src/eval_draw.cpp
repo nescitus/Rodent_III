@@ -51,8 +51,10 @@ int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
 
   if (p->phase == 0) return ScalePawnsOnly(p, sd, op);
 
-  if (p->phase == 1 && p->cnt[sd][B] == 1)                                                           // KBPK, see below
-    return ScaleKBPK(p, sd, op);
+  if (p->phase == 1) {
+	if (p->cnt[sd][B] == 1) return ScaleKBPK(p, sd, op);                                             // KBPK, see below
+	if (p->cnt[sd][N] == 1) return ScaleKNPK(p, sd, op);                                             // KBPK, see below
+  }
 
   if (p->phase < 2) {
     if (p->Pawns(sd) == 0) return 0;                                                                 // KK, KmK, KmKp, KmKpp
@@ -64,6 +66,11 @@ int cEngine::GetDrawFactor(POS * p, int sd) { // refactoring may be needed
       if (p->cnt[op][P] == 0) return 0;                                                              // KNNK(m)
       else return 8;                                                                                 // KNNK(m)(p)
     }
+	
+	if (p->cnt[sd][B] == 2 && p->cnt[sd][P] == 0) {                                                  // KBBK, same coloured bishops
+      if (MoreThanOne(p->Bishops(sd) & bbWhiteSq)
+	  ||  MoreThanOne(p->Bishops(sd) & bbBlackSq)) return 0;
+	}
 
     if (p->cnt[sd][B] == 1                                                                           // KBPKm, king blocks
     && p->cnt[op][B] + p->cnt[op][N] == 1
@@ -125,6 +132,24 @@ int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
   }
 
   return 64; // default
+}
+
+int cEngine::ScaleKNPK(POS *p, int sd, int op) {
+
+  // rare KNPK draw rule: king blocking an edge pawn on 7th rank draws
+
+  if (p->cnt[sd][N] == 1
+  &&  p->cnt[sd][P] == 1
+  &&  p->cnt[op][P] == 0) {
+
+    if ((RelSqBb(A7, sd) & PcBb(p, sd, P))
+    && (RelSqBb(A8, sd) & PcBb(p, op, K))) return 0; // dead draw
+
+    if ((RelSqBb(H7, sd) & PcBb(p, sd, P))
+    && (RelSqBb(H8, sd) & PcBb(p, op, K))) return 0; // dead draw
+  }
+
+	return 64; // default
 }
 
 int cEngine::ScaleKBPK(POS *p, int sd, int op) {

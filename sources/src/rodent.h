@@ -216,6 +216,9 @@ static int FORCEINLINE FirstOne(U64 x) {
 #define ShiftSW(x)      ((x & bbNotA)>>9)
 #define ShiftSE(x)      ((x & bbNotH)>>7)
 
+#define JustOne(bb)     (bb && !(bb & (bb-1)))
+#define MoreThanOne(bb) ( bb & (bb - 1) )
+
 typedef class {
 private:
 	U64 p_attacks[2][64];
@@ -576,6 +579,7 @@ public:
   void EvaluateThreats(POS *p, eData *e, int sd);
   int ScalePawnsOnly(POS *p, int sd, int op);
   int ScaleKBPK(POS *p, int sd, int op);
+  int ScaleKNPK(POS *p, int sd, int op);
   int ScaleKRPKR(POS *p, int sd, int op);
   int ScaleKQKRP(POS *p, int sd, int op);
   void EvaluateBishopPatterns(POS * p, eData * e);
