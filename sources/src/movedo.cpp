@@ -80,14 +80,14 @@ void POS::DoMove(int move, UNDO *u) {
     hash_key ^= zob_piece[Pc(op, ttp)][tsq];
 
     if (ttp == P)
-      pawn_key ^= zob_piece[Pc(op, ttp)][tsq];
+      pawn_key ^= zob_piece[Pc(op, ttp)][tsq]; // pawn hash
 
     cl_bb[op] ^= SqBb(tsq);
     tp_bb[ttp] ^= SqBb(tsq);
     mg_sc[op] -= Par.mg_pst[op][ttp][tsq];
     eg_sc[op] -= Par.eg_pst[op][ttp][tsq];
     phase -= ph_value[ttp];
-    cnt[op][ttp]--;
+    cnt[op][ttp]--; // piece count
   }
 
   switch (MoveType(move)) {

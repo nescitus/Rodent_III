@@ -220,13 +220,11 @@ int cEngine::EvaluateChains(POS *p, int sd) {
   if (SqBb(sq) & Mask.ks_castle[sd]) {
 
     if (OPP_PAWN(E4)) {
-      if (CONTAINS(opPawns, D5, C6)) { // c6-d5-e4 triad
+      if (CONTAINS(opPawns, D5, C6)) // c6-d5-e4 triad
         mg_result -= (CONTAINS(sdPawns, D4, E3)) ? bigChainScore : smallChainScore;
-      }
 
-      if (CONTAINS(opPawns, D5, F3)) { // d5-e4-f3 triad
+      if (CONTAINS(opPawns, D5, F3)) // d5-e4-f3 triad
         mg_result -= (OWN_PAWN(E3)) ? bigChainScore : smallChainScore;
-      }
     }
 
     if (OPP_PAWN(E5)) {
@@ -241,9 +239,8 @@ int cEngine::EvaluateChains(POS *p, int sd) {
         mg_result -= (CONTAINS(sdPawns, E4, D5)) ? bigChainScore : smallChainScore;
       }
 
-      if (CONTAINS(opPawns, G3, F4)) { // e5-f4-g3 triad
+      if (CONTAINS(opPawns, G3, F4)) // e5-f4-g3 triad
         mg_result -= (OWN_PAWN(F3)) ? bigChainScore : smallChainScore;
-      }
     }
   }
   
@@ -252,13 +249,11 @@ int cEngine::EvaluateChains(POS *p, int sd) {
     // basic pointy chain
 
     if (OPP_PAWN(D4)) {
-      if (CONTAINS(opPawns, E5, F6)) {
+      if (CONTAINS(opPawns, E5, F6))
         mg_result -= (CONTAINS(sdPawns, E4, D3)) ? bigChainScore : smallChainScore;
-      }
       
-      if (CONTAINS(opPawns, F5, C3)) {
+      if (CONTAINS(opPawns, F5, C3))
         mg_result -= (SQ(D3) & sdPawns) ? bigChainScore : smallChainScore;
-      }
     }
 
     if (OPP_PAWN(D5)) {
@@ -273,9 +268,8 @@ int cEngine::EvaluateChains(POS *p, int sd) {
         mg_result -= (CONTAINS(sdPawns, E4, D5)) ? bigChainScore : smallChainScore;
       }
 
-      if (CONTAINS(opPawns, B3, C4)) {
+      if (CONTAINS(opPawns, B3, C4))
         mg_result -= (OWN_PAWN(C3)) ? bigChainScore : smallChainScore;
-      }
     }
   }
 

@@ -581,6 +581,7 @@ public:
   int ScaleKBPK(POS *p, int sd, int op);
   int ScaleKNPK(POS *p, int sd, int op);
   int ScaleKRPKR(POS *p, int sd, int op);
+  int ScaleKRKP(POS *p, int sd, int op);
   int ScaleKQKRP(POS *p, int sd, int op);
   void EvaluateBishopPatterns(POS * p, eData * e);
   void EvaluateKnightPatterns(POS * p, eData * e);

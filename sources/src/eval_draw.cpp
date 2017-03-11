@@ -15,6 +15,19 @@ You should have received a copy of the GNU General Public License along with thi
 If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+Endgames that possibly might be added:
+
+- KQKP
+- KRKP
+- KBPKP fortress draws with stronger side pawn blocked on 6th line by weaker side pawn
+- KBPPB blockade draws
+- KRPPKRP scaling
+- KBNNKR scaling
+- KNPK draw with stronger king blocking edge pawn on 7th rank (depends on the color of a square knight is on)
+
+*/
+
 #include "rodent.h"
 
 static const U64 bbKingBlockH[2] = { SqBb(H8) | SqBb(H7) | SqBb(G8) | SqBb(G7),
