@@ -59,7 +59,7 @@ void PrintUciOptions(void) {
     printf("option name PiecePressure type spin default %d min 0 max 500\n", Par.threats_weight);
 
     printf("option name PassedPawns type spin default %d min 0 max 500\n", Par.passers_weight);
-    printf("option name PaswnStructure type spin default %d min 0 max 500\n", Par.struct_weight);
+    printf("option name PawnStructure type spin default %d min 0 max 500\n", Par.struct_weight);
     printf("option name PawnShield type spin default %d min 0 max 500\n", Par.shield_weight);
     printf("option name PawnStorm type spin default %d min 0 max 500\n", Par.storm_weight);
     printf("option name Outposts type spin default %d min 0 max 500\n", Par.outposts_weight);
