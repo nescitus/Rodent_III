@@ -558,6 +558,8 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
   Add(e, sd, (Par.threats_weight * mg) / 100, (Par.threats_weight * eg) / 100);
 }
 
+#ifdef USE_RISKY_PARAMETER
+
 // from Rodent Risky code by Roman T. Sovanyan
 
 int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
@@ -584,6 +586,7 @@ int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
   }
   return eval_adj;
 }
+#endif
 
 int cEngine::Evaluate(POS *p, eData *e) {
 

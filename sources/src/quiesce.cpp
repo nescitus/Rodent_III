@@ -43,7 +43,12 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
   if (IsDraw(p) && ply) return DrawScore(p);
   move = 0;
 
-  best = EvalScaleByDepth(p, ply, Evaluate(p, &e));
+  // DETERMINE FLOOR VALUE
+
+  best = Evaluate(p, &e);
+#ifdef USE_RISKY_PARAMETER
+  best = EvalScaleByDepth(p, ply, best);
+#endif
   if (best >= beta) return best;
   if (best > alpha) alpha = best;
 
@@ -56,7 +61,13 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
   // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
 
-  if (ply >= MAX_PLY - 1) return EvalScaleByDepth(p, ply, Evaluate(p, &e));
+  if (ply >= MAX_PLY - 1) {
+    int eval = Evaluate(p, &e);
+#ifdef USE_RISKY_PARAMETER
+	eval = EvalScaleByDepth(p, ply, eval);
+#endif
+    return eval;
+  }
 
   fl_check = InCheck(p);
 
@@ -140,7 +151,13 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
   // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
 
-  if (ply >= MAX_PLY - 1) return EvalScaleByDepth(p, ply, Evaluate(p, &e));
+  if (ply >= MAX_PLY - 1) {
+    int eval = Evaluate(p, &e);
+#ifdef USE_RISKY_PARAMETER
+	eval = EvalScaleByDepth(p, ply, eval);
+#endif
+    return eval;
+  }
 
   fl_check = InCheck(p);
 
@@ -221,14 +238,23 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
   // SAFEGUARD AGAINST HITTIMG MAX PLY LIMIT
 
-  if (ply >= MAX_PLY - 1) return EvalScaleByDepth(p, ply, Evaluate(p, &e));
+  if (ply >= MAX_PLY - 1) {
+    int eval = Evaluate(p, &e);
+#ifdef USE_RISKY_PARAMETER
+	eval = EvalScaleByDepth(p, ply, eval);
+#endif
+    return eval;
+  }
 
   // GET STAND PAT SCORE
 
-  best = EvalScaleByDepth(p, ply, Evaluate(p, &e));
+  best = Evaluate(p, &e);
+#ifdef USE_RISKY_PARAMETER
+  best = EvalScaleByDepth(p, ply, best);
+#endif
 
   // CORRECTION OF SCORE FOR OWN SIDE IN RISKY MODE (Roman T. Sovanyan)
-
+#ifdef USE_RISKY_PARAMETER
   if ((Par.riskydepth > 0) 
   && (ply >= Par.riskydepth) 
   && (p->side == Par.prog_side) 
@@ -237,6 +263,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
     if (eval_adj>1000) eval_adj = 1000;
     best = eval_adj;
   }
+#endif
 
   // SET VARIABLES FOR DELTA PRUNING, EXIT IF STAND PAT SCORE ABOVE BETA
 

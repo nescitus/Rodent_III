@@ -27,6 +27,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #define USE_MAGIC
 #define USE_MM_POPCNT
 #define USE_FIRST_ONE_INTRINSICS
+#define USE_RISKY_PARAMETER
 
 enum eColor {WC, BC, NO_CL};
 enum ePieceType {P, N, B, R, Q, K, NO_TP};
@@ -450,7 +451,9 @@ public:
   int rp_table[9];
   int backward_malus_mg[8];
   int protecting_bishop;
+#ifdef USE_RISKY_PARAMETER
   int riskydepth;
+#endif
   void InitPst(void);
   void InitMobility(void);
   void InitBackward(void);
@@ -563,7 +566,9 @@ public:
 
   void Init(int th);
   int Evaluate(POS * p, eData *e);
+#ifdef USE_RISKY_PARAMETER
   int EvalScaleByDepth(POS *p, int ply, int eval);
+#endif
   int EvaluateChains(POS *p, int sd);
   void EvaluateMaterial(POS * p, eData *e, int sd);
   void EvaluatePieces(POS *p, eData *e, int sd);

@@ -73,7 +73,9 @@ void cParam::DefaultWeights(void) {
    pst_style = 0;
    mob_style = 0;         // 1 is only marginally behind
    protecting_bishop = 0; // flavour option
+#ifdef USE_RISKY_PARAMETER
    riskydepth = 0;
+#endif
    draw_score = 0;
    shut_up = 0;           // surpress displaing info currmove etc.
 

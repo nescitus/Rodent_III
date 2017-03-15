@@ -81,7 +81,9 @@ void PrintUciOptions(void) {
     printf("option name SlowMover type spin default %d min 10 max 500\n", Par.time_percentage);
     printf("option name Selectivity type spin default %d min 10 max 500\n", Par.hist_perc);
     printf("option name SearchSkill type spin default %d min 0 max 10\n", Par.search_skill);
+#ifdef USE_RISKY_PARAMETER
 	printf("option name RiskyDepth type spin default %d min 0 max 10\n", Par.riskydepth);
+#endif
   }
   printf("option name UseBook type check default false\n");
   printf("option name GuideBookFile type string default guide.bin\n");
@@ -279,9 +281,11 @@ void ParseSetoption(char *ptr) {
   } else if (strcmp(name, "SearchSkill") == 0       || strcmp(name, "searchskill") == 0)    {
     Par.search_skill = atoi(value);
 	Glob.should_clear = 1;
+#ifdef USE_RISKY_PARAMETER
   } else if (strcmp(name, "RiskyDepth") == 0       || strcmp(name, "riskydepth") == 0)    {
     Par.riskydepth = atoi(value);
 	Glob.should_clear = 1;
+#endif
   } else if (strcmp(name, "SlowMover") == 0         || strcmp(name, "slowmover") == 0)      {
     Par.time_percentage = atoi(value);
   } else if (strcmp(name, "Selectivity") == 0       || strcmp(name, "selectivity") == 0)    {
