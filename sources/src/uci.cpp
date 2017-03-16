@@ -18,10 +18,12 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <thread>
 #include <iostream>
 #include "rodent.h"
 #include "book.h"
+#ifdef USE_THREADS
+#include <thread>
+#endif
 
 #if defined(_WIN32) || defined(_WIN64)
 #  define WINDOWS_BUILD
@@ -151,6 +153,8 @@ void ParsePosition(POS *p, char *ptr) {
     ParseMoves(p, ptr);
 }
 
+#ifdef USE_THREADS
+
 void task1(POS * p, int *pv) {
   Engine1.Think(p, pv);
 }
@@ -180,6 +184,8 @@ void timer_task() {
     CheckTimeout();
   }
 }
+
+#endif
 
 int BulletCorrection(int time) {
 
@@ -329,11 +335,15 @@ void ParseGo(POS *p, char *ptr) {
   // Set engine-dependent variables
 
   Engine1.dp_completed = 0;
+#ifdef USE_THREADS
   Engine2.dp_completed = 0;
   Engine3.dp_completed = 0;
   Engine4.dp_completed = 0;
+#endif
 
   // Search using the designated number of threads
+
+#ifdef USE_THREADS
 
   if (Glob.thread_no == 1) {
     thread t(timer_task);
@@ -374,11 +384,24 @@ void ParseGo(POS *p, char *ptr) {
     t4.join();
     t.join();
   }
+#else
+  Engine1.Think(p, pv);
+  MoveToStr(pv[0], bestmove_str);
+  if (pv[1]) {
+    MoveToStr(pv[1], ponder_str);
+    printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+  }
+  else
+    printf("bestmove %s\n", bestmove_str);
+#endif
 
   done:
 
   if (!move_from_book) {
+
      best_depth = Engine1.dp_completed;
+
+#ifdef USE_THREADS
      if (Engine2.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 2; }
      if (Engine3.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 3; }
      if (Engine4.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 4; }
@@ -393,35 +416,36 @@ void ParseGo(POS *p, char *ptr) {
          printf("bestmove %s\n", bestmove_str);
      }
 
-	  if (best_eng == 3) {
-		  MoveToStr(pv3[0], bestmove_str);
-		  if (pv3[1]) {
-			  MoveToStr(pv3[1], ponder_str);
-			  printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
-		  }
-		  else
-			  printf("bestmove %s\n", bestmove_str);
+     if (best_eng == 3) {
+        MoveToStr(pv3[0], bestmove_str);
+        if (pv3[1]) {
+          MoveToStr(pv3[1], ponder_str);
+          printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+        }
+        else
+          printf("bestmove %s\n", bestmove_str);
 	  }
 
-	  if (best_eng == 2) {
-		  MoveToStr(pv2[0], bestmove_str);
-		  if (pv2[1]) {
-			  MoveToStr(pv2[1], ponder_str);
-			  printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
-		  }
-		  else
-			  printf("bestmove %s\n", bestmove_str);
+      if (best_eng == 2) {
+        MoveToStr(pv2[0], bestmove_str);
+        if (pv2[1]) {
+          MoveToStr(pv2[1], ponder_str);
+          printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+        }
+        else
+          printf("bestmove %s\n", bestmove_str);
 	  }
 
-	  if (best_eng == 1) {
-		  MoveToStr(pv[0], bestmove_str);
-		  if (pv[1]) {
-			  MoveToStr(pv[1], ponder_str);
-			  printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
-		  }
-		  else
-			  printf("bestmove %s\n", bestmove_str);
+      if (best_eng == 1) {
+        MoveToStr(pv[0], bestmove_str);
+        if (pv[1]) {
+          MoveToStr(pv[1], ponder_str);
+          printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
+        }
+        else
+          printf("bestmove %s\n", bestmove_str);
 	  }
+#endif
   }
 
 }

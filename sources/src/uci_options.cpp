@@ -24,7 +24,9 @@ If not, see <http://www.gnu.org/licenses/>.
 void PrintUciOptions(void) {
 
   printf("option name Hash type spin default 16 min 1 max 4096\n");
+#ifdef USE_THREADS
   printf("option name Threads type spin default %d min 1 max 4\n", Glob.thread_no);
+#endif
   printf("option name Clear Hash type button\n");
 
   if (Glob.use_personality_files)
@@ -118,8 +120,10 @@ void ParseSetoption(char *ptr) {
   }
   if (strcmp(name, "Hash") == 0                     || strcmp(name, "hash") == 0)              {
     AllocTrans(atoi(value));
+#ifdef USE_THREADS
   } else if (strcmp(name, "Threads") == 0           || strcmp(name, "threads") == 0)           {
     Glob.thread_no = (atoi(value));
+#endif
   } else if (strcmp(name, "Clear Hash") == 0        || strcmp(name, "clear hash") == 0)        {
     ClearTrans();
   } else if (strcmp(name, "PawnValue") == 0         || strcmp(name, "pawnvalue") == 0)         {

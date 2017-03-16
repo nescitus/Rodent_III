@@ -16,7 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 6610 lines
+// 6757 lines
 
 // b15: 36.387.883 / 29,7 / 2.837
 
@@ -27,7 +27,9 @@ If not, see <http://www.gnu.org/licenses/>.
 #define USE_MAGIC
 #define USE_MM_POPCNT
 #define USE_FIRST_ONE_INTRINSICS
+
 #define USE_RISKY_PARAMETER
+#define USE_THREADS
 
 enum eColor {WC, BC, NO_CL};
 enum ePieceType {P, N, B, R, Q, K, NO_TP};
@@ -604,9 +606,11 @@ public:
 } cEngine;
 
 extern cEngine Engine1;
+#ifdef USE_THREADS
 extern cEngine Engine2;
 extern cEngine Engine3;
 extern cEngine Engine4;
+#endif
 
 void InitSearch(void);
 int BulletCorrection(int time);

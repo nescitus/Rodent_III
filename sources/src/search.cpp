@@ -45,9 +45,11 @@ void cGlobals::ClearData(void) {
 
   ClearTrans();
   Engine1.ClearAll();
+#ifdef USE_THREADS
   Engine2.ClearAll();
   Engine3.ClearAll();
   Engine4.ClearAll();
+#endif
   should_clear = 0;
 }
 
@@ -604,6 +606,10 @@ void cEngine::Slowdown() {
     if (Glob.nodes >= move_nodes)
       Glob.abort_search = 1;
   }
+
+#ifndef USE_THREADS
+  if (Glob.nodes & 2047) CheckTimeout();
+#endif
 
   if (Par.nps_limit == 0) return;
 
