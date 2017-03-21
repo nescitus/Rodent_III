@@ -30,6 +30,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #define USE_RISKY_PARAMETER
 #define USE_THREADS
+#define MAX_THREADS 4 // do not change unless threading code is modified (array of cEngine class instances)
 
 enum eColor {WC, BC, NO_CL};
 enum ePieceType {P, N, B, R, Q, K, NO_TP};
@@ -600,7 +601,7 @@ public:
   void Add(eData *e, int sd, int mg_val, int eg_val);
   void Add(eData *e, int sd, int val);
   void AddPawns(eData *e, int sd, int mg_val, int eg_val);
-  int NotOnBishColor(POS * p, int bishSide, int sq);
+  int NotOnBishColor(POS * p, int bish_side, int sq);
   int DifferentBishops(POS * p);
 
 } cEngine;
@@ -688,4 +689,4 @@ extern int tt_date;
 // TODO: setting path to opening book
 // TODO: no book moves in analyze mode
 // TODO: fix small bug: engine crashes on empty book file path or empty personality file path
-// TODO: transplant Risky parameter
+// TODO: minor defended by pawn and something else (to decrease the probability of getting doubled pawns)

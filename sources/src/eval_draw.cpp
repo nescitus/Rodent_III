@@ -252,12 +252,12 @@ int cEngine::ScaleKQKRP(POS *p, int sd, int op) {
   return 64;   // default: no scaling
 }
 
-int cEngine::NotOnBishColor(POS * p, int bishSide, int sq) {
+int cEngine::NotOnBishColor(POS * p, int bish_side, int sq) {
 
-  if (((bbWhiteSq & p->Bishops(bishSide)) == 0)
+  if (((bbWhiteSq & p->Bishops(bish_side)) == 0)
   && (SqBb(sq) & bbWhiteSq)) return 1;
 
-  if (((bbBlackSq & p->Bishops(bishSide)) == 0)
+  if (((bbBlackSq & p->Bishops(bish_side)) == 0)
   && (SqBb(sq) & bbBlackSq)) return 1;
 
   return 0;
