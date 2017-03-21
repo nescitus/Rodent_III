@@ -193,13 +193,13 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
   ) return 0; // dead draw
 
   U64 bb_span = BB.GetFrontSpan(p->Pawns(sd), sd);
-  int prom_sq = FirstOne(bbRelRank[sd][RANK_8] & bb_span);
+  int prom_sq = FirstOne(bb_rel_rank[sd][RANK_8] & bb_span);
   int strong_king = p->king_sq[sd];
   int weak_king = p->king_sq[op];
   int strong_pawn = FirstOne(p->Pawns(sd));
   int weak_rook = FirstOne(p->Rooks(op));
   int tempo = (p->side == sd);
-  U64 bb_safe_zone = Mask.home[sd] ^ bbRelRank[sd][RANK_5];
+  U64 bb_safe_zone = Mask.home[sd] ^ bb_rel_rank[sd][RANK_5];
 
   if (p->Pawns(sd) & bb_safe_zone) {
 
@@ -214,7 +214,7 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
 
 	if (Dist.metric[weak_king][prom_sq] <= 1
     && strong_king <= H5
-    && (p->Rooks(op) & bbRelRank[sd][RANK_6]))
+    && (p->Rooks(op) & bb_rel_rank[sd][RANK_6]))
 		return 0;
 
   } else { // advanced enemy pawn
@@ -223,10 +223,10 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
     // pawn on the 6th rank, but weaker side defends promotion square
     // and can check from behind
 
-    if (p->Pawns(sd) & bbRelRank[sd][RANK_6]
+    if (p->Pawns(sd) & bb_rel_rank[sd][RANK_6]
     && Dist.metric[weak_king][prom_sq] <= 1
-    && ((p->Kings(sd) & bb_safe_zone) || (!tempo && p->Kings(sd) & bbRelRank[sd][RANK_6]) )
-    && (p->Rooks(op) & bbRelRank[sd][RANK_1] ))
+    && ((p->Kings(sd) & bb_safe_zone) || (!tempo && p->Kings(sd) & bb_rel_rank[sd][RANK_6]) )
+    && (p->Rooks(op) & bb_rel_rank[sd][RANK_1] ))
     return 0;
 
   }
@@ -241,7 +241,7 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
 
 int cEngine::ScaleKQKRP(POS *p, int sd, int op) {
 
-  U64 bb_defended = p->Pawns(op) & bbRelRank[sd][RANK_7];
+  U64 bb_defended = p->Pawns(op) & bb_rel_rank[sd][RANK_7];
   bb_defended &= BB.KingAttacks(p->king_sq[op]);
 
   // fortress: rook defended by a pawn on the third rank, pawn defended by the king

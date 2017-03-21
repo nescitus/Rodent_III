@@ -332,7 +332,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   && Par.search_skill > 3
   && !move
   && !was_null
-  && !(p->Pawns(p->side) & bbRelRank[p->side][RANK_7]) // no pawns to promote in one move
+  && !(p->Pawns(p->side) & bb_rel_rank[p->side][RANK_7]) // no pawns to promote in one move
   && depth <= 4) {
     int threshold = beta - razor_margin[depth];
 

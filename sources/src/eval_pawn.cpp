@@ -169,7 +169,7 @@ void cEngine::EvaluateKingFile(POS * p, int sd, U64 bb_file, int *shield, int *s
 
   int shelter = EvaluateFileShelter(bb_file &  p->Pawns(sd), sd);
   if (p->Kings(sd) & bb_file) shelter = ((shelter * 120) / 100);
-  if (bb_file & bbCentralFile) shelter /= 2;
+  if (bb_file & bb_central_file) shelter /= 2;
   *shield += shelter;
   *storm += EvaluateFileStorm(bb_file & p->Pawns(Opp(sd)), sd);
 }
@@ -177,21 +177,21 @@ void cEngine::EvaluateKingFile(POS * p, int sd, U64 bb_file, int *shield, int *s
 int cEngine::EvaluateFileShelter(U64 bb_own_pawns, int sd) {
 
   if (!bb_own_pawns) return -36;
-  if (bb_own_pawns & bbRelRank[sd][RANK_2]) return    2;
-  if (bb_own_pawns & bbRelRank[sd][RANK_3]) return  -11;
-  if (bb_own_pawns & bbRelRank[sd][RANK_4]) return  -20;
-  if (bb_own_pawns & bbRelRank[sd][RANK_5]) return  -27;
-  if (bb_own_pawns & bbRelRank[sd][RANK_6]) return  -32;
-  if (bb_own_pawns & bbRelRank[sd][RANK_7]) return  -35;
+  if (bb_own_pawns & bb_rel_rank[sd][RANK_2]) return    2;
+  if (bb_own_pawns & bb_rel_rank[sd][RANK_3]) return  -11;
+  if (bb_own_pawns & bb_rel_rank[sd][RANK_4]) return  -20;
+  if (bb_own_pawns & bb_rel_rank[sd][RANK_5]) return  -27;
+  if (bb_own_pawns & bb_rel_rank[sd][RANK_6]) return  -32;
+  if (bb_own_pawns & bb_rel_rank[sd][RANK_7]) return  -35;
   return 0;
 }
 
 int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
 
   if (!bb_opp_pawns) return -16;
-  if (bb_opp_pawns & bbRelRank[sd][RANK_3]) return -32;
-  if (bb_opp_pawns & bbRelRank[sd][RANK_4]) return -16;
-  if (bb_opp_pawns & bbRelRank[sd][RANK_5]) return -8;
+  if (bb_opp_pawns & bb_rel_rank[sd][RANK_3]) return -32;
+  if (bb_opp_pawns & bb_rel_rank[sd][RANK_4]) return -16;
+  if (bb_opp_pawns & bb_rel_rank[sd][RANK_5]) return -8;
   return 0;
 }
 

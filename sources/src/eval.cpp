@@ -242,9 +242,9 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
     // Rook on the 7th rank attacking pawns or cutting off enemy king
 
-    if (SqBb(sq) & bbRelRank[sd][RANK_7]) {             // rook on 7th rank
-      if (p->Pawns(op) & bbRelRank[sd][RANK_7]          // attacking enemy pawns
-      || p->Kings(op) & bbRelRank[sd][RANK_8]) {        // or cutting off enemy king
+    if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // rook on 7th rank
+      if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
+      || p->Kings(op) & bb_rel_rank[sd][RANK_8]) {        // or cutting off enemy king
          lines_mg += 16;
          lines_eg += 32;
          r_on_7th++;
@@ -293,9 +293,9 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     mob_mg += Par.q_mob_mg[cnt];
     mob_eg += Par.q_mob_eg[cnt];
 
-    if (SqBb(sq) & bbRelRank[sd][RANK_7]) {             // queen on 7th rank
-      if (p->Pawns(op) & bbRelRank[sd][RANK_7]          // attacking enemy pawns
-      ||  p->Kings(op) & bbRelRank[sd][RANK_8]) {       // or cutting off enemy king
+    if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // queen on 7th rank
+      if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
+      ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) {       // or cutting off enemy king
         lines_mg += 4;
         lines_eg += 8;
       }
@@ -550,7 +550,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
   // unattacked and undefended
 
   while (bb_undefended) {
-	bb_undefended &= (bb_undefended - 1);
+    bb_undefended &= (bb_undefended - 1);
     mg += 5;
     eg += 9;
   }
@@ -573,16 +573,16 @@ int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
   && (p->side == Par.prog_side) 
   && (Abs(eval) > Par.draw_score) 
   && (Abs(eval) < 1000)){
-	  eval_adj = eval<0 ? round(1.0*eval*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth/ply) : round(1.0*eval*(Glob.nodes > 100 ? 2 : 1)*ply/Par.riskydepth);
-	  if (eval_adj>1000) eval_adj = 1000;
+    eval_adj = eval<0 ? round(1.0*eval*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth/ply) : round(1.0*eval*(Glob.nodes > 100 ? 2 : 1)*ply/Par.riskydepth);
+    if (eval_adj>1000) eval_adj = 1000;
   }
   else if ((Par.riskydepth > 0)
   && (ply >= Par.riskydepth) 
   && (p->side != Par.prog_side) 
   && (Abs(eval) > Par.draw_score) 
   && (Abs(eval) < 1000)){
-	  eval_adj = eval<0 ? round(1.0*eval*(Glob.nodes > 100 ? 2 : 1)*ply/Par.riskydepth) : round(1.0*eval*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth/ply);
-	  if (eval_adj>1000) eval_adj = 1000;
+    eval_adj = eval<0 ? round(1.0*eval*(Glob.nodes > 100 ? 2 : 1)*ply/Par.riskydepth) : round(1.0*eval*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth/ply);
+    if (eval_adj>1000) eval_adj = 1000;
   }
   return eval_adj;
 }
