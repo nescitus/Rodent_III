@@ -17,14 +17,28 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#define PMG2 12
+#define PMG3 12
+#define PMG4 30
+#define PMG5 50
+#define PMG6 80
+#define PMG7 130
+
+#define PEG2 24
+#define PEG3 24
+#define PEG4 60
+#define PEG5 100
+#define PEG6 160
+#define PEG7 260
+
 static const int passed_bonus_mg[2][8] = {
-  { 0, 12, 12, 30, 50, 80, 130, 0 },
-  { 0, 130, 80, 50, 30, 12, 12, 0 }
+  { 0, PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, 0 },
+  { 0, PMG7, PMG6, PMG5, PMG4, PMG3, PMG2, 0 }
 };
 
 static const int passed_bonus_eg[2][8] = {
-  { 0, 24, 24, 60, 100, 160, 260, 0 },
-  { 0, 260, 160, 100, 60, 24, 24, 0 }
+  { 0, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7, 0 },
+  { 0, PEG7, PEG6, PEG5, PEG4, PEG3, PEG2, 0 }
 };
 
 /*
@@ -701,11 +715,11 @@ static const int pst_empty_qs[64] = {
 
 #define A  80 // advantage in both major and minor pieces
 #define Rk 60 // advantage in major pieces only
-#define Nt 45 // advantage in minor pieces only
+#define Nt 53 // advantage in minor pieces only
 #define Ex 25 // exchange disadvantage
-#define Mm 60 // two minors for a rook 
-
-static const int adj[9] = { -4, -3, -2, -1, 0,  1,  2,  3,  4 };
+#define Mm 44 // two minors for a rook 
+                           // !!!
+static const int adj[9] = { -3, -3, -2, -1, 0,  1,  2,  3,  4 };
 
 static const int imbalance_data[9][9] = {
     /* n=-4  n=-3  n=-2  n=-1  n=0   n=+1  n=+2  n=+3  n=+4 */

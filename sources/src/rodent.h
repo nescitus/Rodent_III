@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 36.387.883 / 29,7 / 2.837
+// b15: 38.430.859
 
 #pragma once
 
@@ -404,9 +404,12 @@ public:
   int eval_blur;
   int hist_perc;
   int hist_limit;
-  int pc_value[7];
+  int pc_value_mg[7];
+  int pc_value_eg[7];
   int keep_pc[7];
   int bish_pair;
+  int knight_pair;
+  int rook_pair;
   int exchange_imbalance;
   int imbalance[9][9];
   int n_likes_closed;
@@ -653,6 +656,7 @@ void ReadLine(char *, int);
 void ReadPersonality(char *fileName);
 void SetPosition(POS *p, char *epd);
 void SetMoveTime(int base, int inc, int movestogo);
+void SetPieceValue(int pc, int val);
 int StrToMove(POS *p, char *move_str);
 int Swap(POS *p, int from, int to);
 int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);

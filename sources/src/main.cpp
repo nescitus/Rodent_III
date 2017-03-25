@@ -106,3 +106,4 @@ void cGlobals::Init() {
   is_console = 1;
   elo_slider = 1;
 }
+

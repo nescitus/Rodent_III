@@ -33,11 +33,17 @@ void PrintUciOptions(void) {
     printf("option name PersonalityFile type string default rodent.txt\n");
   else {
 
-    printf("option name PawnValue type spin default %d min 0 max 1200\n", Par.pc_value[P]);
-    printf("option name KnightValue type spin default %d min 0 max 1200\n", Par.pc_value[N]);
-    printf("option name BishopValue type spin default %d min 0 max 1200\n", Par.pc_value[B]);
-    printf("option name RookValue type spin default %d min 0 max 1200\n", Par.pc_value[R]);
-    printf("option name QueenValue type spin default %d min 0 max 1200\n", Par.pc_value[Q]);
+    printf("option name PawnValueMg type spin default %d min 0 max 1200\n", Par.pc_value_mg[P]);
+    printf("option name KnightValueMg type spin default %d min 0 max 1200\n", Par.pc_value_mg[N]);
+    printf("option name BishopValueMg type spin default %d min 0 max 1200\n", Par.pc_value_mg[B]);
+    printf("option name RookValueMg type spin default %d min 0 max 1200\n", Par.pc_value_mg[R]);
+    printf("option name QueenValueMg type spin default %d min 0 max 1200\n", Par.pc_value_mg[Q]);
+
+	printf("option name PawnValueEg type spin default %d min 0 max 1200\n", Par.pc_value_eg[P]);
+	printf("option name KnightValueEg type spin default %d min 0 max 1200\n", Par.pc_value_eg[N]);
+	printf("option name BishopValueEg type spin default %d min 0 max 1200\n", Par.pc_value_eg[B]);
+	printf("option name RookValueEg type spin default %d min 0 max 1200\n", Par.pc_value_eg[R]);
+	printf("option name QueenValueEg type spin default %d min 0 max 1200\n", Par.pc_value_eg[Q]);
 
     printf("option name KeepPawn type spin default %d min 0 max 500\n", Par.keep_pc[P]);
     printf("option name KeepKnight type spin default %d min 0 max 500\n", Par.keep_pc[N]);
@@ -96,6 +102,7 @@ void PrintUciOptions(void) {
 void ParseSetoption(char *ptr) {
 
   char token[80], name[80], value[80];
+  int val;
 
   ptr = ParseToken(ptr, token);
   name[0] = '\0';
@@ -127,26 +134,56 @@ void ParseSetoption(char *ptr) {
 #endif
   } else if (strcmp(name, "Clear Hash") == 0        || strcmp(name, "clear hash") == 0)        {
     ClearTrans();
+  } else if (strcmp(name, "PawnValueMg") == 0       || strcmp(name, "pawnvalue") == 0)         {
+    Par.pc_value_mg[P] = atoi(value);
+    Par.InitPst();
+    Glob.should_clear = 1;
+  } else if (strcmp(name, "PawnValueEg") == 0       || strcmp(name, "pawnvalue") == 0)         {
+    Par.pc_value_eg[P] = atoi(value);
+    Par.InitPst();
+    Glob.should_clear = 1;
   } else if (strcmp(name, "PawnValue") == 0         || strcmp(name, "pawnvalue") == 0)         {
-    Par.pc_value[P] = atoi(value);
+    SetPieceValue(P, atoi(value));
+  } else if (strcmp(name, "KnightValueMg") == 0       || strcmp(name, "knightvalue") == 0)       {
+    Par.pc_value_mg[N] = atoi(value);
+    Par.InitPst();
+    Glob.should_clear = 1;
+  } else if (strcmp(name, "KnightValueEg") == 0       || strcmp(name, "knightvalue") == 0)       {
+    Par.pc_value_eg[N] = atoi(value);
     Par.InitPst();
     Glob.should_clear = 1;
   } else if (strcmp(name, "KnightValue") == 0       || strcmp(name, "knightvalue") == 0)       {
-    Par.pc_value[N] = atoi(value);
+    SetPieceValue(N, atoi(value));
+  } else if (strcmp(name, "BishopValueMg") == 0       || strcmp(name, "bishopvalue") == 0)       {
+    Par.pc_value_mg[B] = atoi(value);
+    Par.InitPst();
+    Glob.should_clear = 1;
+  } else if (strcmp(name, "BishopValueEg") == 0       || strcmp(name, "bishopvalue") == 0)       {
+    Par.pc_value_eg[B] = atoi(value);
     Par.InitPst();
     Glob.should_clear = 1;
   } else if (strcmp(name, "BishopValue") == 0       || strcmp(name, "bishopvalue") == 0)       {
-    Par.pc_value[B] = atoi(value);
+    SetPieceValue(B, atoi(value));
+  } else if (strcmp(name, "RookValueMg") == 0         || strcmp(name, "rookvalue") == 0)         {
+    Par.pc_value_mg[R] = atoi(value);
+    Par.InitPst();
+    Glob.should_clear = 1;
+  } else if (strcmp(name, "RookValueEg") == 0         || strcmp(name, "rookvalue") == 0)         {
+    Par.pc_value_eg[R] = atoi(value);
     Par.InitPst();
     Glob.should_clear = 1;
   } else if (strcmp(name, "RookValue") == 0         || strcmp(name, "rookvalue") == 0)         {
-    Par.pc_value[R] = atoi(value);
+    SetPieceValue(R, atoi(value));
+  } else if (strcmp(name, "QueenValueMg") == 0        || strcmp(name, "queenvalue") == 0)        {
+    Par.pc_value_mg[Q] = atoi(value);
+    Par.InitPst();
+    Glob.should_clear = 1;
+  } else if (strcmp(name, "QueenValueEg") == 0        || strcmp(name, "queenvalue") == 0)        {
+    Par.pc_value_eg[Q] = atoi(value);
     Par.InitPst();
     Glob.should_clear = 1;
   } else if (strcmp(name, "QueenValue") == 0        || strcmp(name, "queenvalue") == 0)        {
-    Par.pc_value[Q] = atoi(value);
-    Par.InitPst();
-    Glob.should_clear = 1;
+    SetPieceValue(Q, atoi(value));
   } else if (strcmp(name, "KeepPawn") == 0          || strcmp(name, "keeppawn") == 0)          {
     Par.keep_pc[P] = atoi(value);
     Glob.should_clear = 1;
@@ -303,6 +340,14 @@ void ParseSetoption(char *ptr) {
 	 printf("\n");
 	 ReadPersonality(value);
   }
+}
+
+void SetPieceValue(int pc, int val) { // to preserve personalities with old settings
+
+  Par.pc_value_mg[pc] = val;
+  Par.pc_value_eg[pc] = val;
+  Par.InitPst();
+  Glob.should_clear = 1;
 }
 
 void ReadPersonality(char *fileName) {

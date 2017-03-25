@@ -42,15 +42,14 @@ void cEngine::EvaluateMaterial(POS * p, eData *e, int sd) {
   int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]   // knights lose value as pawns disappear
           - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];  // rooks gain value as pawns disappear
 
-  if (p->cnt[sd][N] > 1) tmp -= 10;                       // knight pair
-  if (p->cnt[sd][R] > 1) tmp -=  5;                       // rook pair
-  if (p->cnt[sd][B] > 1) 
-     Add(e, sd, Par.bish_pair, Par.bish_pair + 10);       // bishop pair
+  if (p->cnt[sd][N] > 1) tmp += Par.knight_pair;          // knight pair
+  if (p->cnt[sd][R] > 1) tmp += Par.rook_pair;            // rook pair
+  if (p->cnt[sd][B] > 1) tmp += Par.bish_pair;            // bishop pair
     
   // "elephantiasis correction" for queen, idea by H.G.Mueller (nb. rookVsQueen doesn't help)
 
   if (p->cnt[sd][Q])
-    tmp -= 5 * (p->cnt[op][N] + p->cnt[op][B]);
+    tmp -= 4 * (p->cnt[op][N] + p->cnt[op][B]);
 
   Add(e, sd, tmp);
 }
@@ -405,10 +404,13 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
       mul = 100;
       stop = BB.ShiftFwd(SqBb(sq), sd);
 
-      if (stop & OccBb(p)) mul -= 20;   // blocked passers score less
+      if (stop & OccBb(p)) mul -= 23;   // blocked passers score less
 
       else if ((stop & e->all_att[sd])  // our control of stop square
-           && (stop & ~e->all_att[op])) mul += 10;
+           && (stop & ~e->all_att[op])) mul += 14;
+
+	  // Initial difference    : 0.055808
+	  // Material mg/eg tuning : 0.055695
 
       mg_tmp = passed_bonus_mg[sd][Rank(sq)];
       eg_tmp = passed_bonus_eg[sd][Rank(sq)] 
