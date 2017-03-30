@@ -38,6 +38,8 @@ int main() {
   Glob.Init();
   Par.DefaultWeights();
   Par.InitTables();
+  Glob.is_tuning = 0;
+
   Mask.Init();
   Dist.Init();
   Engine1.Init(0);

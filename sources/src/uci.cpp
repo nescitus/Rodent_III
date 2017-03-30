@@ -82,7 +82,7 @@ void UciLoop(void) {
       Par.use_book = (strstr(command, "value true") != 0);
 
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.176\n");  
+      printf("id name Rodent III 0.179\n");  
 	  Glob.is_console = 0;
       printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
       PrintUciOptions();
@@ -90,6 +90,8 @@ void UciLoop(void) {
     } else if (strcmp(token, "isready") == 0) {
       printf("readyok\n");
     } else if (strcmp(token, "setoption") == 0) {
+      ParseSetoption(ptr);
+    } else if (strcmp(token, "so") == 0) {
       ParseSetoption(ptr);
     } else if (strcmp(token, "position") == 0) {
       ParsePosition(p, ptr);
@@ -99,6 +101,12 @@ void UciLoop(void) {
       PrintBoard(p);
     } else if (strcmp(token, "step") == 0) {
       ParseMoves(p, ptr);
+#ifdef USE_TUNING
+    } else if (strcmp(token, "tune") == 0) {
+      Glob.is_tuning = 1;
+      printf("FIT: %lf\n", Engine1.TexelFit(p, pv));
+	  Glob.is_tuning = 0;
+#endif
     } else if (strcmp(token, "bench") == 0) {
       ptr = ParseToken(ptr, token);
       Engine1.Bench(atoi(token));
@@ -182,7 +190,7 @@ void timer_task() {
   #else
     usleep(5 * 1000);
   #endif
-    CheckTimeout();
+    if (!Glob.is_tuning) CheckTimeout();
   }
 }
 

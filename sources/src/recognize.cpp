@@ -50,7 +50,6 @@ int cEngine::IsDraw(POS *p) {
     } // pawns only
   }
 
-
   // Default: no draw
 
   return 0;

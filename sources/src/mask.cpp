@@ -65,6 +65,15 @@ void cMask::Init(void) {
     passed[BC][sq] |= BB.ShiftSideways(passed[BC][sq]);
   }
 
+  // Mask of squares with positive outpost score
+
+  outpost_map[WC] = bb_rel_rank[WC][RANK_4] | bb_rel_rank[WC][RANK_5] | bb_rel_rank[WC][RANK_6];
+  outpost_map[BC] = bb_rel_rank[BC][RANK_4] | bb_rel_rank[BC][RANK_5] | bb_rel_rank[BC][RANK_6];
+  outpost_map[WC] = outpost_map[WC] & bbNotA;
+  outpost_map[WC] = outpost_map[WC] & bbNotH;
+  outpost_map[BC] = outpost_map[WC] & bbNotA;
+  outpost_map[BC] = outpost_map[WC] & bbNotH;
+
   // Squares requiring bishop pattern evaluation
 
   wb_special = SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2);

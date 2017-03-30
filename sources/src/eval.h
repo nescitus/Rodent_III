@@ -711,27 +711,21 @@ static const int pst_empty_qs[64] = {
  -30, -20, -10,   0,   0,   0,   0,   0,
  -30, -20, -10,   0,   0,   0,   0,   0};
 
-// parameters for evaluating material imbalance [5+9+2]
-
-#define A  80 // advantage in both major and minor pieces
-#define Rk 60 // advantage in major pieces only
-#define Nt 53 // advantage in minor pieces only
-#define Ex 25 // exchange disadvantage
-#define Mm 44 // two minors for a rook 
-                           // !!!
 static const int adj[9] = { -3, -3, -2, -1, 0,  1,  2,  3,  4 };
+
+// map of a table for evaluating material imbalance
 
 static const int imbalance_data[9][9] = {
     /* n=-4  n=-3  n=-2  n=-1  n=0   n=+1  n=+2  n=+3  n=+4 */
-    {  -A,   -A,   -A,   -A,  -Rk,    0,    0,    0,    0 }, // R = -4
-    {  -A,   -A,   -A,   -A,  -Rk,    0,    0,    0,    0 }, // R = -3
-    {  -A,   -A,   -A,   -A,  -Rk,    0,    0,    0,    0 }, // R = -2
-    {  -A,   -A,   -A,   -A,  -Rk,  -Ex,   Mm,    0,    0 }, // R = -1
-    { -Nt,   -Nt, -Nt,  -Nt,    0,   Nt,   Nt,   Nt,   Nt }, // R =  0
-    {   0,    0,  -Mm,   Ex,   Rk,    A,    A,    A,    A }, // R = +1
-    {   0,    0,    0,    0,   Rk,    A,    A,    A,    A }, // R = +2
-    {   0,    0,    0,    0,   Rk,    A,    A,    A,    A }, // R = +3
-    {   0,    0,    0,    0,   Rk,    A,    A,    A,    A }  // R = +4
+    { -A_ALL, -A_ALL, -A_ALL, -A_ALL,  -A_MAJ,      0,      0,      0,      0 }, // R = -4
+    { -A_ALL, -A_ALL, -A_ALL, -A_ALL,  -A_MAJ,      0,      0,      0,      0 }, // R = -3
+    { -A_ALL, -A_ALL, -A_ALL, -A_ALL,  -A_MAJ,      0,      0,      0,      0 }, // R = -2
+    { -A_ALL, -A_ALL, -A_ALL, -A_ALL,  -A_MAJ,  -EXCH,  A_TWO,      0,      0 }, // R = -1
+    {-A_MIN , -A_MIN, -A_MIN, -A_MIN,       0,  A_MIN,  A_MIN,  A_MIN,  A_MIN }, // R =  0
+    {      0,      0, -A_TWO,   EXCH,   A_MAJ,  A_ALL,  A_ALL,  A_ALL,  A_ALL }, // R = +1
+    {      0,      0,      0,      0,   A_MAJ,  A_ALL,  A_ALL,  A_ALL,  A_ALL }, // R = +2
+    {      0,      0,      0,      0,   A_MAJ,  A_ALL,  A_ALL,  A_ALL,  A_ALL }, // R = +3
+    {      0,      0,      0,      0,   A_MAJ,  A_ALL,  A_ALL,  A_ALL,  A_ALL }  // R = +4
 };
 
 static const int fwd_bonus[16] = {

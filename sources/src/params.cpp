@@ -40,22 +40,18 @@ void cParam::DefaultWeights(void) {
    time_percentage = 100;
 
    // Piece values
+ 
+   values[P_MID] = 94;   // was 100
+   values[N_MID] = 310;  // was 325
+   values[B_MID] = 320;  // was 335
+   values[R_MID] = 515;  // was 500
+   values[Q_MID] = 1000;
 
-   pc_value_mg[P] = 94;   // was 100
-   pc_value_mg[N] = 310;  // was 325
-   pc_value_mg[B] = 320;  // was 335
-   pc_value_mg[R] = 515;  // was 500
-   pc_value_mg[Q] = 1000;
-   pc_value_mg[K] = 0;
-   pc_value_mg[K+1] = 0;
-
-   pc_value_eg[P] = 106;  // was 100
-   pc_value_eg[N] = 305;  // was 325
-   pc_value_eg[B] = 320;  // was 335 // decrease
-   pc_value_eg[R] = 520;  // was 500
-   pc_value_eg[Q] = 1010; // was 1000
-   pc_value_eg[K] = 0;
-   pc_value_eg[K + 1] = 0;
+   values[P_END] = 106;  // was 100
+   values[N_END] = 305;  // was 325
+   values[B_END] = 320;  // was 335 // decrease
+   values[R_END] = 520;  // was 500
+   values[Q_END] = 1010; // was 1000
 
    // Tendency to keep own pieces
 
@@ -69,12 +65,17 @@ void cParam::DefaultWeights(void) {
 
    // Material adjustments
 
-   bish_pair = 50;
-   knight_pair = -9;
-   rook_pair = -9;
-   exchange_imbalance = 26; // was 25
-   n_likes_closed = 7;
-   r_likes_open = 3;
+   values[B_PR]  = 50;
+   values[N_PR]  = -9;
+   values[R_PR]  = -9;
+   values[ELEF]  = 4;
+   values[EXCH]  = 26; // exchange advantage additional bonus
+   values[A_MIN] = 53; // additional bonus for minor piece advantage
+   values[A_MAJ] = 60; // additional bonus for major piece advantage
+   values[A_TWO] = 44; // additional bonus for two minors for a rook
+   values[A_ALL] = 80; // additional bonus for advantage in both majors and minors
+   values[N_CL]  = 7;
+   values[R_OP]  = 3;
 
    // Varia
 
@@ -152,16 +153,16 @@ void cParam::InitPst(void) {
   for (int sq = 0; sq < 64; sq++) {
     for (int sd = 0; sd < 2; sd++) {
  
-      mg_pst[sd][P][REL_SQ(sq, sd)] = ((pc_value_mg[P] * mat_weight) / 100) + ( pstPawnMg  [pst_style][sq] * pst_weight) / 100;
-      eg_pst[sd][P][REL_SQ(sq, sd)] = ((pc_value_eg[P] * mat_weight) / 100) + ( pstPawnEg  [pst_style][sq] * pst_weight) / 100;
-      mg_pst[sd][N][REL_SQ(sq, sd)] = ((pc_value_mg[N] * mat_weight) / 100) + ( pstKnightMg[pst_style][sq] * pst_weight) / 100;
-      eg_pst[sd][N][REL_SQ(sq, sd)] = ((pc_value_eg[N] * mat_weight) / 100) + ( pstKnightEg[pst_style][sq] * pst_weight) / 100;
-      mg_pst[sd][B][REL_SQ(sq, sd)] = ((pc_value_mg[B] * mat_weight) / 100) + ( pstBishopMg[pst_style][sq] * pst_weight) / 100;
-      eg_pst[sd][B][REL_SQ(sq, sd)] = ((pc_value_eg[B] * mat_weight) / 100) + ( pstBishopEg[pst_style][sq] * pst_weight) / 100;
-      mg_pst[sd][R][REL_SQ(sq, sd)] = ((pc_value_mg[R] * mat_weight) / 100) + ( pstRookMg  [pst_style][sq] * pst_weight) / 100;
-      eg_pst[sd][R][REL_SQ(sq, sd)] = ((pc_value_eg[R] * mat_weight) / 100) + ( pstRookEg  [pst_style][sq] * pst_weight) / 100;
-      mg_pst[sd][Q][REL_SQ(sq, sd)] = ((pc_value_mg[Q] * mat_weight) / 100) + ( pstQueenMg [pst_style][sq] * pst_weight) / 100;
-      eg_pst[sd][Q][REL_SQ(sq, sd)] = ((pc_value_eg[Q] * mat_weight) / 100) + ( pstQueenEg [pst_style][sq] * pst_weight) / 100;
+      mg_pst[sd][P][REL_SQ(sq, sd)] = ((values[P_MID] * mat_weight) / 100) + ( pstPawnMg  [pst_style][sq] * pst_weight) / 100;
+      eg_pst[sd][P][REL_SQ(sq, sd)] = ((values[P_END] * mat_weight) / 100) + ( pstPawnEg  [pst_style][sq] * pst_weight) / 100;
+      mg_pst[sd][N][REL_SQ(sq, sd)] = ((values[N_MID] * mat_weight) / 100) + ( pstKnightMg[pst_style][sq] * pst_weight) / 100;
+      eg_pst[sd][N][REL_SQ(sq, sd)] = ((values[N_END] * mat_weight) / 100) + ( pstKnightEg[pst_style][sq] * pst_weight) / 100;
+      mg_pst[sd][B][REL_SQ(sq, sd)] = ((values[B_MID] * mat_weight) / 100) + ( pstBishopMg[pst_style][sq] * pst_weight) / 100;
+      eg_pst[sd][B][REL_SQ(sq, sd)] = ((values[B_END] * mat_weight) / 100) + ( pstBishopEg[pst_style][sq] * pst_weight) / 100;
+      mg_pst[sd][R][REL_SQ(sq, sd)] = ((values[R_MID] * mat_weight) / 100) + ( pstRookMg  [pst_style][sq] * pst_weight) / 100;
+      eg_pst[sd][R][REL_SQ(sq, sd)] = ((values[R_END] * mat_weight) / 100) + ( pstRookEg  [pst_style][sq] * pst_weight) / 100;
+      mg_pst[sd][Q][REL_SQ(sq, sd)] = ((values[Q_MID] * mat_weight) / 100) + ( pstQueenMg [pst_style][sq] * pst_weight) / 100;
+      eg_pst[sd][Q][REL_SQ(sq, sd)] = ((values[Q_END] * mat_weight) / 100) + ( pstQueenEg [pst_style][sq] * pst_weight) / 100;
       mg_pst[sd][K][REL_SQ(sq, sd)] =                                         ( pstKingMg  [pst_style][sq] * pst_weight) / 100;
       eg_pst[sd][K][REL_SQ(sq, sd)] =                                         ( pstKingEg  [pst_style][sq] * pst_weight) / 100;
 
@@ -205,8 +206,8 @@ void cParam::InitMaterialTweaks(void) {
   // according to the number of own pawns
 
   for (int i = 0; i < 9; i++) {
-    np_table[i] = adj[i] * n_likes_closed;
-    rp_table[i] = adj[i] * r_likes_open;
+    np_table[i] = adj[i] * values[N_CL];
+    rp_table[i] = adj[i] * values[R_OP];
   }
 
   // Init imbalance table, so that we can expose option for exchange delta
@@ -217,9 +218,18 @@ void cParam::InitMaterialTweaks(void) {
       // insert original values
       imbalance[i][j] = imbalance_data[i][j];
 
-      // insert value defined by the user
-      if (imbalance[i][j] == Ex) imbalance[i][j] = exchange_imbalance;
-      if (imbalance[i][j] == -Ex) imbalance[i][j] = -exchange_imbalance;
+      // insert value defined in Par.values
+
+      if (imbalance_data[i][j] == EXCH) imbalance[i][j] = values[EXCH];
+      if (imbalance_data[i][j] == -EXCH) imbalance[i][j] = -values[EXCH];
+	  if (imbalance_data[i][j] == A_MIN) imbalance[i][j] = values[A_MIN];
+	  if (imbalance_data[i][j] == -A_MIN) imbalance[i][j] = -values[A_MIN];
+	  if (imbalance_data[i][j] == A_MAJ) imbalance[i][j] = values[A_MAJ];
+	  if (imbalance_data[i][j] == -A_MAJ) imbalance[i][j] = -values[A_MAJ];
+	  if (imbalance_data[i][j] == A_TWO) imbalance[i][j] = values[A_TWO];
+	  if (imbalance_data[i][j] == -A_TWO) imbalance[i][j] = -values[A_TWO];
+	  if (imbalance_data[i][j] == A_ALL) imbalance[i][j] = values[A_ALL];
+	  if (imbalance_data[i][j] == -A_ALL) imbalance[i][j] = -values[A_ALL];
     }
   }
 }
@@ -290,4 +300,8 @@ void cDistance::Init() {
       metric[sq1][sq2] = Max(r_delta, f_delta);    // chebyshev distance for unstoppable passers
     }
   }
+}
+
+void cParam::SetVal(int slot, int val) {
+  values[slot] = val;
 }

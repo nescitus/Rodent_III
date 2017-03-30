@@ -42,21 +42,21 @@ void cEngine::EvaluateMaterial(POS * p, eData *e, int sd) {
   int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]   // knights lose value as pawns disappear
           - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];  // rooks gain value as pawns disappear
 
-  if (p->cnt[sd][N] > 1) tmp += Par.knight_pair;          // knight pair
-  if (p->cnt[sd][R] > 1) tmp += Par.rook_pair;            // rook pair
-  if (p->cnt[sd][B] > 1) tmp += Par.bish_pair;            // bishop pair
+  if (p->cnt[sd][N] > 1) tmp += Par.values[N_PR];         // knight pair
+  if (p->cnt[sd][R] > 1) tmp += Par.values[R_PR];         // rook pair
+  if (p->cnt[sd][B] > 1) tmp += Par.values[B_PR];         // bishop pair
     
   // "elephantiasis correction" for queen, idea by H.G.Mueller (nb. rookVsQueen doesn't help)
 
   if (p->cnt[sd][Q])
-    tmp -= 4 * (p->cnt[op][N] + p->cnt[op][B]);
+    tmp -= Par.values[ELEF] * (p->cnt[op][N] + p->cnt[op][B]);
 
   Add(e, sd, tmp);
 }
 
 void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
-  U64 bb_pieces, bb_attack, bb_control, bb_contact, bb_zone, bb_file;
+  U64 bb_pieces, bb_attack, bb_control, bb_possible, bb_contact, bb_zone, bb_file;
   int sq, cnt, own_p_cnt, opp_p_cnt;
   int r_on_7th = 0;
   int mob_mg = 0;
@@ -108,6 +108,11 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     e->ev_att[sd]  |= bb_control;
     if (bb_control & n_checks) att += 4;                // check threats
 
+	bb_possible = bb_control &~e->p_takes[op];          // reachable outposts
+	bb_possible &= ~e->p_can_take[op];
+	bb_possible &= Mask.outpost_map[sd];
+	if (bb_possible) Add(e, sd, 2);
+
     bb_attack = BB.KnightAttacks(sd);
     if (bb_attack & bb_zone) {                          // king attack
       wood++;
@@ -151,7 +156,12 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     mob_mg += Par.b_mob_mg[cnt];
     mob_eg += Par.b_mob_eg[cnt];
 
-    EvaluateOutpost(p, e, sd, B, sq, &outpost);        // outpost
+	bb_possible = bb_control &~e->p_takes[op];          // reachable outposts
+	bb_possible &= ~e->p_can_take[op];
+	bb_possible &= Mask.outpost_map[sd];
+	if (bb_possible) Add(e, sd, 2);
+
+    EvaluateOutpost(p, e, sd, B, sq, &outpost);         // outpost
 
     // Bishops side by side
 
@@ -666,13 +676,13 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
   // Material imbalance evaluation (based on Crafty)
 
-  int minorBalance = p->cnt[WC][N] - p->cnt[BC][N] + p->cnt[WC][B] - p->cnt[BC][B];
-  int majorBalance = p->cnt[WC][R] - p->cnt[BC][R] + 2 * p->cnt[WC][Q] - 2 * p->cnt[BC][Q];
+  int minor_balance = p->cnt[WC][N] - p->cnt[BC][N] + p->cnt[WC][B] - p->cnt[BC][B];
+  int major_balance = p->cnt[WC][R] - p->cnt[BC][R] + 2 * p->cnt[WC][Q] - 2 * p->cnt[BC][Q];
 
-  int x = Max(majorBalance + 4, 0);
+  int x = Max(major_balance + 4, 0);
   if (x > 8) x = 8;
 
-  int y = Max(minorBalance + 4, 0);
+  int y = Max(minor_balance + 4, 0);
   if (y > 8) y = 8;
 
   score += Par.imbalance[x][y];

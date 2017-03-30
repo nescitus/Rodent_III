@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 38.430.859
+// b15: 43.762.230 / 35,5 / 2.861
 
 #pragma once
 
@@ -27,6 +27,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #define USE_MAGIC
 #define USE_MM_POPCNT
 #define USE_FIRST_ONE_INTRINSICS
+//#define USE_TUNING // long compile time, huge file!!!
 
 #define USE_RISKY_PARAMETER
 #define USE_THREADS
@@ -177,29 +178,29 @@ const int lsb_64_table[64] =
 * @return index (0..63) of least significant one bit
 */
 static int FORCEINLINE  bitScanForward(U64 bb) {
-	unsigned int folded;
-	bb ^= bb - 1;
-	folded = (int)bb ^ (bb >> 32);
-	return lsb_64_table[folded * 0x78291ACF >> 26];
+  unsigned int folded;
+  bb ^= bb - 1;
+  folded = (int)bb ^ (bb >> 32);
+  return lsb_64_table[folded * 0x78291ACF >> 26];
 }
 #endif
 #endif
 static int FORCEINLINE FirstOne(U64 x) {
 #ifndef _WIN64
-	return bitScanForward(x);
+  return bitScanForward(x);
 #else
-	unsigned long index = -1;
-	_BitScanForward64(&index, x);
-	return index;
+  unsigned long index = -1;
+  _BitScanForward64(&index, x);
+  return index;
 #endif
 }
 
 #elif defined(__GNUC__)
 
 static int FORCEINLINE FirstOne(U64 x) {
-	int tmp = __builtin_ffsll(x);
-	if (tmp == 0) return -1;
-	else return tmp - 1;
+  int tmp = __builtin_ffsll(x);
+  if (tmp == 0) return -1;
+  else return tmp - 1;
 }
 
 #endif
@@ -379,18 +380,23 @@ typedef struct {
 } eData;
 
 struct sEvalHashEntry {
-	U64 key;
-	int score;
+  U64 key;
+  int score;
 };
 
 struct sPawnHashEntry {
-	U64 key;
-	int mg_pawns;
-	int eg_pawns;
+  U64 key;
+  int mg_pawns;
+  int eg_pawns;
 };
+
+enum Values {P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END, 
+	          B_PR,  N_PR,  R_PR,  ELEF,  EXCH, A_TWO, A_MAJ, A_MIN, A_ALL, N_CL, 
+	          R_OP, N_OF_VAL};
 
 typedef class {
 public:
+  int values[N_OF_VAL];
   int use_book;
   int book_filter;
   int elo;
@@ -404,16 +410,8 @@ public:
   int eval_blur;
   int hist_perc;
   int hist_limit;
-  int pc_value_mg[7];
-  int pc_value_eg[7];
   int keep_pc[7];
-  int bish_pair;
-  int knight_pair;
-  int rook_pair;
-  int exchange_imbalance;
   int imbalance[9][9];
-  int n_likes_closed;
-  int r_likes_open;
   int mat_weight;
   int pst_weight;
   int own_att_weight;
@@ -470,6 +468,7 @@ public:
   void SetSpeed(int elo);
   int EloToSpeed(int elo);
   int EloToBlur(int elo);
+  void SetVal(int slot, int val);
 } cParam;
 
 extern cParam Par;
@@ -492,6 +491,7 @@ public:
   U64 away[2];
   U64 ks_castle[2];
   U64 qs_castle[2];
+  U64 outpost_map[2];
   U64 passed[2][64];
   U64 adjacent[8];
   U64 supported[2][64];
@@ -504,6 +504,7 @@ extern cMask Mask;
 typedef class {
 public:
   U64 nodes;
+  int is_tuning = 0;
   int abort_search;
   int pondering;
   int separate_books;
@@ -569,6 +570,7 @@ public:
   int KPKdraw(POS *p, int sd);
   void DisplayPv(int score, int *pv);
   void Slowdown(void);
+  double TexelFit(POS * p, int *pv);
 
   void Init(int th);
   int Evaluate(POS * p, eData *e);
@@ -656,7 +658,7 @@ void ReadLine(char *, int);
 void ReadPersonality(char *fileName);
 void SetPosition(POS *p, char *epd);
 void SetMoveTime(int base, int inc, int movestogo);
-void SetPieceValue(int pc, int val);
+void SetPieceValue(int pc, int val, int slot);
 int StrToMove(POS *p, char *move_str);
 int Swap(POS *p, int from, int to);
 int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
@@ -694,3 +696,5 @@ extern int tt_date;
 // TODO: no book moves in analyze mode
 // TODO: fix small bug: engine crashes on empty book file path or empty personality file path
 // TODO: minor defended by pawn and something else (to decrease the probability of getting doubled pawns)
+
+double TexelSigmoid(int score, double k);

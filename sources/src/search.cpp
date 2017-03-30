@@ -607,6 +607,8 @@ void cEngine::Slowdown() {
       Glob.abort_search = 1;
   }
 
+// TODO: reorder, slowdown code first
+
 #ifndef USE_THREADS
   if (Glob.nodes & 2047) CheckTimeout();
 #endif
