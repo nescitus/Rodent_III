@@ -51,8 +51,8 @@ void PrintUciOptions(void) {
     printf("option name KeepRook type spin default %d min 0 max 500\n", Par.keep_pc[R]);
     printf("option name KeepQueen type spin default %d min 0 max 500\n", Par.keep_pc[Q]);
 
-    printf("option name BishopPair type spin default %d min -100 max 100\n", Par.values[B_PR]);
-    printf("option name ExchangeImbalance type spin default %d min -100 max 100\n", Par.values[A_EXC]);
+    printf("option name BishopPair type spin default %d min -100 max 100\n", Par.values[B_PAIR]);
+    printf("option name ExchangeImbalance type spin default %d min -200 max 200\n", Par.values[A_EXC]);
     printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", Par.values[N_CL]);
     printf("option name RookLikesOpen type spin default %d min 0 max 10\n", Par.values[R_OP]);
 
@@ -63,7 +63,7 @@ void PrintUciOptions(void) {
     printf("option name OwnMobility type spin default %d min 0 max 500\n", Par.own_mob_weight);
     printf("option name OppMobility type spin default %d min 0 max 500\n", Par.opp_mob_weight);
     printf("option name KingTropism type spin default %d min 0 max 500\n", Par.tropism_weight);
-    printf("option name Forwardness type spin default %d min 0 max 500\n", Par.forward_weight);
+    printf("option name Forwardness type spin default %d min -500 max 500\n", Par.forward_weight);
     printf("option name PiecePressure type spin default %d min 0 max 500\n", Par.threats_weight);
 
     printf("option name PassedPawns type spin default %d min 0 max 500\n", Par.passers_weight);
@@ -76,7 +76,7 @@ void PrintUciOptions(void) {
 
     printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
     printf("option name MobilityStyle type spin default %d min 0 max 1\n", Par.mob_style);
-    printf("option name Contempt type spin default %d min -250 max 250\n", Par.draw_score);
+    printf("option name Contempt type spin default %d min -500 max 500\n", Par.draw_score);
 
     if (!Glob.elo_slider) {
       printf("option name EvalBlur type spin default %d min 0 max 5000000\n", Par.eval_blur);
@@ -200,7 +200,7 @@ void ParseSetoption(char *ptr) {
     Par.keep_pc[Q] = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "BishopPair") == 0        || strcmp(name, "bishoppair") == 0)        {
-    Par.values[B_PR] = atoi(value);
+    Par.values[B_PAIR] = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "ExchangeImbalance") == 0 || strcmp(name, "exchangeimbalance") == 0) {
     Par.values[A_EXC] = atoi(value);

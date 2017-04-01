@@ -42,14 +42,14 @@ void cEngine::EvaluateMaterial(POS * p, eData *e, int sd) {
   int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]   // knights lose value as pawns disappear
           - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];  // rooks gain value as pawns disappear
 
-  if (p->cnt[sd][N] > 1) tmp += Par.values[N_PR];         // knight pair
-  if (p->cnt[sd][R] > 1) tmp += Par.values[R_PR];         // rook pair
-  if (p->cnt[sd][B] > 1) tmp += Par.values[B_PR];         // bishop pair
+  if (p->cnt[sd][N] > 1) tmp += Par.values[N_PAIR];       // knight pair
+  if (p->cnt[sd][R] > 1) tmp += Par.values[R_PAIR];       // rook pair
+  if (p->cnt[sd][B] > 1) tmp += Par.values[B_PAIR];       // bishop pair
     
   // "elephantiasis correction" for queen, idea by H.G.Mueller (nb. rookVsQueen doesn't help)
 
   if (p->cnt[sd][Q])
-    tmp -= Par.values[ELEF] * (p->cnt[op][N] + p->cnt[op][B]);
+    tmp -= Par.values[ELEPH] * (p->cnt[op][N] + p->cnt[op][B]);
 
   Add(e, sd, tmp);
 }

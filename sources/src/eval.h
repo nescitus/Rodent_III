@@ -63,7 +63,7 @@ Rodent can use several sets of piece/square tables (currently 4).
 static const int pstPawnMg[4][64] = {
  //A1                                H1 Midgame pawn table - wing-neutral average of Hakkapeliitta table
 { 0,   0,   0,   0,   0,   0,   0,   0, 
--30, -16, -17, -27, -27, -17, -16, -30,
+-30, -16, -22, -27, -27, -17, -16, -30,
 -25, -16, -16, -18, -18, -16, -16, -25,
 -20, -17,  -7,  -2,  -2,  -7, -17, -20,
 -12,  -3,   2,  16,  16,   2,  -3, -12,

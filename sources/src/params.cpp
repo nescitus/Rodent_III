@@ -65,10 +65,10 @@ void cParam::DefaultWeights(void) {
 
    // Material adjustments
 
-   values[B_PR]  = 50;
-   values[N_PR]  = -9;
-   values[R_PR]  = -9;
-   values[ELEF]  = 4;
+   values[B_PAIR]  = 50;
+   values[N_PAIR]  = -9;
+   values[R_PAIR]  = -9;
+   values[ELEPH]  = 4;
    values[A_EXC]  = 26; // exchange advantage additional bonus
    values[A_MIN] = 53; // additional bonus for minor piece advantage
    values[A_MAJ] = 60; // additional bonus for major piece advantage
