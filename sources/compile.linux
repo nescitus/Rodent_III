@@ -9,7 +9,7 @@
 #include "src/gen.cpp"
 #include "src/init.cpp"
 #include "src/legal.cpp"
-#include "src/magicmoves.c"
+#include "src/magicmoves.cpp"
 #include "src/main.cpp"
 #include "src/mask.cpp"
 #include "src/movedo.cpp"
