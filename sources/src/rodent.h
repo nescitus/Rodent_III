@@ -391,7 +391,7 @@ struct sPawnHashEntry {
 };
 
 enum Values {P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END, 
-	          B_PR,  N_PR,  R_PR,  ELEF,  EXCH, A_TWO, A_MAJ, A_MIN, A_ALL, N_CL, 
+	          B_PR,  N_PR,  R_PR,  ELEF, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL, N_CL, 
 	          R_OP, N_OF_VAL};
 
 typedef class {

@@ -52,7 +52,7 @@ void PrintUciOptions(void) {
     printf("option name KeepQueen type spin default %d min 0 max 500\n", Par.keep_pc[Q]);
 
     printf("option name BishopPair type spin default %d min -100 max 100\n", Par.values[B_PR]);
-    printf("option name ExchangeImbalance type spin default %d min -100 max 100\n", Par.values[EXCH]);
+    printf("option name ExchangeImbalance type spin default %d min -100 max 100\n", Par.values[A_EXC]);
     printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", Par.values[N_CL]);
     printf("option name RookLikesOpen type spin default %d min 0 max 10\n", Par.values[R_OP]);
 
@@ -203,7 +203,7 @@ void ParseSetoption(char *ptr) {
     Par.values[B_PR] = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "ExchangeImbalance") == 0 || strcmp(name, "exchangeimbalance") == 0) {
-    Par.values[EXCH] = atoi(value);
+    Par.values[A_EXC] = atoi(value);
 	Par.InitMaterialTweaks();
     Glob.should_clear = 1;
   } else if (strcmp(name, "KnightLikesClosed") == 0 || strcmp(name, "knightlikesclosed") == 0) {

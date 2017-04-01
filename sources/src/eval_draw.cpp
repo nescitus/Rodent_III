@@ -274,6 +274,45 @@ int cEngine::CheckmateHelper(POS *p) {
 
   int result = 0;
 
+  // TODO: function detecting simple checkmate scenarios: KRK, KBBK, KBNK, KRx
+
+  if (p->cnt[WC][Q] > 0 && p->cnt[WC][P] == 0) {
+    if (p->cnt[BC][Q] == 0 && p->cnt[BC][P] == 0 && p->cnt[BC][R] + p->cnt[BC][B] + p->cnt[BC][N] <= 1) {
+
+      result += 200;
+      result += 10 * Dist.bonus[p->king_sq[WC]][p->king_sq[BC]];
+      result -= Par.eg_pst[BC][K][p->king_sq[BC]];
+      return result;
+    }
+  }
+
+  if (p->cnt[BC][Q] > 0 && p->cnt[BC][P] == 0) {
+    if (p->cnt[WC][Q] == 0 && p->cnt[WC][P] == 0 && p->cnt[WC][R] + p->cnt[WC][B] + p->cnt[WC][N] <= 1) {
+
+      result -= 200;
+      result -= 10 * Dist.bonus[p->king_sq[WC]][p->king_sq[BC]];
+      result += Par.eg_pst[BC][K][p->king_sq[BC]];
+      return result;
+    }
+  }
+  
+  if (p->cnt[BC][P] + p->cnt[BC][N] + p->cnt[BC][B] + p->cnt[BC][R] + p->cnt[BC][Q] == 0) {
+    if (p->cnt[WC][Q] + p->cnt[WC][R] > 0) {
+	  result += 200;
+	  result += 10 * Dist.bonus[p->king_sq[WC]][p->king_sq[BC]];
+	  result -= Par.eg_pst[BC][K][p->king_sq[BC]];
+    }
+  }
+
+  if (p->cnt[WC][P] + p->cnt[WC][N] + p->cnt[WC][B] + p->cnt[WC][R] + p->cnt[WC][Q] == 0) {
+    if (p->cnt[BC][Q] + p->cnt[BC][R] > 0) {
+	  result -= 200;
+	  result -= 10 * Dist.bonus[p->king_sq[WC]][p->king_sq[BC]];
+	  result += Par.eg_pst[BC][K][p->king_sq[BC]];
+    }
+  }
+
+
   if (p->cnt[WC][P] == 0
   &&  p->cnt[BC][P] == 0
   &&  p->phase == 2) {

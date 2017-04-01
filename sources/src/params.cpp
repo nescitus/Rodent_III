@@ -69,7 +69,7 @@ void cParam::DefaultWeights(void) {
    values[N_PR]  = -9;
    values[R_PR]  = -9;
    values[ELEF]  = 4;
-   values[EXCH]  = 26; // exchange advantage additional bonus
+   values[A_EXC]  = 26; // exchange advantage additional bonus
    values[A_MIN] = 53; // additional bonus for minor piece advantage
    values[A_MAJ] = 60; // additional bonus for major piece advantage
    values[A_TWO] = 44; // additional bonus for two minors for a rook
@@ -220,8 +220,8 @@ void cParam::InitMaterialTweaks(void) {
 
       // insert value defined in Par.values
 
-      if (imbalance_data[i][j] == EXCH) imbalance[i][j] = values[EXCH];
-      if (imbalance_data[i][j] == -EXCH) imbalance[i][j] = -values[EXCH];
+      if (imbalance_data[i][j] == A_EXC) imbalance[i][j] = values[A_EXC];
+      if (imbalance_data[i][j] == -A_EXC) imbalance[i][j] = -values[A_EXC];
 	  if (imbalance_data[i][j] == A_MIN) imbalance[i][j] = values[A_MIN];
 	  if (imbalance_data[i][j] == -A_MIN) imbalance[i][j] = -values[A_MIN];
 	  if (imbalance_data[i][j] == A_MAJ) imbalance[i][j] = values[A_MAJ];
