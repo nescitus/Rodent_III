@@ -332,6 +332,7 @@ void ParseGo(POS *p, char *ptr) {
 
     pv[0] = GuideBook.GetPolyglotMove(p, 1);
     if (!pv[0]) pv[0] = MainBook.GetPolyglotMove(p, 1);
+	if (!pv[0]) pv[0] = InternalBook.MoveFromInternal(p);
 
     if (pv[0]) {
       MoveToStr(pv[0], bestmove_str);

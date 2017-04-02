@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 43.762.230 / 35,5 / 2.861
+// b15: 41.604.242 / 35,7 / 2.703
 
 #pragma once
 
@@ -504,7 +504,7 @@ extern cMask Mask;
 typedef class {
 public:
   U64 nodes;
-  int is_tuning = 0;
+  int is_tuning;
   int abort_search;
   int pondering;
   int separate_books;
@@ -520,6 +520,29 @@ public:
 } cGlobals;
 
 extern cGlobals Glob;
+
+struct sBookEntry {
+	U64 hash;
+	int move;
+	int freq;
+};
+
+struct sInternalBook {
+public:
+	int n_of_choices;
+	int n_of_records;
+	int moves[100];
+	int values[100];
+	sBookEntry internal_book[48000];
+	void Init(POS * p);
+	int MoveFromInternal(POS *p);
+	void MoveToInternal(U64 hashKey, int move, int val);
+	U64 GetBookHash(POS *p);
+	int LineToInternal(POS *p, char *ptr, int excludedColor);
+	void ReadInternal(POS *p);
+};
+
+extern sInternalBook InternalBook;
 
 void CheckTimeout(void);
 

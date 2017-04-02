@@ -29,8 +29,11 @@ cMask Mask;
 cDistance Dist;
 sBook GuideBook;
 sBook MainBook;
+sInternalBook InternalBook;
 
 int main() {
+
+  POS p;
 
   BB.Init();
   InitSearch();
@@ -92,6 +95,7 @@ int main() {
 
   GuideBook.OpenPolyglot();
   MainBook.OpenPolyglot();
+  InternalBook.Init(&p);
   UciLoop();
   GuideBook.ClosePolyglot();
   MainBook.ClosePolyglot();
