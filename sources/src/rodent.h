@@ -666,6 +666,7 @@ void TransRetrieveMove(U64 key, int *move);
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
 void UciLoop(void);
 void WasteTime(int miliseconds);
+void PrintBb(U64 bbTest);
 
 extern int castle_mask[64];
 extern const int bit_table[64];

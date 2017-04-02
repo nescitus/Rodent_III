@@ -76,7 +76,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   int op = Opp(sd);
   int king_sq = KingSq(p, op);
   bb_zone = BB.KingAttacks(king_sq);
-  bb_zone = bb_zone |= BB.ShiftFwd(bb_zone, op);
+  bb_zone |= BB.ShiftFwd(bb_zone, op);
   bb_zone = bb_zone &~e->p_takes[op];
 
   // Init helper bitboards
