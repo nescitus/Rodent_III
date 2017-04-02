@@ -82,7 +82,7 @@ void UciLoop(void) {
       Par.use_book = (strstr(command, "value true") != 0);
 
     if (strcmp(token, "uci") == 0) {
-      printf("id name Rodent III 0.181\n");  
+      printf("id name Rodent III 0.182\n");  
 	  Glob.is_console = 0;
       printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
       PrintUciOptions();
@@ -500,6 +500,7 @@ void cEngine::Bench(int depth) {
     printf("%s", test[i]);
     SetPosition(p, test[i]);
     printf("\n");
+	Par.InitAsymmetric(p);
 	Glob.depth_reached = 0;
     Iterate(p, pv);
   }
