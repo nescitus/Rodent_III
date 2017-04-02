@@ -77,7 +77,6 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   int king_sq = KingSq(p, op);
   bb_zone = BB.KingAttacks(king_sq);
   bb_zone |= BB.ShiftFwd(bb_zone, op);
-  bb_zone = bb_zone &~e->p_takes[op];
 
   // Init helper bitboards
 
@@ -116,7 +115,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     bb_attack = BB.KnightAttacks(sd);
     if (bb_attack & bb_zone) {                          // king attack
       wood++;
-      att += 6 * BB.PopCnt(bb_attack & bb_zone);
+      att += 6 * BB.PopCnt(bb_attack & (bb_zone &~e->p_takes[op]));
+	  att += 2 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
     }
 
     cnt = BB.PopCnt(bb_control &~e->p_takes[op]);       // get mobility count
@@ -149,7 +149,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
     if (bb_attack & bb_zone) {                          // evaluate king attacks
       wood++;
-      att += 6 * BB.PopCnt(bb_attack & bb_zone);         
+      att += 6 * BB.PopCnt(bb_attack & (bb_zone &~e->p_takes[op]));
+	  att += 2 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
     }
 
     cnt = BB.PopCnt(bb_control &~e->p_takes[op] & ~bb_excluded);  // get mobility count
@@ -219,7 +220,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
     if (bb_attack & bb_zone) {                          // evaluate king attacks
       wood++;
-      att += 9 * BB.PopCnt(bb_attack & bb_zone);
+      att += 9 * BB.PopCnt(bb_attack & (bb_zone &~e->p_takes[op]));
+	  att += 3 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
     }
 
     cnt = BB.PopCnt(bb_control & ~bb_excluded);         // get mobility count
@@ -295,7 +297,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
     if (bb_attack & bb_zone) {                          // evaluate king attacks
       wood++;
-      att += 15 * BB.PopCnt(bb_attack & bb_zone);
+      att += 15 * BB.PopCnt(bb_attack & (bb_zone &~e->p_takes[op]));
+	  att +=  5 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
     }
 
     cnt = BB.PopCnt(bb_control & ~bb_excluded);         // get mobility count
