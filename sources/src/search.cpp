@@ -21,7 +21,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "rodent.h"
 
 int razor_margin[5] = { 0, 300, 360, 420, 480 };
-int fut_margin[7] = { 0, 100, 150, 200, 250, 300, 350 };
+int fut_margin[7] = { 0, 100, 160, 220, 280, 340, 400 };
 double lmr_size[2][MAX_PLY][MAX_MOVES];
 
 void cParam::InitAsymmetric(POS * p) {

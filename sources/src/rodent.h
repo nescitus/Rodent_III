@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 41.604.242 / 35,7 / 2.703
+// b15: 42.415.101 / 35,7 / 2.703
 
 #pragma once
 
@@ -716,7 +716,6 @@ extern int tt_date;
 // TODO: easy move code
 // TODO: stress test of ExtractMove at many threads
 // TODO: cleanup of uci.cpp
-// TODO: setting path to opening book
 // TODO: no book moves in analyze mode
 // TODO: fix small bug: engine crashes on empty book file path or empty personality file path
 // TODO: minor defended by pawn and something else (to decrease the probability of getting doubled pawns)

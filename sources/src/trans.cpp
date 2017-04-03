@@ -17,6 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdlib.h>
 #include "rodent.h"
+#include <string.h>
 
 void AllocTrans(int mbsize) {
 
@@ -34,6 +35,7 @@ void ClearTrans(void) {
   ENTRY *entry;
 
   tt_date = 0;
+  
   for (entry = tt; entry < tt + tt_size; entry++) {
     entry->key = 0;
     entry->date = 0;
@@ -42,6 +44,7 @@ void ClearTrans(void) {
     entry->flags = 0;
     entry->depth = 0;
   }
+
 }
 
 int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
