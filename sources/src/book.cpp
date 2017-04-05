@@ -335,12 +335,6 @@ U64 sBook::GetPolyglotKey(POS *p) {
 
 void sBook::OpenPolyglot(void) {
 
-  // check if string contains a line ending information from personality file;
-  // if found, replace with C string termination
-
-  size_t ln = strlen(bookName) - 1;
-  if (*bookName && bookName[ln] == '\n') 
-    bookName[ln] = '\0';
   bookFile = fopen(bookName, "rb");
 
   if (bookFile != NULL) {
@@ -358,7 +352,7 @@ void sBook::OpenPolyglot(void) {
   }
 }
 
-int my_random(int n) {
+static int my_random(int n) {
 
   double r;
   r = double(rand()) / (double(RAND_MAX) + 1.0);

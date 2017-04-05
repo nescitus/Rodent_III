@@ -52,8 +52,8 @@ int main() {
 
 #if defined(_WIN32) || defined(_WIN64)
   // if we are on Windows search for books and settings in same directory as rodentII.exe
-  MainBook.bookName = "books/rodent.bin";
-  GuideBook.bookName = "books/guide.bin";
+  MainBook.SetBookName( "books/rodent.bin" );
+  GuideBook.SetBookName( "books/guide.bin" );
   ReadPersonality("basic.ini");
 #elif __linux || __unix
   // if we are on Linux
@@ -67,20 +67,20 @@ int main() {
   strcpy(path, ""); // first clear
   strcpy(path, STR(BOOKPATH)); // copy path from c preprocessor here
   strcat(path, nameMainbook); // append bookname
-  MainBook.bookName = path; // store it
+  MainBook.SetBookName( path ); // store it
   // process Guidebook
   strcpy(path, "");
   strcpy(path, STR(BOOKPATH));
   strcat(path, nameGuidebook);
-  GuideBook.bookName = nameGuidebook;
+  GuideBook.SetBookName( nameGuidebook );
   // process Personality file
   strcpy(path, "");
   strcpy(path, STR(BOOKPATH));
   strcat(path, namePersonality);
   ReadPersonality(path);
 #else // if no path was given than we assume that files are stored at /usr/share/rodentII
-  MainBook.bookName = "/usr/share/rodentII/rodent.bin";
-  GuideBook.bookName = "/usr/share/rodentII/guide.bin";
+  MainBook.SetBookName( "/usr/share/rodentII/rodent.bin" );
+  GuideBook.SetBookName( "/usr/share/rodentII/guide.bin" );
   ReadPersonality("/usr/share/rodentII/basic.ini");
 #endif
 
@@ -88,8 +88,8 @@ int main() {
   // a platform we have not tested yet. We assume that opening books and 
   // settings are stored within the same directory. Similiar to Windows.
   printf("Platform unknown. We assume that opening books and settings are stored within RodentII path");
-  MainBook.bookName = "books/rodent.bin";
-  GuideBook.bookName = "books/guide.bin";
+  MainBook.SetBookName( "books/rodent.bin" );
+  GuideBook.SetBookName( "books/guide.bin" );
   ReadPersonality("basic.ini");
 #endif
 

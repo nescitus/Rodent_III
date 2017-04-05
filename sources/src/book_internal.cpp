@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 void sInternalBook::ReadInternal(POS *p) {
 
-  char *book[] = {
+  const char *book[] = {
 	  "b1c3? c7c5 e2e4 b8c6 f2f4? e7e6 g1f3 d7d5 f1b5 g8e7",
 	  "b1c3? d7d5 e2e4 c7c6 d2d4 d5e4 c3e4 b8d7 e4g5 g8f6 f1d3 e7e6",
 	  "b2b3? d7d5 c1b2 c7c5 e2e3 g8f6 f1b5 c8d7 d1e2 a7a6 b5d7 b8d7 f2f4 g7g6 g1f3 f8g7 e1g1 e8g8",
@@ -3244,7 +3244,7 @@ void sInternalBook::ReadInternal(POS *p) {
   printf("%d moves loaded\n", n_of_records);
 }
 
-int sInternalBook::LineToInternal(POS *p, char *ptr, int excludedColor) {
+int sInternalBook::LineToInternal(POS *p, const char *ptr, int excludedColor) {
 
   char token[512];
   UNDO u[1];
