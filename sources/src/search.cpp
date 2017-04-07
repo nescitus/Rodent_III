@@ -561,7 +561,7 @@ void cEngine::DisplayPv(int score, int *pv) {
 
   if (root_depth < Glob.depth_reached) return;
 
-  char *type, pv_str[512];
+  const char *type; char pv_str[512];
   int elapsed = GetMS() - start_time;
   U64 nps = GetNps(elapsed);
 

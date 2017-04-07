@@ -99,7 +99,7 @@ void PrintUciOptions(void) {
 
 }
 
-void ParseSetoption(char *ptr) {
+void ParseSetoption(const char *ptr) {
 
   char token[80], name[80], value[80];
   int val;
@@ -300,13 +300,13 @@ void ParseSetoption(char *ptr) {
   } else if (strcmp(name, "GuideBookFile") == 0     || strcmp(name, "guidebookfile") == 0)  {
     if (!Glob.separate_books || !Glob.reading_personality) {
       GuideBook.ClosePolyglot();
-      GuideBook.bookName = value;
+      GuideBook.SetBookName( value );
       GuideBook.OpenPolyglot();
 	}
   } else if (strcmp(name, "MainBookFile") == 0      || strcmp(name, "mainbookfile") == 0)   {
 	if (!Glob.separate_books || !Glob.reading_personality) {
       MainBook.ClosePolyglot();
-      MainBook.bookName = value;
+      MainBook.SetBookName( value );
       MainBook.OpenPolyglot();
 	}
   } else if (strcmp(name, "Contempt") == 0          || strcmp(name, "contempt") == 0 )      {
@@ -350,11 +350,11 @@ void SetPieceValue(int pc, int val, int slot) { // to preserve personalities wit
   Glob.should_clear = 1;
 }
 
-void ReadPersonality(char *fileName) {
+void ReadPersonality(const char *fileName) {
 
   FILE *personalityFile;
   char line[256];
-  char token[180], *ptr;
+  char token[180]; const char *ptr;
 
   // exit if this personality file doesn't exist
 

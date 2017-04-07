@@ -30,8 +30,11 @@ If not, see <http://www.gnu.org/licenses/>.
 //#define USE_TUNING // long compile time, huge file!!!
 
 #define USE_RISKY_PARAMETER
+
+#ifndef NO_THREADS
 #define USE_THREADS
 #define MAX_THREADS 4 // do not change unless threading code is modified (array of cEngine class instances)
+#endif
 
 enum eColor {WC, BC, NO_CL};
 enum ePieceType {P, N, B, R, Q, K, NO_TP};
@@ -66,7 +69,12 @@ enum eSquare {
 #define MAX_EVAL        29999
 #define MAX_HIST        (1 << 15)
 
-typedef unsigned long long U64;
+#if __cplusplus >= 201103L
+    #include <cstdint>
+    typedef uint64_t U64;
+#else
+    typedef unsigned long long U64;
+#endif
 
 #define RANK_1_BB       (U64)0x00000000000000FF
 #define RANK_2_BB       (U64)0x000000000000FF00
@@ -141,16 +149,18 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 #define KingSq(p, x)    ((p)->king_sq[x])
 #define IsOnSq(p, sd, pc, sq) ( PcBb(p, sd, pc) & SqBb(sq) )
 
-#ifdef _WIN32
-#define FORCEINLINE __forceinline
-#else
-#define FORCEINLINE __inline
+#ifndef FORCEINLINE
+    #if defined(_WIN32) && !defined(__MINGW32__)
+        #define FORCEINLINE __forceinline
+    #else
+        #define FORCEINLINE __inline
+    #endif
 #endif
 
 // Compiler and architecture dependent versions of FirstOne() function,
 // triggered by defines at the top of this file.
 #ifdef USE_FIRST_ONE_INTRINSICS
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 #include <intrin.h>
 #ifdef _WIN64
 #pragma intrinsic(_BitScanForward64)
@@ -197,11 +207,15 @@ static int FORCEINLINE FirstOne(U64 x) {
 
 #elif defined(__GNUC__)
 
+/*
 static int FORCEINLINE FirstOne(U64 x) {
   int tmp = __builtin_ffsll(x);
   if (tmp == 0) return -1;
   else return tmp - 1;
 }
+*/
+
+#define FirstOne(x) (__builtin_ffsll(x) - 1)
 
 #endif
 
@@ -538,7 +552,7 @@ public:
 	int MoveFromInternal(POS *p);
 	void MoveToInternal(U64 hashKey, int move, int val);
 	U64 GetBookHash(POS *p);
-	int LineToInternal(POS *p, char *ptr, int excludedColor);
+	int LineToInternal(POS *p, const char *ptr, int excludedColor);
 	void ReadInternal(POS *p);
 };
 
@@ -667,19 +681,19 @@ U64 InitHashKey(POS *p);
 U64 InitPawnKey(POS *p);
 int Legal(POS *p, int move);
 void MoveToStr(int move, char *move_str);
-void ParseGo(POS *p, char *ptr);
-void ParseMoves(POS *p, char *ptr);
-void ParsePosition(POS *p, char *ptr);
-void ParseSetoption(char *);
-char *ParseToken(char *, char *);
+void ParseGo(POS *p, const char *ptr);
+void ParseMoves(POS *p, const char *ptr);
+void ParsePosition(POS *p, const char *ptr);
+void ParseSetoption(const char *);
+const char *ParseToken(const char *, char *);
 void PrintBoard(POS *p);
 void PrintMove(int move);
 void PrintUciOptions(void);
 void PvToStr(int *, char *);
 U64 Random64(void);
 void ReadLine(char *, int);
-void ReadPersonality(char *fileName);
-void SetPosition(POS *p, char *epd);
+void ReadPersonality(const char *fileName);
+void SetPosition(POS *p, const char *epd);
 void SetMoveTime(int base, int inc, int movestogo);
 void SetPieceValue(int pc, int val, int slot);
 int StrToMove(POS *p, char *move_str);

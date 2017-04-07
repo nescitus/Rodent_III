@@ -49,7 +49,7 @@ void ClearPosition(POS *p) {
   p->phase = 0;
 }
 
-void SetPosition(POS *p, char *epd) {
+void SetPosition(POS *p, const char *epd) {
 
   int pc;
   static const char pc_char[13] = "PpNnBbRrQqKk";

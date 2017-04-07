@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <iostream>
+//#include <iostream>
 #include "rodent.h"
 #include "book.h"
 #ifdef USE_THREADS
@@ -43,7 +43,7 @@ void ReadLine(char *str, int n) {
     *ptr = '\0';
 }
 
-char *ParseToken(char *string, char *token) {
+const char *ParseToken(const char *string, char *token) {
 
   while (*string == ' ')
     string++;
@@ -55,7 +55,7 @@ char *ParseToken(char *string, char *token) {
 
 void UciLoop(void) {
 
-  char command[4096], token[80], *ptr;
+  char command[4096], token[80]; const char *ptr;
   POS p[1];
  int pv[MAX_PLY];
 
@@ -116,7 +116,7 @@ void UciLoop(void) {
   }
 }
 
-void ParseMoves(POS *p, char *ptr) {
+void ParseMoves(POS *p, const char *ptr) {
   
   char token[180];
   UNDO u[1];
@@ -139,7 +139,7 @@ void ParseMoves(POS *p, char *ptr) {
   }
 }
 
-void ParsePosition(POS *p, char *ptr) {
+void ParsePosition(POS *p, const char *ptr) {
 
   char token[80], fen[80];
 
@@ -248,7 +248,7 @@ void SetMoveTime(int base, int inc, int movestogo) {
   }
 }
 
-void ParseGo(POS *p, char *ptr) {
+void ParseGo(POS *p, const char *ptr) {
 
   char token[80], bestmove_str[6], ponder_str[6];
   int wtime, btime, winc, binc, movestogo, strict_time;
@@ -464,7 +464,7 @@ void cEngine::Bench(int depth) {
 
   POS p[1];
   int pv[MAX_PLY];
-  char *test[] = {
+  const char *test[] = {
     "r1bqkbnr/pp1ppppp/2n5/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq -",       // 1.e4 c5 2.Nf3 Nc6
     "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -",   // multiple captures
     "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -",                              // rook endgame
@@ -516,7 +516,7 @@ void cEngine::Bench(int depth) {
 
 void PrintBoard(POS *p) {
 
-  char *piece_name[] = { "P ", "p ", "N ", "n ", "B ", "b ", "R ", "r ", "Q ", "q ", "K ", "k ", ". " };
+  const char *piece_name[] = { "P ", "p ", "N ", "n ", "B ", "b ", "R ", "r ", "Q ", "q ", "K ", "k ", ". " };
 
   printf("--------------------------------------------\n");
   for (int sq = 0; sq < 64; sq++) {
