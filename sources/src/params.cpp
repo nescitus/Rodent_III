@@ -41,7 +41,7 @@ void cParam::DefaultWeights(void) {
 
    // Piece values
  
-   values[P_MID] = 94;   // was 100
+   values[P_MID] = 95;   // was 100
    values[N_MID] = 310;  // was 325
    values[B_MID] = 320;  // was 335
    values[R_MID] = 515;  // was 500
@@ -111,14 +111,14 @@ void cParam::DefaultWeights(void) {
 
    // Pawn structure parameters
 
-   doubled_mg = -12;
-   doubled_eg = -24;
-   isolated_mg = -10;
-   isolated_eg = -20;
-   isolated_open = -10;
-   backward_mg = -8;
-   backward_eg = -8;
-   backward_open = -8;
+   values[DB_MID] = -12;
+   values[DB_END] = -24;
+   values[IS_MID] = -10;
+   values[IS_END] = -20;
+   values[IS_OPE] = -10;
+   values[BK_MID] = -8;
+   values[BK_END] = -8;
+   values[BK_OPE] = -8;
 
    // Specialized functions
 
@@ -132,20 +132,23 @@ void cParam::DefaultWeights(void) {
    hist_perc = 175;
    hist_limit = 24576;
 
-   // when testing a personality, place changes in relation to default here
+   // when testing a personality, place changes in relation to default below:
 
 }
 
 void cParam::InitBackward(void) {
 
-   backward_malus_mg[FILE_A] = backward_mg + 3;
-   backward_malus_mg[FILE_B] = backward_mg + 1;
-   backward_malus_mg[FILE_C] = backward_mg - 1;
-   backward_malus_mg[FILE_D] = backward_mg - 3;
-   backward_malus_mg[FILE_E] = backward_mg - 3;
-   backward_malus_mg[FILE_F] = backward_mg - 1;
-   backward_malus_mg[FILE_G] = backward_mg + 1;
-   backward_malus_mg[FILE_H] = backward_mg + 3;
+   // add file-dependent component to backward pawns penalty
+   // (assuming backward pawns on central files are bigger liability)
+
+   backward_malus_mg[FILE_A] = values[BK_MID] + 3;
+   backward_malus_mg[FILE_B] = values[BK_MID] + 1;
+   backward_malus_mg[FILE_C] = values[BK_MID] - 1;
+   backward_malus_mg[FILE_D] = values[BK_MID] - 3;
+   backward_malus_mg[FILE_E] = values[BK_MID] - 3;
+   backward_malus_mg[FILE_F] = values[BK_MID] - 1;
+   backward_malus_mg[FILE_G] = values[BK_MID] + 1;
+   backward_malus_mg[FILE_H] = values[BK_MID] + 3;
 }
 
 void cParam::InitPst(void) {

@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 42.415.101 / 35,7 / 2.703
+// b15: 57.999.953 / 47,4 / 2.835
 
 #pragma once
 
@@ -406,7 +406,7 @@ struct sPawnHashEntry {
 
 enum Values {P_MID,  P_END,  N_MID,  N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END, 
 	         B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL, N_CL, 
-	         R_OP, N_OF_VAL};
+	         R_OP, IS_MID, IS_END, IS_OPE, BK_MID, BK_END, BK_OPE, DB_MID, DB_END, N_OF_VAL};
 
 typedef class {
 public:
@@ -441,14 +441,6 @@ public:
   int storm_weight;
   int struct_weight;
   int passers_weight;
-  int doubled_mg;
-  int doubled_eg;
-  int isolated_mg;
-  int isolated_eg;
-  int isolated_open;
-  int backward_mg;
-  int backward_eg;
-  int backward_open;
   int sd_att[2];
   int sd_mob[2];
   int mg_pst[2][6][64];

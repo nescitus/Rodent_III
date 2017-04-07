@@ -265,29 +265,29 @@ void ParseSetoption(const char *ptr) {
     Par.protecting_bishop = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "DoubledPawnMg") == 0     || strcmp(name, "doubledpawnmg") == 0)  {
-    Par.doubled_mg = atoi(value);
+    Par.values[DB_MID] = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "DoubledPawnEg") == 0     || strcmp(name, "doubledpawneg") == 0)  {
-    Par.doubled_eg = atoi(value);
+    Par.values[DB_END] = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "IsolatedPawnMg") == 0    || strcmp(name, "isolatedpawnmg") == 0) {
-    Par.isolated_mg = atoi(value);
+    Par.values[IS_MID] = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "IsolatedPawnEg") == 0    || strcmp(name, "isolatedpawneg") == 0) {
-    Par.isolated_eg = atoi(value);
+    Par.values[IS_END] = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "IsolatedOpenMg") == 0    || strcmp(name, "isolatedopenmg") == 0) {
-    Par.isolated_open = atoi(value);
+    Par.values[IS_OPE] = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "BackwardPawnMg") == 0    || strcmp(name, "backwardpawneg") == 0) {
-    Par.backward_mg = atoi(value);
+    Par.values[BK_MID] = atoi(value);
 	Par.InitBackward();
     Glob.should_clear = 1;
   } else if (strcmp(name, "BackwardPawnEg") == 0    || strcmp(name, "backwardpawneg") == 0) {
-    Par.backward_eg = atoi(value);
+    Par.values[BK_END] = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "BackwardOpenMg") == 0    || strcmp(name, "backwardopenmg") == 0) {
-    Par.backward_open = atoi(value);
+    Par.values[BK_OPE] = atoi(value);
     Glob.should_clear = 1;
   } else if (strcmp(name, "PstStyle") == 0          || strcmp(name, "pststyle") == 0)       {
     Par.pst_style = atoi(value);

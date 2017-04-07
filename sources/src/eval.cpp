@@ -383,7 +383,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
     // Doubled pawn
 
     if (front_span & p->Pawns(sd))
-      AddPawns(e, sd, Par.doubled_mg, Par.doubled_eg);
+      AddPawns(e, sd, Par.values[DB_MID], Par.values[DB_END]);
 
     // Supported pawn
 
@@ -393,9 +393,9 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
     // Isolated and weak pawn
 
     if (!(Mask.adjacent[File(sq)] & p->Pawns(sd)))
-      AddPawns(e, sd, Par.isolated_mg + Par.isolated_open * fl_unopposed, Par.isolated_eg);
+      AddPawns(e, sd, Par.values[IS_MID] + Par.values[IS_OPE] * fl_unopposed, Par.values[IS_END]);
     else if (!(Mask.supported[sd][sq] & p->Pawns(sd)))
-      AddPawns(e, sd, Par.backward_malus_mg[File(sq)] + Par.backward_open * fl_unopposed, Par.backward_eg);
+      AddPawns(e, sd, Par.backward_malus_mg[File(sq)] + Par.values[BK_OPE] * fl_unopposed, Par.values[BK_END]);
   }
 }
 
