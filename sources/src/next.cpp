@@ -280,6 +280,22 @@ int cEngine::MvvLva(POS *p, int move) {
   return 5;
 }
 
+void cEngine::AgeHist(void) {
+
+  for (int tp = 0; tp < 12; tp++)
+    for (int sq = 0; sq < 64; sq++)
+      history[tp][sq] /= 8;
+
+  for (int fsq = 0; fsq < 64; fsq++)
+    for (int tsq = 0; tsq < 64; tsq++)
+      refutation[fsq][tsq] = 0;
+
+  for (int i = 0; i < MAX_PLY; i++) {
+    killer[i][0] = 0;
+    killer[i][1] = 0;
+  }
+}
+
 void cEngine::ClearHist(void) {
 
   for (int tp = 0; tp < 12; tp++)

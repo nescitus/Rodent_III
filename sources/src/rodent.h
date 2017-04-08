@@ -543,7 +543,6 @@ public:
 	void Init(POS * p);
 	int MoveFromInternal(POS *p);
 	void MoveToInternal(U64 hashKey, int move, int val);
-	U64 GetBookHash(POS *p);
 	int LineToInternal(POS *p, const char *ptr, int excludedColor);
 	void ReadInternal(POS *p);
 };
@@ -579,6 +578,7 @@ public:
   int BadCapture(POS *p, int move);
   int MvvLva(POS *p, int move);
   void ClearHist(void);
+  void AgeHist(void);
   void ClearEvalHash(void);
   void ClearPawnHash(void);
   void ClearAll(void);

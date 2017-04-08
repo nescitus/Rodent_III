@@ -117,7 +117,7 @@ void cEngine::Think(POS *p, int *pv) {
   pv[1] = 0;
 
   CopyPos(p, curr);
-  ClearHist();
+  AgeHist();
   Iterate(curr, pv);
 }
 
