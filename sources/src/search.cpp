@@ -293,7 +293,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   && fl_prunable_node
   && MayNull(p)
   && eval >= beta) {
-    new_depth = depth - ((823 + 67 * depth) / 256); // simplified Stockfish formula
+    new_depth = depth - ((823 + 67 * depth) / 256) /*- Min(2, (eval - beta) / 150)*/; // simplified Stockfish formula
 
     // omit null move search if normal search to the same depth wouldn't exceed beta
     // (sometimes we can check it for free via hash table)
@@ -306,11 +306,18 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     if (new_depth <= 0) score = -QuiesceChecks(p, ply + 1, -beta, -beta + 1, new_pv);
     else                score = -Search(p, ply + 1, -beta, -beta + 1, new_depth, 1, 0, -1, new_pv);
 
+	// get location of a piece whose capture refuted null move
+	// its escape will be prioritised in the move ordering
+
     TransRetrieve(p->hash_key, &null_refutation, &null_score, alpha, beta, depth, ply);
     if (null_refutation > 0) ref_sq = Tsq(null_refutation);
-    p->UndoNull(u);
 
+    p->UndoNull(u);
     if (Glob.abort_search && root_depth > 1) return 0;
+
+	// do not return unproved mate scores, Stockfish-style
+
+	if (score >= MAX_EVAL) score = beta;
 
     if (score >= beta) {
 
@@ -344,10 +351,16 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
   // INTERNAL ITERATIVE DEEPENING
 
-  if (is_pv && !fl_check && !move && depth > 6) {
+  if (is_pv 
+  && !fl_check 
+  && !move 
+  && depth > 6) {
+  // TODO: && eval + 100 < beta, Stockfish-style
      Search(p, ply, alpha, beta, depth-2, 0, -1, last_capt_sq, pv);
      TransRetrieveMove(p->hash_key, &move);
   }
+
+  // TODO: internal iterative deepening in cut nodes
 
   // PREPARE FOR MAIN SEARCH
 
@@ -441,6 +454,8 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
       if (mv_hist_score < 0
       && new_depth - reduction > 2)
         reduction++;
+
+	  // TODO: decrease reduction of moves with good history score
 
       new_depth = new_depth - reduction;
     }
