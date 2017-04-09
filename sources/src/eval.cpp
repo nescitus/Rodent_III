@@ -422,12 +422,14 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
       else if ((stop & e->all_att[sd])  // our control of stop square
            && (stop & ~e->all_att[op])) mul += 14;
 
-	  // Initial difference    : 0.055808
-	  // Material mg/eg tuning : 0.055695
+      // in the midgame, we use just a bonus from the table
+      // in the endgame, passed pawn attracts both kings.
 
       mg_tmp = passed_bonus_mg[sd][Rank(sq)];
       eg_tmp = passed_bonus_eg[sd][Rank(sq)] 
-             -((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[op]]) / 30);
+             -((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[op]]) / 30)
+             +((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[sd]]) / 90);
+
       mg_tot += (mg_tmp * mul) / 100;
       eg_tot += (eg_tmp * mul) / 100;
     }
