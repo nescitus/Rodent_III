@@ -293,7 +293,11 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
   && fl_prunable_node
   && MayNull(p)
   && eval >= beta) {
-    new_depth = depth - ((823 + 67 * depth) / 256) /*- Min(2, (eval - beta) / 150)*/; // simplified Stockfish formula
+
+    // null move depth reduction - modified Stockfish formula
+
+    new_depth = depth - ((823 + 67 * depth) / 256) 
+                      - Min(3, (eval - beta) / 200);
 
     // omit null move search if normal search to the same depth wouldn't exceed beta
     // (sometimes we can check it for free via hash table)
