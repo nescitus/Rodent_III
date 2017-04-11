@@ -135,6 +135,7 @@ void ParseMoves(POS *p, const char *ptr) {
     if (*token == '\0') break;
 
     p->DoMove(StrToMove(p, token), u);
+	Glob.moves_from_start++;
 
     // We won't be taking back moves beyond this point:
 
@@ -331,11 +332,11 @@ void ParseGo(POS *p, const char *ptr) {
 
   // get book move
 
-  if (Par.use_book) {
-
+  if (Par.use_book && Par.book_depth >= Glob.moves_from_start) {
+	  printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
     pv[0] = GuideBook.GetPolyglotMove(p, 1);
     if (!pv[0]) pv[0] = MainBook.GetPolyglotMove(p, 1);
-	//if (!pv[0]) pv[0] = InternalBook.MoveFromInternal(p);
+	if (!pv[0]) pv[0] = InternalBook.MoveFromInternal(p);
 
     if (pv[0]) {
       MoveToStr(pv[0], bestmove_str);

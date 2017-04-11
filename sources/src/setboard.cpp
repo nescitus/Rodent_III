@@ -55,6 +55,7 @@ void SetPosition(POS *p, const char *epd) {
   static const char pc_char[13] = "PpNnBbRrQqKk";
 
   ClearPosition(p);
+  Glob.moves_from_start = 0;
 
   for (int i = 56; i >= 0; i -= 8) {
     int j = 0;

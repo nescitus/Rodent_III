@@ -271,13 +271,13 @@ void ParseSetoption(const char *ptr) {
     Par.values[DB_END] = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "IsolatedPawnMg") == 0    || strcmp(name, "isolatedpawnmg") == 0) {
-    Par.values[IS_MID] = atoi(value);
+    Par.values[ISO_MG] = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "IsolatedPawnEg") == 0    || strcmp(name, "isolatedpawneg") == 0) {
-    Par.values[IS_END] = atoi(value);
+    Par.values[ISO_EG] = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "IsolatedOpenMg") == 0    || strcmp(name, "isolatedopenmg") == 0) {
-    Par.values[IS_OPE] = atoi(value);
+    Par.values[ISO_OF] = atoi(value);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "BackwardPawnMg") == 0    || strcmp(name, "backwardpawneg") == 0) {
     Par.values[BK_MID] = atoi(value);

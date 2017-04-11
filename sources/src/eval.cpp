@@ -232,21 +232,21 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     bb_file = BB.FillNorth(SqBb(sq)) | BB.FillSouth(SqBb(sq));   // get file
 
     if (bb_file & p->Queens(op)) {                      // enemy queen on rook's file
-      lines_mg += 5;
-      lines_eg += 5;
+      lines_mg += Par.values[ROQ_MG];
+      lines_eg += Par.values[ROQ_EG];
     }
 
     if (!(bb_file & p->Pawns(sd))) {                    // no own pawns on that file
       if (!(bb_file & p->Pawns(op))) {
-        lines_mg += 14;
-        lines_eg += 14;
+        lines_mg += Par.values[ROF_MG];
+        lines_eg += Par.values[ROF_EG];
       } else {                                          // half-open file...
         if (bb_file & (p->Pawns(op) & e->p_takes[op])) {// ...with defended enemy pawn
-          lines_mg += 5;
-          lines_eg += 5;
+          lines_mg += Par.values[RBH_MG];
+          lines_eg += Par.values[RBH_EG];
         } else {                                        // ...with undefended enemy pawn
-          lines_mg += 7;
-          lines_eg += 7;
+          lines_mg += Par.values[RGH_MG];
+          lines_eg += Par.values[RGH_EG];
         }
       }
     }
@@ -256,8 +256,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // rook on 7th rank
       if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
       || p->Kings(op) & bb_rel_rank[sd][RANK_8]) {        // or cutting off enemy king
-         lines_mg += 16;
-         lines_eg += 32;
+         lines_mg += Par.values[RSR_MG];
+         lines_eg += Par.values[RSR_EG];
          r_on_7th++;
       }
     }
@@ -308,8 +308,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // queen on 7th rank
       if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
       ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) {       // or cutting off enemy king
-        lines_mg += 4;
-        lines_eg += 8;
+        lines_mg += Par.values[QSR_MG];
+        lines_eg += Par.values[QSR_EG];
       }
     }
   } // end of queen eval
@@ -317,8 +317,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   // Composite factors
 
   if (r_on_7th > 1) {  // two rooks on 7th rank
-    lines_mg += 8;
-    lines_eg += 16;
+    lines_mg += Par.values[RS2_MG];
+    lines_eg += Par.values[RS2_EG];
   }
 
   Add(e, sd, (Par.sd_mob[sd] * mob_mg)  / 100, (Par.sd_mob[sd] * mob_eg)  / 100);
@@ -393,7 +393,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
     // Isolated and weak pawn
 
     if (!(Mask.adjacent[File(sq)] & p->Pawns(sd)))
-      AddPawns(e, sd, Par.values[IS_MID] + Par.values[IS_OPE] * fl_unopposed, Par.values[IS_END]);
+      AddPawns(e, sd, Par.values[ISO_MG] + Par.values[ISO_OF] * fl_unopposed, Par.values[ISO_EG]);
     else if (!(Mask.supported[sd][sq] & p->Pawns(sd)))
       AddPawns(e, sd, Par.backward_malus_mg[File(sq)] + Par.values[BK_OPE] * fl_unopposed, Par.values[BK_END]);
   }

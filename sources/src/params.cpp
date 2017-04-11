@@ -29,6 +29,7 @@ void cParam::DefaultWeights(void) {
    fl_weakening = 0;
    elo = 2800;
    eval_blur = 0;
+   book_depth = 256;
 
    // Opening book
 
@@ -113,12 +114,32 @@ void cParam::DefaultWeights(void) {
 
    values[DB_MID] = -12;
    values[DB_END] = -24;
-   values[IS_MID] = -10;
-   values[IS_END] = -20;
-   values[IS_OPE] = -10;
+   values[ISO_MG] = -10;
+   values[ISO_EG] = -20;
+   values[ISO_OF] = -10;
    values[BK_MID] = -8;
    values[BK_END] = -8;
    values[BK_OPE] = -8;
+   
+   // Rook parameters
+
+   values[RSR_MG] = 16;
+   values[RSR_EG] = 32;
+   values[RS2_MG] = 8;
+   values[RS2_EG] = 16;
+   values[ROF_MG] = 14;
+   values[ROF_EG] = 14;
+   values[RGH_MG] = 7;
+   values[RGH_EG] = 7;
+   values[RBH_MG] = 5;
+   values[RBH_EG] = 5;
+   values[ROQ_MG] = 5;
+   values[ROQ_EG] = 5;
+
+   // Queen parameters
+
+   values[QSR_MG] = 4;
+   values[QSR_EG] = 8;
 
    // Specialized functions
 
@@ -251,9 +272,10 @@ void cParam::SetSpeed(int elo) {
    nps_limit = 0;
    eval_blur = 0;
 
-   if (Par.fl_weakening) {
+   if (fl_weakening) {
       nps_limit = EloToSpeed(elo);
-	  Par.eval_blur = EloToBlur(elo);
+	  eval_blur = EloToBlur(elo);
+	  book_depth = EloToBookDepth(elo);
    }
 }
 
@@ -282,8 +304,13 @@ int cParam::EloToSpeed(int elo) {
 }
 
 int cParam::EloToBlur(int elo) {
-  if (elo < 2000) return (2000 - elo) / 5;
+  if (elo < 2000) return (2000 - elo) / 4;
   return 0;
+}
+
+int cParam::EloToBookDepth(int elo) {
+  if (elo < 2000) return (elo-700) / 100;
+  return 256;
 }
 
 void cEngine::Init(int th) {

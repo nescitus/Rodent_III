@@ -19,6 +19,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // 6757 lines
 
 // b15: 37.208.595 / 30,7 / 2.809
+// tune: 0.059217
 
 #pragma once
 
@@ -27,7 +28,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #define USE_MAGIC
 #define USE_MM_POPCNT
 #define USE_FIRST_ONE_INTRINSICS
-//#define USE_TUNING // long compile time, huge file!!!
+//#define USE_TUNING // needs epd.cpp, long compile time, huge file!!!
 
 #define USE_RISKY_PARAMETER
 
@@ -406,13 +407,16 @@ struct sPawnHashEntry {
 
 enum Values {P_MID,  P_END,  N_MID,  N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END, 
 	         B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL, N_CL, 
-	         R_OP, IS_MID, IS_END, IS_OPE, BK_MID, BK_END, BK_OPE, DB_MID, DB_END, N_OF_VAL};
+	         R_OP, ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END, 
+	         ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG, 
+	         RS2_MG, RS2_EG, QSR_MG, QSR_EG, N_OF_VAL};
 
 typedef class {
 public:
   int values[N_OF_VAL];
   int use_book;
   int book_filter;
+  int book_depth;
   int elo;
   int fl_weakening;
   int shut_up;
@@ -474,6 +478,7 @@ public:
   void SetSpeed(int elo);
   int EloToSpeed(int elo);
   int EloToBlur(int elo);
+  int EloToBookDepth(int elo);
   void SetVal(int slot, int val);
 } cParam;
 
@@ -521,6 +526,7 @@ public:
   int thread_no;
   int should_clear;
   int depth_reached;
+  int moves_from_start; // to restrict book depth for weaker levels
   void ClearData(void);
   void Init(void);
 } cGlobals;
@@ -725,5 +731,6 @@ extern int tt_date;
 // TODO: no book moves in analyze mode
 // TODO: fix small bug: engine crashes on empty book file path or empty personality file path
 // TODO: minor defended by pawn and something else (to decrease the probability of getting doubled pawns)
+// TODO: rook and queen on7th rank
 
 double TexelSigmoid(int score, double k);
