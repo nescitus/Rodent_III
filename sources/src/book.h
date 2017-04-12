@@ -39,6 +39,7 @@ private:
     void ClosePolyglot(void);
     void OpenPolyglot(void);
     void ReadEntry(polyglot_move *entry, int n);
+    U64 GetPolyglotKey(POS *p);
     U64 ReadInteger(int size);
 public:
     sBook(): bookFile(NULL) {}
@@ -53,7 +54,6 @@ public:
     }
     ~sBook() { ClosePolyglot(); }
     int GetPolyglotMove(POS *p, int print_output);
-    U64 GetPolyglotKey(POS *p);
     //void Init(void);
 };
 
