@@ -335,9 +335,7 @@ void ParseSetoption(const char *ptr) {
 	Par.hist_limit = -MAX_HIST + ((MAX_HIST * Par.hist_perc) / 100);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "PersonalityFile") == 0 || strcmp(name, "personalityfile") == 0) {
-	 printf("info string reading ");
-	 printf(value);
-	 printf("\n");
+	 printf("info string reading %s\n", value);
 	 ReadPersonality(value);
   }
 }
