@@ -342,13 +342,13 @@ void sBook::OpenPolyglot(void) {
   if (bookFile != NULL) {
 
     if (fseek(bookFile, 0, SEEK_END) != 0) {
-      bookFile = NULL;
+      ClosePolyglot();
       return;
     }
 
     book_size = ftell(bookFile) / 16;
     if (book_size == 0) {
-      bookFile = NULL;
+      ClosePolyglot();
       return;
     }
   }
@@ -376,7 +376,7 @@ int sBook::GetPolyglotMove(POS *p, int print_output) {
 
   n_of_choices = 0;
 
-  if (bookFile != NULL && book_size != 0) {
+  if (bookFile != NULL) {
     srand(GetMS());
 
     for (pos = FindPos(key); pos < book_size; pos++) {
