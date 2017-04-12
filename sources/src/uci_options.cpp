@@ -299,15 +299,11 @@ void ParseSetoption(const char *ptr) {
     Glob.should_clear = 1;
   } else if (strcmp(name, "GuideBookFile") == 0     || strcmp(name, "guidebookfile") == 0)  {
     if (!Glob.separate_books || !Glob.reading_personality) {
-      GuideBook.ClosePolyglot();
       GuideBook.SetBookName( value );
-      GuideBook.OpenPolyglot();
 	}
   } else if (strcmp(name, "MainBookFile") == 0      || strcmp(name, "mainbookfile") == 0)   {
 	if (!Glob.separate_books || !Glob.reading_personality) {
-      MainBook.ClosePolyglot();
       MainBook.SetBookName( value );
-      MainBook.OpenPolyglot();
 	}
   } else if (strcmp(name, "Contempt") == 0          || strcmp(name, "contempt") == 0 )      {
     Par.draw_score = atoi(value);
