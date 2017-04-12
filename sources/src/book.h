@@ -29,28 +29,32 @@ struct polyglot_move {
 
 struct sBook {
 private:
-    int book_size;
     FILE *bookFile;
+    char bookName[256];
+    int book_size;
     int moves[100];
     int n_of_choices;
-    int IsInfrequent(int val, int max_freq);
     int FindPos(U64 key);
-    void ReadEntry(polyglot_move * entry, int n);
+    int IsInfrequent(int val, int max_freq);
+    void ClosePolyglot(void);
+    void OpenPolyglot(void);
+    void ReadEntry(polyglot_move *entry, int n);
     U64 ReadInteger(int size);
-    char bookName[256];
 public:
+    sBook(): bookFile(NULL) {}
     void SetBookName(const char *name)
     {
         int i;
         for ( i = 0; (name[i] >= 0x20) && (i < sizeof(bookName)-1); i++ )
             bookName[i] = name[i];
         bookName[i] = '\0';
+
+        OpenPolyglot();
     }
+    ~sBook() { ClosePolyglot(); }
     int GetPolyglotMove(POS *p, int print_output);
     U64 GetPolyglotKey(POS *p);
-    void OpenPolyglot(void);
-    void ClosePolyglot(void);
-    void Init(void);
+    //void Init(void);
 };
 
 extern sBook GuideBook;

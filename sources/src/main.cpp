@@ -93,12 +93,9 @@ int main() {
   ReadPersonality("basic.ini");
 #endif
 
-  GuideBook.OpenPolyglot();
-  MainBook.OpenPolyglot();
   InternalBook.Init(&p);
   UciLoop();
-  GuideBook.ClosePolyglot();
-  MainBook.ClosePolyglot();
+
   return 0;
 }
 

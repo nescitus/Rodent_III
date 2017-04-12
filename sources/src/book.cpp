@@ -335,17 +335,19 @@ U64 sBook::GetPolyglotKey(POS *p) {
 
 void sBook::OpenPolyglot(void) {
 
+  ClosePolyglot();
+
   bookFile = fopen(bookName, "rb");
 
   if (bookFile != NULL) {
 
-    if (fseek(bookFile, 0, SEEK_END) == -1) {
+    if (fseek(bookFile, 0, SEEK_END) != 0) {
       bookFile = NULL;
       return;
     }
 
     book_size = ftell(bookFile) / 16;
-    if (book_size == -1) {
+    if (book_size == 0) {
       bookFile = NULL;
       return;
     }
@@ -472,10 +474,8 @@ U64 sBook::ReadInteger(int size) {
 
   U64 n = 0;
 
-  for (int i = 0; i < size; i++) {
-    int b = fgetc(bookFile);
-    n = (n << 8) | b;
-  }
+  for (int i = 0; i < size; i++)
+    n = (n << 8) | (unsigned char)fgetc(bookFile);
 
   return n;
 }
@@ -488,11 +488,11 @@ void sBook::ClosePolyglot(void) {
   }
 }
 
-void sBook::Init(void) {
-
-  bookFile = NULL;
-  book_size = 0;
-}
+//void sBook::Init(void) {
+//
+//  bookFile = NULL;
+//  book_size = 0;
+//}
 
 int sBook::IsInfrequent(int val, int max_freq) {
 
