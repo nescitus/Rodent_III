@@ -72,6 +72,7 @@ enum eSquare {
 
 #if __cplusplus >= 201103L
     #include <cstdint>
+    #include <cinttypes>
     typedef uint64_t U64;
 #else
     typedef unsigned long long U64;
@@ -533,23 +534,48 @@ public:
 
 extern cGlobals Glob;
 
-struct sBookEntry {
-	U64 hash;
-	int move;
-	int freq;
-};
+#ifdef USEGEN
+  #define GIMMESIZE
+  #include <book_gen.h>
+  #undef GIMMESIZE
+#endif
+
+#ifdef PACKSTRUCT
+	#pragma pack(push, 1)
+	struct sBookEntry {
+		U64 hash;
+		uint16_t move;
+		int16_t freq;
+	};
+	#pragma pack(pop)
+#else
+	struct sBookEntry {
+		U64 hash;
+		int move;
+		int freq;
+	};
+#endif
 
 struct sInternalBook {
 public:
-	int n_of_choices;
 	int n_of_records;
-	int moves[100];
-	int values[100];
+
+#ifdef USEGEN
+	sBookEntry internal_book[BOOKSIZE];
+#else
 	sBookEntry internal_book[48000];
+#endif
+
+	int n_of_choices;
+	int moves[100];
+	//int values[100];
+
 	void Init(POS * p);
 	int MoveFromInternal(POS *p);
+#ifndef USEGEN
 	void MoveToInternal(U64 hashKey, int move, int val);
 	int LineToInternal(POS *p, const char *ptr, int excludedColor);
+#endif
 	void ReadInternal(POS *p);
 };
 

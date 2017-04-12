@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 
 void sInternalBook::ReadInternal(POS *p) {
-
+#ifndef USEGEN
   const char *book[] = {
 	  "b1c3? d7d5 g1f3 g8f6 d2d4 g7g6 c1f4 f8g7 e2e3 e8g8 f1e2 c7c5",
 	  "b1c3? d7d5 e2e4 c7c6 d2d4 d5e4 c3e4 b8d7 e4g5 g8f6 f1d3 e7e6",
@@ -3235,9 +3235,36 @@ void sInternalBook::ReadInternal(POS *p) {
   for (int i = 0; book[i]; ++i) {
     if (LineToInternal(p, book[i], NO_CL)) { printf("Guide book error: "); printf(book[i]); printf("\n"); };
   }
+#endif
+
   printf("%d moves loaded\n", n_of_records);
+
+#ifdef BOOKGEN
+  FILE *f = fopen( "book_gen.h", "w" );
+
+  fprintf( f, "#ifndef GIMMESIZE\n"
+			  "sInternalBook InternalBook = {\n"
+              "%d,\n"
+			  "{\n",
+			  n_of_records );
+
+  bool usei16 = true;
+  for ( int i = 0; i < n_of_records; i++ )
+  {
+	fprintf( f, "{0x%016" PRIx64 ", %5d, %4d}%s", internal_book[i].hash, internal_book[i].move, internal_book[i].freq, 
+						i == n_of_records-1 ? "" : ((i+1) % 3 == 0 ? ",\n" : ", "));
+
+	if ( internal_book[i].move > UINT16_MAX || internal_book[i].freq < INT16_MIN || internal_book[i].freq > INT16_MAX )
+		usei16 = false;
+  }
+
+  fprintf( f, "\n}\n};\n#else\n#define BOOKSIZE %d\n%s\n", n_of_records, usei16 ? "#define PACKSTRUCT\n#endif" : "#endif" );
+
+  fclose( f );
+#endif
 }
 
+#ifndef USEGEN
 int sInternalBook::LineToInternal(POS *p, const char *ptr, int excludedColor) {
 
   char token[512];
@@ -3296,6 +3323,7 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
   internal_book[n_of_records].freq = val;
   n_of_records++;
 }
+#endif
 
 int sInternalBook::MoveFromInternal(POS *p) {
 

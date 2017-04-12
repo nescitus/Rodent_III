@@ -29,7 +29,13 @@ cMask Mask;
 cDistance Dist;
 sBook GuideBook;
 sBook MainBook;
+
+#ifndef USEGEN
 sInternalBook InternalBook;
+#else
+  #include <book_gen.h>
+#endif
+
 
 int main() {
 
