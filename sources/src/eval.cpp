@@ -92,8 +92,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 3 * Dist.bonus[sq][king_sq];          // king tropism (based on Gambit Fruit)
-    tropism_eg += 3 * Dist.bonus[sq][king_sq];
+    // knight tropism to enemy king (based on Gambit Fruit)
+
+    tropism_mg += Par.values[NTR_MG] * Dist.bonus[sq][king_sq];
+    tropism_eg += Par.values[NTR_EG] * Dist.bonus[sq][king_sq];
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 1;
@@ -132,8 +134,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 2 * Dist.bonus[sq][king_sq];          // king tropism (based on Gambit Fruit)
-    tropism_eg += 1 * Dist.bonus[sq][king_sq];
+    // bishop tropism  to enemy king (based on Gambit Fruit)
+
+    tropism_mg += Par.values[BTR_MG] * Dist.bonus[sq][king_sq];
+    tropism_eg += Par.values[BTR_EG] * Dist.bonus[sq][king_sq];
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 1;
@@ -190,8 +194,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 2 * Dist.bonus[sq][king_sq];          // king tropism (based on Gambit Fruit)
-    tropism_eg += 1 * Dist.bonus[sq][king_sq];
+    // rook tropism to enemy king (based on Gambit Fruit)
+
+    tropism_mg += Par.values[RTR_MG] * Dist.bonus[sq][king_sq];
+    tropism_eg += Par.values[RTR_EG] * Dist.bonus[sq][king_sq];
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 2;
@@ -269,8 +275,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
   while (bb_pieces) {
     sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    tropism_mg += 2 * Dist.bonus[sq][king_sq];          // king tropism (based on Gambit Fruit)
-    tropism_eg += 4 * Dist.bonus[sq][king_sq];                
+    // queen tropism to enemy king (based on Gambit Fruit)
+
+    tropism_mg += Par.values[QTR_MG] * Dist.bonus[sq][king_sq];
+    tropism_eg += Par.values[QTR_EG] * Dist.bonus[sq][king_sq];          
 
     if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
       fwd_weight += 4;

@@ -406,11 +406,15 @@ struct sPawnHashEntry {
   int eg_pawns;
 };
 
-enum Values {P_MID,  P_END,  N_MID,  N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END, 
-	         B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL, N_CL, 
-	         R_OP, ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END, 
-	         ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG, 
-	         RS2_MG, RS2_EG, QSR_MG, QSR_EG, N_OF_VAL};
+enum Values {
+	P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,
+	B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,
+	NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,
+	N_CL, R_OP,
+	ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,
+	ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,
+	RS2_MG, RS2_EG, QSR_MG, QSR_EG, N_OF_VAL
+};
 
 typedef class {
 public:

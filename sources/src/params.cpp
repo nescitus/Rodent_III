@@ -78,6 +78,17 @@ void cParam::DefaultWeights(void) {
    values[N_CL]  = 7;
    values[R_OP]  = 3;
 
+   // King tropism
+
+   values[NTR_MG] = 3;
+   values[NTR_EG] = 3;
+   values[BTR_MG] = 2;
+   values[BTR_EG] = 1;
+   values[RTR_MG] = 2;
+   values[RTR_EG] = 1;
+   values[QTR_MG] = 2;
+   values[QTR_EG] = 4;
+
    // Varia
 
    mat_weight = 100;
