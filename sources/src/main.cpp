@@ -20,9 +20,11 @@ If not, see <http://www.gnu.org/licenses/>.
 
 cGlobals Glob;
 cEngine Engine1;
+#ifdef USE_THREADS
 cEngine Engine2;
 cEngine Engine3;
 cEngine Engine4;
+#endif
 cBitBoard BB;
 cParam Par;
 cMask Mask;
@@ -52,9 +54,11 @@ int main() {
   Mask.Init();
   Dist.Init();
   Engine1.Init(0);
+#ifdef USE_THREADS
   Engine2.Init(1);
   Engine3.Init(2);
   Engine4.Init(3);
+#endif
 
 #if defined(_WIN32) || defined(_WIN64)
   // if we are on Windows search for books and settings in same directory as rodentII.exe
@@ -65,25 +69,14 @@ int main() {
   // if we are on Linux
   // first check, if compiler got told where books and settings are stored
 #ifdef BOOKPATH
-  char path[255]; // space for complete path and filename
-  char nameMainbook[20] = "/rodent.bin";
-  char nameGuidebook[20]= "/guide.bin";
-  char namePersonality[20]= "/basic.ini";
+  #define MAKESTR(x) #x
   // process Mainbook
-  strcpy(path, ""); // first clear
-  strcpy(path, STR(BOOKPATH)); // copy path from c preprocessor here
-  strcat(path, nameMainbook); // append bookname
-  MainBook.SetBookName( path ); // store it
+  MainBook.SetBookName( MAKESTR(BOOKPATH) "/rodent.bin" ); // store it
   // process Guidebook
-  strcpy(path, "");
-  strcpy(path, STR(BOOKPATH));
-  strcat(path, nameGuidebook);
-  GuideBook.SetBookName( nameGuidebook );
+  GuideBook.SetBookName( MAKESTR(BOOKPATH) "/guide.bin" );
   // process Personality file
-  strcpy(path, "");
-  strcpy(path, STR(BOOKPATH));
-  strcat(path, namePersonality);
-  ReadPersonality(path);
+  ReadPersonality( MAKESTR(BOOKPATH) "/basic.ini" );
+  #undef MAKESTR
 #else // if no path was given than we assume that files are stored at /usr/share/rodentII
   MainBook.SetBookName( "/usr/share/rodentII/rodent.bin" );
   GuideBook.SetBookName( "/usr/share/rodentII/guide.bin" );

@@ -3237,7 +3237,7 @@ void sInternalBook::ReadInternal(POS *p) {
   }
 #endif
 
-  printf("%d moves loaded\n", n_of_records);
+  printf("info string %d moves loaded from the internal book\n", n_of_records);
 
 #ifdef BOOKGEN
   FILE *f = fopen( "book_gen.h", "w" );

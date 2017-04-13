@@ -101,7 +101,7 @@ void PrintUciOptions(void) {
 
 void ParseSetoption(const char *ptr) {
 
-  char token[80], name[80], value[80];
+  char token[160], name[80], value[160];
   int val;
 
   ptr = ParseToken(ptr, token);
@@ -331,7 +331,6 @@ void ParseSetoption(const char *ptr) {
 	Par.hist_limit = -MAX_HIST + ((MAX_HIST * Par.hist_perc) / 100);
 	Glob.should_clear = 1;
   } else if (strcmp(name, "PersonalityFile") == 0 || strcmp(name, "personalityfile") == 0) {
-	 printf("info string reading %s\n", value);
 	 ReadPersonality(value);
   }
 }
@@ -346,13 +345,14 @@ void SetPieceValue(int pc, int val, int slot) { // to preserve personalities wit
 
 void ReadPersonality(const char *fileName) {
 
-  FILE *personalityFile;
   char line[256];
   char token[180]; const char *ptr;
+  FILE *personalityFile = fopen(fileName, "r");
+
+  printf("info string reading \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 
   // exit if this personality file doesn't exist
-
-  if ((personalityFile = fopen(fileName, "r")) == NULL)
+  if (personalityFile == NULL)
     return;
 
   // set flag in case we want to disable some options while reading
