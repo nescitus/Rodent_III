@@ -20,9 +20,11 @@ If not, see <http://www.gnu.org/licenses/>.
 
 cGlobals Glob;
 cEngine Engine1;
+#ifdef USE_THREADS
 cEngine Engine2;
 cEngine Engine3;
 cEngine Engine4;
+#endif
 cBitBoard BB;
 cParam Par;
 cMask Mask;
@@ -52,9 +54,11 @@ int main() {
   Mask.Init();
   Dist.Init();
   Engine1.Init(0);
+#ifdef USE_THREADS
   Engine2.Init(1);
   Engine3.Init(2);
   Engine4.Init(3);
+#endif
 
 #if defined(_WIN32) || defined(_WIN64)
   // if we are on Windows search for books and settings in same directory as rodentII.exe
