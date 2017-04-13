@@ -349,7 +349,7 @@ void ReadPersonality(const char *fileName) {
   char token[180]; const char *ptr;
   FILE *personalityFile = fopen(fileName, "r");
 
-  printf("info string reading %s (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
+  printf("info string reading \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 
   // exit if this personality file doesn't exist
   if (personalityFile == NULL)

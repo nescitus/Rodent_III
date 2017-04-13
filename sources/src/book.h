@@ -51,6 +51,8 @@ public:
         bookName[i] = '\0';
 
         OpenPolyglot();
+
+        printf("info string opening book file \'%s\' (%s)\n", bookName, bookFile == NULL ? "failure" : "success");
     }
     ~sBook() { ClosePolyglot(); }
     int GetPolyglotMove(POS *p, int print_output);
