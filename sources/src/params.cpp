@@ -95,7 +95,7 @@ void cParam::DefaultWeights(void) {
    pst_weight = 80;
    pst_style = 0;
    mob_style = 0;         // 1 is only marginally behind
-   protecting_bishop = 0; // flavour option
+   values[B_FIANCH] = 0;  // flavour option
 #ifdef USE_RISKY_PARAMETER
    riskydepth = 0;
 #endif
@@ -291,15 +291,6 @@ void cParam::SetSpeed(int elo) {
 }
 
 int cParam::EloToSpeed(int elo) {
-
-  if (elo >= 1800) {
-    int mul = (elo - 1600) / 2;
-	return (10 * mul);
-  }
-
-  if (elo >= 1000) {
-    return 50 + (80 * (elo - 1000) / 100);
-  }
 
   int result = 300 + (int) pow((double)2, (elo - 799) / 85);
   result *= 0.23;
