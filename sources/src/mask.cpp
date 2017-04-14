@@ -19,64 +19,64 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void cMask::Init(void) {
 
-  // Kingside/queenside
-  
-  k_side = FILE_F_BB | FILE_G_BB | FILE_H_BB;
-  q_side = FILE_A_BB | FILE_B_BB | FILE_C_BB;
+    // Kingside/queenside
 
-  // Own/enemy half of the board
+    k_side = FILE_F_BB | FILE_G_BB | FILE_H_BB;
+    q_side = FILE_A_BB | FILE_B_BB | FILE_C_BB;
 
-  home[WC] = RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB;
-  home[BC] = RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB;
-  away[WC] = RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB;
-  away[BC] = RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB;
+    // Own/enemy half of the board
 
-  // Castling zones
+    home[WC] = RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB;
+    home[BC] = RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB;
+    away[WC] = RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB;
+    away[BC] = RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB;
 
-  qs_castle[WC] = SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2);
-  qs_castle[BC] = SqBb(A8) | SqBb(B8) | SqBb(C8) | SqBb(A7) | SqBb(B7) | SqBb(C7);
-  ks_castle[WC] = SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | SqBb(G2) | SqBb(H2);
-  ks_castle[BC] = SqBb(F8) | SqBb(G8) | SqBb(H8) | SqBb(F7) | SqBb(G7) | SqBb(H7);
+    // Castling zones
 
-  // Adjacent files (for isolated pawn detection)
+    qs_castle[WC] = SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2);
+    qs_castle[BC] = SqBb(A8) | SqBb(B8) | SqBb(C8) | SqBb(A7) | SqBb(B7) | SqBb(C7);
+    ks_castle[WC] = SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | SqBb(G2) | SqBb(H2);
+    ks_castle[BC] = SqBb(F8) | SqBb(G8) | SqBb(H8) | SqBb(F7) | SqBb(G7) | SqBb(H7);
 
-  for (int col = 0; col < 8; col++) {
-    adjacent[col] = 0;
-    if (col > 0) adjacent[col] |= FILE_A_BB << (col - 1);
-    if (col < 7) adjacent[col] |= FILE_A_BB << (col + 1);
-  }
+    // Adjacent files (for isolated pawn detection)
 
-  // Supported mask (for weak pawns detection)
+    for (int col = 0; col < 8; col++) {
+        adjacent[col] = 0;
+        if (col > 0) adjacent[col] |= FILE_A_BB << (col - 1);
+        if (col < 7) adjacent[col] |= FILE_A_BB << (col + 1);
+    }
 
-  for (int sq = 0; sq < 64; sq++) {
-    supported[WC][sq] = BB.ShiftSideways(SqBb(sq));
-    supported[WC][sq] |= BB.FillSouth(supported[WC][sq]);
+    // Supported mask (for weak pawns detection)
 
-    supported[BC][sq] = BB.ShiftSideways(SqBb(sq));
-    supported[BC][sq] |= BB.FillNorth(supported[BC][sq]);
-  }
+    for (int sq = 0; sq < 64; sq++) {
+        supported[WC][sq] = BB.ShiftSideways(SqBb(sq));
+        supported[WC][sq] |= BB.FillSouth(supported[WC][sq]);
 
-  // Init mask for passed pawn detection
+        supported[BC][sq] = BB.ShiftSideways(SqBb(sq));
+        supported[BC][sq] |= BB.FillNorth(supported[BC][sq]);
+    }
 
-  for (int sq = 0; sq < 64; sq++) {
-    passed[WC][sq] = BB.FillNorthExcl(SqBb(sq));
-    passed[WC][sq] |= BB.ShiftSideways(passed[WC][sq]);
-    passed[BC][sq] = BB.FillSouthExcl(SqBb(sq));
-    passed[BC][sq] |= BB.ShiftSideways(passed[BC][sq]);
-  }
+    // Init mask for passed pawn detection
 
-  // Mask of squares with positive outpost score
+    for (int sq = 0; sq < 64; sq++) {
+        passed[WC][sq] = BB.FillNorthExcl(SqBb(sq));
+        passed[WC][sq] |= BB.ShiftSideways(passed[WC][sq]);
+        passed[BC][sq] = BB.FillSouthExcl(SqBb(sq));
+        passed[BC][sq] |= BB.ShiftSideways(passed[BC][sq]);
+    }
 
-  outpost_map[WC] = bb_rel_rank[WC][RANK_4] | bb_rel_rank[WC][RANK_5] | bb_rel_rank[WC][RANK_6];
-  outpost_map[BC] = bb_rel_rank[BC][RANK_4] | bb_rel_rank[BC][RANK_5] | bb_rel_rank[BC][RANK_6];
-  outpost_map[WC] = outpost_map[WC] & bbNotA;
-  outpost_map[WC] = outpost_map[WC] & bbNotH;
-  outpost_map[BC] = outpost_map[WC] & bbNotA;
-  outpost_map[BC] = outpost_map[WC] & bbNotH;
+    // Mask of squares with positive outpost score
 
-  // Squares requiring bishop pattern evaluation
+    outpost_map[WC] = bb_rel_rank[WC][RANK_4] | bb_rel_rank[WC][RANK_5] | bb_rel_rank[WC][RANK_6];
+    outpost_map[BC] = bb_rel_rank[BC][RANK_4] | bb_rel_rank[BC][RANK_5] | bb_rel_rank[BC][RANK_6];
+    outpost_map[WC] = outpost_map[WC] & bbNotA;
+    outpost_map[WC] = outpost_map[WC] & bbNotH;
+    outpost_map[BC] = outpost_map[WC] & bbNotA;
+    outpost_map[BC] = outpost_map[WC] & bbNotH;
 
-  wb_special = SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2);
-  bb_special = SqBb(A2) | SqBb(A3) | SqBb(B1) | SqBb(H2) | SqBb(H3) | SqBb(G1) | SqBb(C8) | SqBb(F8) | SqBb(G7) | SqBb(B7);
+    // Squares requiring bishop pattern evaluation
+
+    wb_special = SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2);
+    bb_special = SqBb(A2) | SqBb(A3) | SqBb(B1) | SqBb(H2) | SqBb(H3) | SqBb(G1) | SqBb(C8) | SqBb(F8) | SqBb(G7) | SqBb(B7);
 
 }

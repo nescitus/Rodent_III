@@ -22,565 +22,565 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void cEngine::ClearAll(void) {
 
-  ClearPawnHash();
-  ClearEvalHash();
-  ClearHist();
+    ClearPawnHash();
+    ClearEvalHash();
+    ClearHist();
 }
 
 void cEngine::ClearEvalHash(void) {
 
-  for (int e = 0; e < EVAL_HASH_SIZE; e++) {
-    EvalTT[e].key = 0;
-    EvalTT[e].score = 0;
-  }
+    for (int e = 0; e < EVAL_HASH_SIZE; e++) {
+        EvalTT[e].key = 0;
+        EvalTT[e].score = 0;
+    }
 }
 
-void cEngine::EvaluateMaterial(POS * p, eData *e, int sd) {
+void cEngine::EvaluateMaterial(POS *p, eData *e, int sd) {
 
-  int op = Opp(sd);
+    int op = Opp(sd);
 
-  int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]   // knights lose value as pawns disappear
-          - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];  // rooks gain value as pawns disappear
+    int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]   // knights lose value as pawns disappear
+              - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];  // rooks gain value as pawns disappear
 
-  if (p->cnt[sd][N] > 1) tmp += Par.values[N_PAIR];       // knight pair
-  if (p->cnt[sd][R] > 1) tmp += Par.values[R_PAIR];       // rook pair
-  if (p->cnt[sd][B] > 1) tmp += Par.values[B_PAIR];       // bishop pair
-    
-  // "elephantiasis correction" for queen, idea by H.G.Mueller (nb. rookVsQueen doesn't help)
+    if (p->cnt[sd][N] > 1) tmp += Par.values[N_PAIR];       // knight pair
+    if (p->cnt[sd][R] > 1) tmp += Par.values[R_PAIR];       // rook pair
+    if (p->cnt[sd][B] > 1) tmp += Par.values[B_PAIR];       // bishop pair
 
-  if (p->cnt[sd][Q])
-    tmp -= Par.values[ELEPH] * (p->cnt[op][N] + p->cnt[op][B]);
+    // "elephantiasis correction" for queen, idea by H.G.Mueller (nb. rookVsQueen doesn't help)
 
-  Add(e, sd, tmp);
+    if (p->cnt[sd][Q])
+        tmp -= Par.values[ELEPH] * (p->cnt[op][N] + p->cnt[op][B]);
+
+    Add(e, sd, tmp);
 }
 
 void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
-  U64 bb_pieces, bb_attack, bb_control, bb_possible, bb_contact, bb_zone, bb_file;
-  int sq, cnt, own_p_cnt, opp_p_cnt;
-  int r_on_7th = 0;
-  int mob_mg = 0;
-  int mob_eg = 0;
-  int tropism_mg = 0;
-  int tropism_eg = 0;
-  int lines_mg = 0;
-  int lines_eg = 0;
-  int fwd_weight = 0;
-  int fwd_cnt = 0;
-  int outpost = 0;
-  int att = 0;
-  int wood = 0;
+    U64 bb_pieces, bb_attack, bb_control, bb_possible, bb_contact, bb_zone, bb_file;
+    int sq, cnt, own_p_cnt, opp_p_cnt;
+    int r_on_7th = 0;
+    int mob_mg = 0;
+    int mob_eg = 0;
+    int tropism_mg = 0;
+    int tropism_eg = 0;
+    int lines_mg = 0;
+    int lines_eg = 0;
+    int fwd_weight = 0;
+    int fwd_cnt = 0;
+    int outpost = 0;
+    int att = 0;
+    int wood = 0;
 
-  // Init king attack zone
+    // Init king attack zone
 
-  int op = Opp(sd);
-  int king_sq = KingSq(p, op);
-  bb_zone = BB.KingAttacks(king_sq);
-  bb_zone |= BB.ShiftFwd(bb_zone, op);
+    int op = Opp(sd);
+    int king_sq = KingSq(p, op);
+    bb_zone = BB.KingAttacks(king_sq);
+    bb_zone |= BB.ShiftFwd(bb_zone, op);
 
-  // Init helper bitboards
+    // Init helper bitboards
 
-  U64 n_checks = BB.KnightAttacks(king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
-  U64 b_checks = BB.BishAttacks(OccBb(p), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
-  U64 r_checks = BB.RookAttacks(OccBb(p), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
-  U64 q_checks = r_checks & b_checks;
-  U64 bb_excluded = p->Pawns(sd);
+    U64 n_checks = BB.KnightAttacks(king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
+    U64 b_checks = BB.BishAttacks(OccBb(p), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
+    U64 r_checks = BB.RookAttacks(OccBb(p), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
+    U64 q_checks = r_checks & b_checks;
+    U64 bb_excluded = p->Pawns(sd);
 
-  // Knight eval
+    // Knight eval
 
-  bb_pieces = p->Knights(sd);
-  while (bb_pieces) {
-    sq = BB.PopFirstBit(&bb_pieces);                    // get square
+    bb_pieces = p->Knights(sd);
+    while (bb_pieces) {
+        sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-    // knight tropism to enemy king (based on Gambit Fruit)
+        // knight tropism to enemy king (based on Gambit Fruit)
 
-    tropism_mg += Par.values[NTR_MG] * Dist.bonus[sq][king_sq];
-    tropism_eg += Par.values[NTR_EG] * Dist.bonus[sq][king_sq];
+        tropism_mg += Par.values[NTR_MG] * Dist.bonus[sq][king_sq];
+        tropism_eg += Par.values[NTR_EG] * Dist.bonus[sq][king_sq];
 
-    if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
-      fwd_weight += 1;
-      fwd_cnt += 1;
-    }
-
-    bb_control = BB.KnightAttacks(sq) & ~p->cl_bb[sd];  // get control bitboard
-    if (!(bb_control  &~e->p_takes[op] & Mask.away[sd]))// we do not attack enemy half of the board
-      Add(e, sd, -5);
-    e->all_att[sd] |= BB.KnightAttacks(sq);
-    e->ev_att[sd]  |= bb_control;
-    if (bb_control & n_checks) att += 4;                // check threats
-
-	bb_possible = bb_control &~e->p_takes[op];          // reachable outposts
-	bb_possible &= ~e->p_can_take[op];
-	bb_possible &= Mask.outpost_map[sd];
-	if (bb_possible) Add(e, sd, 2);
-
-    bb_attack = BB.KnightAttacks(sd);
-    if (bb_attack & bb_zone) {                          // king attack
-      wood++;
-      att += 6 * BB.PopCnt(bb_attack & (bb_zone &~e->p_takes[op]));
-	  att += 2 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
-    }
-
-    cnt = BB.PopCnt(bb_control &~e->p_takes[op]);       // get mobility count
-    mob_mg += Par.n_mob_mg[cnt];
-    mob_eg += Par.n_mob_eg[cnt];
-
-    EvaluateOutpost(p, e, sd, N, sq, &outpost);         // outpost
-  }
-
-  // Bishop eval
-
-  bb_pieces = p->Bishops(sd);
-  while (bb_pieces) {
-    sq = BB.PopFirstBit(&bb_pieces);                    // get square
-
-    // bishop tropism  to enemy king (based on Gambit Fruit)
-
-    tropism_mg += Par.values[BTR_MG] * Dist.bonus[sq][king_sq];
-    tropism_eg += Par.values[BTR_EG] * Dist.bonus[sq][king_sq];
-
-    if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
-      fwd_weight += 1;
-      fwd_cnt += 1;
-    }
-
-    bb_control = BB.BishAttacks(OccBb(p), sq);          // get control bitboard
-    e->all_att[sd] |= bb_control;                       // update attack map
-    e->ev_att[sd]  |= bb_control;
-    if (!(bb_control & Mask.away[sd] )) Add(e, sd, -5); // we do not attack enemy half of the board
-    if (bb_control & b_checks) att += 4;                // check threats
-    bb_attack = BB.BishAttacks(OccBb(p) ^ p->Queens(sd), sq);  // get king attack bitboard
-
-    if (bb_attack & bb_zone) {                          // evaluate king attacks
-      wood++;
-      att += 6 * BB.PopCnt(bb_attack & (bb_zone &~e->p_takes[op]));
-	  att += 2 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
-    }
-
-    cnt = BB.PopCnt(bb_control &~e->p_takes[op] & ~bb_excluded);  // get mobility count
-    mob_mg += Par.b_mob_mg[cnt];
-    mob_eg += Par.b_mob_eg[cnt];
-
-	bb_possible = bb_control &~e->p_takes[op];          // reachable outposts
-	bb_possible &= ~e->p_can_take[op];
-	bb_possible &= Mask.outpost_map[sd];
-	if (bb_possible) Add(e, sd, 2);
-
-    EvaluateOutpost(p, e, sd, B, sq, &outpost);         // outpost
-
-    // Bishops side by side
-
-    if (ShiftNorth(SqBb(sq)) & p->Bishops(sd))
-      Add(e, sd, 4);
-    if (ShiftEast(SqBb(sq)) & p->Bishops(sd))
-      Add(e, sd, 4);
-
-    // Pawns on the same square color as our bishop
-
-    if (bbWhiteSq & SqBb(sq)) {
-      own_p_cnt = BB.PopCnt(bbWhiteSq & p->Pawns(sd)) - 4;
-      opp_p_cnt = BB.PopCnt(bbWhiteSq & p->Pawns(op)) - 4;
-    } else {
-      own_p_cnt = BB.PopCnt(bbBlackSq & p->Pawns(sd)) - 4;
-      opp_p_cnt = BB.PopCnt(bbBlackSq & p->Pawns(op)) - 4;
-    }
-
-    Add(e, sd, -3 * own_p_cnt - opp_p_cnt);
-  }
-
-  // Rook eval
-
-  bb_pieces = p->Rooks(sd);
-  while (bb_pieces) {
-    sq = BB.PopFirstBit(&bb_pieces);                    // get square
-
-    // rook tropism to enemy king (based on Gambit Fruit)
-
-    tropism_mg += Par.values[RTR_MG] * Dist.bonus[sq][king_sq];
-    tropism_eg += Par.values[RTR_EG] * Dist.bonus[sq][king_sq];
-
-    if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
-      fwd_weight += 2;
-      fwd_cnt += 1;
-    }
-
-    bb_control = BB.RookAttacks(OccBb(p), sq);          // get control bitboard
-    e->all_att[sd] |= bb_control;                       // update attack map
-    e->ev_att[sd] |= bb_control;
-
-    if ((bb_control & ~p->cl_bb[sd] & r_checks)
-    && p->Queens(sd)) {
-      att += 9;                                         // check threat bonus
-      bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
-
-      while (bb_contact) {
-        int contactSq = BB.PopFirstBit(&bb_contact);    // find a potential contact check
-        if (Swap(p, sq, contactSq) >= 0) {              // rook exchanges are also accepted
-          att += 24;
-          break;
+        if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
+            fwd_weight += 1;
+            fwd_cnt += 1;
         }
-      }
-    }
 
-    bb_attack = BB.RookAttacks(OccBb(p) ^ p->StraightMovers(sd), sq);  // get king attack bitboard
+        bb_control = BB.KnightAttacks(sq) & ~p->cl_bb[sd];  // get control bitboard
+        if (!(bb_control  & ~e->p_takes[op] & Mask.away[sd])) // we do not attack enemy half of the board
+            Add(e, sd, -5);
+        e->all_att[sd] |= BB.KnightAttacks(sq);
+        e->ev_att[sd]  |= bb_control;
+        if (bb_control & n_checks) att += 4;                // check threats
 
-    if (bb_attack & bb_zone) {                          // evaluate king attacks
-      wood++;
-      att += 9 * BB.PopCnt(bb_attack & (bb_zone &~e->p_takes[op]));
-	  att += 3 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
-    }
+        bb_possible = bb_control & ~e->p_takes[op];         // reachable outposts
+        bb_possible &= ~e->p_can_take[op];
+        bb_possible &= Mask.outpost_map[sd];
+        if (bb_possible) Add(e, sd, 2);
 
-    cnt = BB.PopCnt(bb_control & ~bb_excluded);         // get mobility count
-    mob_mg += Par.r_mob_mg[cnt];
-    mob_eg += Par.r_mob_eg[cnt];
-                                                        // FILE EVALUATION:
-
-    bb_file = BB.FillNorth(SqBb(sq)) | BB.FillSouth(SqBb(sq));   // get file
-
-    if (bb_file & p->Queens(op)) {                      // enemy queen on rook's file
-      lines_mg += Par.values[ROQ_MG];
-      lines_eg += Par.values[ROQ_EG];
-    }
-
-    if (!(bb_file & p->Pawns(sd))) {                    // no own pawns on that file
-      if (!(bb_file & p->Pawns(op))) {
-        lines_mg += Par.values[ROF_MG];
-        lines_eg += Par.values[ROF_EG];
-      } else {                                          // half-open file...
-        if (bb_file & (p->Pawns(op) & e->p_takes[op])) {// ...with defended enemy pawn
-          lines_mg += Par.values[RBH_MG];
-          lines_eg += Par.values[RBH_EG];
-        } else {                                        // ...with undefended enemy pawn
-          lines_mg += Par.values[RGH_MG];
-          lines_eg += Par.values[RGH_EG];
+        bb_attack = BB.KnightAttacks(sd);
+        if (bb_attack & bb_zone) {                          // king attack
+            wood++;
+            att += 6 * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            att += 2 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
-      }
+
+        cnt = BB.PopCnt(bb_control & ~e->p_takes[op]);      // get mobility count
+        mob_mg += Par.n_mob_mg[cnt];
+        mob_eg += Par.n_mob_eg[cnt];
+
+        EvaluateOutpost(p, e, sd, N, sq, &outpost);         // outpost
     }
 
-    // Rook on the 7th rank attacking pawns or cutting off enemy king
+    // Bishop eval
 
-    if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // rook on 7th rank
-      if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
-      || p->Kings(op) & bb_rel_rank[sd][RANK_8]) {        // or cutting off enemy king
-         lines_mg += Par.values[RSR_MG];
-         lines_eg += Par.values[RSR_EG];
-         r_on_7th++;
-      }
-    }
-  }
+    bb_pieces = p->Bishops(sd);
+    while (bb_pieces) {
+        sq = BB.PopFirstBit(&bb_pieces);                    // get square
 
-  // Queen eval
+        // bishop tropism  to enemy king (based on Gambit Fruit)
 
-  bb_pieces = p->Queens(sd);
-  while (bb_pieces) {
-    sq = BB.PopFirstBit(&bb_pieces);                    // get square
+        tropism_mg += Par.values[BTR_MG] * Dist.bonus[sq][king_sq];
+        tropism_eg += Par.values[BTR_EG] * Dist.bonus[sq][king_sq];
 
-    // queen tropism to enemy king (based on Gambit Fruit)
-
-    tropism_mg += Par.values[QTR_MG] * Dist.bonus[sq][king_sq];
-    tropism_eg += Par.values[QTR_EG] * Dist.bonus[sq][king_sq];          
-
-    if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
-      fwd_weight += 4;
-      fwd_cnt += 1;
-    }
-
-    bb_control = BB.QueenAttacks(OccBb(p), sq);         // get control bitboard
-    e->all_att[sd] |= bb_control;                       // update attack map
-    if (bb_control & q_checks) {                        // check threat bonus
-      att += 12;
-
-      bb_contact = bb_control & BB.KingAttacks(king_sq);// queen contact checks
-      while (bb_contact) {
-        int contactSq = BB.PopFirstBit(&bb_contact);    // find potential contact check square 
-        if (Swap(p, sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate
-          att += 36;
-          break;
+        if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
+            fwd_weight += 1;
+            fwd_cnt += 1;
         }
-      }
+
+        bb_control = BB.BishAttacks(OccBb(p), sq);          // get control bitboard
+        e->all_att[sd] |= bb_control;                       // update attack map
+        e->ev_att[sd]  |= bb_control;
+        if (!(bb_control & Mask.away[sd])) Add(e, sd, -5);  // we do not attack enemy half of the board
+        if (bb_control & b_checks) att += 4;                // check threats
+        bb_attack = BB.BishAttacks(OccBb(p) ^ p->Queens(sd), sq);  // get king attack bitboard
+
+        if (bb_attack & bb_zone) {                          // evaluate king attacks
+            wood++;
+            att += 6 * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            att += 2 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+        }
+
+        cnt = BB.PopCnt(bb_control & ~e->p_takes[op] & ~bb_excluded); // get mobility count
+        mob_mg += Par.b_mob_mg[cnt];
+        mob_eg += Par.b_mob_eg[cnt];
+
+        bb_possible = bb_control & ~e->p_takes[op];         // reachable outposts
+        bb_possible &= ~e->p_can_take[op];
+        bb_possible &= Mask.outpost_map[sd];
+        if (bb_possible) Add(e, sd, 2);
+
+        EvaluateOutpost(p, e, sd, B, sq, &outpost);         // outpost
+
+        // Bishops side by side
+
+        if (ShiftNorth(SqBb(sq)) & p->Bishops(sd))
+            Add(e, sd, 4);
+        if (ShiftEast(SqBb(sq)) & p->Bishops(sd))
+            Add(e, sd, 4);
+
+        // Pawns on the same square color as our bishop
+
+        if (bbWhiteSq & SqBb(sq)) {
+            own_p_cnt = BB.PopCnt(bbWhiteSq & p->Pawns(sd)) - 4;
+            opp_p_cnt = BB.PopCnt(bbWhiteSq & p->Pawns(op)) - 4;
+        } else {
+            own_p_cnt = BB.PopCnt(bbBlackSq & p->Pawns(sd)) - 4;
+            opp_p_cnt = BB.PopCnt(bbBlackSq & p->Pawns(op)) - 4;
+        }
+
+        Add(e, sd, -3 * own_p_cnt - opp_p_cnt);
     }
 
-    bb_attack  = BB.BishAttacks(OccBb(p) ^ p->DiagMovers(sd), sq);
-    bb_attack |= BB.RookAttacks(OccBb(p) ^ p->StraightMovers(sd), sq);
+    // Rook eval
 
-    if (bb_attack & bb_zone) {                          // evaluate king attacks
-      wood++;
-      att += 15 * BB.PopCnt(bb_attack & (bb_zone &~e->p_takes[op]));
-	  att +=  5 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+    bb_pieces = p->Rooks(sd);
+    while (bb_pieces) {
+        sq = BB.PopFirstBit(&bb_pieces);                    // get square
+
+        // rook tropism to enemy king (based on Gambit Fruit)
+
+        tropism_mg += Par.values[RTR_MG] * Dist.bonus[sq][king_sq];
+        tropism_eg += Par.values[RTR_EG] * Dist.bonus[sq][king_sq];
+
+        if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
+            fwd_weight += 2;
+            fwd_cnt += 1;
+        }
+
+        bb_control = BB.RookAttacks(OccBb(p), sq);          // get control bitboard
+        e->all_att[sd] |= bb_control;                       // update attack map
+        e->ev_att[sd] |= bb_control;
+
+        if ((bb_control & ~p->cl_bb[sd] & r_checks)
+                && p->Queens(sd)) {
+            att += 9;                                         // check threat bonus
+            bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
+
+            while (bb_contact) {
+                int contactSq = BB.PopFirstBit(&bb_contact);    // find a potential contact check
+                if (Swap(p, sq, contactSq) >= 0) {              // rook exchanges are also accepted
+                    att += 24;
+                    break;
+                }
+            }
+        }
+
+        bb_attack = BB.RookAttacks(OccBb(p) ^ p->StraightMovers(sd), sq);  // get king attack bitboard
+
+        if (bb_attack & bb_zone) {                          // evaluate king attacks
+            wood++;
+            att += 9 * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            att += 3 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+        }
+
+        cnt = BB.PopCnt(bb_control & ~bb_excluded);         // get mobility count
+        mob_mg += Par.r_mob_mg[cnt];
+        mob_eg += Par.r_mob_eg[cnt];
+        // FILE EVALUATION:
+
+        bb_file = BB.FillNorth(SqBb(sq)) | BB.FillSouth(SqBb(sq));   // get file
+
+        if (bb_file & p->Queens(op)) {                      // enemy queen on rook's file
+            lines_mg += Par.values[ROQ_MG];
+            lines_eg += Par.values[ROQ_EG];
+        }
+
+        if (!(bb_file & p->Pawns(sd))) {                    // no own pawns on that file
+            if (!(bb_file & p->Pawns(op))) {
+                lines_mg += Par.values[ROF_MG];
+                lines_eg += Par.values[ROF_EG];
+            } else {                                          // half-open file...
+                if (bb_file & (p->Pawns(op) & e->p_takes[op])) {// ...with defended enemy pawn
+                    lines_mg += Par.values[RBH_MG];
+                    lines_eg += Par.values[RBH_EG];
+                } else {                                        // ...with undefended enemy pawn
+                    lines_mg += Par.values[RGH_MG];
+                    lines_eg += Par.values[RGH_EG];
+                }
+            }
+        }
+
+        // Rook on the 7th rank attacking pawns or cutting off enemy king
+
+        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // rook on 7th rank
+            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
+                    || p->Kings(op) & bb_rel_rank[sd][RANK_8]) {        // or cutting off enemy king
+                lines_mg += Par.values[RSR_MG];
+                lines_eg += Par.values[RSR_EG];
+                r_on_7th++;
+            }
+        }
     }
 
-    cnt = BB.PopCnt(bb_control & ~bb_excluded);         // get mobility count
-    mob_mg += Par.q_mob_mg[cnt];
-    mob_eg += Par.q_mob_eg[cnt];
+    // Queen eval
 
-    if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // queen on 7th rank
-      if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
-      ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) {       // or cutting off enemy king
-        lines_mg += Par.values[QSR_MG];
-        lines_eg += Par.values[QSR_EG];
-      }
+    bb_pieces = p->Queens(sd);
+    while (bb_pieces) {
+        sq = BB.PopFirstBit(&bb_pieces);                    // get square
+
+        // queen tropism to enemy king (based on Gambit Fruit)
+
+        tropism_mg += Par.values[QTR_MG] * Dist.bonus[sq][king_sq];
+        tropism_eg += Par.values[QTR_EG] * Dist.bonus[sq][king_sq];
+
+        if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
+            fwd_weight += 4;
+            fwd_cnt += 1;
+        }
+
+        bb_control = BB.QueenAttacks(OccBb(p), sq);         // get control bitboard
+        e->all_att[sd] |= bb_control;                       // update attack map
+        if (bb_control & q_checks) {                        // check threat bonus
+            att += 12;
+
+            bb_contact = bb_control & BB.KingAttacks(king_sq);// queen contact checks
+            while (bb_contact) {
+                int contactSq = BB.PopFirstBit(&bb_contact);    // find potential contact check square
+                if (Swap(p, sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate
+                    att += 36;
+                    break;
+                }
+            }
+        }
+
+        bb_attack  = BB.BishAttacks(OccBb(p) ^ p->DiagMovers(sd), sq);
+        bb_attack |= BB.RookAttacks(OccBb(p) ^ p->StraightMovers(sd), sq);
+
+        if (bb_attack & bb_zone) {                          // evaluate king attacks
+            wood++;
+            att += 15 * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            att +=  5 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+        }
+
+        cnt = BB.PopCnt(bb_control & ~bb_excluded);         // get mobility count
+        mob_mg += Par.q_mob_mg[cnt];
+        mob_eg += Par.q_mob_eg[cnt];
+
+        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // queen on 7th rank
+            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
+                    ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) {       // or cutting off enemy king
+                lines_mg += Par.values[QSR_MG];
+                lines_eg += Par.values[QSR_EG];
+            }
+        }
+    } // end of queen eval
+
+    // Composite factors
+
+    if (r_on_7th > 1) {  // two rooks on 7th rank
+        lines_mg += Par.values[RS2_MG];
+        lines_eg += Par.values[RS2_EG];
     }
-  } // end of queen eval
 
-  // Composite factors
+    Add(e, sd, (Par.sd_mob[sd] * mob_mg)  / 100, (Par.sd_mob[sd] * mob_eg)  / 100);
+    Add(e, sd, (Par.tropism_weight * tropism_mg) / 100, (Par.tropism_weight * tropism_eg) / 100);
+    Add(e, sd, (Par.lines_weight * lines_mg)     / 100, (Par.lines_weight * lines_eg)     / 100);
+    Add(e, sd, (Par.forward_weight * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
+    Add(e, sd, (Par.outposts_weight * outpost) / 100);
 
-  if (r_on_7th > 1) {  // two rooks on 7th rank
-    lines_mg += Par.values[RS2_MG];
-    lines_eg += Par.values[RS2_EG];
-  }
+    // King attack eval
 
-  Add(e, sd, (Par.sd_mob[sd] * mob_mg)  / 100, (Par.sd_mob[sd] * mob_eg)  / 100);
-  Add(e, sd, (Par.tropism_weight * tropism_mg) / 100, (Par.tropism_weight * tropism_eg) / 100);
-  Add(e, sd, (Par.lines_weight * lines_mg)     / 100, (Par.lines_weight * lines_eg)     / 100);
-  Add(e, sd, (Par.forward_weight * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
-  Add(e, sd, (Par.outposts_weight * outpost) / 100);
-
-  // King attack eval
-
-  if (wood > 1) {
-    if (att > 399) att = 399;
-    if (p->cnt[sd][Q] == 0) att = 0;
-    Add(e, sd, (Par.danger[att] * Par.sd_att[sd]) / 100);
-  }
+    if (wood > 1) {
+        if (att > 399) att = 399;
+        if (p->cnt[sd][Q] == 0) att = 0;
+        Add(e, sd, (Par.danger[att] * Par.sd_att[sd]) / 100);
+    }
 
 }
 
 void cEngine::EvaluateOutpost(POS *p, eData *e, int sd, int pc, int sq, int *outpost) {
 
-  if (SqBb(sq) & Mask.home[sd]) {
-    U64 stop = BB.ShiftFwd(SqBb(sq), sd);             // get square in front of a minor
-    if (stop & p->Pawns(sd))                          // is it occupied by own pawn?
-    *outpost += 5;                                    // bonus for a pawn shielding a minor
-  }
+    if (SqBb(sq) & Mask.home[sd]) {
+        U64 stop = BB.ShiftFwd(SqBb(sq), sd);             // get square in front of a minor
+        if (stop & p->Pawns(sd))                          // is it occupied by own pawn?
+            *outpost += 5;                                    // bonus for a pawn shielding a minor
+    }
 
-  int tmp = Par.sp_pst[sd][pc][sq];                   // get base outpost bonus
-  if (tmp) {
-    int mul = 0;                                      // reset outpost multiplier
-    if (SqBb(sq) & ~e->p_can_take[Opp(sd)]) mul += 2; // is piece in hole of enemy pawn structure?
-    if (SqBb(sq) & e->p_takes[sd]) mul += 1;          // is piece defended by own pawn?
-    if (SqBb(sq) & e->two_pawns_take[sd]) mul += 1;   // is piece defended by two pawns?
-    *outpost += (tmp * mul) / 2;                      // add outpost bonus
-  }
+    int tmp = Par.sp_pst[sd][pc][sq];                   // get base outpost bonus
+    if (tmp) {
+        int mul = 0;                                      // reset outpost multiplier
+        if (SqBb(sq) & ~e->p_can_take[Opp(sd)]) mul += 2; // is piece in hole of enemy pawn structure?
+        if (SqBb(sq) & e->p_takes[sd]) mul += 1;          // is piece defended by own pawn?
+        if (SqBb(sq) & e->two_pawns_take[sd]) mul += 1;   // is piece defended by two pawns?
+        *outpost += (tmp * mul) / 2;                      // add outpost bonus
+    }
 }
 
 void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
 
-  U64 bb_pieces, front_span, fl_phalanx;
-  int sq, fl_unopposed;
-  int op = Opp(sd);
+    U64 bb_pieces, front_span, fl_phalanx;
+    int sq, fl_unopposed;
+    int op = Opp(sd);
 
-  bb_pieces = p->Pawns(sd);
-  while (bb_pieces) {
+    bb_pieces = p->Pawns(sd);
+    while (bb_pieces) {
 
-    // Set data and flags
+        // Set data and flags
 
-    sq = BB.PopFirstBit(&bb_pieces);
-    front_span = BB.GetFrontSpan(SqBb(sq), sd);
-    fl_unopposed = ((front_span & p->Pawns(op)) == 0);
-    fl_phalanx = (BB.ShiftSideways(SqBb(sq)) & p->Pawns(sd));
+        sq = BB.PopFirstBit(&bb_pieces);
+        front_span = BB.GetFrontSpan(SqBb(sq), sd);
+        fl_unopposed = ((front_span & p->Pawns(op)) == 0);
+        fl_phalanx = (BB.ShiftSideways(SqBb(sq)) & p->Pawns(sd));
 
-    // Candidate passers
+        // Candidate passers
 
-    if (fl_unopposed) {
-      if (fl_phalanx) {
-      if (BB.PopCnt((Mask.passed[sd][sq] & p->Pawns(op))) == 1)
-        AddPawns(e, sd, passed_bonus_mg[sd][Rank(sq)] / 3, passed_bonus_eg[sd][Rank(sq)] / 3);
-      }
+        if (fl_unopposed) {
+            if (fl_phalanx) {
+                if (BB.PopCnt((Mask.passed[sd][sq] & p->Pawns(op))) == 1)
+                    AddPawns(e, sd, passed_bonus_mg[sd][Rank(sq)] / 3, passed_bonus_eg[sd][Rank(sq)] / 3);
+            }
+        }
+
+        // Doubled pawn
+
+        if (front_span & p->Pawns(sd))
+            AddPawns(e, sd, Par.values[DB_MID], Par.values[DB_END]);
+
+        // Supported pawn
+
+        if (fl_phalanx)                     AddPawns(e, sd, Par.sp_pst[sd][PHA_MG][sq], Par.sp_pst[sd][PHA_EG][sq]); // scores twice !!!
+        else if (SqBb(sq) & e->p_takes[sd]) AddPawns(e, sd, Par.sp_pst[sd][DEF_MG][sq], Par.sp_pst[sd][DEF_EG][sq]);
+
+        // Isolated and weak pawn
+
+        if (!(Mask.adjacent[File(sq)] & p->Pawns(sd)))
+            AddPawns(e, sd, Par.values[ISO_MG] + Par.values[ISO_OF] * fl_unopposed, Par.values[ISO_EG]);
+        else if (!(Mask.supported[sd][sq] & p->Pawns(sd)))
+            AddPawns(e, sd, Par.backward_malus_mg[File(sq)] + Par.values[BK_OPE] * fl_unopposed, Par.values[BK_END]);
     }
-
-    // Doubled pawn
-
-    if (front_span & p->Pawns(sd))
-      AddPawns(e, sd, Par.values[DB_MID], Par.values[DB_END]);
-
-    // Supported pawn
-
-    if (fl_phalanx)                     AddPawns(e, sd, Par.sp_pst[sd][PHA_MG][sq], Par.sp_pst[sd][PHA_EG][sq]); // scores twice !!!
-    else if (SqBb(sq) & e->p_takes[sd]) AddPawns(e, sd, Par.sp_pst[sd][DEF_MG][sq], Par.sp_pst[sd][DEF_EG][sq]);
-
-    // Isolated and weak pawn
-
-    if (!(Mask.adjacent[File(sq)] & p->Pawns(sd)))
-      AddPawns(e, sd, Par.values[ISO_MG] + Par.values[ISO_OF] * fl_unopposed, Par.values[ISO_EG]);
-    else if (!(Mask.supported[sd][sq] & p->Pawns(sd)))
-      AddPawns(e, sd, Par.backward_malus_mg[File(sq)] + Par.values[BK_OPE] * fl_unopposed, Par.values[BK_END]);
-  }
 }
 
 void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
 
-  U64 bb_pieces, stop, mul;
-  int sq, mg_tmp, eg_tmp;
-  int op = Opp(sd);
-  int mg_tot = 0;
-  int eg_tot = 0;
+    U64 bb_pieces, stop, mul;
+    int sq, mg_tmp, eg_tmp;
+    int op = Opp(sd);
+    int mg_tot = 0;
+    int eg_tot = 0;
 
-  bb_pieces = p->Pawns(sd);
-  while (bb_pieces) {
-    sq = BB.PopFirstBit(&bb_pieces);
+    bb_pieces = p->Pawns(sd);
+    while (bb_pieces) {
+        sq = BB.PopFirstBit(&bb_pieces);
 
-    // passed pawns
+        // passed pawns
 
-    if (!(Mask.passed[sd][sq] & p->Pawns(op))) {
-      mul = 100;
-      stop = BB.ShiftFwd(SqBb(sq), sd);
+        if (!(Mask.passed[sd][sq] & p->Pawns(op))) {
+            mul = 100;
+            stop = BB.ShiftFwd(SqBb(sq), sd);
 
-      if (stop & OccBb(p)) mul -= 23;   // blocked passers score less
+            if (stop & OccBb(p)) mul -= 23;   // blocked passers score less
 
-      else if ((stop & e->all_att[sd])  // our control of stop square
-           && (stop & ~e->all_att[op])) mul += 14;
+            else if ((stop & e->all_att[sd])  // our control of stop square
+                     && (stop & ~e->all_att[op])) mul += 14;
 
-      // in the midgame, we use just a bonus from the table
-      // in the endgame, passed pawn attracts both kings.
+            // in the midgame, we use just a bonus from the table
+            // in the endgame, passed pawn attracts both kings.
 
-      mg_tmp = passed_bonus_mg[sd][Rank(sq)];
-      eg_tmp = passed_bonus_eg[sd][Rank(sq)] 
-             -((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[op]]) / 30)
-             +((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[sd]]) / 90);
+            mg_tmp = passed_bonus_mg[sd][Rank(sq)];
+            eg_tmp = passed_bonus_eg[sd][Rank(sq)]
+                     - ((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[op]]) / 30)
+                     + ((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[sd]]) / 90);
 
-      mg_tot += (mg_tmp * mul) / 100;
-      eg_tot += (eg_tmp * mul) / 100;
+            mg_tot += (mg_tmp * mul) / 100;
+            eg_tot += (eg_tmp * mul) / 100;
+        }
     }
-  }
 
-  Add(e, sd, (mg_tot * Par.passers_weight) / 100, (eg_tot * Par.passers_weight) / 100);
+    Add(e, sd, (mg_tot * Par.passers_weight) / 100, (eg_tot * Par.passers_weight) / 100);
 }
 
-void cEngine::EvaluateUnstoppable(eData *e, POS * p) {
+void cEngine::EvaluateUnstoppable(eData *e, POS *p) {
 
-  U64 bb_pieces, bb_span;
-  int w_dist = 8;
-  int b_dist = 8;
-  int sq, king_sq, pawn_sq, tempo, prom_dist;
+    U64 bb_pieces, bb_span;
+    int w_dist = 8;
+    int b_dist = 8;
+    int sq, king_sq, pawn_sq, tempo, prom_dist;
 
-  // White unstoppable passers
+    // White unstoppable passers
 
-  if (p->cnt[BC][N] + p->cnt[BC][B] + p->cnt[BC][R] + p->cnt[BC][Q] == 0) {
-    king_sq = KingSq(p, BC);
-    if (p->side == BC) tempo = 1; else tempo = 0;
-    bb_pieces = p->Pawns(WC);
-    while (bb_pieces) {
-      sq = BB.PopFirstBit(&bb_pieces);
-      if (!(Mask.passed[WC][sq] & p->Pawns(BC))) {
-        bb_span = BB.GetFrontSpan(SqBb(sq), WC);
-        pawn_sq = ((WC - 1) & 56) + (sq & 7);
-        prom_dist = Min(5, Dist.metric[sq][pawn_sq]);
+    if (p->cnt[BC][N] + p->cnt[BC][B] + p->cnt[BC][R] + p->cnt[BC][Q] == 0) {
+        king_sq = KingSq(p, BC);
+        if (p->side == BC) tempo = 1; else tempo = 0;
+        bb_pieces = p->Pawns(WC);
+        while (bb_pieces) {
+            sq = BB.PopFirstBit(&bb_pieces);
+            if (!(Mask.passed[WC][sq] & p->Pawns(BC))) {
+                bb_span = BB.GetFrontSpan(SqBb(sq), WC);
+                pawn_sq = ((WC - 1) & 56) + (sq & 7);
+                prom_dist = Min(5, Dist.metric[sq][pawn_sq]);
 
-        if (prom_dist < (Dist.metric[king_sq][pawn_sq] - tempo)) {
-          if (bb_span & p->Kings(WC)) prom_dist++;
-          w_dist = Min(w_dist, prom_dist);
+                if (prom_dist < (Dist.metric[king_sq][pawn_sq] - tempo)) {
+                    if (bb_span & p->Kings(WC)) prom_dist++;
+                    w_dist = Min(w_dist, prom_dist);
+                }
+            }
         }
-      }
     }
-  }
 
-  // Black unstoppable passers
+    // Black unstoppable passers
 
-  if (p->cnt[WC][N] + p->cnt[WC][B] + p->cnt[WC][R] + p->cnt[WC][Q] == 0) {
-    king_sq = KingSq(p, WC);
-    if (p->side == WC) tempo = 1; else tempo = 0;
-    bb_pieces = p->Pawns(BC);
-    while (bb_pieces) {
-      sq = BB.PopFirstBit(&bb_pieces);
-      if (!(Mask.passed[BC][sq] & p->Pawns(WC))) {
-        bb_span = BB.GetFrontSpan(SqBb(sq), BC);
-        pawn_sq = ((BC - 1) & 56) + (sq & 7);
-        prom_dist = Min(5, Dist.metric[sq][pawn_sq]);
+    if (p->cnt[WC][N] + p->cnt[WC][B] + p->cnt[WC][R] + p->cnt[WC][Q] == 0) {
+        king_sq = KingSq(p, WC);
+        if (p->side == WC) tempo = 1; else tempo = 0;
+        bb_pieces = p->Pawns(BC);
+        while (bb_pieces) {
+            sq = BB.PopFirstBit(&bb_pieces);
+            if (!(Mask.passed[BC][sq] & p->Pawns(WC))) {
+                bb_span = BB.GetFrontSpan(SqBb(sq), BC);
+                pawn_sq = ((BC - 1) & 56) + (sq & 7);
+                prom_dist = Min(5, Dist.metric[sq][pawn_sq]);
 
-        if (prom_dist < (Dist.metric[king_sq][pawn_sq] - tempo)) {
-          if (bb_span & p->Kings(BC)) prom_dist++;
-          b_dist = Min(b_dist, prom_dist);
+                if (prom_dist < (Dist.metric[king_sq][pawn_sq] - tempo)) {
+                    if (bb_span & p->Kings(BC)) prom_dist++;
+                    b_dist = Min(b_dist, prom_dist);
+                }
+            }
         }
-      }
     }
-  }
 
-  if (w_dist < b_dist - 1) Add(e, WC, 0, 500);
-  if (b_dist < w_dist - 1) Add(e, BC, 0, 500);
+    if (w_dist < b_dist - 1) Add(e, WC, 0, 500);
+    if (b_dist < w_dist - 1) Add(e, BC, 0, 500);
 }
 
 
 void cEngine::Add(eData *e, int sd, int mg_val, int eg_val) {
 
-  e->mg[sd] += mg_val;
-  e->eg[sd] += eg_val;
+    e->mg[sd] += mg_val;
+    e->eg[sd] += eg_val;
 }
 
 void cEngine::Add(eData *e, int sd, int val) {
 
-  e->mg[sd] += val;
-  e->eg[sd] += val;
+    e->mg[sd] += val;
+    e->eg[sd] += val;
 }
 
 void cEngine::AddPawns(eData *e, int sd, int mg_val, int eg_val) {
 
-  e->mg_pawns[sd] += mg_val;
-  e->eg_pawns[sd] += eg_val;
+    e->mg_pawns[sd] += mg_val;
+    e->eg_pawns[sd] += eg_val;
 }
 
-int cEngine::Interpolate(POS * p, eData * e) {
+int cEngine::Interpolate(POS *p, eData *e) {
 
-  int mg_tot = e->mg[WC] - e->mg[BC];
-  int eg_tot = e->eg[WC] - e->eg[BC];
-  int mg_phase = Min(p->phase, 24);
-  int eg_phase = 24 - mg_phase;
+    int mg_tot = e->mg[WC] - e->mg[BC];
+    int eg_tot = e->eg[WC] - e->eg[BC];
+    int mg_phase = Min(p->phase, 24);
+    int eg_phase = 24 - mg_phase;
 
-   return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
+    return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
 }
 
 void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
 
-  int pc, sq, sc;
-  int mg = 0;
-  int eg = 0;
-  int op = Opp(sd);
+    int pc, sq, sc;
+    int mg = 0;
+    int eg = 0;
+    int op = Opp(sd);
 
-  U64 bb_undefended = p->cl_bb[op];
-  U64 bb_threatened = bb_undefended & e->p_takes[sd];
-  U64 bb_defended = bb_undefended & e->all_att[op];
-  U64 bb_hanging = bb_undefended & ~e->p_takes[op];
+    U64 bb_undefended = p->cl_bb[op];
+    U64 bb_threatened = bb_undefended & e->p_takes[sd];
+    U64 bb_defended = bb_undefended & e->all_att[op];
+    U64 bb_hanging = bb_undefended & ~e->p_takes[op];
 
-  bb_undefended &= ~p->Pawns(op);
-  bb_undefended &= ~e->all_att[sd];
-  bb_undefended &= ~e->all_att[op];
+    bb_undefended &= ~p->Pawns(op);
+    bb_undefended &= ~e->all_att[sd];
+    bb_undefended &= ~e->all_att[op];
 
-  bb_hanging |= bb_threatened;     // piece attacked by our pawn isn't well defended
-  bb_hanging &= e->all_att[sd];    // hanging piece has to be attacked
-  bb_hanging &= ~p->Pawns(op);     // currently we don't evaluate threats against pawns
+    bb_hanging |= bb_threatened;     // piece attacked by our pawn isn't well defended
+    bb_hanging &= e->all_att[sd];    // hanging piece has to be attacked
+    bb_hanging &= ~p->Pawns(op);     // currently we don't evaluate threats against pawns
 
-  bb_defended &= e->ev_att[sd];    // N, B, R attacks (pieces attacked by pawns are scored as hanging)
-  bb_defended &= ~e->p_takes[sd];  // no defense against pawn attack
-  bb_defended &= ~p->Pawns(op);    // currently we don't evaluate threats against pawns
+    bb_defended &= e->ev_att[sd];    // N, B, R attacks (pieces attacked by pawns are scored as hanging)
+    bb_defended &= ~e->p_takes[sd];  // no defense against pawn attack
+    bb_defended &= ~p->Pawns(op);    // currently we don't evaluate threats against pawns
 
-  // hanging pieces (attacked and undefended, based on DiscoCheck)
+    // hanging pieces (attacked and undefended, based on DiscoCheck)
 
-  while (bb_hanging) {
-    sq = BB.PopFirstBit(&bb_hanging);
-    pc = TpOnSq(p, sq);
-    sc = tp_value[pc] / 64;
-    mg += 10 + sc;
-    eg += 18 + sc;
-  }
+    while (bb_hanging) {
+        sq = BB.PopFirstBit(&bb_hanging);
+        pc = TpOnSq(p, sq);
+        sc = tp_value[pc] / 64;
+        mg += 10 + sc;
+        eg += 18 + sc;
+    }
 
-  // defended pieces under attack
+    // defended pieces under attack
 
-  while (bb_defended) {
-    sq = BB.PopFirstBit(&bb_defended);
-    pc = TpOnSq(p, sq);
-    sc = tp_value[pc] / 96;
-    mg += 5 + sc;
-    eg += 9 + sc;
-  }
+    while (bb_defended) {
+        sq = BB.PopFirstBit(&bb_defended);
+        pc = TpOnSq(p, sq);
+        sc = tp_value[pc] / 96;
+        mg += 5 + sc;
+        eg += 9 + sc;
+    }
 
-  // unattacked and undefended
+    // unattacked and undefended
 
-  while (bb_undefended) {
-    bb_undefended &= (bb_undefended - 1);
-    mg += 5;
-    eg += 9;
-  }
+    while (bb_undefended) {
+        bb_undefended &= (bb_undefended - 1);
+        mg += 5;
+        eg += 9;
+    }
 
-  Add(e, sd, (Par.threats_weight * mg) / 100, (Par.threats_weight * eg) / 100);
+    Add(e, sd, (Par.threats_weight * mg) / 100, (Par.threats_weight * eg) / 100);
 }
 
 #ifdef USE_RISKY_PARAMETER
@@ -589,145 +589,144 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
 
 int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
 
-  int eval_adj = eval;
+    int eval_adj = eval;
 
-  //Correct self-side score by depth for human opponent
+    //Correct self-side score by depth for human opponent
 
-  if ((Par.riskydepth > 0) 
-  && (ply >= Par.riskydepth) 
-  && (p->side == Par.prog_side) 
-  && (Abs(eval) > Par.draw_score) 
-  && (Abs(eval) < 1000)){
-    eval_adj = eval<0 ? round(1.0*eval*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth/ply) : round(1.0*eval*(Glob.nodes > 100 ? 2 : 1)*ply/Par.riskydepth);
-    if (eval_adj>1000) eval_adj = 1000;
-  }
-  else if ((Par.riskydepth > 0)
-  && (ply >= Par.riskydepth) 
-  && (p->side != Par.prog_side) 
-  && (Abs(eval) > Par.draw_score) 
-  && (Abs(eval) < 1000)){
-    eval_adj = eval<0 ? round(1.0*eval*(Glob.nodes > 100 ? 2 : 1)*ply/Par.riskydepth) : round(1.0*eval*(Glob.nodes > 100 ? 0.5 : 1)*Par.riskydepth/ply);
-    if (eval_adj>1000) eval_adj = 1000;
-  }
-  return eval_adj;
+    if ((Par.riskydepth > 0)
+            && (ply >= Par.riskydepth)
+            && (p->side == Par.prog_side)
+            && (Abs(eval) > Par.draw_score)
+            && (Abs(eval) < 1000)) {
+        eval_adj = eval < 0 ? round(1.0 * eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply) : round(1.0 * eval * (Glob.nodes > 100 ? 2 : 1) * ply / Par.riskydepth);
+        if (eval_adj > 1000) eval_adj = 1000;
+    } else if ((Par.riskydepth > 0)
+               && (ply >= Par.riskydepth)
+               && (p->side != Par.prog_side)
+               && (Abs(eval) > Par.draw_score)
+               && (Abs(eval) < 1000)) {
+        eval_adj = eval < 0 ? round(1.0 * eval * (Glob.nodes > 100 ? 2 : 1) * ply / Par.riskydepth) : round(1.0 * eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply);
+        if (eval_adj > 1000) eval_adj = 1000;
+    }
+    return eval_adj;
 }
 #endif
 
 int cEngine::Evaluate(POS *p, eData *e) {
 
-  // Try retrieving score from per-thread eval hashtable
+    // Try retrieving score from per-thread eval hashtable
 
-  int addr = p->hash_key % EVAL_HASH_SIZE;
+    int addr = p->hash_key % EVAL_HASH_SIZE;
 
-  if (EvalTT[addr].key == p->hash_key) {
-    int sc = EvalTT[addr].score;
-    return p->side == WC ? sc : -sc;
-  }
+    if (EvalTT[addr].key == p->hash_key) {
+        int sc = EvalTT[addr].score;
+        return p->side == WC ? sc : -sc;
+    }
 
-  // Clear eval data  
+    // Clear eval data
 
-  e->mg[WC] = p->mg_sc[WC];
-  e->mg[BC] = p->mg_sc[BC];
-  e->eg[WC] = p->eg_sc[WC];
-  e->eg[BC] = p->eg_sc[BC];
+    e->mg[WC] = p->mg_sc[WC];
+    e->mg[BC] = p->mg_sc[BC];
+    e->eg[WC] = p->eg_sc[WC];
+    e->eg[BC] = p->eg_sc[BC];
 
-  // Init helper bitboards (pawn info)
+    // Init helper bitboards (pawn info)
 
-  e->p_takes[WC] = BB.GetWPControl(p->Pawns(WC));
-  e->p_takes[BC] = BB.GetBPControl(p->Pawns(BC));
-  e->p_can_take[WC] = BB.FillNorth(e->p_takes[WC]);
-  e->p_can_take[BC] = BB.FillSouth(e->p_takes[BC]);
-  e->two_pawns_take[WC] = BB.GetDoubleWPControl(p->Pawns(WC));
-  e->two_pawns_take[BC] = BB.GetDoubleBPControl(p->Pawns(BC));
+    e->p_takes[WC] = BB.GetWPControl(p->Pawns(WC));
+    e->p_takes[BC] = BB.GetBPControl(p->Pawns(BC));
+    e->p_can_take[WC] = BB.FillNorth(e->p_takes[WC]);
+    e->p_can_take[BC] = BB.FillSouth(e->p_takes[BC]);
+    e->two_pawns_take[WC] = BB.GetDoubleWPControl(p->Pawns(WC));
+    e->two_pawns_take[BC] = BB.GetDoubleBPControl(p->Pawns(BC));
 
-  // Init or clear attack maps
+    // Init or clear attack maps
 
-  e->all_att[WC] = e->p_takes[WC] | BB.KingAttacks(KingSq(p, WC));
-  e->all_att[BC] = e->p_takes[BC] | BB.KingAttacks(KingSq(p, BC));
-  e->ev_att[WC] = 0ULL;
-  e->ev_att[BC] = 0ULL;
+    e->all_att[WC] = e->p_takes[WC] | BB.KingAttacks(KingSq(p, WC));
+    e->all_att[BC] = e->p_takes[BC] | BB.KingAttacks(KingSq(p, BC));
+    e->ev_att[WC] = 0ULL;
+    e->ev_att[BC] = 0ULL;
 
-  // Run all the evaluation subroutines
+    // Run all the evaluation subroutines
 
-  EvaluateMaterial(p, e, WC);
-  EvaluateMaterial(p, e, BC);
-  EvaluatePieces(p, e, WC);
-  EvaluatePieces(p, e, BC);
-  EvaluatePawnStruct(p, e);
-  EvaluatePassers(p, e, WC);
-  EvaluatePassers(p, e, BC);
-  EvaluateUnstoppable(e, p);
-  EvaluateThreats(p, e, WC);
-  EvaluateThreats(p, e, BC);
-  Add(e, p->side, 14, 7); // tempo bonus
+    EvaluateMaterial(p, e, WC);
+    EvaluateMaterial(p, e, BC);
+    EvaluatePieces(p, e, WC);
+    EvaluatePieces(p, e, BC);
+    EvaluatePawnStruct(p, e);
+    EvaluatePassers(p, e, WC);
+    EvaluatePassers(p, e, BC);
+    EvaluateUnstoppable(e, p);
+    EvaluateThreats(p, e, WC);
+    EvaluateThreats(p, e, BC);
+    Add(e, p->side, 14, 7); // tempo bonus
 
-  // Evaluate patterns
+    // Evaluate patterns
 
-  EvaluateKnightPatterns(p, e);
-  EvaluateBishopPatterns(p, e);
-  EvaluateKingPatterns(p, e);
-  EvaluateCentralPatterns(p, e);
+    EvaluateKnightPatterns(p, e);
+    EvaluateBishopPatterns(p, e);
+    EvaluateKingPatterns(p, e);
+    EvaluateCentralPatterns(p, e);
 
-  // Add pawn score (which might come from hash)
+    // Add pawn score (which might come from hash)
 
-  e->mg[WC] += e->mg_pawns[WC];
-  e->mg[BC] += e->mg_pawns[BC];
-  e->eg[WC] += e->eg_pawns[WC];
-  e->eg[BC] += e->eg_pawns[BC];
+    e->mg[WC] += e->mg_pawns[WC];
+    e->mg[BC] += e->mg_pawns[BC];
+    e->eg[WC] += e->eg_pawns[WC];
+    e->eg[BC] += e->eg_pawns[BC];
 
-  // Add asymmetric bonus for keeping certain type of pieces
+    // Add asymmetric bonus for keeping certain type of pieces
 
-  e->mg[Par.prog_side] += Par.keep_pc[Q] * p->cnt[Par.prog_side][Q];
-  e->mg[Par.prog_side] += Par.keep_pc[R] * p->cnt[Par.prog_side][R];
-  e->mg[Par.prog_side] += Par.keep_pc[B] * p->cnt[Par.prog_side][B];
-  e->mg[Par.prog_side] += Par.keep_pc[N] * p->cnt[Par.prog_side][N];
-  e->mg[Par.prog_side] += Par.keep_pc[P] * p->cnt[Par.prog_side][P];
-  
-  // Interpolate between midgame and endgame scores
+    e->mg[Par.prog_side] += Par.keep_pc[Q] * p->cnt[Par.prog_side][Q];
+    e->mg[Par.prog_side] += Par.keep_pc[R] * p->cnt[Par.prog_side][R];
+    e->mg[Par.prog_side] += Par.keep_pc[B] * p->cnt[Par.prog_side][B];
+    e->mg[Par.prog_side] += Par.keep_pc[N] * p->cnt[Par.prog_side][N];
+    e->mg[Par.prog_side] += Par.keep_pc[P] * p->cnt[Par.prog_side][P];
 
-  int score = Interpolate(p, e);
+    // Interpolate between midgame and endgame scores
 
-  // Material imbalance evaluation (based on Crafty)
+    int score = Interpolate(p, e);
 
-  int minor_balance = p->cnt[WC][N] - p->cnt[BC][N] + p->cnt[WC][B] - p->cnt[BC][B];
-  int major_balance = p->cnt[WC][R] - p->cnt[BC][R] + 2 * p->cnt[WC][Q] - 2 * p->cnt[BC][Q];
+    // Material imbalance evaluation (based on Crafty)
 
-  int x = Max(major_balance + 4, 0);
-  if (x > 8) x = 8;
+    int minor_balance = p->cnt[WC][N] - p->cnt[BC][N] + p->cnt[WC][B] - p->cnt[BC][B];
+    int major_balance = p->cnt[WC][R] - p->cnt[BC][R] + 2 * p->cnt[WC][Q] - 2 * p->cnt[BC][Q];
 
-  int y = Max(minor_balance + 4, 0);
-  if (y > 8) y = 8;
+    int x = Max(major_balance + 4, 0);
+    if (x > 8) x = 8;
 
-  score += Par.imbalance[x][y];
+    int y = Max(minor_balance + 4, 0);
+    if (y > 8) y = 8;
 
-  // Weakening: add pseudo-random value to eval score
+    score += Par.imbalance[x][y];
 
-  if (Par.eval_blur) {
-    int rand_mod = (Par.eval_blur / 2) - (p->hash_key % Par.eval_blur);
-    score += rand_mod;
-  }
+    // Weakening: add pseudo-random value to eval score
 
-  // Special case code for KBN vs K checkmate
+    if (Par.eval_blur) {
+        int rand_mod = (Par.eval_blur / 2) - (p->hash_key % Par.eval_blur);
+        score += rand_mod;
+    }
 
-  score += CheckmateHelper(p);
+    // Special case code for KBN vs K checkmate
 
-  // Decrease score for drawish endgames
+    score += CheckmateHelper(p);
 
-  int draw_factor = 64;
-  if (score > 0) draw_factor = GetDrawFactor(p, WC);
-  if (score < 0) draw_factor = GetDrawFactor(p, BC);
-  score = (score * draw_factor) / 64;
+    // Decrease score for drawish endgames
 
-  // Ensure that returned value doesn't exceed mate score
+    int draw_factor = 64;
+    if (score > 0) draw_factor = GetDrawFactor(p, WC);
+    if (score < 0) draw_factor = GetDrawFactor(p, BC);
+    score = (score * draw_factor) / 64;
 
-  score = Clip(score, MAX_EVAL);
+    // Ensure that returned value doesn't exceed mate score
 
-  // Save eval score in the evaluation hash table
+    score = Clip(score, MAX_EVAL);
 
-  EvalTT[addr].key = p->hash_key;
-  EvalTT[addr].score = score;
+    // Save eval score in the evaluation hash table
 
-  // Return score relative to the side to move
+    EvalTT[addr].key = p->hash_key;
+    EvalTT[addr].score = score;
 
-  return p->side == WC ? score : -score;
+    // Return score relative to the side to move
+
+    return p->side == WC ? score : -score;
 }

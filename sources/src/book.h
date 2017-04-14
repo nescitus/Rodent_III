@@ -18,17 +18,17 @@ If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 struct polyglot_move {
-  U64 key;
-  int move;
-  int weight;
-  int n;
-  int learn;
+    U64 key;
+    int move;
+    int weight;
+    int n;
+    int learn;
 };
 
 #include<stdio.h>
 
 struct sBook {
-private:
+  private:
     FILE *bookFile;
     char bookName[256];
     int book_size;
@@ -41,12 +41,11 @@ private:
     void ReadEntry(polyglot_move *entry, int n);
     U64 GetPolyglotKey(POS *p);
     U64 ReadInteger(int size);
-public:
+  public:
     sBook(): bookFile(NULL) {}
-    void SetBookName(const char *name)
-    {
+    void SetBookName(const char *name) {
         int i;
-        for ( i = 0; (name[i] >= 0x20) && (i < sizeof(bookName)-1); i++ )
+        for (i = 0; (name[i] >= 0x20) && (i < sizeof(bookName) - 1); i++)
             bookName[i] = name[i];
         bookName[i] = '\0';
 
