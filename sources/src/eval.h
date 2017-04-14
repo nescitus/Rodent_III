@@ -32,13 +32,13 @@ If not, see <http://www.gnu.org/licenses/>.
 #define PEG7 260
 
 static const int passed_bonus_mg[2][8] = {
-  { 0, PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, 0 },
-  { 0, PMG7, PMG6, PMG5, PMG4, PMG3, PMG2, 0 }
+    { 0, PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, 0 },
+    { 0, PMG7, PMG6, PMG5, PMG4, PMG3, PMG2, 0 }
 };
 
 static const int passed_bonus_eg[2][8] = {
-  { 0, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7, 0 },
-  { 0, PEG7, PEG6, PEG5, PEG4, PEG3, PEG2, 0 }
+    { 0, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7, 0 },
+    { 0, PEG7, PEG6, PEG5, PEG4, PEG3, PEG2, 0 }
 };
 
 /*
@@ -62,7 +62,7 @@ Rodent can use several sets of piece/square tables (currently 4).
 
 static const int pstPawnMg[4][64] = {
  //A1                                H1 Midgame pawn table - wing-neutral average of Hakkapeliitta table
-{ 0,   0,   0,   0,   0,   0,   0,   0, 
+{ 0,   0,   0,   0,   0,   0,   0,   0,
 -30, -16, -22, -27, -27, -17, -16, -30,
 -25, -16, -16, -18, -18, -16, -16, -25,
 -20, -17,  -7,  -2,  -2,  -7, -17, -20,
@@ -84,7 +84,7 @@ static const int pstPawnMg[4][64] = {
 //A8                                H8
 
 //A1                                H1  Midgame pawn table based on Ippolit
-{ 0,   0,   0,   0,   0,   0,   0,   0, 
+{ 0,   0,   0,   0,   0,   0,   0,   0,
 -23, -11,  -5,   2,   2,  -5, -11, -23,
 -22, -10,  -4,   3,   3,  -4, -10, -22,
 -21,  -9,  -3,   4,   4,  -3,  -9, -21,
@@ -101,7 +101,7 @@ static const int pstPawnMg[4][64] = {
   0,   0,   0,  20,  20,   0,   0,  0,
   5,   5,  10,  25,  25,  10,   5,  5,
  10,  10,  20,  30,  30,  20,  10, 10,
- 50,  50,  50,  50,  50,  50,  50, 50, 
+ 50,  50,  50,  50,  50,  50,  50, 50,
   0,   0,   0,   0,   0,   0,   0,  0
 //A8                                H8
   }
@@ -177,7 +177,7 @@ static const int pstKnightMg[4][64] = {
 -135, -25, -15,  -5,  -5, -15, -25, -135},
 //A8                                 H8
 
-//A1                                 H1 Midgame knight table based on Ippolit 
+//A1                                 H1 Midgame knight table based on Ippolit
 {-58, -42, -31, -27, -27, -31, -42, -58,
  -36, -20,  -9,  -5,  -5,  -9, -20, -36,
  -20,  -4,   7,  11,  11,   7,  -4, -20,
@@ -188,7 +188,7 @@ static const int pstKnightMg[4][64] = {
 -120, -21, -10,  -6,  -6, -10, -21,-120 },
 //A8                                 H8
 
-//A1                                 H1 Knight table by Tomasz Michniewski 
+//A1                                 H1 Knight table by Tomasz Michniewski
 {-50,- 40, -30, -30, -30, -30, -40, -50,
  -40, -20,   0,   5,   5,   0, -20, -40,
  -30,   5,  10,  15,  15,  10,   5, -30,
@@ -292,7 +292,7 @@ static const int pstBishopMg[4][64] = {
 };
 
 static const int pstBishopEg[4][64] = {
-//A1                                 H1 Endgame bishop table - wing-neutral average of Hakkapeliitta table 
+//A1                                 H1 Endgame bishop table - wing-neutral average of Hakkapeliitta table
 {-29, -13,  -4,  -6,  -6,  -4, -13, -29,
  -11, -10,  -9,  -1,  -1,  -9, -10, -11,
   -1,   7,   5,  13,  13,   5,   7,  -1,
@@ -691,7 +691,7 @@ static const int pstPhalanxPawnEg[64] = {
 //A8                                H8
 };
 
-static const int pst_empty_ks[64] = {  
+static const int pst_empty_ks[64] = {
    0,   0,   0,   0,   0, -10, -20, -30,
    0,   0,   0,   0,   0, -10, -20, -30,
    0,   0,   0,   0,   0, -10, -20, -30,
@@ -729,7 +729,7 @@ static const int imbalance_data[9][9] = {
 };
 
 static const int fwd_bonus[16] = {
-	0, 2, 5, 8, 12, 15, 20, 20, 20, 20, 20, 20 ,20, 20, 20, 20,
+    0, 2, 5, 8, 12, 15, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
 };
 
 static const int n_mob_mg_decreasing[9] =  { -1,  6, 12, 16, 17, 16, 16, 15, 18 };
