@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License along with thi
 If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
 #include "rodent.h"
+#include <cstdio>
+#include <cstring>
+#include <cmath>
 
 int razor_margin[5] = { 0, 300, 360, 420, 480 };
 int fut_margin[7] = { 0, 100, 160, 220, 280, 340, 400 };

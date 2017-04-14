@@ -17,7 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 #include "magicmoves.h"
-#include <stdio.h>
+#include <cstdio>
 
 void PrintBb(U64 bbTest) {
 

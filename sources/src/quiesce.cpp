@@ -16,7 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
-#include <math.h>
+#include <cmath>
 
 // QuiescenceChecks() allows the engine to consider most of the checking moves
 // as well as special quiet moves (hash and killers). It improves engines'

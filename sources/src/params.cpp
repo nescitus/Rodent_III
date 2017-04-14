@@ -17,8 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 #include "eval.h"
-#include <stdio.h>
-#include <math.h>
+#include <cmath>
 
 void cParam::DefaultWeights(void) {
 

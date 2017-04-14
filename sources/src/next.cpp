@@ -16,6 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
+#include <cstring>
 
 void cEngine::InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply) {
 
@@ -286,26 +287,16 @@ void cEngine::AgeHist(void) {
         for (int sq = 0; sq < 64; sq++)
             history[tp][sq] /= 8;
 
-    for (int i = 0; i < MAX_PLY; i++) {
-        killer[i][0] = 0;
-        killer[i][1] = 0;
-    }
+    ZEROARRAY(killer);
 }
 
 void cEngine::ClearHist(void) {
 
-    for (int tp = 0; tp < 12; tp++)
-        for (int sq = 0; sq < 64; sq++)
-            history[tp][sq] = 0;
+    ZEROARRAY(history);
 
-    for (int fsq = 0; fsq < 64; fsq++)
-        for (int tsq = 0; tsq < 64; tsq++)
-            refutation[fsq][tsq] = 0;
+    ZEROARRAY(refutation);
 
-    for (int i = 0; i < MAX_PLY; i++) {
-        killer[i][0] = 0;
-        killer[i][1] = 0;
-    }
+    ZEROARRAY(killer);
 }
 
 void cEngine::TrimHist(void) {

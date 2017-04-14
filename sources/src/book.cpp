@@ -16,11 +16,10 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
 #include "book.h"
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
 
 // Random numbers from PolyGlot, used to compute book hash keys
 

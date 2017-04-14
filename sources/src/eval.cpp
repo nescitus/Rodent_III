@@ -17,8 +17,9 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 #include "eval.h"
-#include <stdio.h>
-#include <math.h> // round
+#include <cstdio>
+#include <cstring>
+#include <cmath> // round
 
 void cEngine::ClearAll(void) {
 
@@ -29,10 +30,7 @@ void cEngine::ClearAll(void) {
 
 void cEngine::ClearEvalHash(void) {
 
-    for (int e = 0; e < EVAL_HASH_SIZE; e++) {
-        EvalTT[e].key = 0;
-        EvalTT[e].score = 0;
-    }
+    ZEROARRAY(EvalTT);
 }
 
 void cEngine::EvaluateMaterial(POS *p, eData *e, int sd) {

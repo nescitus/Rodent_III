@@ -583,6 +583,8 @@ struct sInternalBook {
     void ReadInternal(POS *p);
 };
 
+#define ZEROARRAY(x) memset(x, 0, sizeof(x));
+
 extern sInternalBook InternalBook;
 
 void CheckTimeout(void);
@@ -745,8 +747,8 @@ extern int move_nodes;
 extern int search_depth;
 extern int start_time;
 extern ENTRY *tt;
-extern int tt_size;
-extern int tt_mask;
+extern size_t tt_size;
+extern size_t tt_mask;
 extern int tt_date;
 
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change

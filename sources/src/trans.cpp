@@ -15,9 +15,9 @@ You should have received a copy of the GNU General Public License along with thi
 If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
 #include "rodent.h"
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 void AllocTrans(int mbsize) {
 
@@ -26,25 +26,14 @@ void AllocTrans(int mbsize) {
     tt_size = ((tt_size / 2) << 20) / sizeof(ENTRY);
     tt_mask = tt_size - 4;
     free(tt);
-    tt = (ENTRY *) malloc(tt_size * sizeof(ENTRY));
-    ClearTrans();
+    tt = (ENTRY *) calloc(tt_size, sizeof(ENTRY));
 }
 
 void ClearTrans(void) {
 
-    ENTRY *entry;
-
     tt_date = 0;
 
-    for (entry = tt; entry < tt + tt_size; entry++) {
-        entry->key = 0;
-        entry->date = 0;
-        entry->move = 0;
-        entry->score = 0;
-        entry->flags = 0;
-        entry->depth = 0;
-    }
-
+    memset(tt, 0, tt_size * sizeof(ENTRY));
 }
 
 int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
