@@ -551,7 +551,7 @@ extern cGlobals Glob;
         uint16_t move;
         int16_t freq;
     };
-#pragma pack(pop)
+    #pragma pack(pop)
 #else
     struct sBookEntry {
         U64 hash;

@@ -39,12 +39,12 @@ void cEngine::EvaluateMaterial(POS *p, eData *e, int sd) {
 
     int op = Opp(sd);
 
-    int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]   // knights lose value as pawns disappear
-              - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];  // rooks gain value as pawns disappear
+    int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]    // knights lose value as pawns disappear
+              - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R]; // rooks gain value as pawns disappear
 
-    if (p->cnt[sd][N] > 1) tmp += Par.values[N_PAIR];       // knight pair
-    if (p->cnt[sd][R] > 1) tmp += Par.values[R_PAIR];       // rook pair
-    if (p->cnt[sd][B] > 1) tmp += Par.values[B_PAIR];       // bishop pair
+    if (p->cnt[sd][N] > 1) tmp += Par.values[N_PAIR];        // knight pair
+    if (p->cnt[sd][R] > 1) tmp += Par.values[R_PAIR];        // rook pair
+    if (p->cnt[sd][B] > 1) tmp += Par.values[B_PAIR];        // bishop pair
 
     // "elephantiasis correction" for queen, idea by H.G.Mueller (nb. rookVsQueen doesn't help)
 
@@ -210,7 +210,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
         if ((bb_control & ~p->cl_bb[sd] & r_checks)
                 && p->Queens(sd)) {
-            att += 9;                                         // check threat bonus
+            att += 9;                                           // check threat bonus
             bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
 
             while (bb_contact) {
@@ -224,13 +224,13 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
         bb_attack = BB.RookAttacks(OccBb(p) ^ p->StraightMovers(sd), sq);  // get king attack bitboard
 
-        if (bb_attack & bb_zone) {                          // evaluate king attacks
+        if (bb_attack & bb_zone) {                                         // evaluate king attacks
             wood++;
             att += 9 * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
             att += 3 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = BB.PopCnt(bb_control & ~bb_excluded);         // get mobility count
+        cnt = BB.PopCnt(bb_control & ~bb_excluded);                        // get mobility count
         mob_mg += Par.r_mob_mg[cnt];
         mob_eg += Par.r_mob_eg[cnt];
         // FILE EVALUATION:
@@ -246,11 +246,11 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             if (!(bb_file & p->Pawns(op))) {
                 lines_mg += Par.values[ROF_MG];
                 lines_eg += Par.values[ROF_EG];
-            } else {                                          // half-open file...
-                if (bb_file & (p->Pawns(op) & e->p_takes[op])) {// ...with defended enemy pawn
+            } else {                                             // half-open file...
+                if (bb_file & (p->Pawns(op) & e->p_takes[op])) { // ...with defended enemy pawn
                     lines_mg += Par.values[RBH_MG];
                     lines_eg += Par.values[RBH_EG];
-                } else {                                        // ...with undefended enemy pawn
+                } else {                                         // ...with undefended enemy pawn
                     lines_mg += Par.values[RGH_MG];
                     lines_eg += Par.values[RGH_EG];
                 }
@@ -259,9 +259,9 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
         // Rook on the 7th rank attacking pawns or cutting off enemy king
 
-        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // rook on 7th rank
-            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
-                    || p->Kings(op) & bb_rel_rank[sd][RANK_8]) {        // or cutting off enemy king
+        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {                // rook on 7th rank
+            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]           // attacking enemy pawns
+                    || p->Kings(op) & bb_rel_rank[sd][RANK_8]) { // or cutting off enemy king
                 lines_mg += Par.values[RSR_MG];
                 lines_eg += Par.values[RSR_EG];
                 r_on_7th++;
@@ -313,9 +313,9 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         mob_mg += Par.q_mob_mg[cnt];
         mob_eg += Par.q_mob_eg[cnt];
 
-        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {             // queen on 7th rank
-            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]          // attacking enemy pawns
-                    ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) {       // or cutting off enemy king
+        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {                 // queen on 7th rank
+            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]            // attacking enemy pawns
+                    ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) { // or cutting off enemy king
                 lines_mg += Par.values[QSR_MG];
                 lines_eg += Par.values[QSR_EG];
             }
@@ -350,10 +350,10 @@ void cEngine::EvaluateOutpost(POS *p, eData *e, int sd, int pc, int sq, int *out
     if (SqBb(sq) & Mask.home[sd]) {
         U64 stop = BB.ShiftFwd(SqBb(sq), sd);             // get square in front of a minor
         if (stop & p->Pawns(sd))                          // is it occupied by own pawn?
-            *outpost += 5;                                    // bonus for a pawn shielding a minor
+            *outpost += 5;                                // bonus for a pawn shielding a minor
     }
 
-    int tmp = Par.sp_pst[sd][pc][sq];                   // get base outpost bonus
+    int tmp = Par.sp_pst[sd][pc][sq];                     // get base outpost bonus
     if (tmp) {
         int mul = 0;                                      // reset outpost multiplier
         if (SqBb(sq) & ~e->p_can_take[Opp(sd)]) mul += 2; // is piece in hole of enemy pawn structure?

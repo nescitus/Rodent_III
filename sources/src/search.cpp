@@ -182,8 +182,8 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
             cur_val = Search(p, 0, alpha, beta, depth, 0, -1, -1, pv);
             if (Glob.abort_search) break;
             if (cur_val > alpha && cur_val < beta)
-                return cur_val;                // we have finished within the window
-            if (cur_val > MAX_EVAL) break; // verify mate searching with infinite bounds
+                return cur_val;              // we have finished within the window
+            if (cur_val > MAX_EVAL) break;   // verify mate searching with infinite bounds
         }
     }
 
