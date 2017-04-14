@@ -87,9 +87,9 @@ function savePersonality() {
 	
   var mob_name = document.getElementById("mob").value;
   if (mob_name == "linear")
-    out += "steoption name MobilityStyle value 0\r\n"
+    out += "setoption name MobilityStyle value 0\r\n"
   if (mob_name == "decreasing")
-    out += "steoption name MobilityStyle value 1\r\n"
+    out += "setoption name MobilityStyle value 1\r\n"
 	
   out += inputToOption("NpsLimit") + '\r\n';
   out += inputToOption("EvalBlur") + '\r\n';
