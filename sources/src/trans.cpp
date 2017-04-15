@@ -16,6 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -27,9 +28,16 @@ void AllocTrans(int mbsize) {
     tt_mask = tt_size - 4;
     free(tt);
     tt = (ENTRY *) calloc(tt_size, sizeof(ENTRY));
+
+    if (tt)
+        printf("info string %dMB hash memory allocated\n", tt_size * sizeof(ENTRY) / (1024 * 1024));
+    else
+        printf("info string memory allocation error\n");
 }
 
 void ClearTrans(void) {
+
+    if (!tt) return;
 
     tt_date = 0;
 
@@ -37,6 +45,8 @@ void ClearTrans(void) {
 }
 
 int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
+
+    if (!tt) return 0;
 
     ENTRY *entry;
     int i;
@@ -67,6 +77,8 @@ int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth
 
 void TransRetrieveMove(U64 key, int *move) {
 
+    if (!tt) return;
+
     ENTRY *entry;
 
     entry = tt + (key & tt_mask);
@@ -81,6 +93,8 @@ void TransRetrieveMove(U64 key, int *move) {
 }
 
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
+
+    if (!tt) return;
 
     ENTRY *entry, *replace;
     int i, oldest, age;
