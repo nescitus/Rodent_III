@@ -16,43 +16,44 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
+#include "chessheapclass.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
+ChessHeapClass chc;
 
 void AllocTrans(int mbsize) {
 
     for (tt_size = 2; tt_size <= mbsize; tt_size *= 2)
         ;
-    tt_size = ((tt_size / 2) << 20) / sizeof(ENTRY);
-    tt_mask = tt_size - 4;
-    free(tt);
-    tt = (ENTRY *) calloc(tt_size, sizeof(ENTRY));
 
-    if (tt)
-        printf("info string %dMB hash memory allocated\n", tt_size * sizeof(ENTRY) / (1024 * 1024));
+    tt_size /= 2;
+
+    if (chc.Alloc(tt_size))
+        printf("info string %dMB of memory allocated\n", tt_size);
     else
         printf("info string memory allocation error\n");
+
+    tt_size = (tt_size << 20) / sizeof(ENTRY);
+    tt_mask = tt_size - 4;
 }
 
 void ClearTrans(void) {
 
-    if (!tt) return;
-
     tt_date = 0;
 
-    memset(tt, 0, tt_size * sizeof(ENTRY));
+    chc.ZeroMem();
 }
 
 int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
 
-    if (!tt) return 0;
+    if (!chc.success) return 0;
 
     ENTRY *entry;
-    int i;
 
-    entry = tt + (key & tt_mask);
-    for (i = 0; i < 4; i++) {
+    entry = chc[key & tt_mask];
+    for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
             entry->date = tt_date;
             *move = entry->move;
@@ -77,11 +78,11 @@ int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth
 
 void TransRetrieveMove(U64 key, int *move) {
 
-    if (!tt) return;
+    if (!chc.success) return;
 
     ENTRY *entry;
 
-    entry = tt + (key & tt_mask);
+    entry = chc[key & tt_mask];
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
             entry->date = tt_date; // TODO: test without this line (very low priority, long test)
@@ -94,10 +95,10 @@ void TransRetrieveMove(U64 key, int *move) {
 
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
 
-    if (!tt) return;
+    if (!chc.success) return;
 
     ENTRY *entry, *replace;
-    int i, oldest, age;
+    int oldest, age;
 
     if (score < -MAX_EVAL)
         score -= ply;
@@ -105,8 +106,8 @@ void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
         score += ply;
     replace = NULL;
     oldest = -1;
-    entry = tt + (key & tt_mask);
-    for (i = 0; i < 4; i++) {
+    entry = chc[key & tt_mask];
+    for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
             if (!move) move = entry->move;
             replace = entry;

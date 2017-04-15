@@ -18,7 +18,7 @@ case "$1" in
 
 		echo quit | ./rodent_$MSYSTEM_CARCH.exe
 
-		clang -Ofast -s -std=c++14 -march=core2 -fno-stack-protector -fno-exceptions -DUSEGEN -I . -DNO_THREADS -D_FORTIFY_SOURCE=0 src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
+		clang -Ofast -s -std=c++14 -march=core2 -fno-stack-protector -fno-exceptions -DUSEGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 -I . src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
 
 		rm book_gen.h
 		;;
@@ -42,7 +42,7 @@ case "$1" in
 
 		echo quit | ./rodent_$MSYSTEM_CARCH.exe
 
-		gcc -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -DUSEGEN -I . -DNO_THREADS -D_FORTIFY_SOURCE=0 src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
+		gcc -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -DUSEGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 -I . src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
 
 		rm book_gen.h
 
