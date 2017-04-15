@@ -209,7 +209,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         e->ev_att[sd] |= bb_control;
 
         if ((bb_control & ~p->cl_bb[sd] & r_checks)
-                && p->Queens(sd)) {
+        && p->Queens(sd)) {
             att += 9;                                           // check threat bonus
             bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
 
@@ -261,7 +261,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
         if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {                // rook on 7th rank
             if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]           // attacking enemy pawns
-                    || p->Kings(op) & bb_rel_rank[sd][RANK_8]) { // or cutting off enemy king
+            || p->Kings(op) & bb_rel_rank[sd][RANK_8]) {         // or cutting off enemy king
                 lines_mg += Par.values[RSR_MG];
                 lines_eg += Par.values[RSR_EG];
                 r_on_7th++;
@@ -313,9 +313,9 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         mob_mg += Par.q_mob_mg[cnt];
         mob_eg += Par.q_mob_eg[cnt];
 
-        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {                 // queen on 7th rank
-            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]            // attacking enemy pawns
-                    ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) { // or cutting off enemy king
+        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {           // queen on 7th rank
+            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]      // attacking enemy pawns
+            ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) {   // or cutting off enemy king
                 lines_mg += Par.values[QSR_MG];
                 lines_eg += Par.values[QSR_EG];
             }
@@ -428,7 +428,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
             if (stop & OccBb(p)) mul -= 23;   // blocked passers score less
 
             else if ((stop & e->all_att[sd])  // our control of stop square
-                     && (stop & ~e->all_att[op])) mul += 14;
+                 && (stop & ~e->all_att[op])) mul += 14;
 
             // in the midgame, we use just a bonus from the table
             // in the endgame, passed pawn attracts both kings.
@@ -594,17 +594,18 @@ int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
     //Correct self-side score by depth for human opponent
 
     if ((Par.riskydepth > 0)
-            && (ply >= Par.riskydepth)
-            && (p->side == Par.prog_side)
-            && (Abs(eval) > Par.draw_score)
-            && (Abs(eval) < 1000)) {
+    && (ply >= Par.riskydepth)
+    && (p->side == Par.prog_side)
+    && (Abs(eval) > Par.draw_score)
+    && (Abs(eval) < 1000)) {
         eval_adj = eval < 0 ? round(1.0 * eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply) : round(1.0 * eval * (Glob.nodes > 100 ? 2 : 1) * ply / Par.riskydepth);
         if (eval_adj > 1000) eval_adj = 1000;
-    } else if ((Par.riskydepth > 0)
-               && (ply >= Par.riskydepth)
-               && (p->side != Par.prog_side)
-               && (Abs(eval) > Par.draw_score)
-               && (Abs(eval) < 1000)) {
+    } else 
+	if ((Par.riskydepth > 0)
+    && (ply >= Par.riskydepth)
+    && (p->side != Par.prog_side)
+    && (Abs(eval) > Par.draw_score)
+    && (Abs(eval) < 1000)) {
         eval_adj = eval < 0 ? round(1.0 * eval * (Glob.nodes > 100 ? 2 : 1) * ply / Par.riskydepth) : round(1.0 * eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply);
         if (eval_adj > 1000) eval_adj = 1000;
     }

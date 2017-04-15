@@ -65,22 +65,22 @@ int cEngine::KPKdraw(POS *p, int sd) {
     // opposition through a pawn
 
     if (p->side == sd
-            && (bbWeakKing & BB.ShiftFwd(bbPawn, sd))
-            && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
+    && (bbWeakKing & BB.ShiftFwd(bbPawn, sd))
+    && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
        ) return 1;
 
     // weaker side can create opposition through a pawn in one move
 
     if (p->side == op
-            && (BB.KingAttacks(p->king_sq[op]) & BB.ShiftFwd(bbPawn, sd))
-            && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
+    && (BB.KingAttacks(p->king_sq[op]) & BB.ShiftFwd(bbPawn, sd))
+    && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
        ) if (!Illegal(p)) return 1;
 
     // opposition next to a pawn
 
     if (p->side == sd
-            && (bbStrongKing & BB.ShiftSideways(bbPawn))
-            && (bbWeakKing & BB.ShiftFwd(BB.ShiftFwd(bbStrongKing, sd), sd))
+    && (bbStrongKing & BB.ShiftSideways(bbPawn))
+    && (bbWeakKing & BB.ShiftFwd(BB.ShiftFwd(bbStrongKing, sd), sd))
        ) return 1;
 
     // TODO: pawn checks king

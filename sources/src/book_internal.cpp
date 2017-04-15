@@ -3308,7 +3308,7 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
 
     for (int i = 0; i < n_of_records; i++) {
         if (internal_book[i].hash == hashKey
-                &&   internal_book[i].move == move) {
+        &&   internal_book[i].move == move) {
             internal_book[i].freq += val;
             return;
         }
@@ -3338,7 +3338,7 @@ int sInternalBook::MoveFromInternal(POS *p) {
 
     for (i = 0; i < n_of_records; i++) {
         if (internal_book[i].hash == local_hash
-                && Legal(p, internal_book[i].move)) {
+        && Legal(p, internal_book[i].move)) {
             moves[n_of_choices] = internal_book[i].move;
             if (internal_book[i].freq > 0) values[n_of_choices] = internal_book[i].freq + min_freq;
             else                           values[n_of_choices] = -1;

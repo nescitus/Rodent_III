@@ -260,15 +260,15 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     // CAN WE PRUNE THIS NODE?
 
     int fl_prunable_node = !fl_check
-                           && !is_pv
-                           && alpha > -MAX_EVAL
-                           && beta < MAX_EVAL;
+                        && !is_pv
+                        && alpha > -MAX_EVAL
+                        && beta < MAX_EVAL;
 
     // GET EVAL SCORE IF NEEDED FOR PRUNING/REDUCTION DECISIONS
 
     int eval = 0;
     if (fl_prunable_node
-            && (!was_null || depth <= 6)) {
+    && (!was_null || depth <= 6)) {
         eval = Evaluate(p, &e);
 #ifdef USE_RISKY_PARAMETER
         eval = EvalScaleByDepth(p, ply, eval);
@@ -278,9 +278,9 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     // BETA PRUNING / STATIC NULL MOVE
 
     if (fl_prunable_node
-            && Par.search_skill > 7
-            && depth <= 3
-            && !was_null) {
+    && Par.search_skill > 7
+    && depth <= 3
+    && !was_null) {
         int sc = eval - 120 * depth;
         if (sc > beta) return sc;
     }
@@ -288,11 +288,11 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     // NULL MOVE
 
     if (depth > 1
-            && Par.search_skill > 1
-            && !was_null
-            && fl_prunable_node
-            && MayNull(p)
-            && eval >= beta) {
+    && Par.search_skill > 1
+    && !was_null
+    && fl_prunable_node
+    && MayNull(p)
+    && eval >= beta) {
 
         // null move depth reduction - modified Stockfish formula
 
@@ -340,11 +340,11 @@ avoid_null:
     // RAZORING (based on Toga II 3.0)
 
     if (fl_prunable_node
-            && Par.search_skill > 3
-            && !move
-            && !was_null
-            && !(p->Pawns(p->side) & bb_rel_rank[p->side][RANK_7]) // no pawns to promote in one move
-            && depth <= 4) {
+    && Par.search_skill > 3
+    && !move
+    && !was_null
+    && !(p->Pawns(p->side) & bb_rel_rank[p->side][RANK_7]) // no pawns to promote in one move
+    && depth <= 4) {
         int threshold = beta - razor_margin[depth];
 
         if (eval < threshold) {
@@ -356,9 +356,9 @@ avoid_null:
     // INTERNAL ITERATIVE DEEPENING
 
     if (is_pv
-            && !fl_check
-            && !move
-            && depth > 6) {
+    && !fl_check
+    && !move
+    && depth > 6) {
         // TODO: && eval + 100 < beta, Stockfish-style
         Search(p, ply, alpha, beta, depth - 2, 0, -1, last_capt_sq, pv);
         TransRetrieveMove(p->hash_key, &move);
@@ -379,10 +379,10 @@ avoid_null:
         // before the first applicable move is tried
 
         if (mv_type == MV_NORMAL
-                && Par.search_skill > 4
-                && quiet_tried == 0
-                && fl_prunable_node
-                && depth <= 6) {
+        && Par.search_skill > 4
+        && quiet_tried == 0
+        && fl_prunable_node
+        && depth <= 6) {
             if (eval + fut_margin[depth] < beta) fl_futility = 1;
         }
 
@@ -413,28 +413,28 @@ avoid_null:
             new_depth += InCheck(p);                                // check extension, pv or low depth
             if (is_pv && Tsq(move) == last_capt_sq) new_depth += 1; // recapture extension in pv
             if (is_pv && depth < 6 && TpOnSq(p, Tsq(move)) == P     // pawn to 7th extension at the tips of pv
-                    && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) new_depth += 1;
+            && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) new_depth += 1;
         }
 
         // FUTILITY PRUNING
 
         if (fl_futility
-                && !InCheck(p)
-                && mv_hist_score < Par.hist_limit
-                && (mv_type == MV_NORMAL)
-                &&  mv_tried > 1) {
+        && !InCheck(p)
+        && mv_hist_score < Par.hist_limit
+        && (mv_type == MV_NORMAL)
+        &&  mv_tried > 1) {
             p->UndoMove(move, u); continue;
         }
 
         // LATE MOVE PRUNING
 
         if (fl_prunable_node
-                && Par.search_skill > 5
-                && depth < 4
-                && quiet_tried > 3 * depth
-                && !InCheck(p)
-                && mv_hist_score < Par.hist_limit
-                && mv_type == MV_NORMAL) {
+        && Par.search_skill > 5
+        && depth < 4
+        && quiet_tried > 3 * depth
+        && !InCheck(p)
+        && mv_hist_score < Par.hist_limit
+        && mv_type == MV_NORMAL) {
             p->UndoMove(move, u); continue;
         }
 
@@ -443,20 +443,20 @@ avoid_null:
         reduction = 0;
 
         if (depth > 2
-                && Par.search_skill > 2
-                && mv_tried > 3
-                && !fl_check
-                && !InCheck(p)
-                && lmr_size[is_pv][depth][mv_tried] > 0
-                && mv_type == MV_NORMAL
-                && mv_hist_score < Par.hist_limit
-                && MoveType(move) != CASTLE) {
+        && Par.search_skill > 2
+        && mv_tried > 3
+        && !fl_check
+        && !InCheck(p)
+        && lmr_size[is_pv][depth][mv_tried] > 0
+        && mv_type == MV_NORMAL
+        && mv_hist_score < Par.hist_limit
+        && MoveType(move) != CASTLE) {
             reduction = (int)lmr_size[is_pv][depth][mv_tried];
 
             // increase reduction on bad history score
 
             if (mv_hist_score < 0
-                    && new_depth - reduction > 2)
+            && new_depth - reduction > 2)
                 reduction++;
 
             // TODO: decrease reduction of moves with good history score
@@ -467,13 +467,13 @@ avoid_null:
         // LMR 2: MARGINAL REDUCTION OF BAD CAPTURES
 
         if (depth > 2
-                && Par.search_skill > 8
-                && mv_tried > 6
-                && alpha > -MAX_EVAL && beta < MAX_EVAL
-                && !fl_check
-                && !InCheck(p)
-                && (mv_type == MV_BADCAPT)
-                && !is_pv) {
+        && Par.search_skill > 8
+        && mv_tried > 6
+        && alpha > -MAX_EVAL && beta < MAX_EVAL
+        && !fl_check
+        && !InCheck(p)
+        && (mv_type == MV_BADCAPT)
+        && !is_pv) {
             reduction = 1;
             new_depth -= reduction;
         }

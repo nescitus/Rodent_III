@@ -256,9 +256,9 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
     // CORRECTION OF SCORE FOR OWN SIDE IN RISKY MODE (Roman T. Sovanyan)
 #ifdef USE_RISKY_PARAMETER
     if ((Par.riskydepth > 0)
-            && (ply >= Par.riskydepth)
-            && (p->side == Par.prog_side)
-            && (Abs(best) > 100) && (Abs(best) < 1000)) {
+    && (ply >= Par.riskydepth)
+    && (p->side == Par.prog_side)
+    && (Abs(best) > 100) && (Abs(best) < 1000)) {
         int eval_adj = best < 0 ? round(1.0 * best * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply) : round(1.0 * best * (Glob.nodes > 100 ? 2 : 1) * ply / Par.riskydepth);
         if (eval_adj > 1000) eval_adj = 1000;
         best = eval_adj;

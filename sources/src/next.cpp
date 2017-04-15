@@ -64,8 +64,8 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         case 3: // first killer move
             move = m->killer1;
             if (move && move != m->trans_move
-                    && m->p->pc[Tsq(move)] == NO_PC
-                    && Legal(m->p, move)) {
+            && m->p->pc[Tsq(move)] == NO_PC
+            && Legal(m->p, move)) {
                 m->phase = 4;
                 *flag = MV_KILLER;
                 return move;
@@ -74,8 +74,8 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         case 4: // second killer move
             move = m->killer2;
             if (move && move != m->trans_move
-                    && m->p->pc[Tsq(move)] == NO_PC
-                    && Legal(m->p, move)) {
+            && m->p->pc[Tsq(move)] == NO_PC
+            && Legal(m->p, move)) {
                 m->phase = 5;
                 *flag = MV_KILLER;
                 return move;
@@ -84,10 +84,10 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         case 5: // refutation move
             move = m->ref_move;
             if (move && move != m->trans_move
-                    &&  m->p->pc[Tsq(move)] == NO_PC
-                    &&  move != m->killer1
-                    &&  move != m->killer2
-                    && Legal(m->p, move)) {
+            &&  m->p->pc[Tsq(move)] == NO_PC
+            &&  move != m->killer1
+            &&  move != m->killer2
+            && Legal(m->p, move)) {
                 m->phase = 6;
                 *flag = MV_NORMAL;
                 return move;
@@ -103,9 +103,9 @@ int cEngine::NextMove(MOVES *m, int *flag) {
             while (m->next < m->last) {
                 move = SelectBest(m);
                 if (move == m->trans_move
-                        ||  move == m->killer1
-                        ||  move == m->killer2
-                        ||  move == m->ref_move)
+                ||  move == m->killer1
+                ||  move == m->killer2
+                ||  move == m->ref_move)
                     continue;
                 *flag = MV_NORMAL;
                 return move;
@@ -158,8 +158,8 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         case 3: // first killer move
             move = m->killer1;
             if (move && move != m->trans_move
-                    && m->p->pc[Tsq(move)] == NO_PC
-                    && Legal(m->p, move)) {
+            && m->p->pc[Tsq(move)] == NO_PC
+            && Legal(m->p, move)) {
                 m->phase = 4;
                 *flag = MV_KILLER;
                 return move;
@@ -168,7 +168,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         case 4: // second killer move
             move = m->killer2;
             if (move && move != m->trans_move
-                    && m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
+            && m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
                 m->phase = 5;
                 *flag = MV_KILLER;
                 return move;
@@ -184,8 +184,8 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
             while (m->next < m->last) {
                 move = SelectBest(m);
                 if (move == m->trans_move
-                        ||  move == m->killer1
-                        ||  move == m->killer2)
+                ||  move == m->killer1
+                ||  move == m->killer2)
                     continue;
                 *flag = MV_NORMAL;
                 return move;

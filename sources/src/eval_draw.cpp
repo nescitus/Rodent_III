@@ -84,21 +84,21 @@ int cEngine::GetDrawFactor(POS *p, int sd) {  // refactoring may be needed
 
         if (p->cnt[sd][B] == 2 && p->cnt[sd][P] == 0) {                                                  // KBBK, same coloured bishops
             if (MoreThanOne(p->Bishops(sd) & bbWhiteSq)
-                    ||  MoreThanOne(p->Bishops(sd) & bbBlackSq)) return 0;
+            ||  MoreThanOne(p->Bishops(sd) & bbBlackSq)) return 0;
         }
 
         if (p->cnt[sd][B] == 1                                                                           // KBPKm, king blocks
-                && p->cnt[op][B] + p->cnt[op][N] == 1
-                && p->cnt[sd][P] == 1
-                && p->cnt[op][P] == 0
-                && (SqBb(p->king_sq[op]) & BB.GetFrontSpan(p->Pawns(sd), sd))
-                && NotOnBishColor(p, sd, p->king_sq[op]))
+        && p->cnt[op][B] + p->cnt[op][N] == 1
+        && p->cnt[sd][P] == 1
+        && p->cnt[op][P] == 0
+        && (SqBb(p->king_sq[op]) & BB.GetFrontSpan(p->Pawns(sd), sd))
+        && NotOnBishColor(p, sd, p->king_sq[op]))
             return 0;
 
         if (p->cnt[sd][B] == 1 && p->cnt[op][B] == 1
-                && DifferentBishops(p)) {
+        && DifferentBishops(p)) {
             if (Mask.home[sd] & p->Pawns(sd)
-                    &&  p->cnt[sd][P] == 1 && p->cnt[op][P] == 0) return 8;                              // KBPKB, BOC, pawn on own half
+            &&  p->cnt[sd][P] == 1 && p->cnt[op][P] == 0) return 8;                                      // KBPKB, BOC, pawn on own half
 
             return 32;                                                                                   // BOC, any number of pawns
         }
@@ -140,12 +140,13 @@ int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
     if (p->cnt[op][P] == 0) {  // TODO: accept pawns for a weaker side
 
         if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_H_BB)) // all pawns on the h file
-                &&  p->Kings(op) & bbKingBlockH[sd]) return 0;
+        &&  p->Kings(op) & bbKingBlockH[sd]) return 0;
 
         if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_A_BB)) // all pawns on the a file
-                &&  p->Kings(op) & bbKingBlockA[sd]) return 0;
+        &&  p->Kings(op) & bbKingBlockA[sd]) return 0;
     }
 
+	// TODO: perhaps scaling this up, like 72, will help in defending inferior endgames
     return 64; // default
 }
 
@@ -154,14 +155,14 @@ int cEngine::ScaleKNPK(POS *p, int sd, int op) {
     // rare KNPK draw rule: king blocking an edge pawn on 7th rank draws
 
     if (p->cnt[sd][N] == 1
-            &&  p->cnt[sd][P] == 1
-            &&  p->cnt[op][P] == 0) {
+    &&  p->cnt[sd][P] == 1
+    &&  p->cnt[op][P] == 0) {
 
         if ((RelSqBb(A7, sd) & PcBb(p, sd, P))
-                && (RelSqBb(A8, sd) & PcBb(p, op, K))) return 0; // dead draw
+        && (RelSqBb(A8, sd) & PcBb(p, op, K))) return 0; // dead draw
 
         if ((RelSqBb(H7, sd) & PcBb(p, sd, P))
-                && (RelSqBb(H8, sd) & PcBb(p, op, K))) return 0; // dead draw
+        && (RelSqBb(H8, sd) & PcBb(p, op, K))) return 0; // dead draw
     }
 
     return 64; // default
@@ -170,12 +171,12 @@ int cEngine::ScaleKNPK(POS *p, int sd, int op) {
 int cEngine::ScaleKBPK(POS *p, int sd, int op) {
 
     if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_H_BB))
-            && NotOnBishColor(p, sd, REL_SQ(H8, sd))
-            && p->Kings(op)  & bbKingBlockH[sd]) return 0;
+    && NotOnBishColor(p, sd, REL_SQ(H8, sd))
+    && p->Kings(op)  & bbKingBlockH[sd]) return 0;
 
     if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_A_BB))
-            && NotOnBishColor(p, sd, REL_SQ(A8, sd))
-            && p->Kings(op)  & bbKingBlockA[sd]) return 0;
+    && NotOnBishColor(p, sd, REL_SQ(A8, sd))
+    && p->Kings(op)  & bbKingBlockA[sd]) return 0;
 
     return 64; // default
 }
@@ -183,15 +184,15 @@ int cEngine::ScaleKBPK(POS *p, int sd, int op) {
 int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
 
     if ((RelSqBb(A7, sd) & p->Pawns(sd))
-            && (RelSqBb(A8, sd) & p->Rooks(sd))
-            && (FILE_A_BB & p->Rooks(op))
-            && ((RelSqBb(H7, sd) & p->Kings(op)) || (RelSqBb(G7, sd) & p->Kings(op)))
+    && (RelSqBb(A8, sd) & p->Rooks(sd))
+    && (FILE_A_BB & p->Rooks(op))
+    && ((RelSqBb(H7, sd) & p->Kings(op)) || (RelSqBb(G7, sd) & p->Kings(op)))
        ) return 0; // dead draw
 
     if ((RelSqBb(H7, sd) & p->Pawns(sd))
-            && (RelSqBb(H8, sd) & p->Rooks(sd))
-            && (FILE_H_BB & p->Rooks(op))
-            && ((RelSqBb(A7, sd) & p->Kings(op)) || (RelSqBb(B7, sd) & p->Kings(op)))
+    && (RelSqBb(H8, sd) & p->Rooks(sd))
+    && (FILE_H_BB & p->Rooks(op))
+    && ((RelSqBb(A7, sd) & p->Kings(op)) || (RelSqBb(B7, sd) & p->Kings(op)))
        ) return 0; // dead draw
 
     U64 bb_span = BB.GetFrontSpan(p->Pawns(sd), sd);
@@ -208,15 +209,15 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
         // king of the weaker side blocks pawn
 
         if (BB.ShiftFwd(p->Pawns(sd), sd) & p->Kings(op)
-                && Dist.metric[strong_king][strong_pawn] - tempo >= 2
-                && Dist.metric[strong_king][weak_rook] - tempo >= 2)
+        && Dist.metric[strong_king][strong_pawn] - tempo >= 2
+        && Dist.metric[strong_king][weak_rook] - tempo >= 2)
             return 0;
 
         // third rank defence
 
         if (Dist.metric[weak_king][prom_sq] <= 1
-                && strong_king <= H5
-                && (p->Rooks(op) & bb_rel_rank[sd][RANK_6]))
+        && strong_king <= H5
+        && (p->Rooks(op) & bb_rel_rank[sd][RANK_6]))
             return 0;
 
     } else { // advanced enemy pawn
@@ -226,9 +227,9 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
         // and can check from behind
 
         if (p->Pawns(sd) & bb_rel_rank[sd][RANK_6]
-                && Dist.metric[weak_king][prom_sq] <= 1
-                && ((p->Kings(sd) & bb_safe_zone) || (!tempo && p->Kings(sd) & bb_rel_rank[sd][RANK_6]))
-                && (p->Rooks(op) & bb_rel_rank[sd][RANK_1]))
+        && Dist.metric[weak_king][prom_sq] <= 1
+        && ((p->Kings(sd) & bb_safe_zone) || (!tempo && p->Kings(sd) & bb_rel_rank[sd][RANK_6]))
+        && (p->Rooks(op) & bb_rel_rank[sd][RANK_1]))
             return 0;
 
     }
@@ -257,10 +258,10 @@ int cEngine::ScaleKQKRP(POS *p, int sd, int op) {
 int cEngine::NotOnBishColor(POS *p, int bish_side, int sq) {
 
     if (((bbWhiteSq & p->Bishops(bish_side)) == 0)
-            && (SqBb(sq) & bbWhiteSq)) return 1;
+    && (SqBb(sq) & bbWhiteSq)) return 1;
 
     if (((bbBlackSq & p->Bishops(bish_side)) == 0)
-            && (SqBb(sq) & bbBlackSq)) return 1;
+    && (SqBb(sq) & bbBlackSq)) return 1;
 
     return 0;
 }
@@ -316,8 +317,8 @@ int cEngine::CheckmateHelper(POS *p) {
 
 
     if (p->cnt[WC][P] == 0
-            &&  p->cnt[BC][P] == 0
-            &&  p->phase == 2) {
+    &&  p->cnt[BC][P] == 0
+    &&  p->phase == 2) {
 
         if (p->cnt[WC][B] == 1 && p->cnt[WC][N] == 1) {  // mate with bishop and knight
             if (p->Bishops(WC) & bbWhiteSq) result -= 2 * BN_bb[p->king_sq[BC]];
