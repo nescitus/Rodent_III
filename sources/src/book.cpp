@@ -17,9 +17,8 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 #include "book.h"
-#include <cstdlib>
 #include <cstdio>
-#include <cmath>
+#include <cstdlib>
 
 // Random numbers from PolyGlot, used to compute book hash keys
 
@@ -348,11 +347,9 @@ void sBook::OpenPolyglot(void) {
     }
 }
 
-static int my_random(int n) {
+static int big_random(int n) {
 
-    double r;
-    r = double(rand()) / (double(RAND_MAX) + 1.0);
-    return int(floor(r * double(n)));
+    return ((rand() << 15) ^ rand()) % n;
 }
 
 int sBook::GetPolyglotMove(POS *p, int print_output) {
@@ -423,7 +420,7 @@ int sBook::GetPolyglotMove(POS *p, int print_output) {
             // shall we pick this move?
             if (!IsInfrequent(values[i], max_weight)) {
                 best_score += values[i];
-                if (my_random(best_score) < values[i]) best_move = moves[i];
+                if (big_random(best_score) < values[i]) best_move = moves[i];
             }
         }
     }

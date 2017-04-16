@@ -31,11 +31,11 @@ void AllocTrans(int mbsize) {
     tt_size /= 2;
 
     if (chc.Alloc(tt_size))
-        printf("info string %dMB of memory allocated\n", tt_size);
+        printf("info string %zuMB of memory allocated\n", tt_size);
     else
         printf("info string memory allocation error\n");
 
-    tt_size = (tt_size << 20) / sizeof(ENTRY);
+    tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY));
     tt_mask = tt_size - 4;
 }
 
