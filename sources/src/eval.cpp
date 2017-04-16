@@ -598,8 +598,8 @@ int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
     && (Abs(eval) < 1000)) {
         eval_adj = eval < 0 ? round(1.0 * eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply) : round(1.0 * eval * (Glob.nodes > 100 ? 2 : 1) * ply / Par.riskydepth);
         if (eval_adj > 1000) eval_adj = 1000;
-    } else 
-	if ((Par.riskydepth > 0)
+    } else
+    if ((Par.riskydepth > 0)
     && (ply >= Par.riskydepth)
     && (p->side != Par.prog_side)
     && (Abs(eval) > Par.draw_score)

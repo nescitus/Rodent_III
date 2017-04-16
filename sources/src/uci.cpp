@@ -509,7 +509,11 @@ void cEngine::Bench(int depth) {
     int end_time = GetMS() - start_time;
     int nps = (Glob.nodes * 1000) / (end_time + 1);
 
-    printf("%llu nodes searched in %d, speed %u nps (Score: %.3f)\n", Glob.nodes, end_time, nps, (float)nps / 430914.0);
+#if __cplusplus >= 201103L
+    printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", Glob.nodes, end_time, nps, (float)nps / 430914.0);
+#else
+    printf(       "%llu nodes searched in %d, speed %u nps (Score: %.3f)\n", Glob.nodes, end_time, nps, (float)nps / 430914.0);
+#endif
 }
 
 void PrintBoard(POS *p) {
