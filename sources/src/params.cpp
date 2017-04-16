@@ -25,14 +25,14 @@ void cParam::DefaultWeights() {
 
     search_skill = 10;
     nps_limit = 0;
-    fl_weakening = 0;
+    fl_weakening = false;
     elo = 2800;
     eval_blur = 0;
     book_depth = 256;
 
     // Opening book
 
-    use_book = 1;
+    use_book = true;
     book_filter = 20;
 
     // Timing
@@ -99,7 +99,7 @@ void cParam::DefaultWeights() {
     riskydepth = 0;
 #endif
     draw_score = 0;
-    shut_up = 0;           // surpress displaing info currmove etc.
+    shut_up = false;           // surpress displaing info currmove etc.
 
     // Asymmetric weights - the core of personality mechanism
 

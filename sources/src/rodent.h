@@ -420,12 +420,12 @@ enum Values {
 typedef class {
   public:
     int values[N_OF_VAL];
-    int use_book;
+    bool use_book;
     int book_filter;
     int book_depth;
     int elo;
-    int fl_weakening;
-    int shut_up;
+    bool fl_weakening;
+    bool shut_up;
     int time_percentage;
     int draw_score;
     int prog_side;

@@ -268,7 +268,7 @@ void ParseGo(POS *p, const char *ptr) {
     movestogo = 40;
     strict_time = 0;
     search_depth = 64;
-    Par.shut_up = 0;
+    Par.shut_up = false;
 
     for (;;) {
         ptr = ParseToken(ptr, token);
@@ -485,7 +485,7 @@ void cEngine::Bench(int depth) {
     if (depth == 0) depth = 8; // so that you can call bench without parameters
     ClearTrans();
     ClearAll();
-    Par.shut_up = 1;
+    Par.shut_up = true;
 
     printf("Bench test started (depth %d): \n", depth);
 
