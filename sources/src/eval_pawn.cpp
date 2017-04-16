@@ -16,6 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
+#include <cstring>
 
 static const int empty_ks[64] = {
     0,   0,   0,   0,   0, -10, -20, -30,
@@ -41,11 +42,7 @@ static const int empty_qs[64] = {
 
 void cEngine::ClearPawnHash(void) {
 
-    for (int e = 0; e < PAWN_HASH_SIZE; e++) {
-        PawnTT[e].key = 0;
-        PawnTT[e].mg_pawns = 0;
-        PawnTT[e].eg_pawns = 0;
-    }
+    ZEROARRAY(PawnTT);
 }
 
 void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
@@ -193,7 +190,7 @@ int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
     if (!bb_opp_pawns) return -16;
     if (bb_opp_pawns & bb_rel_rank[sd][RANK_3]) return -32;
     if (bb_opp_pawns & bb_rel_rank[sd][RANK_4]) return -16;
-    if (bb_opp_pawns & bb_rel_rank[sd][RANK_5]) return -8;
+    if (bb_opp_pawns & bb_rel_rank[sd][RANK_5]) return  -8;
     return 0;
 }
 

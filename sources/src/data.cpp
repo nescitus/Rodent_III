@@ -42,6 +42,6 @@ int move_nodes;
 int search_depth;
 int start_time;
 ENTRY *tt;
-int tt_size;
-int tt_mask;
+size_t tt_size;
+size_t tt_mask;
 int tt_date;

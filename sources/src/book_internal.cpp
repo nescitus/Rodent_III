@@ -37,11 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include "book.h"
-#include <math.h>
+#include <cstdlib>
+#include <cstring>
+#include <cstdio>
 
 void sInternalBook::ReadInternal(POS *p) {
 #ifndef USEGEN
