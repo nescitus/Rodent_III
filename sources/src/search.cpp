@@ -41,7 +41,7 @@ void cParam::InitAsymmetric(POS *p) {
     }
 }
 
-void cGlobals::ClearData(void) {
+void cGlobals::ClearData() {
 
     ClearTrans();
     Engine1.ClearAll();
@@ -50,10 +50,10 @@ void cGlobals::ClearData(void) {
     Engine3.ClearAll();
     Engine4.ClearAll();
 #endif
-    should_clear = 0;
+    should_clear = false;
 }
 
-void InitSearch(void) {
+void InitSearch() {
 
     // Set depth of late move reduction (formula based on Stockfish)
 
@@ -168,7 +168,7 @@ void cEngine::Iterate(POS *p, int *pv) {
             Glob.depth_reached = dp_completed;
     }
 
-    if (!Par.shut_up) Glob.abort_search = 1; // for correct exit from fixed depth search
+    if (!Par.shut_up) Glob.abort_search = true; // for correct exit from fixed depth search
 }
 
 // Aspiration search, progressively widening the window (based on Senpai 1.0)
@@ -596,36 +596,41 @@ void cEngine::DisplayPv(int score, int *pv) {
 
     PvToStr(pv, pv_str);
 
-#if defined _WIN32 || defined _WIN64
-    printf("info depth %d time %d nodes %I64d nps %I64d score %s %d pv %s\n",
+#if __cplusplus >= 201103L
+    printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
            root_depth, elapsed, Glob.nodes, nps, type, score, pv_str);
 #else
-    printf("info depth %d time %d nodes %lld nps %lld score %s %d pv %s\n",
-           root_depth, elapsed, Glob.nodes, nps, type, score, pv_str);
+    #if defined _WIN32 || defined _WIN64
+        printf("info depth %d time %d nodes %I64d nps %I64d score %s %d pv %s\n",
+               root_depth, elapsed, Glob.nodes, nps, type, score, pv_str);
+    #else
+        printf("info depth %d time %d nodes %lld nps %lld score %s %d pv %s\n",
+               root_depth, elapsed, Glob.nodes, nps, type, score, pv_str);
+    #endif
 #endif
 }
 
-void CheckTimeout(void) {
+void CheckTimeout() {
 
     char command[80];
 
     if (InputAvailable()) {
         ReadLine(command, sizeof(command));
         if (strcmp(command, "stop") == 0)
-            Glob.abort_search = 1;
+            Glob.abort_search = true;
         else if (strcmp(command, "ponderhit") == 0)
-            Glob.pondering = 0;
+            Glob.pondering = false;
     }
 
     if (!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)
-        Glob.abort_search = 1;
+        Glob.abort_search = true;
 }
 
 void cEngine::Slowdown() {
 
     if (move_nodes > 0) {
         if (Glob.nodes >= move_nodes)
-            Glob.abort_search = 1;
+            Glob.abort_search = true;
     }
 
 // TODO: reorder, slowdown code first
@@ -644,7 +649,7 @@ void cEngine::Slowdown() {
             time = GetMS() - start_time + 1;
             nps = GetNps(time);
             if ((!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)) {
-                Glob.abort_search = 1;
+                Glob.abort_search = true;
                 return;
             }
         }

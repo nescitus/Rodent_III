@@ -520,18 +520,18 @@ extern cMask Mask;
 typedef class {
   public:
     U64 nodes;
-    int is_tuning;
-    int abort_search;
-    int pondering;
-    int separate_books;
-    int use_personality_files;
-    int reading_personality;
-    int elo_slider;
-    int is_console;
-    int thread_no;
-    int should_clear;
+    bool abort_search;
+    bool elo_slider;
+    bool is_console;
+    bool is_tuning;
+    bool pondering;
+    bool reading_personality;
+    bool separate_books;
+    bool should_clear;
+    bool use_personality_files;
     int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels
+    int thread_no;
     void ClearData(void);
     void Init(void);
 } cGlobals;
@@ -633,8 +633,8 @@ typedef class {
     int QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv);
     int QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv);
     int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
-    int IsDraw(POS *p);
-    int KPKdraw(POS *p, int sd);
+    bool IsDraw(POS *p);
+    bool KPKdraw(POS *p, int sd);
     void DisplayPv(int score, int *pv);
     void Slowdown(void);
     double TexelFit(POS *p, int *pv);
@@ -673,8 +673,8 @@ typedef class {
     void Add(eData *e, int sd, int mg_val, int eg_val);
     void Add(eData *e, int sd, int val);
     void AddPawns(eData *e, int sd, int mg_val, int eg_val);
-    int NotOnBishColor(POS *p, int bish_side, int sq);
-    int DifferentBishops(POS *p);
+    bool NotOnBishColor(POS *p, int bish_side, int sq);
+    bool DifferentBishops(POS *p);
 
 } cEngine;
 
@@ -702,14 +702,14 @@ void ExtractMove(int pv[MAX_PLY]);
 int *GenerateCaptures(POS *p, int *list);
 int *GenerateQuiet(POS *p, int *list);
 int *GenerateSpecial(POS *p, int *list);
-int CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for GenerateSpecial()
+bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for GenerateSpecial()
 int GetMS(void);
 U64 GetNps(int elapsed);
 void Init(void);
 int InputAvailable(void);
 U64 InitHashKey(POS *p);
 U64 InitPawnKey(POS *p);
-int Legal(POS *p, int move);
+bool Legal(POS *p, int move);
 void MoveToStr(int move, char *move_str);
 void ParseGo(POS *p, const char *ptr);
 void ParseMoves(POS *p, const char *ptr);
@@ -728,7 +728,7 @@ void SetMoveTime(int base, int inc, int movestogo);
 void SetPieceValue(int pc, int val, int slot);
 int StrToMove(POS *p, char *move_str);
 int Swap(POS *p, int from, int to);
-int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
+bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
 void TransRetrieveMove(U64 key, int *move);
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
 void UciLoop(void);
@@ -746,7 +746,7 @@ extern int move_time;
 extern int move_nodes;
 extern int search_depth;
 extern int start_time;
-extern ENTRY *tt;
+
 extern size_t tt_size;
 extern size_t tt_mask;
 extern int tt_date;

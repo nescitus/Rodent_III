@@ -27,7 +27,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-int InputAvailable(void) {
+int InputAvailable() {
 
 #if defined(_WIN32) || defined(_WIN64)
     static int init = 0, pipe;
@@ -71,7 +71,7 @@ int Clip(int sc, int lim) {
     return sc;
 }
 
-int GetMS(void) {
+int GetMS() {
 
 #if defined(_WIN32) || defined(_WIN64)
     return GetTickCount();
@@ -83,7 +83,7 @@ int GetMS(void) {
 #endif
 }
 
-U64 Random64(void) {
+U64 Random64() {
 
     static U64 next = 1;
 

@@ -21,14 +21,14 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstring>
 #include <cmath> // round
 
-void cEngine::ClearAll(void) {
+void cEngine::ClearAll() {
 
     ClearPawnHash();
     ClearEvalHash();
     ClearHist();
 }
 
-void cEngine::ClearEvalHash(void) {
+void cEngine::ClearEvalHash() {
 
     ZEROARRAY(EvalTT);
 }

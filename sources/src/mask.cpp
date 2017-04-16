@@ -17,7 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-void cMask::Init(void) {
+void cMask::Init() {
 
     // Kingside/queenside
 

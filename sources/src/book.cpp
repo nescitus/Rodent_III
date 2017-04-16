@@ -326,7 +326,7 @@ U64 sBook::GetPolyglotKey(POS *p) {
     return key;
 }
 
-void sBook::OpenPolyglot(void) {
+void sBook::OpenPolyglot() {
 
     ClosePolyglot();
 
@@ -352,7 +352,7 @@ static int big_random(int n) {
     return ((rand() << 15) ^ rand()) % n;
 }
 
-int sBook::GetPolyglotMove(POS *p, int print_output) {
+int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
     int best_move = 0;
     int max_weight = 0;
@@ -471,7 +471,7 @@ U64 sBook::ReadInteger(int size) {
     return n;
 }
 
-void sBook::ClosePolyglot(void) {
+void sBook::ClosePolyglot() {
 
     if (bookFile != NULL) {
         fclose(bookFile);
@@ -479,15 +479,15 @@ void sBook::ClosePolyglot(void) {
     }
 }
 
-//void sBook::Init(void) {
+//void sBook::Init() {
 //
 //  bookFile = NULL;
 //  book_size = 0;
 //}
 
-int sBook::IsInfrequent(int val, int max_freq) {
+bool sBook::IsInfrequent(int val, int max_freq) {
 
-    if (max_freq > 2 && val < 2) return 1;     // if possible, pick a move tried at least twice
-    if (val < ((max_freq * Par.book_filter) / 100)) return 1; // rare moves get filtered out
-    return 0;
+    if (max_freq > 2 && val < 2) return true;     // if possible, pick a move tried at least twice
+    if (val < ((max_freq * Par.book_filter) / 100)) return true; // rare moves get filtered out
+    return false;
 }

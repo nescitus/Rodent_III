@@ -39,16 +39,16 @@ void AllocTrans(int mbsize) {
     tt_mask = tt_size - 4;
 }
 
-void ClearTrans(void) {
+void ClearTrans() {
 
     tt_date = 0;
 
     chc.ZeroMem();
 }
 
-int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
+bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
 
-    if (!chc.success) return 0;
+    if (!chc.success) return false;
 
     ENTRY *entry;
 
@@ -66,14 +66,14 @@ int TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth
                 if ((entry->flags & UPPER && *score <= alpha)
                         || (entry->flags & LOWER && *score >= beta)) {
                     //entry->date = tt_date; // refreshing entry TODO: test at 4 threads, at 1 thread it's a wash
-                    return 1;
+                    return true;
                 }
             }
             break;
         }
         entry++;
     }
-    return 0;
+    return false;
 }
 
 void TransRetrieveMove(U64 key, int *move) {

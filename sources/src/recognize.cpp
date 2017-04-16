@@ -17,16 +17,16 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-int cEngine::IsDraw(POS *p) {
+bool cEngine::IsDraw(POS *p) {
 
     // Draw by 50 move rule
 
-    if (p->rev_moves > 100) return 1;
+    if (p->rev_moves > 100) return true;
 
     // Draw by repetition
 
     for (int i = 4; i <= p->rev_moves; i += 2)
-        if (p->hash_key == p->rep_list[p->head - i]) return 1;
+        if (p->hash_key == p->rep_list[p->head - i]) return true;
 
     // With no major pieces on the board, we have some heuristic draws to consider
 
@@ -36,7 +36,7 @@ int cEngine::IsDraw(POS *p) {
 
         if (!Illegal(p)) {
             if (p->cnt[WC][P] + p->cnt[BC][P] == 0) {
-                if (p->cnt[WC][N] + p->cnt[BC][N] + p->cnt[WC][B] + p->cnt[BC][B] <= 1) return 1; // KK, KmK
+                if (p->cnt[WC][N] + p->cnt[BC][N] + p->cnt[WC][B] + p->cnt[BC][B] <= 1) return true; // KK, KmK
             }
         }
 
@@ -52,10 +52,10 @@ int cEngine::IsDraw(POS *p) {
 
     // Default: no draw
 
-    return 0;
+    return false;
 }
 
-int cEngine::KPKdraw(POS *p, int sd) {
+bool cEngine::KPKdraw(POS *p, int sd) {
 
     int op = Opp(sd);
     U64 bbPawn = p->Pawns(sd);
@@ -67,23 +67,23 @@ int cEngine::KPKdraw(POS *p, int sd) {
     if (p->side == sd
     && (bbWeakKing & BB.ShiftFwd(bbPawn, sd))
     && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
-       ) return 1;
+       ) return true;
 
     // weaker side can create opposition through a pawn in one move
 
     if (p->side == op
     && (BB.KingAttacks(p->king_sq[op]) & BB.ShiftFwd(bbPawn, sd))
     && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
-       ) if (!Illegal(p)) return 1;
+       ) if (!Illegal(p)) return true;
 
     // opposition next to a pawn
 
     if (p->side == sd
     && (bbStrongKing & BB.ShiftSideways(bbPawn))
     && (bbWeakKing & BB.ShiftFwd(BB.ShiftFwd(bbStrongKing, sd), sd))
-       ) return 1;
+       ) return true;
 
     // TODO: pawn checks king
 
-    return 0;
+    return false;
 }
