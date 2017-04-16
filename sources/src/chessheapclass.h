@@ -7,13 +7,14 @@ class ChessHeapClass {
     static const size_t bucket_size_mb = 512;
     static const size_t max_memory_mb = 4096;
     static const size_t num_per_bucket = bucket_size_mb * 1024 * 1024 / sizeof(ENTRY);
+    static const size_t arrays_size = max_memory_mb / bucket_size_mb;
 
-    int    bucket_sizs[max_memory_mb / bucket_size_mb];
-    ENTRY *bucket_ptrs[max_memory_mb / bucket_size_mb];
+    int    bucket_sizs[arrays_size];
+    ENTRY *bucket_ptrs[arrays_size];
 
     void Free() {
 
-        for (int i = 0; bucket_ptrs[i]; i++) {
+        for (int i = 0; i < arrays_size && bucket_ptrs[i]; i++) {
             free(bucket_ptrs[i]);
             bucket_ptrs[i] = NULL;
         }
@@ -54,7 +55,7 @@ class ChessHeapClass {
     void ZeroMem() {
 
         if (success)
-            for (int i = 0; bucket_ptrs[i]; i++)
+            for (int i = 0; i < arrays_size && bucket_ptrs[i]; i++)
                 memset(bucket_ptrs[i], 0, bucket_sizs[i]);
     }
 
