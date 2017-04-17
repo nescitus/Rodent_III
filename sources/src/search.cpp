@@ -75,40 +75,6 @@ void InitSearch() {
 
 void CopyPos(POS *old_pos, POS *new_pos) {
 
-    // new_pos->cl_bb[WC] = old_pos->cl_bb[WC];
-    // new_pos->cl_bb[BC] = old_pos->cl_bb[BC];
-
-    // for (int tp = 0; tp < 6; tp++) {
-        // new_pos->tp_bb[tp] = old_pos->tp_bb[tp];
-        // new_pos->cnt[WC][tp] = old_pos->cnt[WC][tp];
-        // new_pos->cnt[BC][tp] = old_pos->cnt[BC][tp];
-    // }
-
-    // for (int sq = 0; sq < 64; sq++) {
-        // new_pos->pc[sq] = old_pos->pc[sq];
-    // }
-
-    // new_pos->king_sq[WC] = old_pos->king_sq[WC];
-    // new_pos->king_sq[BC] = old_pos->king_sq[BC];
-
-    // new_pos->mg_sc[WC] = old_pos->mg_sc[WC];
-    // new_pos->mg_sc[BC] = old_pos->mg_sc[BC];
-    // new_pos->eg_sc[WC] = old_pos->eg_sc[WC];
-    // new_pos->eg_sc[BC] = old_pos->eg_sc[BC];
-
-    // new_pos->side = old_pos->side;
-    // new_pos->c_flags = old_pos->c_flags;
-    // new_pos->ep_sq = old_pos->ep_sq;
-    // new_pos->rev_moves = old_pos->rev_moves;
-    // new_pos->head = old_pos->head;
-    // new_pos->hash_key = old_pos->hash_key;
-    // new_pos->pawn_key = old_pos->pawn_key;
-    // new_pos->phase = old_pos->phase;
-
-    // for (int i = 0; i < 256; i++) {
-        // new_pos->rep_list[i] = old_pos->rep_list[i];
-    // }
-
     *new_pos = *old_pos;
 }
 
@@ -118,6 +84,7 @@ void cEngine::Think(POS *p, int *pv) {
     pv[0] = 0;
     pv[1] = 0;
 
+	fl_root_choice = false;
     CopyPos(p, curr);
     AgeHist();
     Iterate(curr, pv);
@@ -148,6 +115,10 @@ void cEngine::Iterate(POS *p, int *pv) {
         if (Par.search_skill > 6) cur_val = Widen(p, root_depth, pv, cur_val);
         else                      cur_val = Search(p, 0, -INF, INF, root_depth, 0, -1, -1, pv);
         if (Glob.abort_search) break;
+
+        // Shorten search if there is only one root move available
+
+        if (root_depth >= 8 && fl_root_choice == false) break;
 
         // Abort search on finding checkmate score
 
@@ -401,6 +372,7 @@ avoid_null:
 
         mv_played[mv_tried] = move;
         mv_tried++;
+        if (!ply && mv_tried > 1) fl_root_choice = true;
         if (mv_type == MV_NORMAL) quiet_tried++;
         if (ply == 0 && !Par.shut_up && depth > 16 && Glob.thread_no == 1)
             DisplayCurrmove(move, mv_tried);
