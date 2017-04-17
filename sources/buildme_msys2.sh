@@ -1,14 +1,16 @@
 #!/bin/sh
 
 if [ "$MSYSTEM_CARCH" = "i686" ]; then
-	LSA="-Wl,--large-address-aware"
+	LSA="-Wl,--large-address-aware,--gc-sections"
+else
+	LSA="-Wl,--gc-sections"
 fi
 
 case "$1" in
 	1 )
 		echo "Building using mingw..."
 
-		gcc -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
+		gcc -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -flto -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
 		;;
 
 	2 )
@@ -42,7 +44,7 @@ case "$1" in
 
 		echo quit | ./rodent_$MSYSTEM_CARCH.exe
 
-		gcc -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -DUSEGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 -I . src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
+		gcc -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -flto -DUSEGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 -I . src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
 
 		rm book_gen.h
 
