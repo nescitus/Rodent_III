@@ -19,20 +19,20 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "eval.h"
 #include <cmath>
 
-void cParam::DefaultWeights(void) {
+void cParam::DefaultWeights() {
 
     // Switch off weakening parameters
 
     search_skill = 10;
     nps_limit = 0;
-    fl_weakening = 0;
+    fl_weakening = false;
     elo = 2800;
     eval_blur = 0;
     book_depth = 256;
 
     // Opening book
 
-    use_book = 1;
+    use_book = true;
     book_filter = 20;
 
     // Timing
@@ -99,7 +99,7 @@ void cParam::DefaultWeights(void) {
     riskydepth = 0;
 #endif
     draw_score = 0;
-    shut_up = 0;           // surpress displaing info currmove etc.
+    shut_up = false;           // surpress displaing info currmove etc.
 
     // Asymmetric weights - the core of personality mechanism
 
@@ -167,7 +167,7 @@ void cParam::DefaultWeights(void) {
 
 }
 
-void cParam::InitBackward(void) {
+void cParam::InitBackward() {
 
     // add file-dependent component to backward pawns penalty
     // (assuming backward pawns on central files are bigger liability)
@@ -182,7 +182,7 @@ void cParam::InitBackward(void) {
     backward_malus_mg[FILE_H] = values[BK_MID] + 3;
 }
 
-void cParam::InitPst(void) {
+void cParam::InitPst() {
 
     for (int sq = 0; sq < 64; sq++) {
         for (int sd = 0; sd < 2; sd++) {
@@ -210,7 +210,7 @@ void cParam::InitPst(void) {
     }
 }
 
-void cParam::InitMobility(void) {
+void cParam::InitMobility() {
 
     for (int i = 0; i < 9; i++) {
         n_mob_mg[i] = Par.mob_style == 0 ? 4 * (i - 4) : n_mob_mg_decreasing[i];
@@ -234,7 +234,7 @@ void cParam::InitMobility(void) {
 
 }
 
-void cParam::InitMaterialTweaks(void) {
+void cParam::InitMaterialTweaks() {
 
     // Init tables for adjusting piece values
     // according to the number of own pawns
@@ -268,7 +268,7 @@ void cParam::InitMaterialTweaks(void) {
     }
 }
 
-void cParam::InitTables(void) {
+void cParam::InitTables() {
 
     // Init king attack table
 

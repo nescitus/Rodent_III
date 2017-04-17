@@ -17,7 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include<cstdio>
+#include <cstdio>
 
 struct polyglot_move {
     U64 key;
@@ -27,7 +27,6 @@ struct polyglot_move {
     int learn;
 };
 
-
 struct sBook {
   private:
     FILE *bookFile;
@@ -36,7 +35,7 @@ struct sBook {
     int moves[100];
     int n_of_choices;
     int FindPos(U64 key);
-    int IsInfrequent(int val, int max_freq);
+    bool IsInfrequent(int val, int max_freq);
     void ClosePolyglot(void);
     void OpenPolyglot(void);
     void ReadEntry(polyglot_move *entry, int n);
@@ -55,7 +54,7 @@ struct sBook {
         printf("info string opening book file \'%s\' (%s)\n", bookName, bookFile == NULL ? "failure" : "success");
     }
     ~sBook() { ClosePolyglot(); }
-    int GetPolyglotMove(POS *p, int print_output);
+    int GetPolyglotMove(POS *p, bool print_output);
     //void Init(void);
 };
 

@@ -146,7 +146,7 @@ int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
         &&  p->Kings(op) & bbKingBlockA[sd]) return 0;
     }
 
-	// TODO: perhaps scaling this up, like 72, will help in defending inferior endgames
+    // TODO: perhaps scaling this up, like 72, will help in defending inferior endgames
     return 64; // default
 }
 
@@ -255,22 +255,22 @@ int cEngine::ScaleKQKRP(POS *p, int sd, int op) {
     return 64;   // default: no scaling
 }
 
-int cEngine::NotOnBishColor(POS *p, int bish_side, int sq) {
+bool cEngine::NotOnBishColor(POS *p, int bish_side, int sq) {
 
     if (((bbWhiteSq & p->Bishops(bish_side)) == 0)
-    && (SqBb(sq) & bbWhiteSq)) return 1;
+    && (SqBb(sq) & bbWhiteSq)) return true;
 
     if (((bbBlackSq & p->Bishops(bish_side)) == 0)
-    && (SqBb(sq) & bbBlackSq)) return 1;
+    && (SqBb(sq) & bbBlackSq)) return true;
 
-    return 0;
+    return false;
 }
 
-int cEngine::DifferentBishops(POS *p) {
+bool cEngine::DifferentBishops(POS *p) {
 
-    if ((bbWhiteSq & p->Bishops(WC)) && (bbBlackSq & p->Bishops(BC))) return 1;
-    if ((bbBlackSq & p->Bishops(WC)) && (bbWhiteSq & p->Bishops(BC))) return 1;
-    return 0;
+    if ((bbWhiteSq & p->Bishops(WC)) && (bbBlackSq & p->Bishops(BC))) return true;
+    if ((bbBlackSq & p->Bishops(WC)) && (bbWhiteSq & p->Bishops(BC))) return true;
+    return false;
 }
 
 int cEngine::CheckmateHelper(POS *p) {

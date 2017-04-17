@@ -17,7 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-void Init(void) {
+void Init() {
 
     for (int sq = 0; sq < 64; sq++)
         castle_mask[sq] = 15;

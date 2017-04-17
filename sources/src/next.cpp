@@ -281,7 +281,7 @@ int cEngine::MvvLva(POS *p, int move) {
     return 5;
 }
 
-void cEngine::AgeHist(void) {
+void cEngine::AgeHist() {
 
     for (int tp = 0; tp < 12; tp++)
         for (int sq = 0; sq < 64; sq++)
@@ -290,7 +290,7 @@ void cEngine::AgeHist(void) {
     ZEROARRAY(killer);
 }
 
-void cEngine::ClearHist(void) {
+void cEngine::ClearHist() {
 
     ZEROARRAY(history);
 
@@ -299,7 +299,7 @@ void cEngine::ClearHist(void) {
     ZEROARRAY(killer);
 }
 
-void cEngine::TrimHist(void) {
+void cEngine::TrimHist() {
 
     for (int tp = 0; tp < 12; tp++)
         for (int sq = 0; sq < 64; sq++)

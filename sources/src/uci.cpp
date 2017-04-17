@@ -53,7 +53,7 @@ const char *ParseToken(const char *string, char *token) {
     return string;
 }
 
-void UciLoop(void) {
+void UciLoop() {
 
     char command[4096], token[80]; const char *ptr;
     POS p[1];
@@ -83,7 +83,7 @@ void UciLoop(void) {
 
         if (strcmp(token, "uci") == 0) {
             printf("id name Rodent III 0.190\n");
-            Glob.is_console = 0;
+            Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
             PrintUciOptions();
             printf("uciok\n");
@@ -106,9 +106,9 @@ void UciLoop(void) {
             ParseMoves(p, ptr);
 #ifdef USE_TUNING
         } else if (strcmp(token, "tune") == 0) {
-            Glob.is_tuning = 1;
+            Glob.is_tuning = true;
             printf("FIT: %lf\n", Engine1.TexelFit(p, pv));
-            Glob.is_tuning = 0;
+            Glob.is_tuning = false;
 #endif
         } else if (strcmp(token, "bench") == 0) {
             ptr = ParseToken(ptr, token);
@@ -186,9 +186,9 @@ void task4(POS *p, int *pv) {
 
 void timer_task() {
 
-    Glob.abort_search = 0;
+    Glob.abort_search = false;
 
-    while (Glob.abort_search == 0) {
+    while (Glob.abort_search == false) {
 #if defined(_WIN32) || defined(_WIN64)
         _sleep(5);
 #else
@@ -256,11 +256,11 @@ void ParseGo(POS *p, const char *ptr) {
     char token[80], bestmove_str[6], ponder_str[6];
     int wtime, btime, winc, binc, movestogo, strict_time;
     int pv[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY];
-    int move_from_book = 0;
+    bool move_from_book = false;
 
     move_time = -1;
     move_nodes = 0;
-    Glob.pondering = 0;
+    Glob.pondering = false;
     wtime = -1;
     btime = -1;
     winc = 0;
@@ -268,14 +268,14 @@ void ParseGo(POS *p, const char *ptr) {
     movestogo = 40;
     strict_time = 0;
     search_depth = 64;
-    Par.shut_up = 0;
+    Par.shut_up = false;
 
     for (;;) {
         ptr = ParseToken(ptr, token);
         if (*token == '\0')
             break;
         if (strcmp(token, "ponder") == 0) {
-            Glob.pondering = 1;
+            Glob.pondering = true;
         } else if (strcmp(token, "depth") == 0) {
             ptr = ParseToken(ptr, token);
             search_depth = atoi(token);
@@ -320,7 +320,7 @@ void ParseGo(POS *p, const char *ptr) {
     start_time = GetMS();
     tt_date = (tt_date + 1) & 255;
     Glob.nodes = 0;
-    Glob.abort_search = 0;
+    Glob.abort_search = false;
     Glob.depth_reached = 0;
     if (Glob.should_clear)
         Glob.ClearData(); // options has been changed and old tt scores are no longer reliable
@@ -333,14 +333,14 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Par.use_book && Par.book_depth >= Glob.moves_from_start) {
         printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
-        pv[0] = GuideBook.GetPolyglotMove(p, 1);
-        if (!pv[0]) pv[0] = MainBook.GetPolyglotMove(p, 1);
+        pv[0] = GuideBook.GetPolyglotMove(p, true);
+        if (!pv[0]) pv[0] = MainBook.GetPolyglotMove(p, true);
         if (!pv[0]) pv[0] = InternalBook.MoveFromInternal(p);
 
         if (pv[0]) {
             MoveToStr(pv[0], bestmove_str);
             printf("bestmove %s\n", bestmove_str);
-            move_from_book = 1;
+            move_from_book = true;
             goto done;
         }
     }
@@ -485,7 +485,7 @@ void cEngine::Bench(int depth) {
     if (depth == 0) depth = 8; // so that you can call bench without parameters
     ClearTrans();
     ClearAll();
-    Par.shut_up = 1;
+    Par.shut_up = true;
 
     printf("Bench test started (depth %d): \n", depth);
 
@@ -509,7 +509,11 @@ void cEngine::Bench(int depth) {
     int end_time = GetMS() - start_time;
     int nps = (Glob.nodes * 1000) / (end_time + 1);
 
-    printf("%llu nodes searched in %d, speed %u nps (Score: %.3f)\n", Glob.nodes, end_time, nps, (float)nps / 430914.0);
+#if __cplusplus >= 201103L
+    printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", Glob.nodes, end_time, nps, (float)nps / 430914.0);
+#else
+    printf(       "%llu nodes searched in %d, speed %u nps (Score: %.3f)\n", Glob.nodes, end_time, nps, (float)nps / 430914.0);
+#endif
 }
 
 void PrintBoard(POS *p) {

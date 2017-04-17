@@ -49,7 +49,7 @@ int main() {
     Glob.Init();
     Par.DefaultWeights();
     Par.InitTables();
-    Glob.is_tuning = 0;
+    Glob.is_tuning = false;
 
     Mask.Init();
     Dist.Init();
@@ -100,11 +100,11 @@ int main() {
 
 void cGlobals::Init() {
 
-    reading_personality = 0;
-    use_personality_files = 0;
-    separate_books = 0;
+    reading_personality = false;
+    use_personality_files = false;
+    separate_books = false;
     thread_no = 1;
-    should_clear = 0;
-    is_console = 1;
-    elo_slider = 1;
+    should_clear = false;
+    is_console = true;
+    elo_slider = true;
 }

@@ -16,6 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
+#include <cstdio>
 #include <cstring>
 
 void ClearPosition(POS *p) {
@@ -76,9 +77,17 @@ void SetPosition(POS *p, const char *epd) {
                 for (pc = 0; pc < *epd - '0'; pc++) {
                     p->pc[i + j] = NO_PC;
                     j++;
-                } else {
-                for (pc = 0; pc_char[pc] != *epd; pc++)
+                }
+            else {
+                for (pc = 0; pc_char[pc] && pc_char[pc] != *epd; pc++)
                     ;
+
+                if ( !pc_char[pc] ) {
+                    printf("info string FEN parsing error\n");
+                    SetPosition(p, START_POS);
+                    return;
+                }
+
                 p->pc[i + j] = pc;
                 p->cl_bb[Cl(pc)] ^= SqBb(i + j);
                 p->tp_bb[Tp(pc)] ^= SqBb(i + j);

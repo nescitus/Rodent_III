@@ -40,7 +40,7 @@ static const int empty_qs[64] = {
     -30, -20, -10,   0,   0,   0,   0,   0
 };
 
-void cEngine::ClearPawnHash(void) {
+void cEngine::ClearPawnHash() {
 
     ZEROARRAY(PawnTT);
 }

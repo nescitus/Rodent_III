@@ -257,7 +257,7 @@ U64 initmagicmoves_Bmoves(const int square, const U64 occ) {
 #define BmagicNOMASK2(square, occupancy) *(magicmoves_b_indices2[square]+(((occupancy)*magicmoves_b_magics[square])>>magicmoves_b_shift[square]))
 #define RmagicNOMASK2(square, occupancy) *(magicmoves_r_indices2[square]+(((occupancy)*magicmoves_r_magics[square])>>magicmoves_r_shift[square]))
 
-void initmagicmoves(void) {
+void initmagicmoves() {
     int i;
 
     //for bitscans :

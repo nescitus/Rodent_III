@@ -338,7 +338,7 @@ int *GenerateSpecial(POS *p, int *list) {
         // are discovered checks possible?
 
         U64 bb_checkers = p->Queens(sd) | p->Rooks(sd) | p->Bishops(sd);
-        int knight_discovers = CanDiscoverCheck(p, bb_checkers, op, from);
+        bool knight_discovers = CanDiscoverCheck(p, bb_checkers, op, from);
 
         bb_moves = BB.KnightAttacks(from) & UnoccBb(p);
         if (!knight_discovers) bb_moves = bb_moves & n_check;
@@ -356,7 +356,7 @@ int *GenerateSpecial(POS *p, int *list) {
 
         // are straight discovered checks possible?
 
-        int bish_discovers = CanDiscoverCheck(p, p->StraightMovers(sd), op, from);
+        bool bish_discovers = CanDiscoverCheck(p, p->StraightMovers(sd), op, from);
 
         bb_moves = BB.BishAttacks(OccBb(p), from) & UnoccBb(p);
         if (!bish_discovers) bb_moves = bb_moves & b_check;
@@ -374,7 +374,7 @@ int *GenerateSpecial(POS *p, int *list) {
 
         // are diagonal discovered checks possible?
 
-        int rook_discovers = CanDiscoverCheck(p, p->DiagMovers(sd), op, from);
+        bool rook_discovers = CanDiscoverCheck(p, p->DiagMovers(sd), op, from);
 
         bb_moves = BB.RookAttacks(OccBb(p), from) & UnoccBb(p);
         if (!rook_discovers) bb_moves = bb_moves & r_check;
@@ -410,7 +410,7 @@ int *GenerateSpecial(POS *p, int *list) {
     return list;
 }
 
-int CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from) {
+bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from) {
 
     while (bb_checkers) {
         int checker = BB.PopFirstBit(&bb_checkers);
@@ -418,9 +418,9 @@ int CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from) {
 
         if (SqBb(from) & bb_ray) {
             if (BB.PopCnt(bb_ray & OccBb(p)) == 1)
-                return 1;
+                return true;
         }
     }
 
-    return 0;
+    return false;
 }
