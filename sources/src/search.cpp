@@ -568,7 +568,7 @@ void cEngine::DisplayPv(int score, int *pv) {
 
     PvToStr(pv, pv_str);
 
-#if __cplusplus >= 201103L
+#if __cplusplus >= 201103L || _MSVC_LANG >= 201402
     printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
            root_depth, elapsed, Glob.nodes, nps, type, score, pv_str);
 #else
