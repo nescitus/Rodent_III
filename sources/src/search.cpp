@@ -84,7 +84,7 @@ void cEngine::Think(POS *p, int *pv) {
     pv[0] = 0;
     pv[1] = 0;
 
-	fl_root_choice = false;
+    fl_root_choice = false;
     CopyPos(p, curr);
     AgeHist();
     Iterate(curr, pv);

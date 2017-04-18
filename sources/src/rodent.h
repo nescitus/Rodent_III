@@ -604,7 +604,7 @@ typedef class {
     int dp_completed;
     int thread_id;
     int root_depth;
-	bool fl_root_choice;
+    bool fl_root_choice;
 
     void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
