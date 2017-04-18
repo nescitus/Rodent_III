@@ -589,16 +589,13 @@ void CheckTimeout();
 #define PAWN_HASH_SIZE 512 * 512 / 4
 
 class cEngine {
-  public:
-
     sEvalHashEntry EvalTT[EVAL_HASH_SIZE];
     sPawnHashEntry PawnTT[PAWN_HASH_SIZE];
     int history[12][64];
     int killer[MAX_PLY][2];
     int refutation[64][64];
     int local_nodes;
-    int dp_completed;
-    int thread_id;
+    const int thread_id;
     int root_depth;
     bool fl_root_choice;
 
@@ -616,14 +613,11 @@ class cEngine {
     void AgeHist();
     void ClearEvalHash();
     void ClearPawnHash();
-    void ClearAll();
     int Refutation(int move);
     void UpdateHistory(POS *p, int last_move, int move, int depth, int ply);
     void DecreaseHistory(POS *p, int move, int depth);
     void TrimHist();
 
-    void Bench(int depth);
-    void Think(POS *p, int *pv);
     void Iterate(POS *p, int *pv);
     int Widen(POS *p, int depth, int *pv, int lastScore);
     int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int last_move, int last_capt_sq, int *pv);
@@ -634,9 +628,7 @@ class cEngine {
     bool KPKdraw(POS *p, int sd);
     void DisplayPv(int score, int *pv);
     void Slowdown();
-    double TexelFit(POS *p, int *pv);
 
-    void Init(int th);
     int Evaluate(POS *p, eData *e);
 #ifdef USE_RISKY_PARAMETER
     int EvalScaleByDepth(POS *p, int ply, int eval);
@@ -673,6 +665,16 @@ class cEngine {
     bool NotOnBishColor(POS *p, int bish_side, int sq);
     bool DifferentBishops(POS *p);
 
+  public:
+
+    int dp_completed;
+
+    cEngine(int th): thread_id(th) { ClearAll(); };
+
+    void Bench(int depth);
+    void ClearAll();
+    void Think(POS *p, int *pv);
+    double TexelFit(POS *p, int *pv);
 };
 
 extern cEngine Engine1;

@@ -7,7 +7,7 @@ else
 fi
 
 if [[ "$1" == *"t"* ]]; then
-	THR="-DUSE_THREADS"
+	#THR="-DUSE_THREADS"
 	CCGCC="g++"
 	CCCLANG="clang++"
 else
