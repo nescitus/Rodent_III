@@ -24,16 +24,11 @@ If not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_THREADS
     #include <atomic>
 
-    // do not make it bigger, it's a max for 16MB
-    #define NUMBER_OF_AFLAGS (1024*1024)
-    std::atomic_flag aflags[NUMBER_OF_AFLAGS];
+    std::atomic_flag *aflags;
+    unsigned int elem_per_aflag;
 
-    unsigned int elem_per_flag;
-
-    // one element of aflags blocks elem_per_flag ENTRY elements, so for 16MB of memory one entry <-> one atomic_flag
-
-    #define LOCK_ME_PLEASE   const unsigned int current_flag = (key & tt_mask) / elem_per_flag; while (aflags[current_flag].test_and_set());
-    #define UNLOCK_ME_PLEASE aflags[current_flag].clear()
+    #define LOCK_ME_PLEASE   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags[current_aflag].test_and_set());
+    #define UNLOCK_ME_PLEASE aflags[current_aflag].clear()
 
 #else
     #define LOCK_ME_PLEASE
@@ -54,13 +49,16 @@ void AllocTrans(int mbsize) {
     else
         printf("info string memory allocation error\n");
 
-    tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY));
+    tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements type ENTRY
     tt_mask = tt_size - 4;
 
 #ifdef USE_THREADS
-    elem_per_flag = tt_size / NUMBER_OF_AFLAGS;
-    for (auto& af : aflags)
-        af.clear();
+    delete [] aflags;
+    unsigned int number_of_aflags = tt_size > (16 * 1024 * 1024) ? (16 * 1024 * 1024) : tt_size; // 16 * 16 = enough for 256MB of hash
+    aflags = new std::atomic_flag[number_of_aflags];
+    elem_per_aflag = tt_size / number_of_aflags;
+    for (int i = 0; i < number_of_aflags; i++)
+        aflags[i].clear();
 #endif
 }
 
