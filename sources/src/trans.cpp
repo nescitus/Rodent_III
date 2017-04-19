@@ -21,6 +21,25 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cstring>
 
+#ifdef USE_THREADS
+    #include <atomic>
+
+    // do not make it bigger, it's a max for 16MB
+    #define NUMBER_OF_AFLAGS (1024*1024)
+    std::atomic_flag aflags[NUMBER_OF_AFLAGS];
+
+    unsigned int elem_per_flag;
+
+    // one element of aflags blocks elem_per_flag ENTRY elements, so for 16MB of memory one entry <-> one atomic_flag
+
+    #define LOCK_ME_PLEASE   const unsigned int current_flag = (key & tt_mask) / elem_per_flag; while (aflags[current_flag].test_and_set());
+    #define UNLOCK_ME_PLEASE aflags[current_flag].clear()
+
+#else
+    #define LOCK_ME_PLEASE
+    #define UNLOCK_ME_PLEASE
+#endif
+
 ChessHeapClass chc;
 
 void AllocTrans(int mbsize) {
@@ -37,6 +56,12 @@ void AllocTrans(int mbsize) {
 
     tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY));
     tt_mask = tt_size - 4;
+
+#ifdef USE_THREADS
+    elem_per_flag = tt_size / NUMBER_OF_AFLAGS;
+    for (auto& af : aflags)
+        af.clear();
+#endif
 }
 
 void ClearTrans() {
@@ -52,6 +77,8 @@ bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int dept
 
     ENTRY *entry = chc[key & tt_mask];
 
+    LOCK_ME_PLEASE;
+
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
             entry->date = tt_date;
@@ -65,6 +92,8 @@ bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int dept
                 if ((entry->flags & UPPER && *score <= alpha)
                         || (entry->flags & LOWER && *score >= beta)) {
                     //entry->date = tt_date; // refreshing entry TODO: test at 4 threads, at 1 thread it's a wash
+
+                    UNLOCK_ME_PLEASE;
                     return true;
                 }
             }
@@ -72,6 +101,8 @@ bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int dept
         }
         entry++;
     }
+
+    UNLOCK_ME_PLEASE;
     return false;
 }
 
@@ -81,6 +112,8 @@ void TransRetrieveMove(U64 key, int *move) {
 
     ENTRY *entry = chc[key & tt_mask];
 
+    LOCK_ME_PLEASE;
+
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
             entry->date = tt_date; // TODO: test without this line (very low priority, long test)
@@ -89,6 +122,8 @@ void TransRetrieveMove(U64 key, int *move) {
         }
         entry++;
     }
+
+    UNLOCK_ME_PLEASE;
 }
 
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
@@ -103,6 +138,8 @@ void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
         score += ply;
 
     ENTRY *entry = chc[key & tt_mask], *replace = NULL;
+
+    LOCK_ME_PLEASE;
 
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
@@ -119,4 +156,6 @@ void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
     }
     replace->key = key; replace->date = tt_date; replace->move = move;
     replace->score = score; replace->flags = flags; replace->depth = depth;
+
+    UNLOCK_ME_PLEASE;
 }
