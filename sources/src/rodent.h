@@ -513,21 +513,34 @@ class cMask {
 
 extern cMask Mask;
 
+#ifdef USE_THREADS
+    #include <atomic>
+
+    typedef std::atomic<bool>     glob_bool;
+    typedef std::atomic<int>      glob_int;
+    typedef std::atomic<uint64_t> glob_U64;
+#else
+    typedef bool glob_bool;
+    typedef int  glob_int;
+    typedef U64  glob_U64;
+#endif
+
 class cGlobals {
   public:
-    U64 nodes;
-    bool abort_search;
+    glob_U64 nodes;
+    glob_bool abort_search;
     bool elo_slider;
     bool is_console;
     bool is_tuning;
-    bool pondering;
+    glob_bool pondering;
     bool reading_personality;
     bool separate_books;
     bool should_clear;
     bool use_personality_files;
-    int depth_reached;
+    glob_int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels
     int thread_no;
+
     void ClearData();
     void Init();
 };

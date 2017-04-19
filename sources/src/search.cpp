@@ -570,14 +570,14 @@ void cEngine::DisplayPv(int score, int *pv) {
 
 #if __cplusplus >= 201103L || _MSVC_LANG >= 201402
     printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
-           root_depth, elapsed, Glob.nodes, nps, type, score, pv_str);
+           root_depth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
 #else
     #if defined _WIN32 || defined _WIN64
         printf("info depth %d time %d nodes %I64d nps %I64d score %s %d pv %s\n",
-               root_depth, elapsed, Glob.nodes, nps, type, score, pv_str);
+               root_depth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
     #else
         printf("info depth %d time %d nodes %lld nps %lld score %s %d pv %s\n",
-               root_depth, elapsed, Glob.nodes, nps, type, score, pv_str);
+               root_depth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
     #endif
 #endif
 }
