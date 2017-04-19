@@ -21,20 +21,6 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cstring>
 
-#ifdef USE_THREADS
-    #ifndef __MINGW32__
-        #include <mutex>
-        std::mutex trans_mutex;
-        #define LOCK_ME_PLEASE std::lock_guard<std::mutex> lock(trans_mutex)
-    #else
-        #include "lw_mutex.h"
-        lw_mutex trans_mutex;
-        #define LOCK_ME_PLEASE lw_lock_guard lock(trans_mutex)
-    #endif
-#else
-    #define LOCK_ME_PLEASE
-#endif
-
 ChessHeapClass chc;
 
 void AllocTrans(int mbsize) {
@@ -66,8 +52,6 @@ bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int dept
 
     ENTRY *entry = chc[key & tt_mask];
 
-    LOCK_ME_PLEASE;
-
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
             entry->date = tt_date;
@@ -97,8 +81,6 @@ void TransRetrieveMove(U64 key, int *move) {
 
     ENTRY *entry = chc[key & tt_mask];
 
-    LOCK_ME_PLEASE;
-
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
             entry->date = tt_date; // TODO: test without this line (very low priority, long test)
@@ -121,8 +103,6 @@ void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
         score += ply;
 
     ENTRY *entry = chc[key & tt_mask], *replace = NULL;
-
-    LOCK_ME_PLEASE;
 
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {

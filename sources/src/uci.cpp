@@ -362,7 +362,7 @@ void ParseGo(POS *p, const char *ptr) {
         std::thread t(timer_task);
         std::thread e1(task1, p, pv);
         e1.join();
-        Glob.abort_search = true; // should we stop waiting timer thread?
+        //Glob.abort_search = true; // should we stop waiting timer thread?
         t.join();
     }
 
@@ -372,7 +372,7 @@ void ParseGo(POS *p, const char *ptr) {
         std::thread e2(task2, p, pv2);
         e1.join();
         e2.join();
-        Glob.abort_search = true; // should we stop waiting timer thread?
+        //Glob.abort_search = true; // should we stop waiting timer thread?
         t.join();
     }
 
@@ -384,7 +384,7 @@ void ParseGo(POS *p, const char *ptr) {
         e1.join();
         e2.join();
         e3.join();
-        Glob.abort_search = true; // should we stop waiting timer thread?
+        //Glob.abort_search = true; // should we stop waiting timer thread?
         t.join();
     }
 
@@ -398,7 +398,7 @@ void ParseGo(POS *p, const char *ptr) {
         e2.join();
         e3.join();
         e4.join();
-        Glob.abort_search = true; // should we stop waiting timer thread?
+        //Glob.abort_search = true; // should we stop waiting timer thread?
         t.join();
     }
 #else
