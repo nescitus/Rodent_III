@@ -1,0 +1,40 @@
+These are notes about weakening Rodent III engine,
+based on 3+2 blitz games against engines from CCRL 40/4 list
+Tests are run on relatively fast hardware, so an offset of -50 to -100 Elo may be needed.
+
+--
+
+8192 NPS = 2100-2125
+
++85 against Monarch (2055) -> 2130
+-21 against Isa (2117) -> 2096
+
+--
+
+6144 NPS = 1975-2000
+
+-42 to Abbess (2017) -> 1975
+ +191 to CDrill
+ -56  to Monarch (2055) -> 1999
+
+--
+
+4092 NPS = 1900
+
++56 to Simonitachi (1849) = 1905
+
+--
+
+3632 NPS = 1875
+
++28 to Simonitachi (1849) -> 1877
+
+--
+
+3072 NPS  = 1825?
+
+equal with CDrill
+
+--
+
+hypothesis: 2048 NPS = 1700
