@@ -35,7 +35,7 @@ sBook MainBook;
 #ifndef USEGEN
     sInternalBook InternalBook;
 #else
-    #include <book_gen.h>
+    #include "book_gen.h"
 #endif
 
 

@@ -36,8 +36,8 @@ struct sBook {
     int n_of_choices;
     int FindPos(U64 key);
     bool IsInfrequent(int val, int max_freq);
-    void ClosePolyglot(void);
-    void OpenPolyglot(void);
+    void ClosePolyglot();
+    void OpenPolyglot();
     void ReadEntry(polyglot_move *entry, int n);
     U64 GetPolyglotKey(POS *p);
     U64 ReadInteger(int size);
@@ -55,7 +55,6 @@ struct sBook {
     }
     ~sBook() { ClosePolyglot(); }
     int GetPolyglotMove(POS *p, bool print_output);
-    //void Init(void);
 };
 
 extern sBook GuideBook;

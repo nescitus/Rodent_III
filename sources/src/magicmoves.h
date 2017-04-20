@@ -124,6 +124,6 @@ extern const U64 *magicmoves_r_indices[64];
 
 #endif //USE_INLINING
 
-void initmagicmoves(void);
+void initmagicmoves();
 
 #endif //_magicmoveshvesh

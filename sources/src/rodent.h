@@ -262,7 +262,7 @@ typedef class {
 
   public:
     U64 bbBetween[64][64];
-    void Init(void);
+    void Init();
     void Print(U64 bb);
     U64 ShiftFwd(U64 bb, int sd);
     U64 ShiftSideways(U64 bb);
@@ -473,12 +473,12 @@ typedef class {
 #ifdef USE_RISKY_PARAMETER
     int riskydepth;
 #endif
-    void InitPst(void);
-    void InitMobility(void);
-    void InitBackward(void);
-    void InitMaterialTweaks(void);
-    void InitTables(void);
-    void DefaultWeights(void);
+    void InitPst();
+    void InitMobility();
+    void InitBackward();
+    void InitMaterialTweaks();
+    void InitTables();
+    void DefaultWeights();
     void InitAsymmetric(POS *p);
     void SetSpeed(int elo);
     int EloToSpeed(int elo);
@@ -493,14 +493,14 @@ typedef class {
   public:
     int metric[64][64]; // chebyshev distance for unstoppable passers
     int bonus[64][64];
-    void Init(void);
+    void Init();
 } cDistance;
 
 extern cDistance Dist;
 
 typedef class {
   public:
-    void Init(void);
+    void Init();
     U64 k_side;
     U64 q_side;
     U64 home[2];
@@ -532,15 +532,15 @@ typedef class {
     int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels
     int thread_no;
-    void ClearData(void);
-    void Init(void);
+    void ClearData();
+    void Init();
 } cGlobals;
 
 extern cGlobals Glob;
 
 #ifdef USEGEN
     #define GIMMESIZE
-    #include <book_gen.h>
+    #include "book_gen.h"
     #undef GIMMESIZE
 #endif
 
@@ -587,7 +587,7 @@ struct sInternalBook {
 
 extern sInternalBook InternalBook;
 
-void CheckTimeout(void);
+void CheckTimeout();
 
 #define EVAL_HASH_SIZE 512 * 512 / 4
 #define PAWN_HASH_SIZE 512 * 512 / 4
@@ -616,15 +616,15 @@ typedef class {
     int SelectBest(MOVES *m);
     int BadCapture(POS *p, int move);
     int MvvLva(POS *p, int move);
-    void ClearHist(void);
-    void AgeHist(void);
-    void ClearEvalHash(void);
-    void ClearPawnHash(void);
-    void ClearAll(void);
+    void ClearHist();
+    void AgeHist();
+    void ClearEvalHash();
+    void ClearPawnHash();
+    void ClearAll();
     int Refutation(int move);
     void UpdateHistory(POS *p, int last_move, int move, int depth, int ply);
     void DecreaseHistory(POS *p, int move, int depth);
-    void TrimHist(void);
+    void TrimHist();
 
     void Bench(int depth);
     void Think(POS *p, int *pv);
@@ -637,7 +637,7 @@ typedef class {
     bool IsDraw(POS *p);
     bool KPKdraw(POS *p, int sd);
     void DisplayPv(int score, int *pv);
-    void Slowdown(void);
+    void Slowdown();
     double TexelFit(POS *p, int *pv);
 
     void Init(int th);
@@ -686,7 +686,7 @@ extern cEngine Engine1;
     extern cEngine Engine4;
 #endif
 
-void InitSearch(void);
+void InitSearch();
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
 void CopyPos(POS *old_pos, POS *new_pos);
@@ -694,8 +694,8 @@ void AllocTrans(int mbsize);
 int Attacked(POS *p, int sq, int sd);
 U64 AttacksFrom(POS *p, int sq);
 U64 AttacksTo(POS *p, int sq);
-void BuildPv(int *, int *, int);
-void ClearTrans(void);
+void BuildPv(int *dst, int *src, int move);
+void ClearTrans();
 void ClearPosition(POS *p);
 void DisplayCurrmove(int move, int tried);
 int DrawScore(POS *p);
@@ -704,10 +704,10 @@ int *GenerateCaptures(POS *p, int *list);
 int *GenerateQuiet(POS *p, int *list);
 int *GenerateSpecial(POS *p, int *list);
 bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for GenerateSpecial()
-int GetMS(void);
+int GetMS();
 U64 GetNps(int elapsed);
-void Init(void);
-int InputAvailable(void);
+void Init();
+int InputAvailable();
 U64 InitHashKey(POS *p);
 U64 InitPawnKey(POS *p);
 bool Legal(POS *p, int move);
@@ -719,9 +719,9 @@ void ParseSetoption(const char *);
 const char *ParseToken(const char *, char *);
 void PrintBoard(POS *p);
 void PrintMove(int move);
-void PrintUciOptions(void);
+void PrintUciOptions();
 void PvToStr(int *, char *);
-U64 Random64(void);
+U64 Random64();
 void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
 void SetPosition(POS *p, const char *epd);
@@ -732,7 +732,7 @@ int Swap(POS *p, int from, int to);
 bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
 void TransRetrieveMove(U64 key, int *move);
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
-void UciLoop(void);
+void UciLoop();
 void WasteTime(int miliseconds);
 void PrintBb(U64 bbTest);
 
