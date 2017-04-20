@@ -49,19 +49,17 @@ void AllocTrans(int mbsize) {
     else
         printf("info string memory allocation error\n");
 
-    tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements type ENTRY
+    tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements of type ENTRY
     tt_mask = tt_size - 4;
 
 #ifdef USE_THREADS
     delete [] aflags;
 
-    const int tt_size_4 = tt_size >> 2; // groups of 4 elements
-
-    unsigned int number_of_aflags = tt_size_4 > (16 * 1024 * 1024) ? (16 * 1024 * 1024) : tt_size_4; // 16 * 16 * 4 = enough for 1024MB of hash
+    unsigned int number_of_aflags = tt_size > (16 * 1024 * 1024) * 4 ? (16 * 1024 * 1024) : tt_size / 4; // 16 * 16 * 4 = enough for 1024MB of hash
 
     aflags = new std::atomic_flag[number_of_aflags];
 
-    elem_per_aflag = tt_size / number_of_aflags; // 'tt_size' to simplify calculation of current_aflag without dividing (key & tt_mask)
+    elem_per_aflag = tt_size / number_of_aflags; // == 4 for 1:1 case
 
     for (int i = 0; i < number_of_aflags; i++)
         aflags[i].clear();
