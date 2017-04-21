@@ -23,6 +23,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef USE_THREADS
     #include <thread>
+    using namespace std;
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -30,8 +31,6 @@ If not, see <http://www.gnu.org/licenses/>.
 #else
     #include <unistd.h>
 #endif
-
-using namespace std;
 
 void ReadLine(char *str, int n) {
 
@@ -189,11 +188,12 @@ void timer_task() {
     Glob.abort_search = false;
 
     while (Glob.abort_search == false) {
-#if defined(_WIN32) || defined(_WIN64)
-        _sleep(5);
-#else
-        usleep(5 * 1000);
-#endif
+// #if defined(_WIN32) || defined(_WIN64)
+        // _sleep(5);
+// #else
+        // usleep(5 * 1000);
+// #endif
+        std::this_thread::sleep_for(5ms); // why check so frequently?
         if (!Glob.is_tuning) CheckTimeout();
     }
 }
@@ -341,7 +341,7 @@ void ParseGo(POS *p, const char *ptr) {
             MoveToStr(pv[0], bestmove_str);
             printf("bestmove %s\n", bestmove_str);
             move_from_book = true;
-            goto done;
+            goto done; // maybe just return?
         }
     }
 
@@ -359,42 +359,46 @@ void ParseGo(POS *p, const char *ptr) {
 #ifdef USE_THREADS
 
     if (Glob.thread_no == 1) {
-        thread t(timer_task);
-        thread t1(task1, p, pv);
-        t1.join();
+        std::thread t(timer_task);
+        std::thread e1(task1, p, pv);
+        e1.join();
+        //Glob.abort_search = true; // should we stop waiting timer thread?
         t.join();
     }
 
     if (Glob.thread_no == 2) {
-        thread t(timer_task);
-        thread t1(task1, p, pv);
-        thread t2(task2, p, pv2);
-        t1.join();
-        t2.join();
+        std::thread t(timer_task);
+        std::thread e1(task1, p, pv);
+        std::thread e2(task2, p, pv2);
+        e1.join();
+        e2.join();
+        //Glob.abort_search = true; // should we stop waiting timer thread?
         t.join();
     }
 
     if (Glob.thread_no == 3) {
-        thread t(timer_task);
-        thread t1(task1, p, pv);
-        thread t2(task2, p, pv2);
-        thread t3(task2, p, pv3);
-        t1.join();
-        t2.join();
-        t3.join();
+        std::thread t(timer_task);
+        std::thread e1(task1, p, pv);
+        std::thread e2(task2, p, pv2);
+        std::thread e3(task3, p, pv3);
+        e1.join();
+        e2.join();
+        e3.join();
+        //Glob.abort_search = true; // should we stop waiting timer thread?
         t.join();
     }
 
     if (Glob.thread_no == 4) {
-        thread t(timer_task);
-        thread t1(task1, p, pv);
-        thread t2(task2, p, pv2);
-        thread t3(task2, p, pv3);
-        thread t4(task2, p, pv4);
-        t1.join();
-        t2.join();
-        t3.join();
-        t4.join();
+        std::thread t(timer_task);
+        std::thread e1(task1, p, pv);
+        std::thread e2(task2, p, pv2);
+        std::thread e3(task3, p, pv3);
+        std::thread e4(task4, p, pv4);
+        e1.join();
+        e2.join();
+        e3.join();
+        e4.join();
+        //Glob.abort_search = true; // should we stop waiting timer thread?
         t.join();
     }
 #else
@@ -415,8 +419,8 @@ done:
 
 #ifdef USE_THREADS
         if (Engine2.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 2; }
-        if (Engine3.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 3; }
-        if (Engine4.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 4; }
+        if (Engine3.dp_completed > best_depth) { best_depth = Engine3.dp_completed; best_eng = 3; }
+        if (Engine4.dp_completed > best_depth) { best_depth = Engine4.dp_completed; best_eng = 4; }
 
         if (best_eng == 4) {
             MoveToStr(pv4[0], bestmove_str);
@@ -509,10 +513,10 @@ void cEngine::Bench(int depth) {
     int end_time = GetMS() - start_time;
     int nps = (Glob.nodes * 1000) / (end_time + 1);
 
-#if __cplusplus >= 201103L
-    printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", Glob.nodes, end_time, nps, (float)nps / 430914.0);
+#if __cplusplus >= 201103L || _MSVC_LANG >= 201402
+    printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
 #else
-    printf(       "%llu nodes searched in %d, speed %u nps (Score: %.3f)\n", Glob.nodes, end_time, nps, (float)nps / 430914.0);
+    printf(       "%llu nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
 #endif
 }
 

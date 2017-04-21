@@ -314,12 +314,6 @@ int cParam::EloToBookDepth(int elo) {
     return 256;
 }
 
-void cEngine::Init(int th) {
-
-    thread_id = th;
-    ClearHist();
-}
-
 void cDistance::Init() {
 
     // Init distance tables

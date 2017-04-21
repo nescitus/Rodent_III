@@ -70,7 +70,7 @@ enum eSquare {
 #define MAX_EVAL        29999
 #define MAX_HIST        (1 << 15)
 
-#if __cplusplus >= 201103L
+#if __cplusplus >= 201103L || _MSVC_LANG >= 201402
     #include <cstdint>
     #include <cinttypes>
     typedef uint64_t U64;
@@ -164,66 +164,62 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 // Compiler and architecture dependent versions of FirstOne() function,
 // triggered by defines at the top of this file.
 #ifdef USE_FIRST_ONE_INTRINSICS
-#if defined(_WIN32) && !defined(__MINGW32__)
-#include <intrin.h>
-#ifdef _WIN64
-    #pragma intrinsic(_BitScanForward64)
-#endif
 
-#ifdef _MSC_VER
-#ifndef _WIN64
-const int lsb_64_table[64] = {
-    63, 30, 3, 32, 59, 14, 11, 33,
-    60, 24, 50, 9, 55, 19, 21, 34,
-    61, 29, 2, 53, 51, 23, 41, 18,
-    56, 28, 1, 43, 46, 27, 0, 35,
-    62, 31, 58, 4, 5, 49, 54, 6,
-    15, 52, 12, 40, 7, 42, 45, 16,
-    25, 57, 48, 13, 10, 39, 8, 44,
-    20, 47, 38, 22, 17, 37, 36, 26
-};
+    #if defined(_WIN32) && !defined(__MINGW32__)
 
-/**
-* bitScanForward
-* @author Matt Taylor (2003)
-* @param bb bitboard to scan
-* @precondition bb != 0
-* @return index (0..63) of least significant one bit
-*/
-static int FORCEINLINE  bitScanForward(U64 bb) {
-    unsigned int folded;
-    bb ^= bb - 1;
-    folded = (int)bb ^ (bb >> 32);
-    return lsb_64_table[folded * 0x78291ACF >> 26];
-}
-#endif
-#endif
-static int FORCEINLINE FirstOne(U64 x) {
-#ifndef _WIN64
-    return bitScanForward(x);
-#else
-    unsigned long index = -1;
-    _BitScanForward64(&index, x);
-    return index;
-#endif
-}
+        #include <intrin.h>
 
-#elif defined(__GNUC__)
+        #ifdef _WIN64
+            #pragma intrinsic(_BitScanForward64)
+        #endif
 
-/*
-static int FORCEINLINE FirstOne(U64 x) {
-  int tmp = __builtin_ffsll(x);
-  if (tmp == 0) return -1;
-  else return tmp - 1;
-}
-*/
+        #ifdef _MSC_VER
+            #ifndef _WIN64
+                const int lsb_64_table[64] = {
+                    63, 30,  3, 32, 59, 14, 11, 33,
+                    60, 24, 50,  9, 55, 19, 21, 34,
+                    61, 29,  2, 53, 51, 23, 41, 18,
+                    56, 28,  1, 43, 46, 27,  0, 35,
+                    62, 31, 58,  4,  5, 49, 54,  6,
+                    15, 52, 12, 40,  7, 42, 45, 16,
+                    25, 57, 48, 13, 10, 39,  8, 44,
+                    20, 47, 38, 22, 17, 37, 36, 26
+                };
 
-#define FirstOne(x) (__builtin_ffsll(x) - 1)
+                /**
+                * bitScanForward
+                * @author Matt Taylor (2003)
+                * @param bb bitboard to scan
+                * @precondition bb != 0
+                * @return index (0..63) of least significant one bit
+                */
+                static int FORCEINLINE  bitScanForward(U64 bb) {
+                    unsigned int folded;
+                    bb ^= bb - 1;
+                    folded = (int)bb ^ (bb >> 32);
+                    return lsb_64_table[folded * 0x78291ACF >> 26];
+                }
+            #endif
+        #endif
 
-#endif
+        static int FORCEINLINE FirstOne(U64 x) {
+        #ifndef _WIN64
+            return bitScanForward(x);
+        #else
+            unsigned long index = -1;
+            _BitScanForward64(&index, x);
+            return index;
+        #endif
+        }
+
+    #elif defined(__GNUC__)
+
+        #define FirstOne(x) (__builtin_ffsll(x) - 1)
+
+    #endif
 
 #else
-#define FirstOne(x)     bit_table[(((x) & (~(x) + 1)) * (U64)0x0218A392CD3D5DBF) >> 58] // first "1" in a bitboard
+    #define FirstOne(x)     bit_table[(((x) & (~(x) + 1)) * (U64)0x0218A392CD3D5DBF) >> 58] // first "1" in a bitboard
 #endif
 
 #define bbNotA          (U64)0xfefefefefefefefe // ~FILE_A_BB
@@ -241,7 +237,7 @@ static int FORCEINLINE FirstOne(U64 x) {
 #define JustOne(bb)     (bb && !(bb & (bb-1)))
 #define MoreThanOne(bb) ( bb & (bb - 1) )
 
-typedef class {
+class cBitBoard {
   private:
     U64 p_attacks[2][64];
     U64 n_attacks[64];
@@ -288,20 +284,20 @@ typedef class {
     U64 RookAttacks(U64 occ, int sq);
     U64 BishAttacks(U64 occ, int sq);
     U64 QueenAttacks(U64 occ, int sq);
-} cBitBoard;
+};
 
 extern cBitBoard BB;
 
-typedef struct {
+struct UNDO {
     int ttp;
     int c_flags;
     int ep_sq;
     int rev_moves;
     U64 hash_key;
     U64 pawn_key;
-} UNDO;
+};
 
-typedef class {
+class POS {
   public:
     U64 cl_bb[2];
     U64 tp_bb[6];
@@ -357,9 +353,9 @@ typedef class {
     void UndoNull(UNDO *u);
     void UndoMove(int move, UNDO *u);
 
-} POS;
+};
 
-typedef struct {
+struct MOVES {
     POS *p;
     int phase;
     int trans_move;
@@ -373,18 +369,18 @@ typedef struct {
     int value[MAX_MOVES];
     int *badp;
     int bad[MAX_MOVES];
-} MOVES;
+};
 
-typedef struct {
+struct ENTRY {
     U64 key;
     short date;
     short move;
     short score;
     unsigned char flags;
     unsigned char depth;
-} ENTRY;
+};
 
-typedef struct {
+struct eData {
     int mg[2];
     int eg[2];
     int mg_pawns[2];
@@ -394,7 +390,7 @@ typedef struct {
     U64 p_can_take[2];
     U64 all_att[2];
     U64 ev_att[2];
-} eData;
+};
 
 struct sEvalHashEntry {
     U64 key;
@@ -417,7 +413,7 @@ enum Values {
     RS2_MG, RS2_EG, QSR_MG, QSR_EG, N_OF_VAL
 };
 
-typedef class {
+class cParam {
   public:
     int values[N_OF_VAL];
     bool use_book;
@@ -485,20 +481,20 @@ typedef class {
     int EloToBlur(int elo);
     int EloToBookDepth(int elo);
     void SetVal(int slot, int val);
-} cParam;
+};
 
 extern cParam Par;
 
-typedef class {
+class cDistance {
   public:
     int metric[64][64]; // chebyshev distance for unstoppable passers
     int bonus[64][64];
     void Init();
-} cDistance;
+};
 
 extern cDistance Dist;
 
-typedef class {
+class cMask {
   public:
     void Init();
     U64 k_side;
@@ -513,28 +509,41 @@ typedef class {
     U64 supported[2][64];
     U64 wb_special;
     U64 bb_special;
-} cMask;
+};
 
 extern cMask Mask;
 
-typedef class {
+#if defined(USE_THREADS) && defined(NEW_THREADS)
+    #include <atomic>
+
+    typedef std::atomic<bool>     glob_bool;
+    typedef std::atomic<int>      glob_int;
+    typedef std::atomic<uint64_t> glob_U64;
+#else
+    typedef bool glob_bool;
+    typedef int  glob_int;
+    typedef U64  glob_U64;
+#endif
+
+class cGlobals {
   public:
-    U64 nodes;
-    bool abort_search;
+    glob_U64 nodes;
+    glob_bool abort_search;
     bool elo_slider;
     bool is_console;
     bool is_tuning;
-    bool pondering;
+    glob_bool pondering;
     bool reading_personality;
     bool separate_books;
     bool should_clear;
     bool use_personality_files;
-    int depth_reached;
+    glob_int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels
     int thread_no;
+
     void ClearData();
     void Init();
-} cGlobals;
+};
 
 extern cGlobals Glob;
 
@@ -592,19 +601,16 @@ void CheckTimeout();
 #define EVAL_HASH_SIZE 512 * 512 / 4
 #define PAWN_HASH_SIZE 512 * 512 / 4
 
-typedef class {
-  public:
-
+class cEngine {
     sEvalHashEntry EvalTT[EVAL_HASH_SIZE];
     sPawnHashEntry PawnTT[PAWN_HASH_SIZE];
     int history[12][64];
     int killer[MAX_PLY][2];
     int refutation[64][64];
     int local_nodes;
-    int dp_completed;
-    int thread_id;
+    const int thread_id;
     int root_depth;
-	bool fl_root_choice;
+    bool fl_root_choice;
 
     void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
@@ -620,14 +626,11 @@ typedef class {
     void AgeHist();
     void ClearEvalHash();
     void ClearPawnHash();
-    void ClearAll();
     int Refutation(int move);
     void UpdateHistory(POS *p, int last_move, int move, int depth, int ply);
     void DecreaseHistory(POS *p, int move, int depth);
     void TrimHist();
 
-    void Bench(int depth);
-    void Think(POS *p, int *pv);
     void Iterate(POS *p, int *pv);
     int Widen(POS *p, int depth, int *pv, int lastScore);
     int Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int last_move, int last_capt_sq, int *pv);
@@ -638,9 +641,7 @@ typedef class {
     bool KPKdraw(POS *p, int sd);
     void DisplayPv(int score, int *pv);
     void Slowdown();
-    double TexelFit(POS *p, int *pv);
 
-    void Init(int th);
     int Evaluate(POS *p, eData *e);
 #ifdef USE_RISKY_PARAMETER
     int EvalScaleByDepth(POS *p, int ply, int eval);
@@ -677,7 +678,17 @@ typedef class {
     bool NotOnBishColor(POS *p, int bish_side, int sq);
     bool DifferentBishops(POS *p);
 
-} cEngine;
+  public:
+
+    int dp_completed;
+
+    cEngine(int th): thread_id(th) { ClearAll(); };
+
+    void Bench(int depth);
+    void ClearAll();
+    void Think(POS *p, int *pv);
+    double TexelFit(POS *p, int *pv);
+};
 
 extern cEngine Engine1;
 #ifdef USE_THREADS

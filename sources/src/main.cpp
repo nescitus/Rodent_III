@@ -19,11 +19,11 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "book.h"
 
 cGlobals Glob;
-cEngine Engine1;
+cEngine Engine1(0);
 #ifdef USE_THREADS
-    cEngine Engine2;
-    cEngine Engine3;
-    cEngine Engine4;
+    cEngine Engine2(1);
+    cEngine Engine3(2);
+    cEngine Engine4(3);
 #endif
 cBitBoard BB;
 cParam Par;
@@ -53,12 +53,6 @@ int main() {
 
     Mask.Init();
     Dist.Init();
-    Engine1.Init(0);
-#ifdef USE_THREADS
-    Engine2.Init(1);
-    Engine3.Init(2);
-    Engine4.Init(3);
-#endif
 
 #if defined(_WIN32) || defined(_WIN64)
     // if we are on Windows search for books and settings in same directory as rodentII.exe
