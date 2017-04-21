@@ -513,7 +513,7 @@ class cMask {
 
 extern cMask Mask;
 
-#ifdef USE_THREADS
+#if defined(USE_THREADS) && defined(NEW_THREADS)
     #include <atomic>
 
     typedef std::atomic<bool>     glob_bool;

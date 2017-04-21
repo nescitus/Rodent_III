@@ -16,6 +16,12 @@ else
 	CCCLANG="clang"
 fi
 
+if [[ "$1" == *"n"* ]]; then
+	NTHR="-DNEW_THREADS"
+else
+	NTHR=""
+fi
+
 case "$1" in
 	1 )
 		echo "Building using mingw..."
@@ -55,7 +61,7 @@ case "$1" in
 		echo quit | ./rodent_$MSYSTEM_CARCH.exe
 		cat src/*.cpp > src/combined.cpp
 
-		$CCGCC -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -fwhole-program -DUSEGEN -DNDEBUG $THR -D_FORTIFY_SOURCE=0 -I . src/combined.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
+		$CCGCC -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -fwhole-program -DUSEGEN -DNDEBUG $THR $NTHR -D_FORTIFY_SOURCE=0 -I . src/combined.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
 
 		rm book_gen.h
 		rm src/combined.cpp
@@ -68,7 +74,7 @@ case "$1" in
 
 		echo quit | ./rodent_$MSYSTEM_CARCH.exe
 
-		$CCGCC -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -flto -DUSEGEN -DNDEBUG $THR -D_FORTIFY_SOURCE=0 -I . src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
+		$CCGCC -Ofast -s -march=core2 -fno-stack-protector -fno-exceptions -flto -DUSEGEN -DNDEBUG $THR $NTHR -D_FORTIFY_SOURCE=0 -I . src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
 
 		rm book_gen.h
 

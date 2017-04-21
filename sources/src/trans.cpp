@@ -21,7 +21,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cstring>
 
-#ifdef USE_THREADS
+#if defined(USE_THREADS) && defined(NEW_THREADS)
     #include <atomic>
 
     std::atomic_flag *aflags;
@@ -52,7 +52,7 @@ void AllocTrans(int mbsize) {
     tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements of type ENTRY
     tt_mask = tt_size - 4;
 
-#ifdef USE_THREADS
+#if defined(USE_THREADS) && defined(NEW_THREADS)
     delete [] aflags;
 
     unsigned int number_of_aflags = tt_size > (16 * 1024 * 1024) * 4 ? (16 * 1024 * 1024) : tt_size / 4; // 16 * 16 * 4 = enough for 1024MB of hash
