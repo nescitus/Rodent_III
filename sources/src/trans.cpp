@@ -26,7 +26,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
     std::atomic_flag *aflags0;
     std::atomic_flag *aflags1;
-    unsigned int elem_per_aflag;
+    const unsigned int elem_per_aflag = 4;
 
     #define LOCK_ME_PLEASE0   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags0[current_aflag].test_and_set());
     #define UNLOCK_ME_PLEASE0 aflags0[current_aflag].clear()
@@ -58,8 +58,10 @@ void AllocTrans(int mbsize) {
 
     if (chc.Alloc(tt_size))
         printf("info string %zuMB of memory allocated\n", tt_size);
-    else
+    else {
         printf("info string memory allocation error\n");
+        return;
+    }
 
     tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements of type ENTRY
     tt_mask = tt_size - 4;
@@ -68,12 +70,10 @@ void AllocTrans(int mbsize) {
     delete [] aflags0;
     delete [] aflags1;
 
-    unsigned int number_of_aflags = tt_size > (16 * 1024 * 1024) * 4 ? (16 * 1024 * 1024) : tt_size / 4; // 16 * 16 * 4 = enough for 1024MB of hash
+    unsigned int number_of_aflags = tt_size / 4;
 
     aflags0 = new std::atomic_flag[number_of_aflags];
     aflags1 = new std::atomic_flag[number_of_aflags];
-
-    elem_per_aflag = tt_size / number_of_aflags; // == 4 for 1:1 case
 
     for (int i = 0; i < number_of_aflags; i++) {
         aflags0[i].clear();
