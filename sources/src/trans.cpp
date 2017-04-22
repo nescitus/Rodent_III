@@ -24,15 +24,27 @@ If not, see <http://www.gnu.org/licenses/>.
 #if defined(USE_THREADS) && defined(NEW_THREADS)
     #include <atomic>
 
-    std::atomic_flag *aflags;
-    unsigned int elem_per_aflag;
+    std::atomic_flag *aflags0;
+    std::atomic_flag *aflags1;
+    const unsigned int elem_per_aflag = 4;
 
-    #define LOCK_ME_PLEASE   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags[current_aflag].test_and_set());
-    #define UNLOCK_ME_PLEASE aflags[current_aflag].clear()
+    #define LOCK_ME_PLEASE0   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags0[current_aflag].test_and_set());
+    #define UNLOCK_ME_PLEASE0 aflags0[current_aflag].clear()
+    #define LOCK_ME_PLEASE1   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags1[current_aflag].test_and_set());
+    #define UNLOCK_ME_PLEASE1 aflags1[current_aflag].clear()
+
+    #define LOCK_ME_PLEASE01   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag;\
+                               while (aflags0[current_aflag].test_and_set());\
+                               while (aflags1[current_aflag].test_and_set());
 
 #else
-    #define LOCK_ME_PLEASE
-    #define UNLOCK_ME_PLEASE
+    #define LOCK_ME_PLEASE0
+    #define UNLOCK_ME_PLEASE0
+    #define LOCK_ME_PLEASE1
+    #define UNLOCK_ME_PLEASE1
+
+    #define LOCK_ME_PLEASE01
+
 #endif
 
 ChessHeapClass chc;
@@ -46,23 +58,27 @@ void AllocTrans(int mbsize) {
 
     if (chc.Alloc(tt_size))
         printf("info string %zuMB of memory allocated\n", tt_size);
-    else
+    else {
         printf("info string memory allocation error\n");
+        return;
+    }
 
     tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements of type ENTRY
     tt_mask = tt_size - 4;
 
 #if defined(USE_THREADS) && defined(NEW_THREADS)
-    delete [] aflags;
+    delete [] aflags0;
+    delete [] aflags1;
 
-    unsigned int number_of_aflags = tt_size > (16 * 1024 * 1024) * 4 ? (16 * 1024 * 1024) : tt_size / 4; // 16 * 16 * 4 = enough for 1024MB of hash
+    unsigned int number_of_aflags = tt_size / 4;
 
-    aflags = new std::atomic_flag[number_of_aflags];
+    aflags0 = new std::atomic_flag[number_of_aflags];
+    aflags1 = new std::atomic_flag[number_of_aflags];
 
-    elem_per_aflag = tt_size / number_of_aflags; // == 4 for 1:1 case
-
-    for (int i = 0; i < number_of_aflags; i++)
-        aflags[i].clear();
+    for (int i = 0; i < number_of_aflags; i++) {
+        aflags0[i].clear();
+        aflags1[i].clear();
+    }
 #endif
 }
 
@@ -79,7 +95,7 @@ bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int dept
 
     ENTRY *entry = chc[key & tt_mask];
 
-    LOCK_ME_PLEASE;
+    LOCK_ME_PLEASE0;
 
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
@@ -95,7 +111,7 @@ bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int dept
                         || (entry->flags & LOWER && *score >= beta)) {
                     //entry->date = tt_date; // refreshing entry TODO: test at 4 threads, at 1 thread it's a wash
 
-                    UNLOCK_ME_PLEASE;
+                    UNLOCK_ME_PLEASE0;
                     return true;
                 }
             }
@@ -104,7 +120,7 @@ bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int dept
         entry++;
     }
 
-    UNLOCK_ME_PLEASE;
+    UNLOCK_ME_PLEASE0;
     return false;
 }
 
@@ -114,7 +130,7 @@ void TransRetrieveMove(U64 key, int *move) {
 
     ENTRY *entry = chc[key & tt_mask];
 
-    LOCK_ME_PLEASE;
+    LOCK_ME_PLEASE1;
 
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
@@ -125,7 +141,7 @@ void TransRetrieveMove(U64 key, int *move) {
         entry++;
     }
 
-    UNLOCK_ME_PLEASE;
+    UNLOCK_ME_PLEASE1;
 }
 
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
@@ -141,8 +157,6 @@ void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
 
     ENTRY *entry = chc[key & tt_mask], *replace = NULL;
 
-    LOCK_ME_PLEASE;
-
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {
             if (!move) move = entry->move;
@@ -156,8 +170,12 @@ void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
         }
         entry++;
     }
+
+    LOCK_ME_PLEASE01;
+
     replace->key = key; replace->date = tt_date; replace->move = move;
     replace->score = score; replace->flags = flags; replace->depth = depth;
 
-    UNLOCK_ME_PLEASE;
+    UNLOCK_ME_PLEASE0;
+    UNLOCK_ME_PLEASE1;
 }
