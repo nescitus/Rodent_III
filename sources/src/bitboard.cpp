@@ -96,8 +96,15 @@ U64 cBitBoard::GetBetween(int sq1, int sq2) {
 
 #if defined(__GNUC__)
 
+#if defined(__SSSE3__) && !defined(__POPCNT__) // only for ssse3 targets
+    #include "popcnt_ssse3.h"
+    #define popcnt_gcc(x) popcnt_ssse3(x)
+#else
+    #define popcnt_gcc(x) __builtin_popcountll(x)
+#endif
+
 int cBitBoard::PopCnt(U64 bb) {
-    return __builtin_popcountll(bb);
+    return popcnt_gcc(bb);
 }
 
 #elif defined(USE_MM_POPCNT) && defined(_M_AMD64)  // 64 bit windows
