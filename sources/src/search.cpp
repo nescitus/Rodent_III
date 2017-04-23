@@ -356,7 +356,7 @@ avoid_null:
         && quiet_tried == 0
         && fl_prunable_node
         && depth <= 6) {
-            if (eval + fut_margin[depth] < beta) fl_futility = 1;
+           if (eval + fut_margin[depth] < beta) fl_futility = 1;
         }
 
         // MAKE MOVE
@@ -397,19 +397,6 @@ avoid_null:
         && mv_hist_score < Par.hist_limit
         && (mv_type == MV_NORMAL)
         &&  mv_tried > 1) {
-            p->UndoMove(move, u); continue;
-        }
-
-        // BAD QUIETS PRUNING
-
-        if (fl_prunable_node
-        &&  mv_type == MV_NORMAL
-        &&  mv_tried > 1
-        &&  TpOnSq(p,Tsq(move)) != P
-        &&  mv_hist_score < Par.hist_limit
-        &&  !InCheck(p)
-        &&  depth <= 3
-        &&  SqBb(Tsq(move)) & e.p_takes[p->side]) {
             p->UndoMove(move, u); continue;
         }
 
