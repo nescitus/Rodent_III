@@ -416,12 +416,21 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
     bb_pieces = p->Pawns(sd);
     while (bb_pieces) {
         sq = BB.PopFirstBit(&bb_pieces);
+		stop = BB.ShiftFwd(SqBb(sq), sd);
+
+        // pawn can attack enemy piece
+
+        if (!(stop & OccBb(p))) {
+           if (!(stop & e->p_can_take[op])) {
+              if (BB.GetPawnControl(stop, sd) & (p->Bishops(op) | p->Knights(op)))
+                  Add(e, sd, 4);
+           }
+        }
 
         // passed pawns
 
         if (!(Mask.passed[sd][sq] & p->Pawns(op))) {
             mul = 100;
-            stop = BB.ShiftFwd(SqBb(sq), sd);
 
             if (stop & OccBb(p)) mul -= 23;   // blocked passers score less
 
