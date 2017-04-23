@@ -400,6 +400,19 @@ avoid_null:
             p->UndoMove(move, u); continue;
         }
 
+        // BAD QUIETS PRUNING
+
+        if (fl_prunable_node
+        &&  mv_type == MV_NORMAL
+        &&  mv_tried > 1
+        &&  TpOnSq(p,Tsq(move)) != P
+        &&  mv_hist_score < Par.hist_limit
+        &&  !InCheck(p)
+        &&  depth <= 3
+        &&  SqBb(Tsq(move)) & e.p_takes[p->side]) {
+            p->UndoMove(move, u); continue;
+        }
+
         // LATE MOVE PRUNING
 
         if (fl_prunable_node
