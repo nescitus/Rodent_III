@@ -33,17 +33,11 @@ void PrintUciOptions() {
         printf("option name PersonalityFile type string default rodent.txt\n");
     else {
 
-        printf("option name PawnValueMg type spin default %d min 0 max 1200\n", Par.values[P_MID]);
-        printf("option name KnightValueMg type spin default %d min 0 max 1200\n", Par.values[N_MID]);
-        printf("option name BishopValueMg type spin default %d min 0 max 1200\n", Par.values[B_MID]);
-        printf("option name RookValueMg type spin default %d min 0 max 1200\n", Par.values[R_MID]);
-        printf("option name QueenValueMg type spin default %d min 0 max 1200\n", Par.values[Q_MID]);
-
-        printf("option name PawnValueEg type spin default %d min 0 max 1200\n", Par.values[P_END]);
-        printf("option name KnightValueEg type spin default %d min 0 max 1200\n", Par.values[N_END]);
-        printf("option name BishopValueEg type spin default %d min 0 max 1200\n", Par.values[B_END]);
-        printf("option name RookValueEg type spin default %d min 0 max 1200\n", Par.values[R_END]);
-        printf("option name QueenValueEg type spin default %d min 0 max 1200\n", Par.values[Q_END]);
+        printf("option name PawnValue type spin default %d min 0 max 1200\n", Par.values[P_MID]);
+        printf("option name KnightValue type spin default %d min 0 max 1200\n", Par.values[N_MID]);
+        printf("option name BishopValue type spin default %d min 0 max 1200\n", Par.values[B_MID]);
+        printf("option name RookValue type spin default %d min 0 max 1200\n", Par.values[R_MID]);
+        printf("option name QueenValue type spin default %d min 0 max 1200\n", Par.values[Q_MID]);
 
         printf("option name KeepPawn type spin default %d min 0 max 500\n", Par.keep_pc[P]);
         printf("option name KeepKnight type spin default %d min 0 max 500\n", Par.keep_pc[N]);
@@ -54,7 +48,6 @@ void PrintUciOptions() {
         printf("option name BishopPair type spin default %d min -100 max 100\n", Par.values[B_PAIR]);
         printf("option name ExchangeImbalance type spin default %d min -200 max 200\n", Par.values[A_EXC]);
         printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", Par.values[N_CL]);
-        printf("option name RookLikesOpen type spin default %d min 0 max 10\n", Par.values[R_OP]);
 
         printf("option name Material type spin default %d min 0 max 500\n", Par.mat_weight);
         printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.pst_weight);
@@ -335,10 +328,26 @@ void ParseSetoption(const char *ptr) {
     }
 }
 
-void SetPieceValue(int pc, int val, int slot) { // to preserve personalities with old settings
+// @brief function used to preserve personalities with old settings
+// and to decrease number of parameters in UCI options panel
+
+void SetPieceValue(int pc, int val, int slot) {
 
     Par.values[slot] = val;
-    Par.values[slot + 1] = val;
+
+    // Function SetPieceValue() modifies both midgame and endgame piece values.
+    // It is tricky, so this ugly code ensures the same proportion between midgame 
+	// and endgame piece values as in default settings. Midgame and endgame piece
+    // values can be set independently from each other using personality files.
+
+    int eg_val = val;
+    if (pc == P) eg_val = val + ((11 * val) / 95);
+    if (pc == N) eg_val = val - (( 5 * val) / 320);
+    if (pc == B) eg_val = val;
+    if (pc == R) eg_val = val + (( 5 * val) / 515);
+    if (pc == Q) eg_val = val + ((10 * val) / 1000);
+
+    Par.values[slot + 1] = eg_val;
     Par.InitPst();
     Glob.should_clear = true;
 }
