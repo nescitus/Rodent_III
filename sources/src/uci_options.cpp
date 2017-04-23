@@ -65,7 +65,7 @@ void PrintUciOptions() {
         printf("option name PawnStorm type spin default %d min 0 max 500\n", Par.storm_weight);
         printf("option name Outposts type spin default %d min 0 max 500\n", Par.outposts_weight);
         printf("option name Lines type spin default %d min 0 max 500\n", Par.lines_weight);
-        printf("option name Fianchetto type spin default %d min 0 max 100\n", Par.values[B_FIANCH]);
+        printf("option name Fianchetto type spin default %d min 0 max 100\n", Par.values[B_KING]);
 
         printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
         printf("option name MobilityStyle type spin default %d min 0 max 1\n", Par.mob_style);
@@ -255,7 +255,7 @@ void ParseSetoption(const char *ptr) {
         Par.lines_weight = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "Fianchetto") == 0        || strcmp(name, "fianchetto") == 0)        {
-        Par.values[B_FIANCH] = atoi(value);
+        Par.values[B_KING] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "DoubledPawnMg") == 0     || strcmp(name, "doubledpawnmg") == 0)     {
         Par.values[DB_MID] = atoi(value);

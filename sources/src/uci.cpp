@@ -81,7 +81,7 @@ void UciLoop() {
             Par.use_book = (strstr(command, "value true") != 0);
 
         if (strcmp(token, "uci") == 0) {
-            printf("id name Rodent III 0.193\n");
+            printf("id name Rodent III 0.195\n");
             Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
             PrintUciOptions();
@@ -335,7 +335,7 @@ void ParseGo(POS *p, const char *ptr) {
         printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
         pv[0] = GuideBook.GetPolyglotMove(p, true);
         if (!pv[0]) pv[0] = MainBook.GetPolyglotMove(p, true);
-        if (!pv[0]) pv[0] = InternalBook.MoveFromInternal(p);
+        //if (!pv[0]) pv[0] = InternalBook.MoveFromInternal(p);
 
         if (pv[0]) {
             MoveToStr(pv[0], bestmove_str);

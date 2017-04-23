@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 44.483.692 / 36,1 / 2.859
+// b15: 37.208.595 / 32,4 / 2.661
 // tune: 0.059217
 
 #pragma once
@@ -34,6 +34,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef NO_THREADS
     #define USE_THREADS
+    #define NEW_THREADS
     #define MAX_THREADS 4 // do not change unless threading code is modified (array of cEngine class instances)
 #endif
 
@@ -404,13 +405,14 @@ struct sPawnHashEntry {
 };
 
 enum Values {
-    P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,    // piece values
-    B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,        // material adjustements
-    NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,          // king tropism
-    N_CL, R_OP, B_FIANCH,
-    ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,          // pawn weaknesses
+    P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,               // piece values
+    B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustements
+    NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
+    N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE, 
+	B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop patterns
+    ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
     ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,
-    RS2_MG, RS2_EG, QSR_MG, QSR_EG, N_OF_VAL
+    RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK, N_OF_VAL
 };
 
 class cParam {
@@ -663,7 +665,6 @@ class cEngine {
     int ScaleKBPK(POS *p, int sd, int op);
     int ScaleKNPK(POS *p, int sd, int op);
     int ScaleKRPKR(POS *p, int sd, int op);
-    int ScaleKRKP(POS *p, int sd, int op);
     int ScaleKQKRP(POS *p, int sd, int op);
     void EvaluateBishopPatterns(POS *p, eData *e);
     void EvaluateKnightPatterns(POS *p, eData *e);

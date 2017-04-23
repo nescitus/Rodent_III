@@ -94,7 +94,7 @@ void cParam::DefaultWeights() {
     pst_weight = 80;
     pst_style = 0;
     mob_style = 0;         // 1 is only marginally behind
-    values[B_FIANCH] = 0;  // flavour option
+
 #ifdef USE_RISKY_PARAMETER
     riskydepth = 0;
 #endif
@@ -131,6 +131,23 @@ void cParam::DefaultWeights() {
     values[BK_END] = -8;
     values[BK_OPE] = -8;
 
+    // Knight parameters
+
+    values[N_TRAP] = -150;
+    values[N_BLOCK] = -20;
+
+    // Bishop parameters
+
+    values[B_FIANCH] = 4;  // general bonus for fianchettoed bishop
+    values[B_KING] = 0;    // fianchettoed bishop near king
+    values[B_BADF] = -20;  // enemy pawns hamper fianchettoed bishop
+    values[B_TRAP_A2] = -150;
+    values[B_TRAP_A3] = -50;
+    values[B_BLOCK] = -50;
+    values[B_BF_MG] = -10;
+    values[B_BF_EG] = -20;
+    values[B_WING] = 10;
+
     // Rook parameters
 
     values[RSR_MG] = 16;
@@ -145,11 +162,17 @@ void cParam::DefaultWeights() {
     values[RBH_EG] = 5;
     values[ROQ_MG] = 5;
     values[ROQ_EG] = 5;
+    values[R_BLOCK] = -50;
 
     // Queen parameters
 
     values[QSR_MG] = 4;
     values[QSR_EG] = 8;
+
+    // King parameters
+
+    values[K_NO_LUFT] = -15;
+    values[K_CASTLE] = 10;
 
     // Specialized functions
 
