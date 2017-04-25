@@ -35,7 +35,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #ifndef NO_THREADS
     #define USE_THREADS
     #define NEW_THREADS
-    #define MAX_THREADS 4 // do not change unless threading code is modified (array of cEngine class instances)
+    #define MAX_THREADS 8 // do not change unless threading code is modified (array of cEngine class instances)
 #endif
 
 enum eColor {WC, BC, NO_CL};
@@ -696,6 +696,10 @@ extern cEngine Engine1;
     extern cEngine Engine2;
     extern cEngine Engine3;
     extern cEngine Engine4;
+	extern cEngine Engine5;
+    extern cEngine Engine6;
+    extern cEngine Engine7;
+    extern cEngine Engine8;
 #endif
 
 void InitSearch();

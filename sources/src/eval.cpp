@@ -147,6 +147,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         e->ev_att[sd]  |= bb_control;
         if (!(bb_control & Mask.away[sd])) Add(e, sd, -5);  // we do not attack enemy half of the board
         if (bb_control & b_checks) att += 4;                // check threats
+
         bb_attack = BB.BishAttacks(OccBb(p) ^ p->Queens(sd), sq);  // get king attack bitboard
 
         if (bb_attack & bb_zone) {                          // evaluate king attacks

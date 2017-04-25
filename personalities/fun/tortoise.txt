@@ -29,10 +29,10 @@ setoption name PassedPawns value 100
 setoption name PawnStructure value 200
 setoption name Lines value 100
 setoption name Outposts value 200
-setoption name Fianchetto value 0
+setoption name Fianchetto value 20
 setoption name PawnShield value 120
 setoption name PawnStorm value 100
-setoption name Forwardness value 0
+setoption name Forwardness value -50
 setoption name DoubledPawnMg value -12
 setoption name DoubledPawnEg value -24
 setoption name IsolatedPawnMg value -10
