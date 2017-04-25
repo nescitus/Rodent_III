@@ -96,7 +96,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         tropism_eg += Par.values[NTR_EG] * Dist.bonus[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
-            fwd_weight += 1;
+            fwd_weight += Par.values[N_FWD];
             fwd_cnt += 1;
         }
 
@@ -138,7 +138,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         tropism_eg += Par.values[BTR_EG] * Dist.bonus[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
-            fwd_weight += 1;
+            fwd_weight += Par.values[B_FWD];
             fwd_cnt += 1;
         }
 
@@ -199,7 +199,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         tropism_eg += Par.values[RTR_EG] * Dist.bonus[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
-            fwd_weight += 2;
+            fwd_weight += Par.values[R_FWD];
             fwd_cnt += 1;
         }
 
@@ -280,7 +280,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         tropism_eg += Par.values[QTR_EG] * Dist.bonus[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
-            fwd_weight += 4;
+            fwd_weight += Par.values[Q_FWD];
             fwd_cnt += 1;
         }
 

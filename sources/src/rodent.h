@@ -408,9 +408,11 @@ enum Values {
     P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,               // piece values
     B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustements
     NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
-    N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE, 
+	N_FWD, B_FWD, R_FWD, Q_FWD,
+    N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
 	B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop patterns
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
+	P_BIND, P_ISL,
     ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,
     RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK, N_OF_VAL
 };

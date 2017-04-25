@@ -50,6 +50,7 @@ void PrintUciOptions() {
         printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", Par.values[N_CL]);
 
         printf("option name Material type spin default %d min 0 max 500\n", Par.mat_weight);
+		printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
         printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.pst_weight);
         printf("option name OwnAttack type spin default %d min 0 max 500\n", Par.own_att_weight);
         printf("option name OppAttack type spin default %d min 0 max 500\n", Par.opp_att_weight);
@@ -67,8 +68,6 @@ void PrintUciOptions() {
         printf("option name Lines type spin default %d min 0 max 500\n", Par.lines_weight);
         printf("option name Fianchetto type spin default %d min 0 max 100\n", Par.values[B_KING]);
 
-        printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
-        printf("option name MobilityStyle type spin default %d min 0 max 1\n", Par.mob_style);
         printf("option name Contempt type spin default %d min -500 max 500\n", Par.draw_score);
 
         if (!Glob.elo_slider) {

@@ -130,6 +130,8 @@ void cParam::DefaultWeights() {
     values[BK_MID] = -8;
     values[BK_END] = -8;
     values[BK_OPE] = -8;
+	values[P_BIND] = 5;
+	values[P_ISL] = 7;
 
     // Knight parameters
 
@@ -173,6 +175,13 @@ void cParam::DefaultWeights() {
 
     values[K_NO_LUFT] = -15;
     values[K_CASTLE] = 10;
+
+	// Forwardness parameters
+
+    values[N_FWD] = 1;
+    values[B_FWD] = 1;
+    values[R_FWD] = 2;
+    values[Q_FWD] = 4;
 
     // Specialized functions
 
