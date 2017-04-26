@@ -47,8 +47,8 @@ void cGlobals::ClearData() {
 #ifndef USE_THREADS
     EngineSingle.ClearAll();
 #else
-    for ( auto& engine: enginesArray )
-		engine.ClearAll();
+    for (auto& engine: enginesArray)
+        engine.ClearAll();
 #endif
     should_clear = false;
 }

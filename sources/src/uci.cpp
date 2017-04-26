@@ -114,7 +114,7 @@ void UciLoop() {
 #ifndef USE_THREADS
             EngineSingle.Bench(atoi(token));
 #else
-			enginesArray[0].Bench(atoi(token));
+            enginesArray[0].Bench(atoi(token));
 #endif
         } else if (strcmp(token, "quit") == 0) {
             exit(0);
@@ -240,7 +240,7 @@ void ParseGo(POS *p, const char *ptr) {
     int wtime, btime, winc, binc, movestogo, strict_time;
     //int pv[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY], pv5[MAX_PLY], pv6[MAX_PLY], pv7[MAX_PLY], pv8[MAX_PLY];
     int pvb;
-	//bool move_from_book = false;
+    //bool move_from_book = false;
 
     move_time = -1;
     move_nodes = 0;
@@ -326,7 +326,7 @@ void ParseGo(POS *p, const char *ptr) {
             printf("bestmove %s\n", bestmove_str);
             //move_from_book = true;
             //goto done; // maybe just return?
-			return;
+            return;
         }
     }
 
@@ -335,50 +335,49 @@ void ParseGo(POS *p, const char *ptr) {
 #ifndef USE_THREADS
     EngineSingle.dp_completed = 0;
 #else
-	for ( auto& engine: enginesArray )
-		engine.dp_completed = 0;
+    for (auto& engine: enginesArray)
+        engine.dp_completed = 0;
 #endif
 
     // Search using the designated number of threads
 
 #ifdef USE_THREADS
 
-	for ( auto& engine: enginesArray )
-		engine.StartThinkThread(p);
+    for (auto& engine: enginesArray)
+        engine.StartThinkThread(p);
 
-	std::thread timer(timer_task);
+    std::thread timer(timer_task);
 
-	for ( auto& engine: enginesArray )
-		engine.WaitThinkThread();
+    for (auto& engine: enginesArray)
+        engine.WaitThinkThread();
 
-	timer.join();
+    timer.join();
 
 #else
     EngineSingle.Think(p);
-    MoveToStr(EngineSingle.pv[0], bestmove_str);
+/*     MoveToStr(EngineSingle.pv[0], bestmove_str);
     if (EngineSingle.pv[1]) {
         MoveToStr(EngineSingle.pv[1], ponder_str);
         printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
     } else
-        printf("bestmove %s\n", bestmove_str);
+        printf("bestmove %s\n", bestmove_str); */
+    ExtractMove(EngineSingle.pv);
 #endif
 
 //done:
 
     //if (!move_from_book) {
 #ifdef USE_THREADS
-        
-		int *best_pv;
-		int best_depth = -1;
-		
-		for ( auto& engine: enginesArray )
-			if (best_depth < engine.dp_completed)
-			{
-				best_depth = engine.dp_completed;
-				best_pv = engine.pv;
-			}
-	
-		ExtractMove(best_pv);
+
+        int *best_pv, best_depth = -1;
+
+        for (auto& engine: enginesArray)
+            if (best_depth < engine.dp_completed) {
+                best_depth = engine.dp_completed;
+                best_pv = engine.pv;
+            }
+
+        ExtractMove(best_pv);
 #endif
     //}
 

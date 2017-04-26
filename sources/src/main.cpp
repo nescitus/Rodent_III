@@ -20,9 +20,9 @@ If not, see <http://www.gnu.org/licenses/>.
 
 cGlobals Glob;
 #ifndef USE_THREADS
-	cEngine EngineSingle;
+    cEngine EngineSingle;
 #else
-	#include <vector>
+    #include <vector>
     std::vector<cEngine> enginesArray (1);
 #endif
 cBitBoard BB;
@@ -42,7 +42,7 @@ sBook MainBook;
 int main() {
 
     POS p;
-	
+
     BB.Init();
     InitSearch();
     Init();
