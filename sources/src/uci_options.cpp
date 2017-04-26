@@ -123,6 +123,11 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "Threads") == 0           || strcmp(name, "threads") == 0)           {
         Glob.thread_no = (atoi(value));
         if (Glob.thread_no > MAX_THREADS) Glob.thread_no = MAX_THREADS;
+
+		enginesArray.clear();
+		
+		for ( int i = 0; i < Glob.thread_no; i++ )
+			enginesArray.emplace_back(i);
 #endif
     } else if (strcmp(name, "Clear Hash") == 0        || strcmp(name, "clear hash") == 0)        {
         ClearTrans();

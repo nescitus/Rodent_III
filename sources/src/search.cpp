@@ -44,11 +44,11 @@ void cParam::InitAsymmetric(POS *p) {
 void cGlobals::ClearData() {
 
     ClearTrans();
-    Engine1.ClearAll();
-#ifdef USE_THREADS
-    Engine2.ClearAll();
-    Engine3.ClearAll();
-    Engine4.ClearAll();
+#ifndef USE_THREADS
+    EngineSingle.ClearAll();
+#else
+    for ( auto& engine: enginesArray )
+		engine.ClearAll();
 #endif
     should_clear = false;
 }
@@ -78,7 +78,7 @@ void CopyPos(POS *old_pos, POS *new_pos) {
     *new_pos = *old_pos;
 }
 
-void cEngine::Think(POS *p, int *pv) {
+void cEngine::Think(POS *p) {
 
     POS curr[1];
     pv[0] = 0;

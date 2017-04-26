@@ -33,6 +33,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #define USE_RISKY_PARAMETER
 
 #ifndef NO_THREADS
+	#include <thread>
     #define USE_THREADS
     #define NEW_THREADS
     #define MAX_THREADS 8 // do not change unless threading code is modified (array of cEngine class instances)
@@ -683,25 +684,33 @@ class cEngine {
 
   public:
 
+	int pv[MAX_PLY];
     int dp_completed;
 
-    cEngine(int th): thread_id(th) { ClearAll(); };
+	//cEngine() = delete;
+    cEngine(int th = 0): thread_id(th) { ClearAll(); };
+
+#ifdef USE_THREADS
+	std::thread eng;
+	void StartThinkThread( POS *p )
+	{
+		eng = std::thread( &cEngine::Think, this, p );
+	}
+	
+	void WaitThinkThread() { eng.join(); }
+#endif
 
     void Bench(int depth);
     void ClearAll();
-    void Think(POS *p, int *pv);
+    void Think(POS *p);
     double TexelFit(POS *p, int *pv);
 };
 
-extern cEngine Engine1;
-#ifdef USE_THREADS
-    extern cEngine Engine2;
-    extern cEngine Engine3;
-    extern cEngine Engine4;
-	extern cEngine Engine5;
-    extern cEngine Engine6;
-    extern cEngine Engine7;
-    extern cEngine Engine8;
+#ifndef USE_THREADS
+	extern cEngine EngineSingle;
+#else
+	#include <vector>
+    extern std::vector<cEngine> enginesArray;
 #endif
 
 void InitSearch();

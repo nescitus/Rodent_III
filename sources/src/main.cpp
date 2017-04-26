@@ -19,15 +19,11 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "book.h"
 
 cGlobals Glob;
-cEngine Engine1(0);
-#ifdef USE_THREADS
-    cEngine Engine2(1);
-    cEngine Engine3(2);
-    cEngine Engine4(3);
-	cEngine Engine5(4);
-    cEngine Engine6(5);
-    cEngine Engine7(6);
-    cEngine Engine8(7);
+#ifndef USE_THREADS
+	cEngine EngineSingle;
+#else
+	#include <vector>
+    std::vector<cEngine> enginesArray (1);
 #endif
 cBitBoard BB;
 cParam Par;
