@@ -687,6 +687,7 @@ class cEngine {
     int pv[MAX_PLY];
     int dp_completed;
 
+    cEngine(const cEngine &) = delete;
     cEngine(int th = 0): thread_id(th) { ClearAll(); };
 
 #ifdef USE_THREADS
@@ -707,8 +708,8 @@ class cEngine {
 #ifndef USE_THREADS
     extern cEngine EngineSingle;
 #else
-    #include <vector>
-    extern std::vector<cEngine> enginesArray;
+    #include <list>
+    extern std::list<cEngine> enginesArray;
 #endif
 
 void InitSearch();

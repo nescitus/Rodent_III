@@ -114,7 +114,7 @@ void UciLoop() {
 #ifndef USE_THREADS
             EngineSingle.Bench(atoi(token));
 #else
-            enginesArray[0].Bench(atoi(token));
+            enginesArray.front().Bench(atoi(token));
 #endif
         } else if (strcmp(token, "quit") == 0) {
             exit(0);

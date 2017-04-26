@@ -22,8 +22,8 @@ cGlobals Glob;
 #ifndef USE_THREADS
     cEngine EngineSingle;
 #else
-    #include <vector>
-    std::vector<cEngine> enginesArray (1);
+    #include <list>
+    std::list<cEngine> enginesArray (1);
 #endif
 cBitBoard BB;
 cParam Par;
