@@ -23,9 +23,10 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #if defined(USE_THREADS) && defined(NEW_THREADS)
     #include <atomic>
+    #include <memory>
 
-    std::atomic_flag *aflags0;
-    std::atomic_flag *aflags1;
+    std::unique_ptr<std::atomic_flag[]> aflags0;
+    std::unique_ptr<std::atomic_flag[]> aflags1;
     const unsigned int elem_per_aflag = 4;
 
     #define LOCK_ME_PLEASE0   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags0[current_aflag].test_and_set());
@@ -67,13 +68,10 @@ void AllocTrans(int mbsize) {
     tt_mask = tt_size - 4;
 
 #if defined(USE_THREADS) && defined(NEW_THREADS)
-    delete [] aflags0;
-    delete [] aflags1;
-
     unsigned int number_of_aflags = tt_size / 4;
 
-    aflags0 = new std::atomic_flag[number_of_aflags];
-    aflags1 = new std::atomic_flag[number_of_aflags];
+    aflags0 = std::make_unique<std::atomic_flag[]> (number_of_aflags);
+    aflags1 = std::make_unique<std::atomic_flag[]> (number_of_aflags);
 
     for (int i = 0; i < number_of_aflags; i++) {
         aflags0[i].clear();
