@@ -725,7 +725,7 @@ bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for Generat
 int GetMS();
 U64 GetNps(int elapsed);
 void Init();
-int InputAvailable();
+bool InputAvailable();
 U64 InitHashKey(POS *p);
 U64 InitPawnKey(POS *p);
 bool Legal(POS *p, int move);
