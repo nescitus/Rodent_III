@@ -73,21 +73,16 @@ void InitSearch() {
         }
 }
 
-void CopyPos(POS *old_pos, POS *new_pos) {
-
-    *new_pos = *old_pos;
-}
-
 void cEngine::Think(POS *p) {
 
-    POS curr[1];
-    pv[0] = 0;
-    pv[1] = 0;
+    POS curr = *p;
+    pv_eng[0] = 0;
+    pv_eng[1] = 0;
 
     fl_root_choice = false;
-    CopyPos(p, curr);
+
     AgeHist();
-    Iterate(curr, pv);
+    Iterate(&curr, pv_eng);
 }
 
 void cEngine::Iterate(POS *p, int *pv) {

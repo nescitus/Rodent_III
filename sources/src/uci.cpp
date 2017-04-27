@@ -361,7 +361,7 @@ void ParseGo(POS *p, const char *ptr) {
         printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
     } else
         printf("bestmove %s\n", bestmove_str); */
-    ExtractMove(EngineSingle.pv);
+    ExtractMove(EngineSingle.pv_eng);
 #endif
 
 //done:
@@ -374,7 +374,7 @@ void ParseGo(POS *p, const char *ptr) {
         for (auto& engine: enginesArray)
             if (best_depth < engine.dp_completed) {
                 best_depth = engine.dp_completed;
-                best_pv = engine.pv;
+                best_pv = engine.pv_eng;
             }
 
         ExtractMove(best_pv);

@@ -684,7 +684,7 @@ class cEngine {
 
   public:
 
-    int pv[MAX_PLY];
+    int pv_eng[MAX_PLY];
     int dp_completed;
 
     cEngine(const cEngine &) = delete;
