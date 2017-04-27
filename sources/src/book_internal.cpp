@@ -6194,7 +6194,7 @@ int sInternalBook::MoveFromInternal(POS *p) {
     int best_val = 0;
     int choice = 0;
     int values[100];
-	char test_string[12];
+    char test_string[12];
     U64 local_hash = p->hash_key;
 
     int min_freq = 20; // the higher this value, themore uniform move distribution
@@ -6233,9 +6233,8 @@ int sInternalBook::MoveFromInternal(POS *p) {
         printf("info string ");
 
         for (i = 0; i < n_of_choices; i++) {
-			MoveToStr(moves[i], test_string);
-            printf(test_string);
-			printf(" %d; ", values[i]);
+            MoveToStr(moves[i], test_string);
+            printf("%s %d; ", test_string, values[i]);
         }
 
         printf("\n");
