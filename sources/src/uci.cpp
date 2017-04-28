@@ -39,7 +39,7 @@ void ReadLine(char *str, int n) {
     if (fgets(str, n, stdin) == NULL)
         exit(0);
     if ((ptr = strchr(str, '\n')) != NULL)
-        * ptr = '\0';
+        *ptr = '\0';
 }
 
 const char *ParseToken(const char *string, char *token) {
@@ -169,20 +169,6 @@ void ParsePosition(POS *p, const char *ptr) {
         ParseMoves(p, ptr);
 }
 
-#ifdef USE_THREADS
-
-void timer_task() {
-
-    Glob.abort_search = false;
-
-    while (Glob.abort_search == false) {
-        std::this_thread::sleep_for(5ms); // why check so frequently?
-        if (!Glob.is_tuning) CheckTimeout();
-    }
-}
-
-#endif
-
 int BulletCorrection(int time) {
 
     if (time < 200)       return (time * 23) / 32;
@@ -191,7 +177,7 @@ int BulletCorrection(int time) {
     else return time;
 }
 
-void ExtractMove(int pv[MAX_PLY]) {
+void ExtractMove(int *pv) {
 
     char bestmove_str[6], ponder_str[6];
 
@@ -236,11 +222,9 @@ void SetMoveTime(int base, int inc, int movestogo) {
 
 void ParseGo(POS *p, const char *ptr) {
 
-    char token[80], bestmove_str[6], ponder_str[6];
+    char token[80], bestmove_str[6];
     int wtime, btime, winc, binc, movestogo, strict_time;
-    //int pv[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY], pv5[MAX_PLY], pv6[MAX_PLY], pv7[MAX_PLY], pv8[MAX_PLY];
     int pvb;
-    //bool move_from_book = false;
 
     move_time = -1;
     move_nodes = 0;
@@ -310,9 +294,6 @@ void ParseGo(POS *p, const char *ptr) {
         Glob.ClearData(); // options has been changed and old tt scores are no longer reliable
     Par.InitAsymmetric(p);
 
-    //int best_eng = 1;
-    //int best_depth = 0;
-
     // get book move
 
     if (Par.use_book && Par.book_depth >= Glob.moves_from_start) {
@@ -324,8 +305,6 @@ void ParseGo(POS *p, const char *ptr) {
         if (pvb) {
             MoveToStr(pvb, bestmove_str);
             printf("bestmove %s\n", bestmove_str);
-            //move_from_book = true;
-            //goto done; // maybe just return?
             return;
         }
     }
@@ -342,44 +321,35 @@ void ParseGo(POS *p, const char *ptr) {
     // Search using the designated number of threads
 
 #ifdef USE_THREADS
-
     for (auto& engine: enginesArray)
         engine.StartThinkThread(p);
 
-    std::thread timer(timer_task);
+    std::thread timer([] {
+        Glob.abort_search = false;
+        while (Glob.abort_search == false) {
+            std::this_thread::sleep_for(5ms); // why check so frequently?
+            if (!Glob.is_tuning) CheckTimeout();
+        }
+    });
 
     for (auto& engine: enginesArray)
         engine.WaitThinkThread();
 
     timer.join();
 
+    int *best_pv, best_depth = -1;
+
+    for (auto& engine: enginesArray)
+        if (best_depth < engine.dp_completed) {
+            best_depth = engine.dp_completed;
+            best_pv = engine.pv_eng;
+        }
+
+    ExtractMove(best_pv);
 #else
     EngineSingle.Think(p);
-/*     MoveToStr(EngineSingle.pv[0], bestmove_str);
-    if (EngineSingle.pv[1]) {
-        MoveToStr(EngineSingle.pv[1], ponder_str);
-        printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
-    } else
-        printf("bestmove %s\n", bestmove_str); */
     ExtractMove(EngineSingle.pv_eng);
 #endif
-
-//done:
-
-    //if (!move_from_book) {
-#ifdef USE_THREADS
-
-        int *best_pv, best_depth = -1;
-
-        for (auto& engine: enginesArray)
-            if (best_depth < engine.dp_completed) {
-                best_depth = engine.dp_completed;
-                best_pv = engine.pv_eng;
-            }
-
-        ExtractMove(best_pv);
-#endif
-    //}
 
 }
 

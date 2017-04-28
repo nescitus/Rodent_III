@@ -693,7 +693,7 @@ class cEngine {
 #ifdef USE_THREADS
     std::thread worker;
     void StartThinkThread(POS *p) {
-        worker = std::thread(&cEngine::Think, this, p);
+        worker = std::thread([&] { Think(p); });
     }
 
     void WaitThinkThread() { worker.join(); }
