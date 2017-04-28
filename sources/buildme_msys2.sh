@@ -47,10 +47,10 @@ case "$1" in
 		clang -Ofast -s -std=c++14 -march=core2 -fno-stack-protector -fno-exceptions -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/*.cpp -static $LSA -o rodent_$MSYSTEM_CARCH.exe
 		;;
 
-	d )
+	*d* )
 		echo "Building debug using mingw..."
 
-		g++ -Og -g -march=core2 -DNO_THREADS src/*.cpp -static $LSA -o rodent_debug_$MSYSTEM_CARCH.exe
+		g++ -Og -g -march=core2 $THR $NTHR src/*.cpp -static $LSA -o rodent_debug_$MSYSTEM_CARCH.exe
 		;;
 
 	*a* )

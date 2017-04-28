@@ -27,15 +27,15 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-int InputAvailable() {
+bool InputAvailable() {
 
 #if defined(_WIN32) || defined(_WIN64)
-    static int init = 0, pipe;
+    static bool init = false, pipe;
     static HANDLE inh;
     DWORD dw;
 
     if (!init) {
-        init = 1;
+        init = true;
         inh = GetStdHandle(STD_INPUT_HANDLE);
         pipe = !GetConsoleMode(inh, &dw);
         if (!pipe) {
@@ -45,7 +45,7 @@ int InputAvailable() {
     }
     if (pipe) {
         if (!PeekNamedPipe(inh, NULL, 0, NULL, &dw, NULL))
-            return 1;
+            return true;
         return dw > 0;
     } else {
         GetNumberOfConsoleInputEvents(inh, &dw);
