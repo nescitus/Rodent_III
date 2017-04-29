@@ -50,7 +50,7 @@ void PrintUciOptions() {
         printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", Par.values[N_CL]);
 
         printf("option name Material type spin default %d min 0 max 500\n", Par.mat_weight);
-        printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
+		printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
         printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.pst_weight);
         printf("option name OwnAttack type spin default %d min 0 max 500\n", Par.own_att_weight);
         printf("option name OppAttack type spin default %d min 0 max 500\n", Par.opp_att_weight);
@@ -123,11 +123,6 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "Threads") == 0           || strcmp(name, "threads") == 0)           {
         Glob.thread_no = (atoi(value));
         if (Glob.thread_no > MAX_THREADS) Glob.thread_no = MAX_THREADS;
-
-        enginesArray.clear();
-
-        for (int i = 0; i < Glob.thread_no; i++)
-            enginesArray.emplace_back(i);
 #endif
     } else if (strcmp(name, "Clear Hash") == 0        || strcmp(name, "clear hash") == 0)        {
         ClearTrans();
@@ -340,8 +335,8 @@ void SetPieceValue(int pc, int val, int slot) {
     Par.values[slot] = val;
 
     // Function SetPieceValue() modifies both midgame and endgame piece values.
-    // It is tricky, so this ugly code ensures the same proportion between midgame
-    // and endgame piece values as in default settings. Midgame and endgame piece
+    // It is tricky, so this ugly code ensures the same proportion between midgame 
+	// and endgame piece values as in default settings. Midgame and endgame piece
     // values can be set independently from each other using personality files.
 
     int eg_val = val;
