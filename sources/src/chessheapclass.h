@@ -36,7 +36,7 @@ class ChessHeapClass {
         success = true;
         for (int i = 0; size_mb > 0 && success; i++) {
             bucket_sizs[i] = size_mb > bucket_size_mb ? bucket_size_mb : size_mb;
-            bucket_ptrs[i] = (ENTRY *) calloc(1024 * 1024, bucket_sizs[i]);
+            bucket_ptrs[i] = (ENTRY *) malloc(1024 * 1024 * bucket_sizs[i]);
             success = bucket_ptrs[i] != NULL;
             size_mb -= bucket_size_mb;
 

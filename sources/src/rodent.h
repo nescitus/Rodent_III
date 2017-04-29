@@ -727,7 +727,7 @@ class cEngine {
 void InitSearch();
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
-void AllocTrans(int mbsize);
+void AllocTrans(unsigned int mbsize);
 int Attacked(POS *p, int sq, int sd);
 U64 AttacksFrom(POS *p, int sq);
 U64 AttacksTo(POS *p, int sq);
@@ -785,8 +785,8 @@ extern int move_nodes;
 extern int search_depth;
 extern int start_time;
 
-extern size_t tt_size;
-extern size_t tt_mask;
+extern unsigned int tt_size;
+extern unsigned int tt_mask;
 extern int tt_date;
 
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change
