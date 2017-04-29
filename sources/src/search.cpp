@@ -44,11 +44,11 @@ void cParam::InitAsymmetric(POS *p) {
 void cGlobals::ClearData() {
 
     ClearTrans();
-    Engine1.ClearAll();
-#ifdef USE_THREADS
-    Engine2.ClearAll();
-    Engine3.ClearAll();
-    Engine4.ClearAll();
+#ifndef USE_THREADS
+    EngineSingle.ClearAll();
+#else
+    for (auto& engine: enginesArray)
+        engine.ClearAll();
 #endif
     should_clear = false;
 }
@@ -73,21 +73,16 @@ void InitSearch() {
         }
 }
 
-void CopyPos(POS *old_pos, POS *new_pos) {
+void cEngine::Think(POS *p) {
 
-    *new_pos = *old_pos;
-}
-
-void cEngine::Think(POS *p, int *pv) {
-
-    POS curr[1];
-    pv[0] = 0;
-    pv[1] = 0;
+    POS curr = *p;
+    pv_eng[0] = 0;
+    pv_eng[1] = 0;
 
     fl_root_choice = false;
-    CopyPos(p, curr);
+
     AgeHist();
-    Iterate(curr, pv);
+    Iterate(&curr, pv_eng);
 }
 
 void cEngine::Iterate(POS *p, int *pv) {
