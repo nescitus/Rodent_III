@@ -44,11 +44,17 @@ void cParam::InitAsymmetric(POS *p) {
 void cGlobals::ClearData() {
 
     ClearTrans();
-    Engine1.ClearAll();
 #ifdef USE_THREADS
+    Engine1.ClearAll();
     Engine2.ClearAll();
     Engine3.ClearAll();
     Engine4.ClearAll();
+    Engine5.ClearAll();
+    Engine6.ClearAll();
+    Engine7.ClearAll();
+    Engine8.ClearAll();
+#else
+	SingleEngine.ClearAll();
 #endif
     should_clear = false;
 }
@@ -593,32 +599,41 @@ void CheckTimeout() {
 
 void cEngine::Slowdown() {
 
+    // Handling search limited by the number of nodes
+
     if (move_nodes > 0) {
         if (Glob.nodes >= move_nodes)
             Glob.abort_search = true;
     }
 
-// TODO: reorder, slowdown code first
+    // Handling slowdown for weak levels
 
-#ifndef USE_THREADS
-    if (Glob.nodes & 2047) CheckTimeout();
-#endif
-
-    if (Par.nps_limit == 0) return;
-
-    if (Par.nps_limit && root_depth > 1) {
-        int time = GetMS() - start_time + 1;
-        int nps = GetNps(time);
-        while ((int)nps > Par.nps_limit) {
-            WasteTime(10);
-            time = GetMS() - start_time + 1;
-            nps = GetNps(time);
-            if ((!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)) {
-                Glob.abort_search = true;
-                return;
+    if (Par.nps_limit > 0) {
+        if (Par.nps_limit && root_depth > 1) {
+            int time = GetMS() - start_time + 1;
+            int nps = GetNps(time);
+            while ((int)nps > Par.nps_limit) {
+                WasteTime(10);
+                time = GetMS() - start_time + 1;
+                nps = GetNps(time);
+                if ((!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)) {
+                    Glob.abort_search = true;
+                    return;
+                }
             }
         }
     }
+
+    // If Rodent is compiled as a single-threaded engine, Slowdown()
+    // function assumes additional role and it enforces time control
+	// handling.
+
+#ifndef USE_THREADS
+    if ( (!(Glob.nodes & 2047)) 
+    &&   !Glob.is_testing
+    &&   root_depth > 1) CheckTimeout();
+#endif
+
 }
 
 int DrawScore(POS *p) {

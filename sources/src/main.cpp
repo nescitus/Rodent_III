@@ -19,8 +19,9 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "book.h"
 
 cGlobals Glob;
-cEngine Engine1(0);
+
 #ifdef USE_THREADS
+    cEngine Engine1(0);
     cEngine Engine2(1);
     cEngine Engine3(2);
     cEngine Engine4(3);
@@ -28,6 +29,8 @@ cEngine Engine1(0);
     cEngine Engine6(5);
     cEngine Engine7(6);
     cEngine Engine8(7);
+#else
+    cEngine SingleEngine(0);
 #endif
 cBitBoard BB;
 cParam Par;
@@ -98,6 +101,7 @@ int main() {
 
 void cGlobals::Init() {
 
+	is_testing = false;
     reading_personality = false;
     use_personality_files = false;
     separate_books = false;

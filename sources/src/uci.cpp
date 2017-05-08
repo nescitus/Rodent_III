@@ -111,7 +111,11 @@ void UciLoop() {
 #endif
         } else if (strcmp(token, "bench") == 0) {
             ptr = ParseToken(ptr, token);
+#ifdef USE_THREADS
             Engine1.Bench(atoi(token));
+#else
+			SingleEngine.Bench(atoi(token));
+#endif
         } else if (strcmp(token, "quit") == 0) {
             exit(0);
         }
@@ -363,8 +367,8 @@ void ParseGo(POS *p, const char *ptr) {
 
     // Set engine-dependent variables
 
-    Engine1.dp_completed = 0;
 #ifdef USE_THREADS
+	Engine1.dp_completed = 0;
     Engine2.dp_completed = 0;
     Engine3.dp_completed = 0;
     Engine4.dp_completed = 0;
@@ -372,6 +376,8 @@ void ParseGo(POS *p, const char *ptr) {
     Engine6.dp_completed = 0;
     Engine7.dp_completed = 0;
     Engine8.dp_completed = 0;
+#else
+	SingleEngine.dp_completed = 0;
 #endif
 
     // Search using the designated number of threads
@@ -498,7 +504,7 @@ void ParseGo(POS *p, const char *ptr) {
         t.join();
     }
 #else
-    Engine1.Think(p, pv);
+    SingleEngine.Think(p, pv);
     MoveToStr(pv[0], bestmove_str);
     if (pv[1]) {
         MoveToStr(pv[1], ponder_str);
@@ -511,9 +517,8 @@ done:
 
     if (!move_from_book) {
 
-        best_depth = Engine1.dp_completed;
-
 #ifdef USE_THREADS
+		best_depth = Engine1.dp_completed;
         if (Engine2.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 2; }
         if (Engine3.dp_completed > best_depth) { best_depth = Engine3.dp_completed; best_eng = 3; }
         if (Engine4.dp_completed > best_depth) { best_depth = Engine4.dp_completed; best_eng = 4; }
@@ -559,6 +564,7 @@ void cEngine::Bench(int depth) {
         NULL
     }; // test positions taken from DiscoCheck by Lucas Braesch
 
+	Glob.is_testing = true;
     if (depth == 0) depth = 8; // so that you can call bench without parameters
     ClearTrans();
     ClearAll();
@@ -591,6 +597,7 @@ void cEngine::Bench(int depth) {
 #else
     printf(       "%llu nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
 #endif
+	Glob.is_testing = false;
 }
 
 void PrintBoard(POS *p) {

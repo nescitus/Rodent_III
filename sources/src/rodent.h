@@ -533,6 +533,7 @@ class cGlobals {
   public:
     glob_U64 nodes;
     glob_bool abort_search;
+	glob_bool is_testing;
     bool elo_slider;
     bool is_console;
     bool is_tuning;
@@ -693,8 +694,8 @@ class cEngine {
     double TexelFit(POS *p, int *pv);
 };
 
-extern cEngine Engine1;
 #ifdef USE_THREADS
+    extern cEngine Engine1;
     extern cEngine Engine2;
     extern cEngine Engine3;
     extern cEngine Engine4;
@@ -702,6 +703,8 @@ extern cEngine Engine1;
     extern cEngine Engine6;
     extern cEngine Engine7;
     extern cEngine Engine8;
+#else
+    extern cEngine SingleEngine;
 #endif
 
 void InitSearch();
