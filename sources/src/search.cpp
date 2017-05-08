@@ -73,11 +73,6 @@ void InitSearch() {
         }
 }
 
-void CopyPos(POS *old_pos, POS *new_pos) {
-
-    *new_pos = *old_pos;
-}
-
 void cEngine::Think(POS *p, int *pv) {
 
     POS curr[1];
@@ -85,7 +80,7 @@ void cEngine::Think(POS *p, int *pv) {
     pv[1] = 0;
 
     fl_root_choice = false;
-    CopyPos(p, curr);
+	*curr = *p;
     AgeHist();
     Iterate(curr, pv);
 }
@@ -96,8 +91,7 @@ void cEngine::Iterate(POS *p, int *pv) {
 
     // Lazy SMP works best with some depth variance
 
-    int offset = 0;
-    if (thread_id == 1 || thread_id == 3) offset = 1;
+	int offset = thread_id & 0x01;
 
     for (root_depth = 1 + offset; root_depth <= search_depth; root_depth++) {
 

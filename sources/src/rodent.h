@@ -707,7 +707,6 @@ extern cEngine Engine1;
 void InitSearch();
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
-void CopyPos(POS *old_pos, POS *new_pos);
 void AllocTrans(int mbsize);
 int Attacked(POS *p, int sq, int sd);
 U64 AttacksFrom(POS *p, int sq);
