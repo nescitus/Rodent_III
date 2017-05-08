@@ -417,7 +417,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
     bb_pieces = p->Pawns(sd);
     while (bb_pieces) {
         sq = BB.PopFirstBit(&bb_pieces);
-		stop = BB.ShiftFwd(SqBb(sq), sd);
+        stop = BB.ShiftFwd(SqBb(sq), sd);
 
         // pawn can attack enemy piece
 
@@ -425,6 +425,15 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
            if (!(stop & e->p_can_take[op])) {
               if (BB.GetPawnControl(stop, sd) & (p->Bishops(op) | p->Knights(op)))
                   Add(e, sd, 4);
+              if (SqBb(sq) & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
+                   U64 next = BB.ShiftFwd(stop, sd);
+                   if (!(next & OccBb(p))) {
+                       if (!(next & e->p_can_take[op])) {
+                           if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
+                              Add(e, sd, 4);
+                       }
+                   }
+               }
            }
         }
 

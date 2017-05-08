@@ -270,7 +270,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
         // null move depth reduction - modified Stockfish formula
 
         new_depth = depth - ((823 + 67 * depth) / 256)
-                    - Min(3, (eval - beta) / 200);
+                          - Min(3, (eval - beta) / 200);
 
         // omit null move search if normal search to the same depth wouldn't exceed beta
         // (sometimes we can check it for free via hash table)
@@ -332,7 +332,6 @@ avoid_null:
     && !fl_check
     && !move
     && depth > 6) {
-        // TODO: && eval + 100 < beta, Stockfish-style
         Search(p, ply, alpha, beta, depth - 2, 0, -1, last_capt_sq, pv);
         TransRetrieveMove(p->hash_key, &move);
     }
