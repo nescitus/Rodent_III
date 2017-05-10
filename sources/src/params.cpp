@@ -92,6 +92,8 @@ void cParam::DefaultWeights() {
 
     mat_weight = 100;
     pst_weight = 80;
+	pawn_mass_weight = 100;
+	pawn_chains_weight = 100;
     pst_style = 0;
     mob_style = 0;         // 1 is only marginally behind
 

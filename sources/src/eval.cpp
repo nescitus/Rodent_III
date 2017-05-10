@@ -367,6 +367,8 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
     U64 bb_pieces, front_span, fl_phalanx;
     int sq, fl_unopposed;
     int op = Opp(sd);
+    int mass_mg = 0;
+    int mass_eg = 0;
 
     bb_pieces = p->Pawns(sd);
     while (bb_pieces) {
@@ -394,8 +396,14 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
 
         // Supported pawn
 
-        if (fl_phalanx)                     AddPawns(e, sd, Par.sp_pst[sd][PHA_MG][sq], Par.sp_pst[sd][PHA_EG][sq]); // scores twice !!!
-        else if (SqBb(sq) & e->p_takes[sd]) AddPawns(e, sd, Par.sp_pst[sd][DEF_MG][sq], Par.sp_pst[sd][DEF_EG][sq]);
+        if (fl_phalanx) {
+            mass_mg += Par.sp_pst[sd][PHA_MG][sq];
+            mass_eg += Par.sp_pst[sd][PHA_EG][sq];
+        }
+        else if (SqBb(sq) & e->p_takes[sd]) {
+            mass_mg += Par.sp_pst[sd][DEF_MG][sq];
+            mass_eg += Par.sp_pst[sd][DEF_EG][sq];
+        }
 
         // Isolated and weak pawn
 
@@ -404,6 +412,8 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
         else if (!(Mask.supported[sd][sq] & p->Pawns(sd)))
             AddPawns(e, sd, Par.backward_malus_mg[File(sq)] + Par.values[BK_OPE] * fl_unopposed, Par.values[BK_END]);
     }
+
+    AddPawns(e, sd, (mass_mg * Par.pawn_mass_weight) / 100, (mass_eg * Par.pawn_mass_weight) / 100);
 }
 
 void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {

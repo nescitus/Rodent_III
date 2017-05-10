@@ -28,6 +28,9 @@ setoption name PassedPawns value 85
 setoption name PawnStructure value 75
 setoption name Lines value 100
 setoption name Outposts value 50
+setoption name Fianchetto value 0
+setoption name PawnMass value 80
+setoption name PawnChains value 100
 setoption name PawnShield value 120
 setoption name PawnStorm value 100
 setoption name Forwardness value 25

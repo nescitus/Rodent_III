@@ -30,6 +30,8 @@ setoption name PawnStructure value 125
 setoption name Lines value 100
 setoption name Outposts value 100
 setoption name Fianchetto value 0
+setoption name PawnMass value 125
+setoption name PawnChains value 100
 setoption name PawnShield value 100
 setoption name PawnStorm value 100
 setoption name Forwardness value 0

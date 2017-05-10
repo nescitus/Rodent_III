@@ -430,6 +430,8 @@ class cParam {
     int draw_score;
     int prog_side;
     int search_skill;
+	int pawn_mass_weight;
+	int pawn_chains_weight;
     int nps_limit;
     int eval_blur;
     int hist_perc;

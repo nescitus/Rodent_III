@@ -241,6 +241,9 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "PawnStructure") == 0     || strcmp(name, "pawnstructure") == 0)     {
         Par.struct_weight = atoi(value);
         Glob.should_clear = true;
+    } else if (strcmp(name, "PawnMass") == 0     || strcmp(name, "pawnmass") == 0)     {
+        Par.pawn_mass_weight = atoi(value);
+        Glob.should_clear = true;
     } else if (strcmp(name, "PawnShield") == 0        || strcmp(name, "pawnshield") == 0)        {
         Par.shield_weight = atoi(value);
         Glob.should_clear = true;

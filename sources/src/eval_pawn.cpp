@@ -273,5 +273,5 @@ int cEngine::EvaluateChains(POS *p, int sd) {
         }
     }
 
-    return mg_result;
+    return (mg_result * Par.pawn_chains_weight) / 100;
 }
