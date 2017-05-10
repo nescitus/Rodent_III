@@ -68,14 +68,14 @@ void cParam::DefaultWeights() {
     values[B_PAIR]  = 50;
     values[N_PAIR]  = -9;
     values[R_PAIR]  = -9;
-    values[ELEPH]  = 4;
+    values[ELEPH]  = 4;  // queen loses that much with each enemy minor on the board
     values[A_EXC]  = 26; // exchange advantage additional bonus
-    values[A_MIN] = 53; // additional bonus for minor piece advantage
-    values[A_MAJ] = 60; // additional bonus for major piece advantage
-    values[A_TWO] = 44; // additional bonus for two minors for a rook
-    values[A_ALL] = 80; // additional bonus for advantage in both majors and minors
-    values[N_CL]  = 7;
-    values[R_OP]  = 3;
+    values[A_MIN] = 53;  // additional bonus for minor piece advantage
+    values[A_MAJ] = 60;  // additional bonus for major piece advantage
+    values[A_TWO] = 44;  // additional bonus for two minors for a rook
+    values[A_ALL] = 80;  // additional bonus for advantage in both majors and minors
+    values[N_CL]  = 7;   // knight gains this much with each own pawn present on th board
+    values[R_OP]  = 3;   // rook loses that much with each own pawn present on the board
 
     // King tropism
 
@@ -92,8 +92,6 @@ void cParam::DefaultWeights() {
 
     mat_weight = 100;
     pst_weight = 80;
-	pawn_mass_weight = 100;
-	pawn_chains_weight = 100;
     pst_style = 0;
     mob_style = 0;         // 1 is only marginally behind
 
@@ -101,7 +99,7 @@ void cParam::DefaultWeights() {
     riskydepth = 0;
 #endif
     draw_score = 0;
-    shut_up = false;           // surpress displaing info currmove etc.
+    shut_up = false;           // suppress displaing info currmove etc.
 
     // Asymmetric weights - the core of personality mechanism
 
@@ -116,6 +114,8 @@ void cParam::DefaultWeights() {
     tropism_weight = 20;
     forward_weight = 0;
     passers_weight = 100;
+	pawn_mass_weight = 100; // seems optimal
+	pawn_chains_weight = 100;
     outposts_weight = 100;
     lines_weight = 100;
     struct_weight = 100;
@@ -124,16 +124,16 @@ void cParam::DefaultWeights() {
 
     // Pawn structure parameters
 
-    values[DB_MID] = -12;
+    values[DB_MID] = -12;  // doubled
     values[DB_END] = -24;
-    values[ISO_MG] = -10;
+    values[ISO_MG] = -10;  // isolated
     values[ISO_EG] = -20;
     values[ISO_OF] = -10;
-    values[BK_MID] = -8;
+    values[BK_MID] = -8;   // backward
     values[BK_END] = -8;
     values[BK_OPE] = -8;
-	values[P_BIND] = 5;
-	values[P_ISL] = 7;
+	values[P_BIND] = 5;    // two pawns control central square
+	values[P_ISL] = 7;     // penalty for each pawn island
 
     // Knight parameters
 
@@ -154,23 +154,23 @@ void cParam::DefaultWeights() {
 
     // Rook parameters
 
-    values[RSR_MG] = 16;
+    values[RSR_MG] = 16; // rook on 7th rank
     values[RSR_EG] = 32;
-    values[RS2_MG] = 8;
+    values[RS2_MG] = 8;  // additional bonus for two rooks on 7th rank
     values[RS2_EG] = 16;
-    values[ROF_MG] = 14;
+    values[ROF_MG] = 14; // rook on open file
     values[ROF_EG] = 14;
-    values[RGH_MG] = 7;
+    values[RGH_MG] = 7;  // rook on half-open file with undefended enemy pawn
     values[RGH_EG] = 7;
-    values[RBH_MG] = 5;
+    values[RBH_MG] = 5;  // rook on half-open file with defended enemy pawn
     values[RBH_EG] = 5;
-    values[ROQ_MG] = 5;
+    values[ROQ_MG] = 5;  // rook and queen on the same file, open or closed
     values[ROQ_EG] = 5;
     values[R_BLOCK] = -50;
 
     // Queen parameters
 
-    values[QSR_MG] = 4;
+    values[QSR_MG] = 4;  // queen on the 7th rank
     values[QSR_EG] = 8;
 
     // King parameters

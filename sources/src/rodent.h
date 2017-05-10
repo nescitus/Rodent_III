@@ -618,6 +618,7 @@ class cEngine {
     const int thread_id;
     int root_depth;
     bool fl_root_choice;
+	int pv_eng[MAX_PLY];
 
     void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);

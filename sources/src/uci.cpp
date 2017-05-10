@@ -81,7 +81,7 @@ void UciLoop() {
             Par.use_book = (strstr(command, "value true") != 0);
 
         if (strcmp(token, "uci") == 0) {
-            printf("id name Rodent III 0.199\n");
+            printf("id name Rodent III 0.200\n");
             Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
             PrintUciOptions();
@@ -275,8 +275,8 @@ void ParseGo(POS *p, const char *ptr) {
 
     char token[80], bestmove_str[6], ponder_str[6];
     int wtime, btime, winc, binc, movestogo, strict_time;
+	int pv_book[MAX_PLY];
     int pv[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY], pv5[MAX_PLY], pv6[MAX_PLY], pv7[MAX_PLY], pv8[MAX_PLY];
-    bool move_from_book = false;
 
     move_time = -1;
     move_nodes = 0;
@@ -353,15 +353,14 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Par.use_book && Par.book_depth >= Glob.moves_from_start) {
         printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
-        pv[0] = GuideBook.GetPolyglotMove(p, true);
-        if (!pv[0]) pv[0] = MainBook.GetPolyglotMove(p, true);
-        //if (!pv[0]) pv[0] = InternalBook.MoveFromInternal(p);
+        pv_book[0] = GuideBook.GetPolyglotMove(p, true);
+        if (!pv_book[0]) pv_book[0] = MainBook.GetPolyglotMove(p, true);
+        //if (!pv_book[0]) pv_book[0] = InternalBook.MoveFromInternal(p);
 
-        if (pv[0]) {
-            MoveToStr(pv[0], bestmove_str);
+        if (pv_book[0]) {
+            MoveToStr(pv_book[0], bestmove_str);
             printf("bestmove %s\n", bestmove_str);
-            move_from_book = true;
-            goto done; // maybe just return?
+			return;
         }
     }
 
@@ -513,10 +512,6 @@ void ParseGo(POS *p, const char *ptr) {
         printf("bestmove %s\n", bestmove_str);
 #endif
 
-done:
-
-    if (!move_from_book) {
-
 #ifdef USE_THREADS
 		best_depth = Engine1.dp_completed;
         if (Engine2.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 2; }
@@ -536,7 +531,6 @@ done:
         if (best_eng == 2) ExtractMove(pv2);
         if (best_eng == 1) ExtractMove(pv);
 #endif
-    }
 
 }
 
