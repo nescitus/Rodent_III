@@ -77,6 +77,37 @@ void cParam::DefaultWeights() {
     values[N_CL]  = 7;   // knight gains this much with each own pawn present on th board
     values[R_OP]  = 3;   // rook loses that much with each own pawn present on the board
 
+    // King attack values
+
+	// "_ATT1" values are awarded for attacking squares not defended by enemy pawns
+	// "_ATT2" values are awarded for attacking squares defended by enemy pawns
+	// "_CHK"  values are awarded for threatening check to enemy king
+	// "_CONTACT" values are awarded for contact checks threats
+	//
+	// All these values are NOT the actual bonuses; their sum is used as index 
+	// to a non-linear king safety table. Tune them with extreme caution.
+
+	// 0.059217
+
+	values[N_ATT1] = 6;  // 6
+	values[N_ATT2] = 2;  // 2
+	values[B_ATT1] = 6;  // 6
+	values[B_ATT2] = 2;  // 2
+    values[R_ATT1] = 9;  // 9
+    values[R_ATT2] = 3;  // 3
+    values[Q_ATT1] = 15; // 15
+    values[Q_ATT2] = 5;  // 5
+
+	values[N_CHK] = 4;   // 4
+	values[B_CHK] = 4;   // 4
+	values[R_CHK] = 9;   // 9
+	values[Q_CHK] = 12;  // 12
+
+	values[R_CONTACT] = 24; // 24
+	values[Q_CONTACT] = 36; // 36
+
+	// TODO: add check bonuses
+
     // King tropism
 
     values[NTR_MG] = 3;

@@ -79,23 +79,23 @@ void InitSearch() {
         }
 }
 
-void cEngine::Think(POS *p, int *pv) {
+void cEngine::Think(POS *p) {
 
     POS curr[1];
-    pv[0] = 0;
-    pv[1] = 0;
-
+    pv_eng[0] = 0; // clear engine's move
+    pv_eng[1] = 0; // clear ponder move
     fl_root_choice = false;
 	*curr = *p;
     AgeHist();
-    Iterate(curr, pv);
+    Iterate(curr, pv_eng);
 }
 
 void cEngine::Iterate(POS *p, int *pv) {
 
     int cur_val = 0;
 
-    // Lazy SMP works best with some depth variance
+    // Lazy SMP works best with some depth variance,
+	// so every other thread will search to depth + 1
 
 	int offset = thread_id & 0x01;
 

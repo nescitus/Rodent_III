@@ -81,7 +81,7 @@ void UciLoop() {
             Par.use_book = (strstr(command, "value true") != 0);
 
         if (strcmp(token, "uci") == 0) {
-            printf("id name Rodent III 0.200\n");
+            printf("id name Rodent III 0.201\n");
             Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
             PrintUciOptions();
@@ -171,36 +171,36 @@ void ParsePosition(POS *p, const char *ptr) {
 
 #ifdef USE_THREADS
 
-void task1(POS *p, int *pv) {
-    Engine1.Think(p, pv);
+void task1(POS *p) {
+    Engine1.Think(p);
 }
 
-void task2(POS *p, int *pv) {
-    Engine2.Think(p, pv);
+void task2(POS *p) {
+    Engine2.Think(p);
 }
 
-void task3(POS *p, int *pv) {
-    Engine3.Think(p, pv);
+void task3(POS *p) {
+    Engine3.Think(p);
 }
 
-void task4(POS *p, int *pv) {
-    Engine4.Think(p, pv);
+void task4(POS *p) {
+    Engine4.Think(p);
 }
 
-void task5(POS *p, int *pv) {
-    Engine5.Think(p, pv);
+void task5(POS *p) {
+    Engine5.Think(p);
 }
 
-void task6(POS *p, int *pv) {
-    Engine6.Think(p, pv);
+void task6(POS *p) {
+    Engine6.Think(p);
 }
 
-void task7(POS *p, int *pv) {
-    Engine7.Think(p, pv);
+void task7(POS *p) {
+	Engine7.Think(p);
 }
 
-void task8(POS *p, int *pv) {
-    Engine8.Think(p, pv);
+void task8(POS *p) {
+    Engine8.Think(p);
 }
 
 void timer_task() {
@@ -276,7 +276,6 @@ void ParseGo(POS *p, const char *ptr) {
     char token[80], bestmove_str[6], ponder_str[6];
     int wtime, btime, winc, binc, movestogo, strict_time;
 	int pv_book[MAX_PLY];
-    int pv[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY], pv5[MAX_PLY], pv6[MAX_PLY], pv7[MAX_PLY], pv8[MAX_PLY];
 
     move_time = -1;
     move_nodes = 0;
@@ -385,7 +384,7 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Glob.thread_no == 1) {
         std::thread t(timer_task);
-        std::thread e1(task1, p, pv);
+        std::thread e1(task1, p);
         e1.join();
         //Glob.abort_search = true; // should we stop waiting timer thread?
         t.join();
@@ -393,8 +392,8 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Glob.thread_no == 2) {
         std::thread t(timer_task);
-        std::thread e1(task1, p, pv);
-        std::thread e2(task2, p, pv2);
+        std::thread e1(task1, p);
+        std::thread e2(task2, p);
         e1.join();
         e2.join();
         //Glob.abort_search = true; // should we stop waiting timer thread?
@@ -403,9 +402,9 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Glob.thread_no == 3) {
         std::thread t(timer_task);
-        std::thread e1(task1, p, pv);
-        std::thread e2(task2, p, pv2);
-        std::thread e3(task3, p, pv3);
+        std::thread e1(task1, p);
+        std::thread e2(task2, p);
+        std::thread e3(task3, p);
         e1.join();
         e2.join();
         e3.join();
@@ -415,10 +414,10 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Glob.thread_no == 4) {
         std::thread t(timer_task);
-        std::thread e1(task1, p, pv);
-        std::thread e2(task2, p, pv2);
-        std::thread e3(task3, p, pv3);
-        std::thread e4(task4, p, pv4);
+        std::thread e1(task1, p);
+        std::thread e2(task2, p);
+        std::thread e3(task3, p);
+        std::thread e4(task4, p);
         e1.join();
         e2.join();
         e3.join();
@@ -429,11 +428,11 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Glob.thread_no == 5) {
         std::thread t(timer_task);
-        std::thread e1(task1, p, pv);
-        std::thread e2(task2, p, pv2);
-        std::thread e3(task3, p, pv3);
-        std::thread e4(task4, p, pv4);
-        std::thread e5(task5, p, pv5);
+        std::thread e1(task1, p);
+        std::thread e2(task2, p);
+        std::thread e3(task3, p);
+        std::thread e4(task4, p);
+        std::thread e5(task5, p);
         e1.join();
         e2.join();
         e3.join();
@@ -445,12 +444,12 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Glob.thread_no == 6) {
         std::thread t(timer_task);
-        std::thread e1(task1, p, pv);
-        std::thread e2(task2, p, pv2);
-        std::thread e3(task3, p, pv3);
-        std::thread e4(task4, p, pv4);
-        std::thread e5(task5, p, pv5);
-        std::thread e6(task6, p, pv6);
+        std::thread e1(task1, p);
+        std::thread e2(task2, p);
+        std::thread e3(task3, p);
+        std::thread e4(task4, p);
+        std::thread e5(task5, p);
+        std::thread e6(task6, p);
         e1.join();
         e2.join();
         e3.join();
@@ -463,13 +462,13 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Glob.thread_no == 7) {
         std::thread t(timer_task);
-        std::thread e1(task1, p, pv);
-        std::thread e2(task2, p, pv2);
-        std::thread e3(task3, p, pv3);
-        std::thread e4(task4, p, pv4);
-        std::thread e5(task5, p, pv5);
-        std::thread e6(task6, p, pv6);
-        std::thread e7(task6, p, pv7);
+        std::thread e1(task1, p);
+        std::thread e2(task2, p);
+        std::thread e3(task3, p);
+        std::thread e4(task4, p);
+        std::thread e5(task5, p);
+        std::thread e6(task6, p);
+        std::thread e7(task6, p);
         e1.join();
         e2.join();
         e3.join();
@@ -483,14 +482,14 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Glob.thread_no == 8) {
         std::thread t(timer_task);
-        std::thread e1(task1, p, pv);
-        std::thread e2(task2, p, pv2);
-        std::thread e3(task3, p, pv3);
-        std::thread e4(task4, p, pv4);
-        std::thread e5(task5, p, pv5);
-        std::thread e6(task6, p, pv6);
-        std::thread e7(task6, p, pv7);
-        std::thread e8(task6, p, pv8);
+        std::thread e1(task1, p);
+        std::thread e2(task2, p);
+        std::thread e3(task3, p);
+        std::thread e4(task4, p);
+        std::thread e5(task5, p);
+        std::thread e6(task6, p);
+        std::thread e7(task6, p);
+        std::thread e8(task6, p);
         e1.join();
         e2.join();
         e3.join();
@@ -503,10 +502,10 @@ void ParseGo(POS *p, const char *ptr) {
         t.join();
     }
 #else
-    SingleEngine.Think(p, pv);
-    MoveToStr(pv[0], bestmove_str);
-    if (pv[1]) {
-        MoveToStr(pv[1], ponder_str);
+    SingleEngine.Think(p);
+    MoveToStr(SingleEngine.pv_eng[0], bestmove_str);
+    if (SingleEngine.pv_eng[1]) {
+        MoveToStr(SingleEngine.pv_eng[1], ponder_str);
         printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
     } else
         printf("bestmove %s\n", bestmove_str);
@@ -522,14 +521,14 @@ void ParseGo(POS *p, const char *ptr) {
         if (Engine7.dp_completed > best_depth) { best_depth = Engine7.dp_completed; best_eng = 7; }
         if (Engine8.dp_completed > best_depth) { best_depth = Engine8.dp_completed; best_eng = 8; }
 
-        if (best_eng == 8) ExtractMove(pv8);
-        if (best_eng == 7) ExtractMove(pv7);
-        if (best_eng == 6) ExtractMove(pv6);
-        if (best_eng == 5) ExtractMove(pv5);
-        if (best_eng == 4) ExtractMove(pv4);
-        if (best_eng == 3) ExtractMove(pv3); 
-        if (best_eng == 2) ExtractMove(pv2);
-        if (best_eng == 1) ExtractMove(pv);
+        if (best_eng == 8) ExtractMove(Engine8.pv_eng);
+        if (best_eng == 7) ExtractMove(Engine7.pv_eng);
+        if (best_eng == 6) ExtractMove(Engine6.pv_eng);
+        if (best_eng == 5) ExtractMove(Engine5.pv_eng);
+        if (best_eng == 4) ExtractMove(Engine4.pv_eng);
+        if (best_eng == 3) ExtractMove(Engine3.pv_eng);
+        if (best_eng == 2) ExtractMove(Engine2.pv_eng);
+        if (best_eng == 1) ExtractMove(Engine1.pv_eng);
 #endif
 
 }

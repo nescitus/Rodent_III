@@ -407,12 +407,14 @@ struct sPawnHashEntry {
 enum Values {
     P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,               // piece values
     B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustements
+    N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
+    N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
     NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
-	N_FWD, B_FWD, R_FWD, Q_FWD,
+    N_FWD, B_FWD, R_FWD, Q_FWD,
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
-	B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop patterns
+    B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop patterns
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
-	P_BIND, P_ISL,
+    P_BIND, P_ISL,
     ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,
     RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK, N_OF_VAL
 };
@@ -430,8 +432,8 @@ class cParam {
     int draw_score;
     int prog_side;
     int search_skill;
-	int pawn_mass_weight;
-	int pawn_chains_weight;
+    int pawn_mass_weight;
+    int pawn_chains_weight;
     int nps_limit;
     int eval_blur;
     int hist_perc;
@@ -535,7 +537,7 @@ class cGlobals {
   public:
     glob_U64 nodes;
     glob_bool abort_search;
-	glob_bool is_testing;
+    glob_bool is_testing;
     bool elo_slider;
     bool is_console;
     bool is_tuning;
@@ -618,7 +620,6 @@ class cEngine {
     const int thread_id;
     int root_depth;
     bool fl_root_choice;
-	int pv_eng[MAX_PLY];
 
     void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
@@ -688,12 +689,13 @@ class cEngine {
   public:
 
     int dp_completed;
+    int pv_eng[MAX_PLY];
 
     cEngine(int th): thread_id(th) { ClearAll(); };
 
     void Bench(int depth);
     void ClearAll();
-    void Think(POS *p, int *pv);
+    void Think(POS *p);
     double TexelFit(POS *p, int *pv);
 };
 
@@ -702,7 +704,7 @@ class cEngine {
     extern cEngine Engine2;
     extern cEngine Engine3;
     extern cEngine Engine4;
-	extern cEngine Engine5;
+    extern cEngine Engine5;
     extern cEngine Engine6;
     extern cEngine Engine7;
     extern cEngine Engine8;

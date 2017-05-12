@@ -191,6 +191,48 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "KeepQueen") == 0         || strcmp(name, "keepqueen") == 0)         {
         Par.keep_pc[Q] = atoi(value);
         Glob.should_clear = true;
+    } else if (strcmp(name, "na1") == 0 ) {
+        Par.values[N_ATT1] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "na2") == 0 ) {
+        Par.values[N_ATT2] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "ba1") == 0 ) {
+        Par.values[B_ATT1] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "ba2") == 0 ) {
+        Par.values[B_ATT2] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "ra1") == 0 ) {
+        Par.values[R_ATT1] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "ra2") == 0 ) {
+        Par.values[R_ATT2] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "qa1") == 0 ) {
+        Par.values[Q_ATT1] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "qa2") == 0 ) {
+        Par.values[Q_ATT1] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "nch") == 0 ) {
+        Par.values[N_CHK] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "bch") == 0 ) {
+        Par.values[B_CHK] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "rch") == 0 ) {
+        Par.values[R_CHK] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "qch") == 0 ) {
+        Par.values[Q_CHK] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "qcon") == 0 ) {
+        Par.values[Q_CONTACT] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "rcon") == 0 ) {
+        Par.values[R_CONTACT] = atoi(value);
+        Glob.should_clear = true;
     } else if (strcmp(name, "BishopPair") == 0        || strcmp(name, "bishoppair") == 0)        {
         Par.values[B_PAIR] = atoi(value);
         Glob.should_clear = true;

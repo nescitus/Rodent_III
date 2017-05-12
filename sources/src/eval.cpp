@@ -105,7 +105,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             Add(e, sd, -5);
         e->all_att[sd] |= BB.KnightAttacks(sq);
         e->ev_att[sd]  |= bb_control;
-        if (bb_control & n_checks) att += 4;                // check threats
+        if (bb_control & n_checks) att += Par.values[N_CHK];// check threats
 
         bb_possible = bb_control & ~e->p_takes[op];         // reachable outposts
         bb_possible &= ~e->p_can_take[op];
@@ -115,8 +115,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         bb_attack = BB.KnightAttacks(sd);
         if (bb_attack & bb_zone) {                          // king attack
             wood++;
-            att += 6 * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            att += 2 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            att += Par.values[N_ATT1] * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            att += Par.values[N_ATT2] * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
         cnt = BB.PopCnt(bb_control & ~e->p_takes[op]);      // get mobility count
@@ -146,14 +146,14 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd]  |= bb_control;
         if (!(bb_control & Mask.away[sd])) Add(e, sd, -5);  // we do not attack enemy half of the board
-        if (bb_control & b_checks) att += 4;                // check threats
+        if (bb_control & b_checks) att += Par.values[B_CHK];// check threats
 
         bb_attack = BB.BishAttacks(OccBb(p) ^ p->Queens(sd), sq);  // get king attack bitboard
 
         if (bb_attack & bb_zone) {                          // evaluate king attacks
             wood++;
-            att += 6 * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            att += 2 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            att += Par.values[B_ATT1] * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            att += Par.values[B_ATT2] * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
         cnt = BB.PopCnt(bb_control & ~e->p_takes[op] & ~bb_excluded); // get mobility count
@@ -209,13 +209,13 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
         if ((bb_control & ~p->cl_bb[sd] & r_checks)
         && p->Queens(sd)) {
-            att += 9;                                           // check threat bonus
+            att += Par.values[R_CHK];                       // check threat bonus
             bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
 
             while (bb_contact) {
                 int contactSq = BB.PopFirstBit(&bb_contact);    // find a potential contact check
                 if (Swap(p, sq, contactSq) >= 0) {              // rook exchanges are also accepted
-                    att += 24;
+                    att += Par.values[R_CONTACT];
                     break;
                 }
             }
@@ -225,8 +225,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
         if (bb_attack & bb_zone) {                                         // evaluate king attacks
             wood++;
-            att += 9 * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            att += 3 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            att += Par.values[R_ATT1] * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            att += Par.values[R_ATT2] * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
         cnt = BB.PopCnt(bb_control & ~bb_excluded);                        // get mobility count
@@ -287,13 +287,13 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         bb_control = BB.QueenAttacks(OccBb(p), sq);         // get control bitboard
         e->all_att[sd] |= bb_control;                       // update attack map
         if (bb_control & q_checks) {                        // check threat bonus
-            att += 12;
+            att += Par.values[Q_CHK];
 
             bb_contact = bb_control & BB.KingAttacks(king_sq);// queen contact checks
             while (bb_contact) {
                 int contactSq = BB.PopFirstBit(&bb_contact);    // find potential contact check square
                 if (Swap(p, sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate
-                    att += 36;
+                    att += Par.values[Q_CONTACT];
                     break;
                 }
             }
@@ -304,8 +304,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
         if (bb_attack & bb_zone) {                          // evaluate king attacks
             wood++;
-            att += 15 * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            att +=  5 * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            att += Par.values[Q_ATT1] * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            att += Par.values[Q_ATT2] * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
         cnt = BB.PopCnt(bb_control & ~bb_excluded);         // get mobility count
