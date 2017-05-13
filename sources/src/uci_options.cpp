@@ -213,7 +213,7 @@ void ParseSetoption(const char *ptr) {
         Par.values[Q_ATT1] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "qa2") == 0 ) {
-        Par.values[Q_ATT1] = atoi(value);
+        Par.values[Q_ATT2] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "nch") == 0 ) {
         Par.values[N_CHK] = atoi(value);

@@ -40,18 +40,19 @@ void cParam::DefaultWeights() {
     time_percentage = 100;
 
     // Piece values
+	// 0.059156
 
-    values[P_MID] = 95;   // was 100
-    values[N_MID] = 310;  // was 325
-    values[B_MID] = 320;  // was 335
-    values[R_MID] = 515;  // was 500
+    values[P_MID] = 95;   // 95
+    values[N_MID] = 310;  // 310
+    values[B_MID] = 321;  // 320
+    values[R_MID] = 514;  // 515
     values[Q_MID] = 1000;
 
-    values[P_END] = 106;  // was 100
-    values[N_END] = 305;  // was 325
-    values[B_END] = 320;  // was 335 // decrease
-    values[R_END] = 520;  // was 500
-    values[Q_END] = 1010; // was 1000
+    values[P_END] = 109;  // 106
+    values[N_END] = 305;  // 305
+    values[B_END] = 320;  // 320
+    values[R_END] = 526;  // 520
+    values[Q_END] = 1011; // 1010
 
     // Tendency to keep own pieces
 
@@ -87,20 +88,18 @@ void cParam::DefaultWeights() {
 	// All these values are NOT the actual bonuses; their sum is used as index 
 	// to a non-linear king safety table. Tune them with extreme caution.
 
-	// 0.059217
-
 	values[N_ATT1] = 6;  // 6
-	values[N_ATT2] = 2;  // 2
+	values[N_ATT2] = 3;  // 2
 	values[B_ATT1] = 6;  // 6
 	values[B_ATT2] = 2;  // 2
     values[R_ATT1] = 9;  // 9
-    values[R_ATT2] = 3;  // 3
-    values[Q_ATT1] = 15; // 15
+    values[R_ATT2] = 4;  // 3
+    values[Q_ATT1] = 16; // 15
     values[Q_ATT2] = 5;  // 5
 
 	values[N_CHK] = 4;   // 4
-	values[B_CHK] = 4;   // 4
-	values[R_CHK] = 9;   // 9
+	values[B_CHK] = 6;   // 4
+	values[R_CHK] = 11;  // 9
 	values[Q_CHK] = 12;  // 12
 
 	values[R_CONTACT] = 24; // 24
@@ -141,13 +140,13 @@ void cParam::DefaultWeights() {
 
     // Positional weights
 
-    threats_weight = 100;
+    threats_weight = 107;
     tropism_weight = 20;
     forward_weight = 0;
     passers_weight = 100;
 	pawn_mass_weight = 100; // seems optimal
 	pawn_chains_weight = 100;
-    outposts_weight = 100;
+    outposts_weight = 95;
     lines_weight = 100;
     struct_weight = 100;
     shield_weight = 120;
@@ -174,7 +173,7 @@ void cParam::DefaultWeights() {
     // Bishop parameters
 
     values[B_FIANCH] = 4;  // general bonus for fianchettoed bishop
-    values[B_KING] = 0;    // fianchettoed bishop near king
+    values[B_KING] = 5;    // fianchettoed bishop near king: 0
     values[B_BADF] = -20;  // enemy pawns hamper fianchettoed bishop
     values[B_TRAP_A2] = -150;
     values[B_TRAP_A3] = -50;
