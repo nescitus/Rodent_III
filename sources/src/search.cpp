@@ -44,17 +44,11 @@ void cParam::InitAsymmetric(POS *p) {
 void cGlobals::ClearData() {
 
     ClearTrans();
-#ifdef USE_THREADS
-    Engine1.ClearAll();
-    Engine2.ClearAll();
-    Engine3.ClearAll();
-    Engine4.ClearAll();
-    Engine5.ClearAll();
-    Engine6.ClearAll();
-    Engine7.ClearAll();
-    Engine8.ClearAll();
+#ifndef USE_THREADS
+    EngineSingle.ClearAll();
 #else
-	SingleEngine.ClearAll();
+    for (auto& engine: Engines)
+        engine.ClearAll();
 #endif
     should_clear = false;
 }
@@ -589,6 +583,14 @@ void CheckTimeout() {
         ReadLine(command, sizeof(command));
         if (strcmp(command, "stop") == 0)
             Glob.abort_search = true;
+		else if (strcmp(command, "quit") == 0) {
+#ifndef USE_THREADS
+           exit(0);
+#else
+            Glob.abort_search = true;
+            Glob.goodbye = true; // will crash if just `exit()`. should wait until threads are terminated
+#endif
+		}
         else if (strcmp(command, "ponderhit") == 0)
             Glob.pondering = false;
     }

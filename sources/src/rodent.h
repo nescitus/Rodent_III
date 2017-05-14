@@ -19,7 +19,6 @@ If not, see <http://www.gnu.org/licenses/>.
 // 6757 lines
 
 // b15: 45.900.558
-// tune: 0.059217
 
 #pragma once
 
@@ -33,9 +32,16 @@ If not, see <http://www.gnu.org/licenses/>.
 #define USE_RISKY_PARAMETER
 
 #ifndef NO_THREADS
-    #define USE_THREADS
-    #define NEW_THREADS
+    #include <thread>
+    #ifndef USE_THREADS
+       #define USE_THREADS
+    #endif
+    #ifndef NEW_THREADS
+        #define NEW_THREADS
+    #endif
     #define MAX_THREADS 8 // do not change unless threading code is modified (array of cEngine class instances)
+#else
+    #undef USE_THREADS
 #endif
 
 enum eColor {WC, BC, NO_CL};
@@ -545,6 +551,7 @@ class cGlobals {
     bool reading_personality;
     bool separate_books;
     bool should_clear;
+    bool goodbye;
     bool use_personality_files;
     glob_int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels
@@ -688,10 +695,21 @@ class cEngine {
 
   public:
 
-    int dp_completed;
-    int pv_eng[MAX_PLY];
+	  int pv_eng[MAX_PLY];
+	  int dp_completed;
 
-    cEngine(int th): thread_id(th) { ClearAll(); };
+	  cEngine(const cEngine &) = delete;
+	  cEngine(int th = 0) : thread_id(th) { ClearAll(); };
+
+#ifdef USE_THREADS
+	  std::thread worker;
+	  void StartThinkThread(POS *p) {
+		  dp_completed = 0;
+		  worker = std::thread([&] { Think(p); });
+	  }
+
+	  void WaitThinkThread() { worker.join(); }
+#endif
 
     void Bench(int depth);
     void ClearAll();
@@ -700,16 +718,10 @@ class cEngine {
 };
 
 #ifdef USE_THREADS
-    extern cEngine Engine1;
-    extern cEngine Engine2;
-    extern cEngine Engine3;
-    extern cEngine Engine4;
-    extern cEngine Engine5;
-    extern cEngine Engine6;
-    extern cEngine Engine7;
-    extern cEngine Engine8;
+    #include <list>
+    extern std::list<cEngine> Engines;
 #else
-    extern cEngine SingleEngine;
+    extern cEngine EngineSingle;
 #endif
 
 void InitSearch();

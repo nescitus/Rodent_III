@@ -21,16 +21,10 @@ If not, see <http://www.gnu.org/licenses/>.
 cGlobals Glob;
 
 #ifdef USE_THREADS
-    cEngine Engine1(0);
-    cEngine Engine2(1);
-    cEngine Engine3(2);
-    cEngine Engine4(3);
-	cEngine Engine5(4);
-    cEngine Engine6(5);
-    cEngine Engine7(6);
-    cEngine Engine8(7);
+    #include <list>
+    std::list<cEngine> Engines(1);
 #else
-    cEngine SingleEngine(0);
+    cEngine EngineSingle(0);
 #endif
 cBitBoard BB;
 cParam Par;
@@ -49,6 +43,15 @@ sBook MainBook;
 int main() {
 
     POS p;
+
+	/*
+	float j = 2;
+
+	for (int i = 0; i < 100; i++) {
+		j = j * 1.80;
+		printf("%3d : %d\n", i, (int)j);
+	}
+	*/
 	
     BB.Init();
     InitSearch();
@@ -106,6 +109,13 @@ void cGlobals::Init() {
     use_personality_files = false;
     separate_books = false;
     thread_no = 1;
+
+#ifdef USE_THREADS
+	Engines.clear();
+	for (int i = 0; i < thread_no; i++)
+		Engines.emplace_back(i);
+#endif
+
     should_clear = false;
     is_console = true;
     elo_slider = true;

@@ -39,7 +39,7 @@ void ReadLine(char *str, int n) {
     if (fgets(str, n, stdin) == NULL)
         exit(0);
     if ((ptr = strchr(str, '\n')) != NULL)
-        * ptr = '\0';
+        *ptr = '\0';
 }
 
 const char *ParseToken(const char *string, char *token) {
@@ -56,7 +56,6 @@ void UciLoop() {
 
     char command[4096], token[80]; const char *ptr;
     POS p[1];
-    int pv[MAX_PLY];
 
     setbuf(stdin, NULL);
     setbuf(stdout, NULL);
@@ -81,7 +80,7 @@ void UciLoop() {
             Par.use_book = (strstr(command, "value true") != 0);
 
         if (strcmp(token, "uci") == 0) {
-            printf("id name Rodent III 0.201\n");
+            printf("id name Rodent III 0.196\n");
             Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
             PrintUciOptions();
@@ -106,15 +105,19 @@ void UciLoop() {
 #ifdef USE_TUNING
         } else if (strcmp(token, "tune") == 0) {
             Glob.is_tuning = true;
-            printf("FIT: %lf\n", Engine1.TexelFit(p, pv));
+#ifndef USE_THREADS
+			printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));
+#else
+			printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().pv_eng));
+#endif
             Glob.is_tuning = false;
 #endif
         } else if (strcmp(token, "bench") == 0) {
             ptr = ParseToken(ptr, token);
-#ifdef USE_THREADS
-            Engine1.Bench(atoi(token));
+#ifndef USE_THREADS
+            EngineSingle.Bench(atoi(token));
 #else
-			SingleEngine.Bench(atoi(token));
+            Engines.front().Bench(atoi(token));
 #endif
         } else if (strcmp(token, "quit") == 0) {
             exit(0);
@@ -169,57 +172,6 @@ void ParsePosition(POS *p, const char *ptr) {
         ParseMoves(p, ptr);
 }
 
-#ifdef USE_THREADS
-
-void task1(POS *p) {
-    Engine1.Think(p);
-}
-
-void task2(POS *p) {
-    Engine2.Think(p);
-}
-
-void task3(POS *p) {
-    Engine3.Think(p);
-}
-
-void task4(POS *p) {
-    Engine4.Think(p);
-}
-
-void task5(POS *p) {
-    Engine5.Think(p);
-}
-
-void task6(POS *p) {
-    Engine6.Think(p);
-}
-
-void task7(POS *p) {
-	Engine7.Think(p);
-}
-
-void task8(POS *p) {
-    Engine8.Think(p);
-}
-
-void timer_task() {
-
-    Glob.abort_search = false;
-
-    while (Glob.abort_search == false) {
-// #if defined(_WIN32) || defined(_WIN64)
-        // _sleep(5);
-// #else
-        // usleep(5 * 1000);
-// #endif
-        std::this_thread::sleep_for(5ms); // why check so frequently?
-        if (!Glob.is_tuning) CheckTimeout();
-    }
-}
-
-#endif
-
 int BulletCorrection(int time) {
 
     if (time < 200)       return (time * 23) / 32;
@@ -228,7 +180,7 @@ int BulletCorrection(int time) {
     else return time;
 }
 
-void ExtractMove(int pv[MAX_PLY]) {
+void ExtractMove(int *pv) {
 
     char bestmove_str[6], ponder_str[6];
 
@@ -273,9 +225,9 @@ void SetMoveTime(int base, int inc, int movestogo) {
 
 void ParseGo(POS *p, const char *ptr) {
 
-    char token[80], bestmove_str[6], ponder_str[6];
+    char token[80], bestmove_str[6];
     int wtime, btime, winc, binc, movestogo, strict_time;
-	int pv_book[MAX_PLY];
+    int pvb;
 
     move_time = -1;
     move_nodes = 0;
@@ -345,190 +297,57 @@ void ParseGo(POS *p, const char *ptr) {
         Glob.ClearData(); // options has been changed and old tt scores are no longer reliable
     Par.InitAsymmetric(p);
 
-    int best_eng = 1;
-    int best_depth = 0;
-
     // get book move
 
     if (Par.use_book && Par.book_depth >= Glob.moves_from_start) {
         printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
-        pv_book[0] = GuideBook.GetPolyglotMove(p, true);
-        if (!pv_book[0]) pv_book[0] = MainBook.GetPolyglotMove(p, true);
-        //if (!pv_book[0]) pv_book[0] = InternalBook.MoveFromInternal(p);
+        pvb = GuideBook.GetPolyglotMove(p, true);
+        if (!pvb) pvb = MainBook.GetPolyglotMove(p, true);
+        if (!pvb) pvb = InternalBook.MoveFromInternal(p);
 
-        if (pv_book[0]) {
-            MoveToStr(pv_book[0], bestmove_str);
+        if (pvb) {
+            MoveToStr(pvb, bestmove_str);
             printf("bestmove %s\n", bestmove_str);
-			return;
+            return;
         }
     }
 
-    // Set engine-dependent variables
+    // Set engine-dependent variables and search using the designated number of threads
 
-#ifdef USE_THREADS
-	Engine1.dp_completed = 0;
-    Engine2.dp_completed = 0;
-    Engine3.dp_completed = 0;
-    Engine4.dp_completed = 0;
-    Engine5.dp_completed = 0;
-    Engine6.dp_completed = 0;
-    Engine7.dp_completed = 0;
-    Engine8.dp_completed = 0;
+#ifndef USE_THREADS
+    EngineSingle.dp_completed = 0;
+    EngineSingle.Think(p);
+    ExtractMove(EngineSingle.pv_eng);
 #else
-	SingleEngine.dp_completed = 0;
-#endif
+    Glob.goodbye = false;
 
-    // Search using the designated number of threads
+    for (auto& engine: Engines) // dp_completed cleared in StartThinkThread();
+        engine.StartThinkThread(p);
 
-#ifdef USE_THREADS
+    std::thread timer([] {
+        while (Glob.abort_search == false) {
+            std::this_thread::sleep_for(50ms); // why check so frequently? changed 5ms -> 50ms
+            if (!Glob.is_tuning) CheckTimeout();
+        }
+    });
 
-    if (Glob.thread_no == 1) {
-        std::thread t(timer_task);
-        std::thread e1(task1, p);
-        e1.join();
-        //Glob.abort_search = true; // should we stop waiting timer thread?
-        t.join();
-    }
+    for (auto& engine: Engines)
+        engine.WaitThinkThread();
 
-    if (Glob.thread_no == 2) {
-        std::thread t(timer_task);
-        std::thread e1(task1, p);
-        std::thread e2(task2, p);
-        e1.join();
-        e2.join();
-        //Glob.abort_search = true; // should we stop waiting timer thread?
-        t.join();
-    }
+    timer.join();
 
-    if (Glob.thread_no == 3) {
-        std::thread t(timer_task);
-        std::thread e1(task1, p);
-        std::thread e2(task2, p);
-        std::thread e3(task3, p);
-        e1.join();
-        e2.join();
-        e3.join();
-        //Glob.abort_search = true; // should we stop waiting timer thread?
-        t.join();
-    }
+    if (Glob.goodbye)
+        exit(0);
 
-    if (Glob.thread_no == 4) {
-        std::thread t(timer_task);
-        std::thread e1(task1, p);
-        std::thread e2(task2, p);
-        std::thread e3(task3, p);
-        std::thread e4(task4, p);
-        e1.join();
-        e2.join();
-        e3.join();
-        e4.join();
-        //Glob.abort_search = true; // should we stop waiting timer thread?
-        t.join();
-    }
+    int *best_pv, best_depth = -1;
 
-    if (Glob.thread_no == 5) {
-        std::thread t(timer_task);
-        std::thread e1(task1, p);
-        std::thread e2(task2, p);
-        std::thread e3(task3, p);
-        std::thread e4(task4, p);
-        std::thread e5(task5, p);
-        e1.join();
-        e2.join();
-        e3.join();
-        e4.join();
-        e5.join();
-        //Glob.abort_search = true; // should we stop waiting timer thread?
-        t.join();
-    }
+    for (auto& engine: Engines)
+        if (best_depth < engine.dp_completed) {
+            best_depth = engine.dp_completed;
+            best_pv = engine.pv_eng;
+        }
 
-    if (Glob.thread_no == 6) {
-        std::thread t(timer_task);
-        std::thread e1(task1, p);
-        std::thread e2(task2, p);
-        std::thread e3(task3, p);
-        std::thread e4(task4, p);
-        std::thread e5(task5, p);
-        std::thread e6(task6, p);
-        e1.join();
-        e2.join();
-        e3.join();
-        e4.join();
-        e5.join();
-        e6.join();
-        //Glob.abort_search = true; // should we stop waiting timer thread?
-        t.join();
-    }
-
-    if (Glob.thread_no == 7) {
-        std::thread t(timer_task);
-        std::thread e1(task1, p);
-        std::thread e2(task2, p);
-        std::thread e3(task3, p);
-        std::thread e4(task4, p);
-        std::thread e5(task5, p);
-        std::thread e6(task6, p);
-        std::thread e7(task6, p);
-        e1.join();
-        e2.join();
-        e3.join();
-        e4.join();
-        e5.join();
-        e6.join();
-		e7.join();
-        //Glob.abort_search = true; // should we stop waiting timer thread?
-        t.join();
-    }
-
-    if (Glob.thread_no == 8) {
-        std::thread t(timer_task);
-        std::thread e1(task1, p);
-        std::thread e2(task2, p);
-        std::thread e3(task3, p);
-        std::thread e4(task4, p);
-        std::thread e5(task5, p);
-        std::thread e6(task6, p);
-        std::thread e7(task6, p);
-        std::thread e8(task6, p);
-        e1.join();
-        e2.join();
-        e3.join();
-        e4.join();
-        e5.join();
-        e6.join();
-		e7.join();
-        e8.join();
-        //Glob.abort_search = true; // should we stop waiting timer thread?
-        t.join();
-    }
-#else
-    SingleEngine.Think(p);
-    MoveToStr(SingleEngine.pv_eng[0], bestmove_str);
-    if (SingleEngine.pv_eng[1]) {
-        MoveToStr(SingleEngine.pv_eng[1], ponder_str);
-        printf("bestmove %s ponder %s\n", bestmove_str, ponder_str);
-    } else
-        printf("bestmove %s\n", bestmove_str);
-#endif
-
-#ifdef USE_THREADS
-		best_depth = Engine1.dp_completed;
-        if (Engine2.dp_completed > best_depth) { best_depth = Engine2.dp_completed; best_eng = 2; }
-        if (Engine3.dp_completed > best_depth) { best_depth = Engine3.dp_completed; best_eng = 3; }
-        if (Engine4.dp_completed > best_depth) { best_depth = Engine4.dp_completed; best_eng = 4; }
-        if (Engine5.dp_completed > best_depth) { best_depth = Engine5.dp_completed; best_eng = 5; }
-        if (Engine6.dp_completed > best_depth) { best_depth = Engine6.dp_completed; best_eng = 6; }
-        if (Engine7.dp_completed > best_depth) { best_depth = Engine7.dp_completed; best_eng = 7; }
-        if (Engine8.dp_completed > best_depth) { best_depth = Engine8.dp_completed; best_eng = 8; }
-
-        if (best_eng == 8) ExtractMove(Engine8.pv_eng);
-        if (best_eng == 7) ExtractMove(Engine7.pv_eng);
-        if (best_eng == 6) ExtractMove(Engine6.pv_eng);
-        if (best_eng == 5) ExtractMove(Engine5.pv_eng);
-        if (best_eng == 4) ExtractMove(Engine4.pv_eng);
-        if (best_eng == 3) ExtractMove(Engine3.pv_eng);
-        if (best_eng == 2) ExtractMove(Engine2.pv_eng);
-        if (best_eng == 1) ExtractMove(Engine1.pv_eng);
+    ExtractMove(best_pv);
 #endif
 
 }
@@ -557,7 +376,6 @@ void cEngine::Bench(int depth) {
         NULL
     }; // test positions taken from DiscoCheck by Lucas Braesch
 
-	Glob.is_testing = true;
     if (depth == 0) depth = 8; // so that you can call bench without parameters
     ClearTrans();
     ClearAll();
@@ -583,14 +401,13 @@ void cEngine::Bench(int depth) {
     // calculate and print statistics
 
     int end_time = GetMS() - start_time;
-    int nps = (Glob.nodes * 1000) / (end_time + 1);
+    unsigned int nps = (Glob.nodes * 1000) / (end_time + 1);
 
 #if __cplusplus >= 201103L || _MSVC_LANG >= 201402
     printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
 #else
     printf(       "%llu nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
 #endif
-	Glob.is_testing = false;
 }
 
 void PrintBoard(POS *p) {
