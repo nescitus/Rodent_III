@@ -110,10 +110,16 @@ void cGlobals::Init() {
     separate_books = false;
     thread_no = 1;
 
+    // Clearing  and  setting threads  may  be  necessary
+    // if we need a compile using a bigger default number
+    // of threads for testing purposes
+
 #ifdef USE_THREADS
-	Engines.clear();
-	for (int i = 0; i < thread_no; i++)
-		Engines.emplace_back(i);
+    if (thread_no > 1) {
+        Engines.clear();
+        for (int i = 0; i < thread_no; i++)
+            Engines.emplace_back(i);
+    }
 #endif
 
     should_clear = false;

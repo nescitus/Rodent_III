@@ -102,7 +102,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
         bb_control = BB.KnightAttacks(sq) & ~p->cl_bb[sd];  // get control bitboard
         if (!(bb_control  & ~e->p_takes[op] & Mask.away[sd])) // we do not attack enemy half of the board
-            Add(e, sd, -5);
+            Add(e, sd, Par.values[N_OWH]);
         e->all_att[sd] |= BB.KnightAttacks(sq);
         e->ev_att[sd]  |= bb_control;
         if (bb_control & n_checks) att += Par.values[N_CHK];// check threats
@@ -110,7 +110,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         bb_possible = bb_control & ~e->p_takes[op];         // reachable outposts
         bb_possible &= ~e->p_can_take[op];
         bb_possible &= Mask.outpost_map[sd];
-        if (bb_possible) Add(e, sd, 2);
+        if (bb_possible) Add(e, sd, Par.values[N_REACH]);
 
         bb_attack = BB.KnightAttacks(sd);
         if (bb_attack & bb_zone) {                          // king attack
@@ -145,7 +145,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         bb_control = BB.BishAttacks(OccBb(p), sq);          // get control bitboard
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd]  |= bb_control;
-        if (!(bb_control & Mask.away[sd])) Add(e, sd, -5);  // we do not attack enemy half of the board
+        if (!(bb_control & Mask.away[sd])) 
+             Add(e, sd, Par.values[B_OVH]);                 // we do not attack enemy half of the board
         if (bb_control & b_checks) att += Par.values[B_CHK];// check threats
 
         bb_attack = BB.BishAttacks(OccBb(p) ^ p->Queens(sd), sq);  // get king attack bitboard
@@ -163,16 +164,16 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         bb_possible = bb_control & ~e->p_takes[op];         // reachable outposts
         bb_possible &= ~e->p_can_take[op];
         bb_possible &= Mask.outpost_map[sd];
-        if (bb_possible) Add(e, sd, 2);
+        if (bb_possible) Add(e, sd, Par.values[B_REACH]);
 
         EvaluateOutpost(p, e, sd, B, sq, &outpost);         // outpost
 
         // Bishops side by side
 
         if (ShiftNorth(SqBb(sq)) & p->Bishops(sd))
-            Add(e, sd, 4);
+            Add(e, sd, Par.values[B_TOUCH]);
         if (ShiftEast(SqBb(sq)) & p->Bishops(sd))
-            Add(e, sd, 4);
+            Add(e, sd, Par.values[B_TOUCH]);
 
         // Pawns on the same square color as our bishop
 

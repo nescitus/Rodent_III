@@ -158,17 +158,20 @@ void cParam::DefaultWeights() {
     values[DB_END] = -24;
     values[ISO_MG] = -10;  // isolated
     values[ISO_EG] = -20;
-    values[ISO_OF] = -10;
+    values[ISO_OF] = -10;  // additional midgame penalty for isolated pawn on an open file
     values[BK_MID] = -8;   // backward
     values[BK_END] = -8;
-    values[BK_OPE] = -8;
+    values[BK_OPE] = -8;   // additional midgame penalty for backward pawn on an open file
 	values[P_BIND] = 5;    // two pawns control central square
 	values[P_ISL] = 7;     // penalty for each pawn island
 
     // Knight parameters
 
     values[N_TRAP] = -150;
-    values[N_BLOCK] = -20;
+    values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
+	values[N_OWH] = -5;    // knight can move only to own half of the board
+	values[N_REACH] = 2;   // knight can reach an outpost square
+
 
     // Bishop parameters
 
@@ -177,10 +180,13 @@ void cParam::DefaultWeights() {
     values[B_BADF] = -20;  // enemy pawns hamper fianchettoed bishop
     values[B_TRAP_A2] = -150;
     values[B_TRAP_A3] = -50;
-    values[B_BLOCK] = -50;
-    values[B_BF_MG] = -10;
+    values[B_BLOCK] = -50; // blocked pawn at d2/e2 hampers bishop's develomement
+    values[B_BF_MG] = -10; // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
     values[B_BF_EG] = -20;
-    values[B_WING] = 10;
+    values[B_WING] = 10;   // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2)
+	values[B_OVH] = -5;    // bishop can move only to own half of the board
+	values[B_REACH] = 2;   // bishop can reach an outpost square
+	values[B_TOUCH] = 4;   // two bishops on adjacent squares
 
     // Rook parameters
 

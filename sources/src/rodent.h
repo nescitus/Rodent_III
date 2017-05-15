@@ -416,7 +416,7 @@ enum Values {
     N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
     N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
     NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
-    N_FWD, B_FWD, R_FWD, Q_FWD,
+    N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OVH, N_REACH, B_REACH, B_TOUCH,
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop patterns
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
@@ -796,8 +796,6 @@ extern int tt_date;
 // TODO: continuation move
 // TODO: single move speedup
 // TODO: easy move code
-// TODO: stress test of ExtractMove at many threads
-// TODO: cleanup of uci.cpp
 // TODO: no book moves in analyze mode
 // TODO: fix small bug: engine crashes on empty book file path or empty personality file path
 // TODO: minor defended by pawn and something else (to decrease the probability of getting doubled pawns)
