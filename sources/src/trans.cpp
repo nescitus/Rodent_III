@@ -63,6 +63,7 @@ void AllocTrans(unsigned int mbsize) {
 
         if (!chc.Alloc(tt_size)) {
             printf("info string memory allocation error\n");
+            prev_size = 0; // will realloc next time
             return;
         }
 
