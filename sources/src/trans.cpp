@@ -50,34 +50,44 @@ If not, see <http://www.gnu.org/licenses/>.
 
 ChessHeapClass chc;
 
-void AllocTrans(int mbsize) {
+void AllocTrans(unsigned int mbsize) {
+
+    static unsigned int prev_size;
 
     for (tt_size = 2; tt_size <= mbsize; tt_size *= 2)
         ;
 
     tt_size /= 2;
 
-    if (chc.Alloc(tt_size))
-        printf("info string %zuMB of memory allocated\n", tt_size);
-    else {
-        printf("info string memory allocation error\n");
-        return;
-    }
+    if (prev_size != tt_size) { // don't waste time if the size is the same
 
-    tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements of type ENTRY
-    tt_mask = tt_size - 4;
+        if (!chc.Alloc(tt_size)) {
+            printf("info string memory allocation error\n");
+            prev_size = 0; // will realloc next time
+            return;
+        }
+
+        prev_size = tt_size;
+
+        tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements of type ENTRY
+        tt_mask = tt_size - 4;
 
 #if defined(USE_THREADS) && defined(NEW_THREADS)
-    unsigned int number_of_aflags = tt_size / 4;
+        unsigned int number_of_aflags = tt_size / 4;
 
-    aflags0 = std::make_unique<std::atomic_flag[]> (number_of_aflags);
-    aflags1 = std::make_unique<std::atomic_flag[]> (number_of_aflags);
+        aflags0 = std::make_unique<std::atomic_flag[]> (number_of_aflags);
+        aflags1 = std::make_unique<std::atomic_flag[]> (number_of_aflags);
 
-    for (int i = 0; i < number_of_aflags; i++) {
-        aflags0[i].clear();
-        aflags1[i].clear();
-    }
+        for (int i = 0; i < number_of_aflags; i++) {
+            aflags0[i].clear();
+            aflags1[i].clear();
+        }
 #endif
+    }
+
+    ClearTrans();
+
+    printf("info string %uMB of memory allocated\n", prev_size);
 }
 
 void ClearTrans() {

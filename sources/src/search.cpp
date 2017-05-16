@@ -17,6 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <cmath>
 
@@ -585,7 +586,7 @@ void CheckTimeout() {
             Glob.abort_search = true;
 		else if (strcmp(command, "quit") == 0) {
 #ifndef USE_THREADS
-           exit(0);
+            exit(0);
 #else
             Glob.abort_search = true;
             Glob.goodbye = true; // will crash if just `exit()`. should wait until threads are terminated
