@@ -80,7 +80,7 @@ void UciLoop() {
             Par.use_book = (strstr(command, "value true") != 0);
 
         if (strcmp(token, "uci") == 0) {
-            printf("id name Rodent III 0.196\n");
+            printf("id name Rodent III 0.200\n");
             Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
             PrintUciOptions();
@@ -326,7 +326,11 @@ void ParseGo(POS *p, const char *ptr) {
 
     std::thread timer([] {
         while (Glob.abort_search == false) {
-            std::this_thread::sleep_for(50ms); // why check so frequently? changed 5ms -> 50ms
+
+            // Check for timeut every 5 miliseconds. This allows Rodent
+            // to survive extreme time controls, like 1 s + 10 ms
+
+            std::this_thread::sleep_for(5ms);
             if (!Glob.is_tuning) CheckTimeout();
         }
     });

@@ -794,7 +794,6 @@ extern int tt_date;
 // TODO: changing tt date of used entries (thx Kestutis)
 // TODO: IID at cut nodes
 // TODO: continuation move
-// TODO: single move speedup
 // TODO: easy move code
 // TODO: no book moves in analyze mode
 // TODO: fix small bug: engine crashes on empty book file path or empty personality file path
