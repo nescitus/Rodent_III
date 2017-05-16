@@ -56,7 +56,7 @@ class ChessHeapClass {
 
         if (success)
             for (int i = 0; i < arrays_size && bucket_ptrs[i]; i++)
-                memset(bucket_ptrs[i], 0, bucket_sizs[i]);
+                memset(bucket_ptrs[i], 0, 1024 * 1024 * bucket_sizs[i]);
     }
 
     ENTRY *operator[](size_t entry_number) {
