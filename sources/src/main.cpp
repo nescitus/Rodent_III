@@ -97,9 +97,10 @@ int main() {
 #endif
 
     InternalBook.Init(&p);
-    UciLoop();
 
-    return 0;
+#ifndef BOOKGEN
+    UciLoop();
+#endif
 }
 
 void cGlobals::Init() {
