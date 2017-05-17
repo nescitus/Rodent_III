@@ -130,51 +130,51 @@ void ParseSetoption(const char *ptr) {
 #endif
     } else if (strcmp(name, "Clear Hash") == 0        || strcmp(name, "clear hash") == 0)        {
         ClearTrans();
-    } else if (strcmp(name, "PawnValueMg") == 0       || strcmp(name, "pawnvalue") == 0)         {
+    } else if (strcmp(name, "PawnValueMg") == 0       || strcmp(name, "pawnvaluemg") == 0)         {
         Par.values[P_MID] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
-    } else if (strcmp(name, "PawnValueEg") == 0       || strcmp(name, "pawnvalue") == 0)         {
+    } else if (strcmp(name, "PawnValueEg") == 0       || strcmp(name, "pawnvalueeg") == 0)         {
         Par.values[P_END] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
     } else if (strcmp(name, "PawnValue") == 0         || strcmp(name, "pawnvalue") == 0)         {
         SetPieceValue(P, atoi(value), P_MID);
-    } else if (strcmp(name, "KnightValueMg") == 0     || strcmp(name, "knightvalue") == 0)       {
+    } else if (strcmp(name, "KnightValueMg") == 0     || strcmp(name, "knightvaluemg") == 0)       {
         Par.values[N_MID] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
-    } else if (strcmp(name, "KnightValueEg") == 0     || strcmp(name, "knightvalue") == 0)       {
+    } else if (strcmp(name, "KnightValueEg") == 0     || strcmp(name, "knightvalueeg") == 0)       {
         Par.values[N_END] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
     } else if (strcmp(name, "KnightValue") == 0       || strcmp(name, "knightvalue") == 0)       {
         SetPieceValue(N, atoi(value), N_MID);
-    } else if (strcmp(name, "BishopValueMg") == 0     || strcmp(name, "bishopvalue") == 0)       {
+    } else if (strcmp(name, "BishopValueMg") == 0     || strcmp(name, "bishopvaluemg") == 0)       {
         Par.values[B_MID] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
-    } else if (strcmp(name, "BishopValueEg") == 0     || strcmp(name, "bishopvalue") == 0)       {
+    } else if (strcmp(name, "BishopValueEg") == 0     || strcmp(name, "bishopvalueeg") == 0)       {
         Par.values[B_END] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
     } else if (strcmp(name, "BishopValue") == 0       || strcmp(name, "bishopvalue") == 0)       {
         SetPieceValue(B, atoi(value), B_MID);
-    } else if (strcmp(name, "RookValueMg") == 0       || strcmp(name, "rookvalue") == 0)         {
+    } else if (strcmp(name, "RookValueMg") == 0       || strcmp(name, "rookvaluemg") == 0)         {
         Par.values[R_MID] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
-    } else if (strcmp(name, "RookValueEg") == 0       || strcmp(name, "rookvalue") == 0)         {
+    } else if (strcmp(name, "RookValueEg") == 0       || strcmp(name, "rookvalueeg") == 0)         {
         Par.values[R_END] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
     } else if (strcmp(name, "RookValue") == 0         || strcmp(name, "rookvalue") == 0)         {
         SetPieceValue(R, atoi(value), R_MID);
-    } else if (strcmp(name, "QueenValueMg") == 0      || strcmp(name, "queenvalue") == 0)        {
+    } else if (strcmp(name, "QueenValueMg") == 0      || strcmp(name, "queenvaluemg") == 0)        {
         Par.values[Q_MID] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
-    } else if (strcmp(name, "QueenValueEg") == 0      || strcmp(name, "queenvalue") == 0)        {
+    } else if (strcmp(name, "QueenValueEg") == 0      || strcmp(name, "queenvalueeg") == 0)        {
         Par.values[Q_END] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
