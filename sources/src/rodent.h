@@ -695,20 +695,22 @@ class cEngine {
 
   public:
 
-	  int pv_eng[MAX_PLY];
-	  int dp_completed;
+    int pv_eng[MAX_PLY];
+    int dp_completed;
 
-	  cEngine(const cEngine &) = delete;
-	  cEngine(int th = 0) : thread_id(th) { ClearAll(); };
+    cEngine(const cEngine&) = delete;
+    cEngine& operator=(const cEngine&) = delete;
+    cEngine(int th = 0): thread_id(th) { ClearAll(); };
 
 #ifdef USE_THREADS
-	  std::thread worker;
-	  void StartThinkThread(POS *p) {
-		  dp_completed = 0;
-		  worker = std::thread([&] { Think(p); });
-	  }
+    std::thread worker;
+    void StartThinkThread(POS *p) {
+        dp_completed = 0;
+        worker = std::thread([&] { Think(p); });
+    }
 
-	  void WaitThinkThread() { worker.join(); }
+    ~cEngine() { WaitThinkThread(); };  // should fix crash on windows on console closing
+    void WaitThinkThread() { if (worker.joinable()) worker.join(); }
 #endif
 
     void Bench(int depth);
