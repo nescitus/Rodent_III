@@ -45,8 +45,8 @@ setoption name IsolatedOnOpenMg value -10
 setoption name BackwardPawnMg value -8
 setoption name BackwardPawnEg value -10
 setoption name BackwardOnOpenMg value -8
-settoption name PstStyle value 0
-seoption name MobilityStyle value 0
+setoption name PstStyle value 0
+setoption name MobilityStyle value 0
 setoption name NpsLimit value 5500
 setoption name EvalBlur value 0
 setoption name Contempt value 0
