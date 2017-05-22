@@ -22,6 +22,8 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstring>
 #include <cctype>
 
+sPersAliases pers_aliases;
+
 void PrintUciOptions() {
 
     printf("option name Hash type spin default 16 min 1 max 4096\n");
@@ -30,9 +32,15 @@ void PrintUciOptions() {
 #endif
     printf("option name Clear Hash type button\n");
 
-    if (Glob.use_personality_files)
-        printf("option name PersonalityFile type string default rodent.txt\n");
-    else {
+    if (Glob.use_personality_files) {
+            printf("option name PersonalityFile type string default rodent.txt\n");
+        if (pers_aliases.count != 0) {
+            printf("option name Personality type combo default ---"); // `---` in case we want PersonalityFile
+            for (int i = 0; i < pers_aliases.count; i++)
+                printf(" var %s", pers_aliases.alias[i]);
+            printf("\n");
+        }
+    } else {
 
         printf("option name PawnValue type spin default %d min 0 max 1200\n", Par.values[P_MID]);
         printf("option name KnightValue type spin default %d min 0 max 1200\n", Par.values[N_MID]);
@@ -381,6 +389,12 @@ void ParseSetoption(const char *ptr) {
         Glob.should_clear = true;
     } else if (strcmp(name, "personalityfile") == 0)   {
         ReadPersonality(value);
+    } else if (strcmp(name, "personality") == 0 )      {
+        for (int i = 0; i < pers_aliases.count; i++)
+            if (strcmp(pers_aliases.alias[i], value) == 0) {
+                ReadPersonality(pers_aliases.path[i]);
+                break;
+            }
     }
 }
 
@@ -410,8 +424,6 @@ void SetPieceValue(int pc, int val, int slot) {
 
 void ReadPersonality(const char *fileName) {
 
-    char line[256];
-    char token[180]; const char *ptr;
     FILE *personalityFile = fopen(fileName, "r");
 
     printf("info string reading \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
@@ -420,35 +432,47 @@ void ReadPersonality(const char *fileName) {
     if (personalityFile == NULL)
         return;
 
-    // set flag in case we want to disable some options while reading
-    // personality from a file
-
+    // set flag in case we want to disable some options while reading personality from a file
     Glob.reading_personality = true;
 
-    // read options line by line
+    char line[256], token[180]; int cnt = 0;
 
-    while (fgets(line, 256, personalityFile)) {
-        ptr = ParseToken(line, token);
+    while (fgets(line, sizeof(line), personalityFile)) {    // read options line by line
 
         // do we pick opening book within a personality?
-
         if (strstr(line, "PERSONALITY_BOOKS")) Glob.separate_books = false;
         if (strstr(line, "GENERAL_BOOKS"))     Glob.separate_books = true;
 
         // how we go about weakening the engine?
-
         if (strstr(line, "ELO_SLIDER")) Glob.elo_slider = true;
         if (strstr(line, "NPS_BLUR"))   Glob.elo_slider = false;
 
         // which UCI options are exposed to the user?
-
         if (strstr(line, "HIDE_OPTIONS")) Glob.use_personality_files = true;
         if (strstr(line, "SHOW_OPTIONS")) Glob.use_personality_files = false;
 
+        // aliases for personalities
+        char *pos = strchr(line, '=');
+        if (pos) {
+            *pos = '\0';
+            strncpy(pers_aliases.alias[cnt], line, ALIASLEN-1);// -1 coz `strncpy` has a very unexpected glitch
+            strncpy(pers_aliases.path[cnt], pos+1, PATHLEN-1); // see the C11 language standard, note 308
+            while (pos = strpbrk(pers_aliases.path[cnt], "\r\n")) *pos = '\0'; // clean the sh!t
+            cnt++;
+            continue;
+        }
+
+        const char *ptr = ParseToken(line, token);
         if (strcmp(token, "setoption") == 0)
             ParseSetoption(ptr);
     }
 
+    if (cnt) { // add a fake alias to allow to use PersonalityFile, ReadPersonality will fail on it keeping PersonalityFile values
+        strcpy(pers_aliases.alias[cnt], "---");
+        strcpy(pers_aliases.path[cnt], "---");
+        cnt++;
+    }
+    pers_aliases.count = cnt;
     fclose(personalityFile);
     Glob.reading_personality = false;
 }

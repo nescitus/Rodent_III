@@ -726,6 +726,15 @@ class cEngine {
     extern cEngine EngineSingle;
 #endif
 
+#define ALIASLEN 12
+#define PATHLEN 240
+#define MAXALIASES 100
+struct sPersAliases {
+    char alias[MAXALIASES][ALIASLEN];
+    char path[MAXALIASES][PATHLEN];
+    int count;
+};
+
 void InitSearch();
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
@@ -786,6 +795,8 @@ extern int move_time;
 extern int move_nodes;
 extern int search_depth;
 extern int start_time;
+
+extern sPersAliases pers_aliases;
 
 extern unsigned int tt_size;
 extern unsigned int tt_mask;
