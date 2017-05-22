@@ -33,6 +33,9 @@ void PrintUciOptions() {
     printf("option name Clear Hash type button\n");
 
     if (Glob.use_personality_files) {
+            // it's unclear if the default 'rodent.txt' will be loaded by request from the GUI
+            // something should be done with it: 1. read it here or
+            // 2. (better imo) change to 'default ---' to avoid confusion
             printf("option name PersonalityFile type string default rodent.txt\n");
         if (pers_aliases.count != 0) {
             printf("option name Personality type combo default ---"); // `---` in case we want PersonalityFile
@@ -455,8 +458,8 @@ void ReadPersonality(const char *fileName) {
         char *pos = strchr(line, '=');
         if (pos) {
             *pos = '\0';
-            strncpy(pers_aliases.alias[cnt], line, ALIASLEN-1);// -1 coz `strncpy` has a very unexpected glitch
-            strncpy(pers_aliases.path[cnt], pos+1, PATHLEN-1); // see the C11 language standard, note 308
+            strncpy(pers_aliases.alias[cnt], line, PERSALIAS_ALEN-1); // -1 coz `strncpy` has a very unexpected glitch
+            strncpy(pers_aliases.path[cnt], pos+1, PERSALIAS_PLEN-1); // see the C11 language standard, note 308
             while (pos = strpbrk(pers_aliases.path[cnt], "\r\n")) *pos = '\0'; // clean the sh!t
             cnt++;
             continue;
@@ -469,7 +472,7 @@ void ReadPersonality(const char *fileName) {
 
     if (cnt) { // add a fake alias to allow to use PersonalityFile, ReadPersonality will fail on it keeping PersonalityFile values
         strcpy(pers_aliases.alias[cnt], "---");
-        strcpy(pers_aliases.path[cnt], "---");
+        strcpy(pers_aliases.path[cnt], "///");
         cnt++;
     }
     pers_aliases.count = cnt;

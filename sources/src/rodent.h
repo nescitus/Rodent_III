@@ -726,12 +726,12 @@ class cEngine {
     extern cEngine EngineSingle;
 #endif
 
-#define ALIASLEN 12
-#define PATHLEN 240
-#define MAXALIASES 100
+#define PERSALIAS_ALEN       32
+#define PERSALIAS_PLEN       200
+#define PERSALIAS_MAXALIASES 100
 struct sPersAliases {
-    char alias[MAXALIASES][ALIASLEN];
-    char path[MAXALIASES][PATHLEN];
+    char alias[PERSALIAS_MAXALIASES][PERSALIAS_ALEN];
+    char path[PERSALIAS_MAXALIASES][PERSALIAS_PLEN];
     int count;
 };
 
