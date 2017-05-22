@@ -121,7 +121,7 @@ void cParam::DefaultWeights() {
     // Varia
 
     mat_weight = 100;
-    pst_weight = 80;
+	pst_weight = 80;
     pst_style = 0;
     mob_style = 0;         // 1 is only marginally behind
 
@@ -214,7 +214,7 @@ void cParam::DefaultWeights() {
     values[K_NO_LUFT] = -15;
     values[K_CASTLE] = 10;
 
-	// Forwardness parameters
+    // Forwardness parameters
 
     values[N_FWD] = 1;
     values[B_FWD] = 1;
@@ -361,21 +361,25 @@ void cParam::SetSpeed(int elo) {
 
 int cParam::EloToSpeed(int elo) {
 
-    int result = 300 + (int) pow((double)2, (elo - 799) / 85);
-    result *= 0.23;
+    // this formula abuses Michael Byrne's code from CraftySkill.
+	// He used  it to calculate max nodes per elo. By  dividing,
+	// I derive speed that yields similar result in standart blitz.
+    // Formula has a little bit of built-in randomness.
 
-    if (elo < 1400) result *= 0.95;
-    if (elo < 1300) result *= 0.95;
-    if (elo < 1200) result *= 0.95;
-    if (elo < 1100) result *= 0.95;
-    if (elo < 1000) result *= 0.95;
-    if (elo <  900) result *= 0.95;
+	int lower_elo = elo - 25;
+	int upper_elo = elo + 25;
+	int use_rating = rand() % (upper_elo - lower_elo + 1) + lower_elo;
+	int search_nodes = pow(1.0069555500567, (((use_rating) / 1200) - 1)
+		+ (use_rating - 1200)) * 128;
 
-    return result;
+	return search_nodes / 7;
 }
 
 int cParam::EloToBlur(int elo) {
-    if (elo < 2000) return (2000 - elo) / 4;
+
+    // Weaker levels get their evaluation blurred
+
+    if (elo < 1500) return (1500 - elo) / 4;
     return 0;
 }
 
