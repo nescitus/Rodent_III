@@ -65,21 +65,7 @@ void UciLoop() {
         ReadLine(command, sizeof(command));
         ptr = ParseToken(command, token);
 
-        // boolean option: strength limit
-
-        if (strstr(command, "setoption name UCI_LimitStrength value"))
-            Par.fl_weakening = (strstr(command, "value true") != 0);
-        if (strstr(command, "setoption name uci_limitstrength value"))
-            Par.fl_weakening = (strstr(command, "value true") != 0);
-
-        // boolean option: opening book usage
-
-        if (strstr(command, "setoption name UseBook value"))
-            Par.use_book = (strstr(command, "value true") != 0);
-        if (strstr(command, "setoption name usebook value"))
-            Par.use_book = (strstr(command, "value true") != 0);
-
-        if (strcmp(token, "uci") == 0) {
+        if (strcmp(token, "uci") == 0)               {
             printf("id name Rodent III 0.200\n");
             Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
@@ -88,38 +74,38 @@ void UciLoop() {
         } else if (strcmp(token, "ucinewgame") == 0) {
             ClearTrans();
             Glob.ClearData();
-        } else if (strcmp(token, "isready") == 0) {
+        } else if (strcmp(token, "isready") == 0)    {
             printf("readyok\n");
-        } else if (strcmp(token, "setoption") == 0) {
+        } else if (strcmp(token, "setoption") == 0)  {
             ParseSetoption(ptr);
-        } else if (strcmp(token, "so") == 0) {
+        } else if (strcmp(token, "so") == 0)         {
             ParseSetoption(ptr);
-        } else if (strcmp(token, "position") == 0) {
+        } else if (strcmp(token, "position") == 0)   {
             ParsePosition(p, ptr);
-        } else if (strcmp(token, "go") == 0) {
+        } else if (strcmp(token, "go") == 0)         {
             ParseGo(p, ptr);
-        } else if (strcmp(token, "print") == 0) {
+        } else if (strcmp(token, "print") == 0)      {
             PrintBoard(p);
-        } else if (strcmp(token, "step") == 0) {
+        } else if (strcmp(token, "step") == 0)       {
             ParseMoves(p, ptr);
 #ifdef USE_TUNING
-        } else if (strcmp(token, "tune") == 0) {
+        } else if (strcmp(token, "tune") == 0)       {
             Glob.is_tuning = true;
 #ifndef USE_THREADS
-			printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));
+            printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));
 #else
-			printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().pv_eng));
+            printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().pv_eng));
 #endif
             Glob.is_tuning = false;
 #endif
-        } else if (strcmp(token, "bench") == 0) {
+        } else if (strcmp(token, "bench") == 0)      {
             ptr = ParseToken(ptr, token);
 #ifndef USE_THREADS
             EngineSingle.Bench(atoi(token));
 #else
             Engines.front().Bench(atoi(token));
 #endif
-        } else if (strcmp(token, "quit") == 0) {
+        } else if (strcmp(token, "quit") == 0)       {
             exit(0);
         }
     }
