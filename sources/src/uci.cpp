@@ -226,7 +226,7 @@ void SetMoveTime(int base, int inc, int movestogo) {
 void ParseGo(POS *p, const char *ptr) {
 
     char token[80], bestmove_str[6];
-    int wtime, btime, winc, binc, movestogo, strict_time;
+    int wtime, btime, winc, binc, movestogo; bool strict_time;
     int pvb;
 
     move_time = -1;
@@ -237,7 +237,7 @@ void ParseGo(POS *p, const char *ptr) {
     winc = 0;
     binc = 0;
     movestogo = 40;
-    strict_time = 0;
+    strict_time = false;
     search_depth = 64;
     Par.shut_up = false;
 
@@ -245,31 +245,31 @@ void ParseGo(POS *p, const char *ptr) {
         ptr = ParseToken(ptr, token);
         if (*token == '\0')
             break;
-        if (strcmp(token, "ponder") == 0) {
+        if (strcmp(token, "ponder") == 0)           {
             Glob.pondering = true;
-        } else if (strcmp(token, "depth") == 0) {
+        } else if (strcmp(token, "depth") == 0)     {
             ptr = ParseToken(ptr, token);
             search_depth = atoi(token);
-            strict_time = 1;
-        } else if (strcmp(token, "movetime") == 0) {
+            strict_time = true;
+        } else if (strcmp(token, "movetime") == 0)  {
             ptr = ParseToken(ptr, token);
             move_time = atoi(token);
-            strict_time = 1;
-        } else if (strcmp(token, "nodes") == 0) {
+            strict_time = true;
+        } else if (strcmp(token, "nodes") == 0)     {
             ptr = ParseToken(ptr, token);
             move_nodes = atoi(token);
             move_time = 99999999;
-            strict_time = 1;
-        } else if (strcmp(token, "wtime") == 0) {
+            strict_time = true;
+        } else if (strcmp(token, "wtime") == 0)     {
             ptr = ParseToken(ptr, token);
             wtime = atoi(token);
-        } else if (strcmp(token, "btime") == 0) {
+        } else if (strcmp(token, "btime") == 0)     {
             ptr = ParseToken(ptr, token);
             btime = atoi(token);
-        } else if (strcmp(token, "winc") == 0) {
+        } else if (strcmp(token, "winc") == 0)      {
             ptr = ParseToken(ptr, token);
             winc = atoi(token);
-        } else if (strcmp(token, "binc") == 0) {
+        } else if (strcmp(token, "binc") == 0)      {
             ptr = ParseToken(ptr, token);
             binc = atoi(token);
         } else if (strcmp(token, "movestogo") == 0) {
