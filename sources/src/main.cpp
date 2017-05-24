@@ -109,6 +109,7 @@ void cGlobals::Init() {
     reading_personality = false;
     use_personality_files = false;
     separate_books = false;
+    show_pers_file = true;
     thread_no = 1;
 
     // Clearing  and  setting threads  may  be  necessary

@@ -36,7 +36,8 @@ void PrintUciOptions() {
         // it's unclear if the default 'rodent.txt' will be loaded by request from the GUI
         // something should be done with it: 1. read it here or
         // 2. (better imo) change to 'default ---' to avoid confusion
-        printf("option name PersonalityFile type string default rodent.txt\n");
+        if (pers_aliases.count == 0 || Glob.show_pers_file)
+            printf("option name PersonalityFile type string default rodent.txt\n");
         if (pers_aliases.count != 0) {
             printf("option name Personality type combo default ---"); // `---` in case we want PersonalityFile
             for (int i = 0; i < pers_aliases.count; i++)
@@ -463,6 +464,8 @@ void ReadPersonality(const char *fileName) {
         // which UCI options are exposed to the user?
         if (strstr(line, "HIDE_OPTIONS")) Glob.use_personality_files = true;
         if (strstr(line, "SHOW_OPTIONS")) Glob.use_personality_files = false;
+
+        if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false;
 
         // aliases for personalities
         char *pos = strchr(line, '=');
