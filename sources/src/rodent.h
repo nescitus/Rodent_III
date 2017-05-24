@@ -553,6 +553,7 @@ class cGlobals {
     bool should_clear;
     bool goodbye;
     bool use_personality_files;
+    bool show_pers_file;
     glob_int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels
     int thread_no;
@@ -726,6 +727,15 @@ class cEngine {
     extern cEngine EngineSingle;
 #endif
 
+#define PERSALIAS_ALEN       32
+#define PERSALIAS_PLEN       200
+#define PERSALIAS_MAXALIASES 100
+struct sPersAliases {
+    char alias[PERSALIAS_MAXALIASES][PERSALIAS_ALEN];
+    char path[PERSALIAS_MAXALIASES][PERSALIAS_PLEN];
+    int count;
+};
+
 void InitSearch();
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
@@ -786,6 +796,8 @@ extern int move_time;
 extern int move_nodes;
 extern int search_depth;
 extern int start_time;
+
+extern sPersAliases pers_aliases;
 
 extern unsigned int tt_size;
 extern unsigned int tt_mask;

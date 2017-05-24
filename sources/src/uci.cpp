@@ -65,21 +65,7 @@ void UciLoop() {
         ReadLine(command, sizeof(command));
         ptr = ParseToken(command, token);
 
-        // boolean option: strength limit
-
-        if (strstr(command, "setoption name UCI_LimitStrength value"))
-            Par.fl_weakening = (strstr(command, "value true") != 0);
-        if (strstr(command, "setoption name uci_limitstrength value"))
-            Par.fl_weakening = (strstr(command, "value true") != 0);
-
-        // boolean option: opening book usage
-
-        if (strstr(command, "setoption name UseBook value"))
-            Par.use_book = (strstr(command, "value true") != 0);
-        if (strstr(command, "setoption name usebook value"))
-            Par.use_book = (strstr(command, "value true") != 0);
-
-        if (strcmp(token, "uci") == 0) {
+        if (strcmp(token, "uci") == 0)               {
             printf("id name Rodent III 0.200\n");
             Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
@@ -88,38 +74,38 @@ void UciLoop() {
         } else if (strcmp(token, "ucinewgame") == 0) {
             ClearTrans();
             Glob.ClearData();
-        } else if (strcmp(token, "isready") == 0) {
+        } else if (strcmp(token, "isready") == 0)    {
             printf("readyok\n");
-        } else if (strcmp(token, "setoption") == 0) {
+        } else if (strcmp(token, "setoption") == 0)  {
             ParseSetoption(ptr);
-        } else if (strcmp(token, "so") == 0) {
+        } else if (strcmp(token, "so") == 0)         {
             ParseSetoption(ptr);
-        } else if (strcmp(token, "position") == 0) {
+        } else if (strcmp(token, "position") == 0)   {
             ParsePosition(p, ptr);
-        } else if (strcmp(token, "go") == 0) {
+        } else if (strcmp(token, "go") == 0)         {
             ParseGo(p, ptr);
-        } else if (strcmp(token, "print") == 0) {
+        } else if (strcmp(token, "print") == 0)      {
             PrintBoard(p);
-        } else if (strcmp(token, "step") == 0) {
+        } else if (strcmp(token, "step") == 0)       {
             ParseMoves(p, ptr);
 #ifdef USE_TUNING
-        } else if (strcmp(token, "tune") == 0) {
+        } else if (strcmp(token, "tune") == 0)       {
             Glob.is_tuning = true;
 #ifndef USE_THREADS
-			printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));
+            printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));
 #else
-			printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().pv_eng));
+            printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().pv_eng));
 #endif
             Glob.is_tuning = false;
 #endif
-        } else if (strcmp(token, "bench") == 0) {
+        } else if (strcmp(token, "bench") == 0)      {
             ptr = ParseToken(ptr, token);
 #ifndef USE_THREADS
             EngineSingle.Bench(atoi(token));
 #else
             Engines.front().Bench(atoi(token));
 #endif
-        } else if (strcmp(token, "quit") == 0) {
+        } else if (strcmp(token, "quit") == 0)       {
             exit(0);
         }
     }
@@ -226,7 +212,7 @@ void SetMoveTime(int base, int inc, int movestogo) {
 void ParseGo(POS *p, const char *ptr) {
 
     char token[80], bestmove_str[6];
-    int wtime, btime, winc, binc, movestogo, strict_time;
+    int wtime, btime, winc, binc, movestogo; bool strict_time;
     int pvb;
 
     move_time = -1;
@@ -237,7 +223,7 @@ void ParseGo(POS *p, const char *ptr) {
     winc = 0;
     binc = 0;
     movestogo = 40;
-    strict_time = 0;
+    strict_time = false;
     search_depth = 64;
     Par.shut_up = false;
 
@@ -245,31 +231,31 @@ void ParseGo(POS *p, const char *ptr) {
         ptr = ParseToken(ptr, token);
         if (*token == '\0')
             break;
-        if (strcmp(token, "ponder") == 0) {
+        if (strcmp(token, "ponder") == 0)           {
             Glob.pondering = true;
-        } else if (strcmp(token, "depth") == 0) {
+        } else if (strcmp(token, "depth") == 0)     {
             ptr = ParseToken(ptr, token);
             search_depth = atoi(token);
-            strict_time = 1;
-        } else if (strcmp(token, "movetime") == 0) {
+            strict_time = true;
+        } else if (strcmp(token, "movetime") == 0)  {
             ptr = ParseToken(ptr, token);
             move_time = atoi(token);
-            strict_time = 1;
-        } else if (strcmp(token, "nodes") == 0) {
+            strict_time = true;
+        } else if (strcmp(token, "nodes") == 0)     {
             ptr = ParseToken(ptr, token);
             move_nodes = atoi(token);
             move_time = 99999999;
-            strict_time = 1;
-        } else if (strcmp(token, "wtime") == 0) {
+            strict_time = true;
+        } else if (strcmp(token, "wtime") == 0)     {
             ptr = ParseToken(ptr, token);
             wtime = atoi(token);
-        } else if (strcmp(token, "btime") == 0) {
+        } else if (strcmp(token, "btime") == 0)     {
             ptr = ParseToken(ptr, token);
             btime = atoi(token);
-        } else if (strcmp(token, "winc") == 0) {
+        } else if (strcmp(token, "winc") == 0)      {
             ptr = ParseToken(ptr, token);
             winc = atoi(token);
-        } else if (strcmp(token, "binc") == 0) {
+        } else if (strcmp(token, "binc") == 0)      {
             ptr = ParseToken(ptr, token);
             binc = atoi(token);
         } else if (strcmp(token, "movestogo") == 0) {
