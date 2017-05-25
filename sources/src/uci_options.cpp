@@ -144,7 +144,7 @@ void ParseSetoption(const char *ptr) {
         name[i] = tolower(name[i]); // we can't lowercase `value` 'coz paths are case-sensitive on linux
 
 #ifndef NDEBUG
-    printf( "(debug) setoption name:  '%s' value: '%s'\n", name, value );
+    printf( "(debug) setoption name: '%s' value: '%s'\n", name, value );
 #endif
 
     if (strcmp(name, "hash") == 0)                                           {
@@ -452,9 +452,11 @@ void ReadPersonality(const char *fileName) {
     // set flag in case we want to disable some options while reading personality from a file
     Glob.reading_personality = true;
 
-    char line[256], token[180]; int cnt = 0;
+    char line[256], token[180]; int cnt = 0; char *pos;
 
     while (fgets(line, sizeof(line), personalityFile)) {    // read options line by line
+
+        while (pos = strpbrk(line, "\r\n")) *pos = '\0'; // clean the sh!t
 
         // do we pick opening book within a personality?
         if (strstr(line, "PERSONALITY_BOOKS")) Glob.separate_books = false;
@@ -471,12 +473,11 @@ void ReadPersonality(const char *fileName) {
         if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false;
 
         // aliases for personalities
-        char *pos = strchr(line, '=');
+        pos = strchr(line, '=');
         if (pos) {
             *pos = '\0';
             strncpy(pers_aliases.alias[cnt], line, PERSALIAS_ALEN-1); // -1 coz `strncpy` has a very unexpected glitch
             strncpy(pers_aliases.path[cnt], pos+1, PERSALIAS_PLEN-1); // see the C11 language standard, note 308
-            while (pos = strpbrk(pers_aliases.path[cnt], "\r\n")) *pos = '\0'; // clean the sh!t
             cnt++;
             continue;
         }
