@@ -143,6 +143,10 @@ void ParseSetoption(const char *ptr) {
     for (int i = 0; name[i]; i++)   // make `name` lowercase
         name[i] = tolower(name[i]); // we can't lowercase `value` 'coz paths are case-sensitive on linux
 
+#ifndef NDEBUG
+    printf( "(debug) setoption name:  '%s' value: '%s'\n", name, value );
+#endif
+
     if (strcmp(name, "hash") == 0)                                           {
         AllocTrans(atoi(value));
 #ifdef USE_THREADS
