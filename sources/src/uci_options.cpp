@@ -113,40 +113,32 @@ static void valuebool(bool& param, char *val) {
     if (strcmp(val, "false") == 0) param = false;
 }
 
-static void trimstring(char *in_str) {
+static char *pseudotrimstring(char *in_str) {
 
-    int first_non_space;
-    for (first_non_space = 0; in_str[first_non_space] == ' '; first_non_space++);
+    for (int last = strlen(in_str)-1; last >= 0 && in_str[last] == ' '; last--)
+        in_str[last] = '\0';
 
-    int last_non_space;
-    for (last_non_space = strlen(in_str)-1; last_non_space >= 0 && in_str[last_non_space] == ' '; last_non_space--)
-        in_str[last_non_space] = '\0';
+    while (*in_str == ' ') in_str++;
 
-    if (last_non_space > 0)
-        memmove(in_str, in_str + first_non_space, last_non_space - first_non_space + 2);
+    return in_str;
 }
 
 void ParseSetoption(const char *ptr) {
 
-    char name[80], value[200];
+    char *name, *value;
 
-    const char *npos = strstr(ptr, " name ");    // len(" name ") == 6, len(" value ") == 7
+    char *npos = (char *)strstr(ptr, " name ");  // len(" name ") == 6, len(" value ") == 7
     char *vpos = (char *)strstr(ptr, " value "); // sorry for an ugly "unconst"
 
-    if ( !npos || (vpos && npos + 6 > vpos) ) return; // if no 'name' or name field is empty
+    if ( !npos ) return; // if no 'name'
 
     if ( vpos ) {
         *vpos = '\0';
-        strcpy(value, vpos + 7);
-        trimstring(value);
+        value = pseudotrimstring(vpos + 7);
     }
-    else
-        value[0] = '\0'; // btw, empty value field is against the rules so the word 'value' goes to the name buf in that case
+    else value = npos; // fake, just to prevent possible crash if misusing
 
-    strcpy(name, npos + 6);
-    trimstring(name);
-
-    if (!name[0]) return;
+    name = pseudotrimstring(npos + 6);
 
     for (int i = 0; name[i]; i++)   // make `name` lowercase
         name[i] = tolower(name[i]); // we can't lowercase `value` 'coz paths are case-sensitive on linux
