@@ -113,33 +113,40 @@ static void valuebool(bool& param, char *val) {
     if (strcmp(val, "false") == 0) param = false;
 }
 
+static void trimstring(char *in_str) {
+
+    int first_non_space;
+    for (first_non_space = 0; in_str[first_non_space] == ' '; first_non_space++);
+
+    int last_non_space;
+    for (last_non_space = strlen(in_str)-1; last_non_space >= 0 && in_str[last_non_space] == ' '; last_non_space--)
+        in_str[last_non_space] = '\0';
+
+    if (last_non_space > 0)
+        memmove(in_str, in_str + first_non_space, last_non_space - first_non_space + 2);
+}
+
 void ParseSetoption(const char *ptr) {
 
-    char token[160], name[80], value[160];
+    char name[80], value[200];
 
-    ptr = ParseToken(ptr, token);
-    name[0] = '\0';
-    for (;;) {
-        ptr = ParseToken(ptr, token);
-        if (*token == '\0' || strcmp(token, "value") == 0)
-            break;
-        strcat(name, token);
-        strcat(name, " ");
+    const char *npos = strstr(ptr, " name ");    // len(" name ") == 6, len(" value ") == 7
+    char *vpos = (char *)strstr(ptr, " value "); // sorry for an ugly "unconst"
+
+    if ( !npos || (vpos && npos + 6 > vpos) ) return; // if no 'name' or name field is empty
+
+    if ( vpos ) {
+        *vpos = '\0';
+        strcpy(value, vpos + 7);
+        trimstring(value);
     }
-    if (name[0] == '\0') return;
-    name[strlen(name) - 1] = '\0';
-    if (strcmp(token, "value") == 0) {
-        value[0] = '\0';
-        for (;;) {
-            ptr = ParseToken(ptr, token);
-            if (*token == '\0')
-                break;
-            strcat(value, token);
-            strcat(value, " ");
-        }
-        if (value[0] == '\0') return;
-        value[strlen(value) - 1] = '\0';
-    }
+    else
+        value[0] = '\0'; // btw, empty value field is against the rules so the word 'value' goes to the name buf in that case
+
+    strcpy(name, npos + 6);
+    trimstring(name);
+
+    if (!name[0]) return;
 
     for (int i = 0; name[i]; i++)   // make `name` lowercase
         name[i] = tolower(name[i]); // we can't lowercase `value` 'coz paths are case-sensitive on linux
