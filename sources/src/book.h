@@ -18,6 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include <cstdio>
+#include <cstring>
 
 struct polyglot_move {
     U64 key;
@@ -44,13 +45,9 @@ struct sBook {
   public:
     sBook(): bookFile(NULL) {}
     void SetBookName(const char *name) {
-        int i;
-        for (i = 0; (name[i] >= 0x20) && (i < sizeof(bookName) - 1); i++)
-            bookName[i] = name[i];
-        bookName[i] = '\0';
 
+        strcpy(bookName, name);
         OpenPolyglot();
-
         printf("info string opening book file \'%s\' (%s)\n", bookName, bookFile == NULL ? "failure" : "success");
     }
     ~sBook() { ClosePolyglot(); }
