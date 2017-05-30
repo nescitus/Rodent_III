@@ -42,7 +42,7 @@ class ChessHeapClass {
 
 #ifndef NDEBUG
             if (success)
-                printf("allocated: %dMB\n", bucket_sizs[i]);
+                printf("(debug) allocated: %dMB\n", bucket_sizs[i]);
 #endif
         }
 

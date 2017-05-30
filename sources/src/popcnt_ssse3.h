@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <tmmintrin.h>
 
 static const __m128i popcount_mask = _mm_set1_epi8(0x0F);

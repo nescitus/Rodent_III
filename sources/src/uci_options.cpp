@@ -113,36 +113,39 @@ static void valuebool(bool& param, char *val) {
     if (strcmp(val, "false") == 0) param = false;
 }
 
+static char *pseudotrimstring(char *in_str) {
+
+    for (int last = strlen(in_str)-1; last >= 0 && in_str[last] == ' '; last--)
+        in_str[last] = '\0';
+
+    while (*in_str == ' ') in_str++;
+
+    return in_str;
+}
+
 void ParseSetoption(const char *ptr) {
 
-    char token[160], name[80], value[160];
+    char *name, *value;
 
-    ptr = ParseToken(ptr, token);
-    name[0] = '\0';
-    for (;;) {
-        ptr = ParseToken(ptr, token);
-        if (*token == '\0' || strcmp(token, "value") == 0)
-            break;
-        strcat(name, token);
-        strcat(name, " ");
+    char *npos = (char *)strstr(ptr, " name ");  // len(" name ") == 6, len(" value ") == 7
+    char *vpos = (char *)strstr(ptr, " value "); // sorry for an ugly "unconst"
+
+    if ( !npos ) return; // if no 'name'
+
+    if ( vpos ) {
+        *vpos = '\0';
+        value = pseudotrimstring(vpos + 7);
     }
-    if (name[0] == '\0') return;
-    name[strlen(name) - 1] = '\0';
-    if (strcmp(token, "value") == 0) {
-        value[0] = '\0';
-        for (;;) {
-            ptr = ParseToken(ptr, token);
-            if (*token == '\0')
-                break;
-            strcat(value, token);
-            strcat(value, " ");
-        }
-        if (value[0] == '\0') return;
-        value[strlen(value) - 1] = '\0';
-    }
+    else value = npos; // fake, just to prevent possible crash if misusing
+
+    name = pseudotrimstring(npos + 6);
 
     for (int i = 0; name[i]; i++)   // make `name` lowercase
         name[i] = tolower(name[i]); // we can't lowercase `value` 'coz paths are case-sensitive on linux
+
+#ifndef NDEBUG
+    printf( "(debug) setoption name: '%s' value: '%s'\n", name, value );
+#endif
 
     if (strcmp(name, "hash") == 0)                                           {
         AllocTrans(atoi(value));
@@ -449,9 +452,11 @@ void ReadPersonality(const char *fileName) {
     // set flag in case we want to disable some options while reading personality from a file
     Glob.reading_personality = true;
 
-    char line[256], token[180]; int cnt = 0;
+    char line[256], token[180]; int cnt = 0; char *pos;
 
     while (fgets(line, sizeof(line), personalityFile)) {    // read options line by line
+
+        while (pos = strpbrk(line, "\r\n")) *pos = '\0'; // clean the sh!t
 
         // do we pick opening book within a personality?
         if (strstr(line, "PERSONALITY_BOOKS")) Glob.separate_books = false;
@@ -468,12 +473,11 @@ void ReadPersonality(const char *fileName) {
         if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false;
 
         // aliases for personalities
-        char *pos = strchr(line, '=');
+        pos = strchr(line, '=');
         if (pos) {
             *pos = '\0';
             strncpy(pers_aliases.alias[cnt], line, PERSALIAS_ALEN-1); // -1 coz `strncpy` has a very unexpected glitch
             strncpy(pers_aliases.path[cnt], pos+1, PERSALIAS_PLEN-1); // see the C11 language standard, note 308
-            while (pos = strpbrk(pers_aliases.path[cnt], "\r\n")) *pos = '\0'; // clean the sh!t
             cnt++;
             continue;
         }

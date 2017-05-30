@@ -6212,8 +6212,6 @@ int sInternalBook::MoveFromInternal(POS *p) {
 
     if (n_of_choices) {
 
-        srand(GetMS());
-
         for (i = 0; i < n_of_choices; i++) {
 
             // pick move with the best random value based on frequency
