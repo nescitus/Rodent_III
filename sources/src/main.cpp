@@ -17,6 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 #include "book.h"
+#include <cstdlib>
 
 cGlobals Glob;
 
@@ -52,7 +53,9 @@ int main() {
 		printf("%3d : %d\n", i, (int)j);
 	}
 	*/
-	
+
+    srand(GetMS());
+
     BB.Init();
     InitSearch();
     Init();

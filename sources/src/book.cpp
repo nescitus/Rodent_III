@@ -368,7 +368,6 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
     n_of_choices = 0;
 
     if (bookFile != NULL) {
-        srand(GetMS());
 
         for (pos = FindPos(key); pos < book_size; pos++) {
 
@@ -478,12 +477,6 @@ void sBook::ClosePolyglot() {
         bookFile = NULL;
     }
 }
-
-//void sBook::Init() {
-//
-//  bookFile = NULL;
-//  book_size = 0;
-//}
 
 bool sBook::IsInfrequent(int val, int max_freq) {
 
