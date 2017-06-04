@@ -435,13 +435,13 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
         if (!(stop & OccBb(p))) {
            if (!(stop & e->p_can_take[op])) {
               if (BB.GetPawnControl(stop, sd) & (p->Bishops(op) | p->Knights(op)))
-                  Add(e, sd, 4);
+                  Add(e, sd, Par.values[P_THR]);
               if (SqBb(sq) & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
                    U64 next = BB.ShiftFwd(stop, sd);
                    if (!(next & OccBb(p))) {
                        if (!(next & e->p_can_take[op])) {
                            if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
-                              Add(e, sd, 4);
+                              Add(e, sd, Par.values[P_THR]);
                        }
                    }
                }
@@ -453,10 +453,12 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
         if (!(Mask.passed[sd][sq] & p->Pawns(op))) {
             mul = 100;
 
-            if (stop & OccBb(p)) mul -= 23;   // blocked passers score less
+            if (stop & OccBb(p)) mul -= Par.values[P_BL_MUL];   // blocked passers score less
 
             else if ((stop & e->all_att[sd])  // our control of stop square
-                 && (stop & ~e->all_att[op])) mul += 14;
+                 && (stop & ~e->all_att[op])) mul += Par.values[P_OURSTOP_MUL];
+
+            // TODO: what about penalty for exclusive enemy control of stop square?
 
             // in the midgame, we use just a bonus from the table
             // in the endgame, passed pawn attracts both kings.

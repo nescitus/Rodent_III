@@ -90,17 +90,17 @@ void cParam::DefaultWeights() {
 	// to a non-linear king safety table. Tune them with extreme caution.
 
 	values[N_ATT1] = 6;  // 6
-	values[N_ATT2] = 3;  // 2
+	values[N_ATT2] = 3;  // 3
 	values[B_ATT1] = 6;  // 6
 	values[B_ATT2] = 2;  // 2
     values[R_ATT1] = 9;  // 9
-    values[R_ATT2] = 4;  // 3
-    values[Q_ATT1] = 16; // 15
+    values[R_ATT2] = 4;  // 4
+    values[Q_ATT1] = 16; // 16
     values[Q_ATT2] = 5;  // 5
 
 	values[N_CHK] = 4;   // 4
-	values[B_CHK] = 6;   // 4
-	values[R_CHK] = 11;  // 9
+	values[B_CHK] = 6;   // 6
+	values[R_CHK] = 11;  // 11
 	values[Q_CHK] = 12;  // 12
 
 	values[R_CONTACT] = 24; // 24
@@ -163,26 +163,32 @@ void cParam::DefaultWeights() {
     values[BK_OPE] = -8;   // additional midgame penalty for backward pawn on an open file
 	values[P_BIND] = 5;    // two pawns control central square
 	values[P_ISL] = 7;     // penalty for each pawn island
+	values[P_THR] = 4;     // pawn move threatens to attack enemy minor
 
-    // Passed pawn parameters
+    // Passed pawn bonuses per rank
 
-    values[PMG2] = 12;
-    values[PMG3] = 12;
-	values[PMG4] = 30;
-	values[PMG5] = 50;
-	values[PMG6] = 80;
-	values[PMG7] = 130;
+    values[PMG2] = 12;  //  12
+    values[PMG3] = 12;  //  12
+	values[PMG4] = 30;  //  30
+	values[PMG5] = 50;  //  50
+	values[PMG6] = 80;  //  80
+	values[PMG7] = 130; // 130
 
-	values[PEG2] = 24;
-	values[PEG3] = 24;
-	values[PEG4] = 60;
-	values[PEG5] = 100;
-	values[PEG6] = 160;
-	values[PEG7] = 260;
+	values[PEG2] = 24;  //  24
+	values[PEG3] = 24;  //  24
+	values[PEG4] = 60;  //  60
+	values[PEG5] = 99;  // 100
+	values[PEG6] = 161; // 160
+	values[PEG7] = 260; // 260
+
+	// Passed pawn value percentage modifiers
+
+	values[P_BL_MUL] = 23;      // blocked passer
+	values[P_OURSTOP_MUL] = 14; // side with a passer controls its stop square
 
     // Knight parameters
 
-    values[N_TRAP] = -150;
+    values[N_TRAP] = -150; // trapped knight
     values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
 	values[N_OWH] = -5;    // knight can move only to own half of the board
 	values[N_REACH] = 2;   // knight can reach an outpost square

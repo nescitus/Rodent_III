@@ -316,6 +316,15 @@ void ParseSetoption(const char *ptr) {
         Par.values[PEG7] = atoi(value);
         Par.InitPassers();
         Glob.should_clear = true;
+    } else if (strcmp(name, "pbl") == 0 )                                    {
+        Par.values[P_BL_MUL] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pstop") == 0 )                                  {
+        Par.values[P_OURSTOP_MUL] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pthr") == 0 )                                   {
+        Par.values[P_THR] = atoi(value);
+        Glob.should_clear = true;
     } else if (strcmp(name, "bishoppair") == 0)                              {
         Par.values[B_PAIR] = atoi(value);
         Glob.should_clear = true;
