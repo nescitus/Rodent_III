@@ -17,30 +17,6 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#define PMG2 12
-#define PMG3 12
-#define PMG4 30
-#define PMG5 50
-#define PMG6 80
-#define PMG7 130
-
-#define PEG2 24
-#define PEG3 24
-#define PEG4 60
-#define PEG5 100
-#define PEG6 160
-#define PEG7 260
-
-static const int passed_bonus_mg[2][8] = {
-    { 0, PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, 0 },
-    { 0, PMG7, PMG6, PMG5, PMG4, PMG3, PMG2, 0 }
-};
-
-static const int passed_bonus_eg[2][8] = {
-    { 0, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7, 0 },
-    { 0, PEG7, PEG6, PEG5, PEG4, PEG3, PEG2, 0 }
-};
-
 /*
 Rodent can use several sets of piece/square tables (currently 4).
 

@@ -106,8 +106,6 @@ void cParam::DefaultWeights() {
 	values[R_CONTACT] = 24; // 24
 	values[Q_CONTACT] = 36; // 36
 
-	// TODO: add check bonuses
-
     // King tropism
 
     values[NTR_MG] = 3;
@@ -165,6 +163,22 @@ void cParam::DefaultWeights() {
     values[BK_OPE] = -8;   // additional midgame penalty for backward pawn on an open file
 	values[P_BIND] = 5;    // two pawns control central square
 	values[P_ISL] = 7;     // penalty for each pawn island
+
+    // Passed pawn parameters
+
+    values[PMG2] = 12;
+    values[PMG3] = 12;
+	values[PMG4] = 30;
+	values[PMG5] = 50;
+	values[PMG6] = 80;
+	values[PMG7] = 130;
+
+	values[PEG2] = 24;
+	values[PEG3] = 24;
+	values[PEG4] = 60;
+	values[PEG5] = 100;
+	values[PEG6] = 160;
+	values[PEG7] = 260;
 
     // Knight parameters
 
@@ -228,6 +242,7 @@ void cParam::DefaultWeights() {
     InitMobility();
     InitMaterialTweaks();
     InitBackward();
+	InitPassers();
 
     // History limit to prunings and reductions
 
@@ -236,6 +251,27 @@ void cParam::DefaultWeights() {
 
     // when testing a personality, place changes in relation to default below:
 
+}
+
+void cParam::InitPassers() {
+
+	passed_bonus_mg[WC][0] = 0;                passed_bonus_mg[BC][7] = 0;
+	passed_bonus_mg[WC][1] = values[PMG2];     passed_bonus_mg[BC][6] = values[PMG2];
+	passed_bonus_mg[WC][2] = values[PMG3];     passed_bonus_mg[BC][5] = values[PMG3];
+	passed_bonus_mg[WC][3] = values[PMG4];     passed_bonus_mg[BC][4] = values[PMG4];
+	passed_bonus_mg[WC][4] = values[PMG5];     passed_bonus_mg[BC][3] = values[PMG5];
+	passed_bonus_mg[WC][5] = values[PMG6];     passed_bonus_mg[BC][2] = values[PMG6];
+	passed_bonus_mg[WC][6] = values[PMG7];     passed_bonus_mg[BC][1] = values[PMG7];
+	passed_bonus_mg[WC][7] = 0;                passed_bonus_mg[BC][0] = 0;
+
+	passed_bonus_eg[WC][0] = 0;                passed_bonus_eg[BC][7] = 0;
+	passed_bonus_eg[WC][1] = values[PEG2];     passed_bonus_eg[BC][6] = values[PEG2];
+	passed_bonus_eg[WC][2] = values[PEG3];     passed_bonus_eg[BC][5] = values[PEG3];
+	passed_bonus_eg[WC][3] = values[PEG4];     passed_bonus_eg[BC][4] = values[PEG4];
+	passed_bonus_eg[WC][4] = values[PEG5];     passed_bonus_eg[BC][3] = values[PEG5];
+	passed_bonus_eg[WC][5] = values[PEG6];     passed_bonus_eg[BC][2] = values[PEG6];
+	passed_bonus_eg[WC][6] = values[PEG7];     passed_bonus_eg[BC][1] = values[PEG7];
+	passed_bonus_eg[WC][7] = 0;                passed_bonus_eg[BC][0] = 0;
 }
 
 void cParam::InitBackward() {

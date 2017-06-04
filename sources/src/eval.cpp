@@ -386,7 +386,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
         if (fl_unopposed) {
             if (fl_phalanx) {
                 if (BB.PopCnt((Mask.passed[sd][sq] & p->Pawns(op))) == 1)
-                    AddPawns(e, sd, passed_bonus_mg[sd][Rank(sq)] / 3, passed_bonus_eg[sd][Rank(sq)] / 3);
+                    AddPawns(e, sd, Par.passed_bonus_mg[sd][Rank(sq)] / 3, Par.passed_bonus_eg[sd][Rank(sq)] / 3);
             }
         }
 
@@ -461,10 +461,10 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
             // in the midgame, we use just a bonus from the table
             // in the endgame, passed pawn attracts both kings.
 
-            mg_tmp = passed_bonus_mg[sd][Rank(sq)];
-            eg_tmp = passed_bonus_eg[sd][Rank(sq)]
-                     - ((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[op]]) / 30)
-                     + ((passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[sd]]) / 90);
+            mg_tmp = Par.passed_bonus_mg[sd][Rank(sq)];
+            eg_tmp = Par.passed_bonus_eg[sd][Rank(sq)]
+                     - ((Par.passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[op]]) / 30)
+                     + ((Par.passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[sd]]) / 90);
 
             mg_tot += (mg_tmp * mul) / 100;
             eg_tot += (eg_tmp * mul) / 100;

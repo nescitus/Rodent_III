@@ -268,6 +268,54 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "rcon") == 0 )                                   {
         Par.values[R_CONTACT] = atoi(value);
         Glob.should_clear = true;
+    } else if (strcmp(name, "pmg2") == 0 )                                   {
+        Par.values[PMG2] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pmg3") == 0 )                                   {
+        Par.values[PMG3] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pmg4") == 0 )                                   {
+        Par.values[PMG4] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pmg5") == 0 )                                   {
+        Par.values[PMG5] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pmg6") == 0 )                                   {
+        Par.values[PMG6] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pmg7") == 0 )                                   {
+        Par.values[PMG7] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "peg2") == 0 )                                   {
+        Par.values[PEG2] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "peg3") == 0 )                                   {
+        Par.values[PEG3] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "peg4") == 0 )                                   {
+        Par.values[PEG4] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "peg5") == 0 )                                   {
+        Par.values[PEG5] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "peg6") == 0 )                                   {
+        Par.values[PEG6] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "peg7") == 0 )                                   {
+        Par.values[PEG7] = atoi(value);
+        Par.InitPassers();
+        Glob.should_clear = true;
     } else if (strcmp(name, "bishoppair") == 0)                              {
         Par.values[B_PAIR] = atoi(value);
         Glob.should_clear = true;
