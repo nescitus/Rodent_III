@@ -38,7 +38,7 @@ void cEngine::EvaluateMaterial(POS *p, eData *e, int sd) {
     int op = Opp(sd);
 
     int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]    // knights lose value as pawns disappear
-              - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R]; // rooks gain value as pawns disappear
+            - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];   // rooks gain value as pawns disappear
 
     if (p->cnt[sd][N] > 1) tmp += Par.values[N_PAIR];        // knight pair
     if (p->cnt[sd][R] > 1) tmp += Par.values[R_PAIR];        // rook pair
