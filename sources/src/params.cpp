@@ -185,6 +185,7 @@ void cParam::DefaultWeights() {
 
 	values[P_BL_MUL] = 23;      // blocked passer
 	values[P_OURSTOP_MUL] = 14; // side with a passer controls its stop square
+	values[P_OPPSTOP_MUL] = 10; // side without a passer controls its stop square
 
     // Knight parameters
 

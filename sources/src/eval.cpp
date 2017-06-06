@@ -458,6 +458,9 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
             else if ((stop & e->all_att[sd])  // our control of stop square
                  && (stop & ~e->all_att[op])) mul += Par.values[P_OURSTOP_MUL];
 
+			else if ((stop & e->all_att[op])  // opp control of stop square
+				&& (stop & ~e->all_att[sd])) mul -= Par.values[P_OPPSTOP_MUL];
+
             // TODO: what about penalty for exclusive enemy control of stop square?
 
             // in the midgame, we use just a bonus from the table
