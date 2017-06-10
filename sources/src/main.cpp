@@ -57,8 +57,8 @@ int main() {
     srand(GetMS());
 
     BB.Init();
-    InitSearch();
-    Init();
+    cEngine::InitSearch();
+    POS::Init();
     Glob.Init();
     Par.DefaultWeights();
     Par.InitTables();
@@ -108,7 +108,7 @@ int main() {
 
 void cGlobals::Init() {
 
-	is_testing = false;
+    is_testing = false;
     reading_personality = false;
     use_personality_files = false;
     separate_books = false;

@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "rodent.h"
 
 int max_depth_completed;
-int castle_mask[64];
+int POS::castle_mask[64];
 
 const int bit_table[64] = {
     0,  1,  2,  7,  3, 13,  8, 19,

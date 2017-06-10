@@ -21,9 +21,9 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstring>
 #include <cmath>
 
-const int razor_margin[5] = { 0, 300, 360, 420, 480 };
-const int fut_margin[7] = { 0, 100, 160, 220, 280, 340, 400 };
-int lmr_size[2][MAX_PLY][MAX_MOVES];
+const int cEngine::razor_margin[5] = { 0, 300, 360, 420, 480 };
+const int cEngine::fut_margin[7] = { 0, 100, 160, 220, 280, 340, 400 };
+int cEngine::lmr_size[2][MAX_PLY][MAX_MOVES];
 
 void cParam::InitAsymmetric(POS *p) {
 
@@ -54,7 +54,7 @@ void cGlobals::ClearData() {
     should_clear = false;
 }
 
-void InitSearch() {
+void cEngine::InitSearch() { // static init function
 
     // Set depth of late move reduction (formula based on Stockfish)
 
