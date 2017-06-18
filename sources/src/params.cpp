@@ -120,7 +120,7 @@ void cParam::DefaultWeights() {
     // Varia
 
     mat_weight = 100;
-	pst_weight = 79;
+	pst_weight = 75;
     pst_style = 0;
     mob_style = 0;         // 1 is only marginally behind
 
@@ -128,7 +128,7 @@ void cParam::DefaultWeights() {
     riskydepth = 0;
 #endif
     draw_score = 0;
-    shut_up = false;           // suppress displaing info currmove etc.
+    shut_up = false;           // true suppresses displaing info currmove etc.
 
     // Asymmetric weights - the core of personality mechanism
 
