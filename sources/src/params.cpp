@@ -41,19 +41,19 @@ void cParam::DefaultWeights() {
     time_percentage = 100;
 
     // Piece values
-	// 0.059156
+	// 0.056823
 
-    values[P_MID] = 95;   // 95
-    values[N_MID] = 310;  // 310
-    values[B_MID] = 322;  // 320
-    values[R_MID] = 514;  // 515
+    values[P_MID] = 95;
+    values[N_MID] = 310;
+    values[B_MID] = 322;
+    values[R_MID] = 514;
     values[Q_MID] = 1000;
 
-    values[P_END] = 110;  // 106
-    values[N_END] = 305;  // 305
-    values[B_END] = 320;  // 320
-    values[R_END] = 527;  // 520
-    values[Q_END] = 1012; // 1010
+    values[P_END] = 110;
+    values[N_END] = 305;
+    values[B_END] = 320;
+    values[R_END] = 529;
+    values[Q_END] = 1013;
 
     // Tendency to keep own pieces
 
@@ -71,12 +71,12 @@ void cParam::DefaultWeights() {
     values[N_PAIR]  = -9;
     values[R_PAIR]  = -9;
     values[ELEPH]  = 4;  // queen loses that much with each enemy minor on the board
-    values[A_EXC]  = 29; // exchange advantage additional bonus
+    values[A_EXC]  = 30; // exchange advantage additional bonus
     values[A_MIN] = 53;  // additional bonus for minor piece advantage
     values[A_MAJ] = 60;  // additional bonus for major piece advantage
     values[A_TWO] = 44;  // additional bonus for two minors for a rook
     values[A_ALL] = 80;  // additional bonus for advantage in both majors and minors
-    values[N_CL]  = 7;   // knight gains this much with each own pawn present on th board
+    values[N_CL]  = 6;   // knight gains this much with each own pawn present on th board
     values[R_OP]  = 3;   // rook loses that much with each own pawn present on the board
 
     // King attack values
@@ -89,22 +89,22 @@ void cParam::DefaultWeights() {
 	// All these values are NOT the actual bonuses; their sum is used as index 
 	// to a non-linear king safety table. Tune them with extreme caution.
 
-	values[N_ATT1] = 6;  // 6
-	values[N_ATT2] = 3;  // 3
-	values[B_ATT1] = 6;  // 6
-	values[B_ATT2] = 2;  // 2
-    values[R_ATT1] = 9;  // 9
-    values[R_ATT2] = 4;  // 4
-    values[Q_ATT1] = 16; // 16
-    values[Q_ATT2] = 5;  // 5
+	values[N_ATT1] = 6;
+	values[N_ATT2] = 3;
+	values[B_ATT1] = 6;
+	values[B_ATT2] = 2;
+    values[R_ATT1] = 9;
+    values[R_ATT2] = 4;
+    values[Q_ATT1] = 16;
+    values[Q_ATT2] = 5;
 
-	values[N_CHK] = 4;   // 4
-	values[B_CHK] = 6;   // 6
-	values[R_CHK] = 11;  // 11
-	values[Q_CHK] = 12;  // 12
+	values[N_CHK] = 4;
+	values[B_CHK] = 6;
+	values[R_CHK] = 11;
+	values[Q_CHK] = 12;
 
-	values[R_CONTACT] = 24; // 24
-	values[Q_CONTACT] = 36; // 36
+	values[R_CONTACT] = 24;
+	values[Q_CONTACT] = 36;
 
     // King tropism
 
@@ -139,7 +139,7 @@ void cParam::DefaultWeights() {
 
     // Positional weights
 
-    threats_weight = 108;
+    threats_weight = 109;
     tropism_weight = 20;
     forward_weight = 0;
     passers_weight = 100;
@@ -148,38 +148,38 @@ void cParam::DefaultWeights() {
     outposts_weight = 95;
     lines_weight = 100;
     struct_weight = 100;
-    shield_weight = 120;
-    storm_weight = 100;
+    shield_weight = 119;
+    storm_weight = 99;
 
     // Pawn structure parameters
 
     values[DB_MID] = -12;  // doubled
-    values[DB_END] = -24;
+    values[DB_END] = -23;
     values[ISO_MG] = -10;  // isolated
     values[ISO_EG] = -20;
     values[ISO_OF] = -10;  // additional midgame penalty for isolated pawn on an open file
     values[BK_MID] = -8;   // backward
     values[BK_END] = -8;
-    values[BK_OPE] = -8;   // additional midgame penalty for backward pawn on an open file
+    values[BK_OPE] = -10;  // additional midgame penalty for backward pawn on an open file
 	values[P_BIND] = 5;    // two pawns control central square
 	values[P_ISL] = 7;     // penalty for each pawn island
 	values[P_THR] = 4;     // pawn move threatens to attack enemy minor
 
     // Passed pawn bonuses per rank
 
-    values[PMG2] = 11;  //  12
-    values[PMG3] = 12;  //  12
-	values[PMG4] = 30;  //  30
-	values[PMG5] = 50;  //  50
-	values[PMG6] = 80;  //  80
-	values[PMG7] = 130; // 130
+    values[PMG2] = 11;
+    values[PMG3] = 12;
+	values[PMG4] = 30;
+	values[PMG5] = 50;
+	values[PMG6] = 80;
+	values[PMG7] = 130;
 
-	values[PEG2] = 23;  //  24
-	values[PEG3] = 24;  //  24
-	values[PEG4] = 60;  //  60
-	values[PEG5] = 99;  // 100
-	values[PEG6] = 161; // 160
-	values[PEG7] = 260; // 260
+	values[PEG2] = 23;
+	values[PEG3] = 24;
+	values[PEG4] = 60;
+	values[PEG5] = 99;
+	values[PEG6] = 161;
+	values[PEG7] = 260;
 
 	// Passed pawn value percentage modifiers
 
@@ -193,7 +193,6 @@ void cParam::DefaultWeights() {
     values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
 	values[N_OWH] = -5;    // knight can move only to own half of the board
 	values[N_REACH] = 2;   // knight can reach an outpost square
-
 
     // Bishop parameters
 
