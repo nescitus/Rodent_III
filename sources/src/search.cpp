@@ -61,12 +61,10 @@ void cEngine::InitSearch() { // static init function
     for (int dp = 0; dp < MAX_PLY; dp++)
         for (int mv = 0; mv < MAX_MOVES; mv++) {
 
-            int r;
+            int r = 0;
 
-            if (dp != 0 && mv != 0)
+            if (dp != 0 && mv != 0) // +-inf to int is undefined
                 r = (int)(log((double)dp) * log((double)Min(mv, 63)) / 2.0);
-            else              // +-inf to int is undefined
-                r = 0;
 
             lmr_size[0][dp][mv] = r;     // zero window node
             lmr_size[1][dp][mv] = r - 1; // principal variation node (checking for pos. values is in `Search()`)
