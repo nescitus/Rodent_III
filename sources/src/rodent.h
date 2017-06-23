@@ -22,6 +22,15 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#if !(__cplusplus >= 201103L || _MSVC_LANG >= 201402)
+    #error Rodent requires C++11 compatible compiler.
+#endif
+
+#include <cstdint>
+#include <cinttypes>
+
+using U64 = uint64_t;
+
 // define how Rodent is to be compiled
 
 #define USE_MAGIC
@@ -76,14 +85,6 @@ enum eSquare {
 #define MATE            32000
 #define MAX_EVAL        29999
 #define MAX_HIST        (1 << 15)
-
-#if __cplusplus >= 201103L || _MSVC_LANG >= 201402
-    #include <cstdint>
-    #include <cinttypes>
-    typedef uint64_t U64;
-#else
-    typedef unsigned long long U64;
-#endif
 
 #define RANK_1_BB       (U64)0x00000000000000FF
 #define RANK_2_BB       (U64)0x000000000000FF00
@@ -605,7 +606,6 @@ struct sInternalBook {
 
     int n_of_choices;
     int moves[100];
-    //int values[100];
 
     void Init(POS *p);
     int MoveFromInternal(POS *p);

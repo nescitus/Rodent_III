@@ -31,9 +31,9 @@
 #include "magicmoves.h"
 
 #ifdef _MSC_VER
-    #pragma message("MSC compatible compiler detected -- turning off warning 4312,4146")
-    #pragma warning( disable : 4312)
-    #pragma warning( disable : 4146)
+    #pragma message("MSC compatible compiler detected -- turning off warning 4312, 4146")
+    #pragma warning( disable : 4312 )
+    #pragma warning( disable : 4146 )
 #endif
 
 const unsigned int magicmoves_r_shift[64] = {
