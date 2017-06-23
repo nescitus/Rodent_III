@@ -402,8 +402,8 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
         }
 
         // pick a move, filtering out those with significantly lower weight
+        int best_score = 0;
         for (int i = 0; i < n_of_choices; i++) {
-            int best_score = 0;
 
             // report about possible choices and rejected moves
             if (values[i] > -1 || max_weight == 1) {
