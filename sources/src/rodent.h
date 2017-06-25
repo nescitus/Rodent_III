@@ -611,7 +611,7 @@ struct sInternalBook {
     int MoveFromInternal(POS *p);
 #ifndef USEGEN
     void MoveToInternal(U64 hashKey, int move, int val);
-    int LineToInternal(POS *p, const char *ptr, int excludedColor);
+    bool LineToInternal(POS *p, const char *ptr, int excludedColor);
 #endif
     void ReadInternal(POS *p);
 };
@@ -752,7 +752,7 @@ struct sPersAliases {
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
 void AllocTrans(unsigned int mbsize);
-int Attacked(POS *p, int sq, int sd);
+bool Attacked(POS *p, int sq, int sd);
 U64 AttacksFrom(POS *p, int sq);
 U64 AttacksTo(POS *p, int sq);
 void BuildPv(int *dst, int *src, int move);
@@ -796,7 +796,6 @@ void UciLoop();
 void WasteTime(int miliseconds);
 void PrintBb(U64 bbTest);
 
-extern int castle_mask[64];
 extern const int bit_table[64];
 extern const int tp_value[7];
 extern const int ph_value[7];
