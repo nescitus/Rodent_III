@@ -420,7 +420,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
 
 void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
 
-    U64 bb_pieces, bb_stop;
+    U64 bb_pieces, bb_pawn, bb_stop;
     int sq, mg_tmp, eg_tmp, mul;
     int op = Opp(sd);
     int mg_tot = 0;
@@ -429,6 +429,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
     bb_pieces = p->Pawns(sd);
     while (bb_pieces) {
         sq = BB.PopFirstBit(&bb_pieces);
+		bb_pawn = SqBb(sq);
         bb_stop = BB.ShiftFwd(SqBb(sq), sd);
 
         // pawn can attack enemy piece
@@ -437,12 +438,12 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
            if (!(bb_stop & e->p_can_take[op])) {
               if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
                   Add(e, sd, Par.values[P_THR]);
-              if (SqBb(sq) & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
+              if (bb_pawn & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
                    U64 next = BB.ShiftFwd(bb_stop, sd);
                    if (!(next & OccBb(p))) {
                        if (!(next & e->p_can_take[op])) {
                            if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
-                              Add(e, sd, Par.values[P_THR]);
+                               Add(e, sd, Par.values[P_THR]);
                        }
                    }
                }
@@ -453,6 +454,9 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
 
         if (!(Mask.passed[sd][sq] & p->Pawns(op))) {
             mul = 100;
+
+            if (bb_pawn & e->p_takes[sd]) mul += 5;
+            if (bb_stop & e->p_takes[sd]) mul += 5;
 
             if (bb_stop & OccBb(p)) mul -= Par.values[P_BL_MUL];   // blocked passers score less
 
