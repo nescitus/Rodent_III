@@ -57,8 +57,8 @@ int main() {
     srand(GetMS());
 
     BB.Init();
-    InitSearch();
-    Init();
+    cEngine::InitSearch();
+    POS::Init();
     Glob.Init();
     Par.DefaultWeights();
     Par.InitTables();
@@ -76,7 +76,8 @@ int main() {
     // if we are on Linux
     // first check, if compiler got told where books and settings are stored
 #ifdef BOOKPATH
-    #define MAKESTR(x) #x
+    #define MAKESTRHLP(x) #x
+    #define MAKESTR(x) MAKESTRHLP(x)
     // process Mainbook
     MainBook.SetBookName(MAKESTR(BOOKPATH) "/rodent.bin");   // store it
     // process Guidebook
@@ -84,6 +85,7 @@ int main() {
     // process Personality file
     ReadPersonality(MAKESTR(BOOKPATH) "/basic.ini");
     #undef MAKESTR
+    #undef MAKESTRHLP
 #else // if no path was given than we assume that files are stored at /usr/share/rodentII
     MainBook.SetBookName("/usr/share/rodentII/rodent.bin");
     GuideBook.SetBookName("/usr/share/rodentII/guide.bin");
@@ -108,7 +110,7 @@ int main() {
 
 void cGlobals::Init() {
 
-	is_testing = false;
+    is_testing = false;
     reading_personality = false;
     use_personality_files = false;
     separate_books = false;

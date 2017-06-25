@@ -21,9 +21,9 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstring>
 #include <cmath>
 
-int razor_margin[5] = { 0, 300, 360, 420, 480 };
-int fut_margin[7] = { 0, 100, 160, 220, 280, 340, 400 };
-double lmr_size[2][MAX_PLY][MAX_MOVES];
+const int cEngine::razor_margin[5] = { 0, 300, 360, 420, 480 };
+const int cEngine::fut_margin[7] = { 0, 100, 160, 220, 280, 340, 400 };
+int cEngine::lmr_size[2][MAX_PLY][MAX_MOVES];
 
 void cParam::InitAsymmetric(POS *p) {
 
@@ -54,23 +54,24 @@ void cGlobals::ClearData() {
     should_clear = false;
 }
 
-void InitSearch() {
+void cEngine::InitSearch() { // static init function
 
     // Set depth of late move reduction (formula based on Stockfish)
 
     for (int dp = 0; dp < MAX_PLY; dp++)
         for (int mv = 0; mv < MAX_MOVES; mv++) {
 
-            double r = log((double)dp) * log((double)Min(mv, 63)) / 2;
-            lmr_size[0][dp][mv] = r;             // zero window node
-            lmr_size[1][dp][mv] = Max(r - 1, 0); // principal variation node
+            int r = 0;
 
-            for (int node = 0; node <= 1; node++) {
-                if (lmr_size[node][dp][mv] < 1) lmr_size[node][dp][mv] = 0; // ultra-small reductions make no sense
+            if (dp != 0 && mv != 0) // +-inf to int is undefined
+                r = (int)(log((double)dp) * log((double)Min(mv, 63)) / 2.0);
 
-                if (lmr_size[node][dp][mv] > dp - 1) // reduction cannot exceed actual depth
-                    lmr_size[node][dp][mv] = dp - 1;
-            }
+            lmr_size[0][dp][mv] = r;     // zero window node
+            lmr_size[1][dp][mv] = r - 1; // principal variation node (checking for pos. values is in `Search()`)
+
+            // reduction cannot exceed actual depth
+            if (lmr_size[0][dp][mv] > dp - 1) lmr_size[0][dp][mv] = dp - 1;
+            if (lmr_size[1][dp][mv] > dp - 1) lmr_size[1][dp][mv] = dp - 1;
         }
 }
 
@@ -80,7 +81,7 @@ void cEngine::Think(POS *p) {
     pv_eng[0] = 0; // clear engine's move
     pv_eng[1] = 0; // clear ponder move
     fl_root_choice = false;
-	*curr = *p;
+    *curr = *p;
     AgeHist();
     Iterate(curr, pv_eng);
 }
@@ -90,9 +91,9 @@ void cEngine::Iterate(POS *p, int *pv) {
     int cur_val = 0;
 
     // Lazy SMP works best with some depth variance,
-	// so every other thread will search to depth + 1
+    // so every other thread will search to depth + 1
 
-	int offset = thread_id & 0x01;
+    int offset = thread_id & 0x01;
 
     for (root_depth = 1 + offset; root_depth <= search_depth; root_depth++) {
 
@@ -562,18 +563,8 @@ void cEngine::DisplayPv(int score, int *pv) {
 
     PvToStr(pv, pv_str);
 
-#if __cplusplus >= 201103L || _MSVC_LANG >= 201402
     printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
            root_depth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
-#else
-    #if defined _WIN32 || defined _WIN64
-        printf("info depth %d time %d nodes %I64d nps %I64d score %s %d pv %s\n",
-               root_depth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
-    #else
-        printf("info depth %d time %d nodes %lld nps %lld score %s %d pv %s\n",
-               root_depth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
-    #endif
-#endif
 }
 
 void CheckTimeout() {
@@ -584,14 +575,14 @@ void CheckTimeout() {
         ReadLine(command, sizeof(command));
         if (strcmp(command, "stop") == 0)
             Glob.abort_search = true;
-		else if (strcmp(command, "quit") == 0) {
+        else if (strcmp(command, "quit") == 0) {
 #ifndef USE_THREADS
             exit(0);
 #else
             Glob.abort_search = true;
             Glob.goodbye = true; // will crash if just `exit()`. should wait until threads are terminated
 #endif
-		}
+        }
         else if (strcmp(command, "ponderhit") == 0)
             Glob.pondering = false;
     }
@@ -629,10 +620,10 @@ void cEngine::Slowdown() {
 
     // If Rodent is compiled as a single-threaded engine, Slowdown()
     // function assumes additional role and it enforces time control
-	// handling.
+    // handling.
 
 #ifndef USE_THREADS
-    if ( (!(Glob.nodes & 2047)) 
+    if ( (!(Glob.nodes & 2047))
     &&   !Glob.is_testing
     &&   root_depth > 1) CheckTimeout();
 #endif

@@ -393,11 +393,7 @@ void cEngine::Bench(int depth) {
     int end_time = GetMS() - start_time;
     unsigned int nps = (Glob.nodes * 1000) / (end_time + 1);
 
-#if __cplusplus >= 201103L || _MSVC_LANG >= 201402
     printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
-#else
-    printf(       "%llu nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
-#endif
 }
 
 void PrintBoard(POS *p) {
@@ -410,5 +406,5 @@ void PrintBoard(POS *p) {
         if ((sq + 1) % 8 == 0) printf(" %d\n", 9 - ((sq + 1) / 8));
     }
 
-    printf("\na b c d e f g h\n\n--------------------------------------------\n");
+    printf("\na b c d e f g h\n%s\n--------------------------------------------\n", p->side == WC ? "(w)" : "(b)");
 }

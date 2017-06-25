@@ -22,6 +22,15 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#if !(__cplusplus >= 201103L || _MSVC_LANG >= 201402)
+    #error Rodent requires C++11 compatible compiler.
+#endif
+
+#include <cstdint>
+#include <cinttypes>
+
+using U64 = uint64_t;
+
 // define how Rodent is to be compiled
 
 #define USE_MAGIC
@@ -76,14 +85,6 @@ enum eSquare {
 #define MATE            32000
 #define MAX_EVAL        29999
 #define MAX_HIST        (1 << 15)
-
-#if __cplusplus >= 201103L || _MSVC_LANG >= 201402
-    #include <cstdint>
-    #include <cinttypes>
-    typedef uint64_t U64;
-#else
-    typedef unsigned long long U64;
-#endif
 
 #define RANK_1_BB       (U64)0x00000000000000FF
 #define RANK_2_BB       (U64)0x000000000000FF00
@@ -305,6 +306,7 @@ struct UNDO {
 };
 
 class POS {
+    static int castle_mask[64];
   public:
     U64 cl_bb[2];
     U64 tp_bb[6];
@@ -322,6 +324,8 @@ class POS {
     U64 hash_key;
     U64 pawn_key;
     U64 rep_list[256];
+
+    static void Init();
 
     U64 Pawns(int sd) const {
         return (cl_bb[sd] & tp_bb[P]);
@@ -602,7 +606,6 @@ struct sInternalBook {
 
     int n_of_choices;
     int moves[100];
-    //int values[100];
 
     void Init(POS *p);
     int MoveFromInternal(POS *p);
@@ -698,7 +701,13 @@ class cEngine {
     bool NotOnBishColor(POS *p, int bish_side, int sq);
     bool DifferentBishops(POS *p);
 
+    static const int razor_margin[];
+    static const int fut_margin[];
+    static int lmr_size[2][MAX_PLY][MAX_MOVES];
+
   public:
+
+    static void InitSearch();
 
     int pv_eng[MAX_PLY];
     int dp_completed;
@@ -740,7 +749,6 @@ struct sPersAliases {
     int count;
 };
 
-void InitSearch();
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
 void AllocTrans(unsigned int mbsize);
@@ -752,14 +760,13 @@ void ClearTrans();
 void ClearPosition(POS *p);
 void DisplayCurrmove(int move, int tried);
 int DrawScore(POS *p);
-void ExtractMove(int pv[MAX_PLY]);
+void ExtractMove(int *pv);
 int *GenerateCaptures(POS *p, int *list);
 int *GenerateQuiet(POS *p, int *list);
 int *GenerateSpecial(POS *p, int *list);
 bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for GenerateSpecial()
 int GetMS();
 U64 GetNps(int elapsed);
-void Init();
 bool InputAvailable();
 U64 InitHashKey(POS *p);
 U64 InitPawnKey(POS *p);

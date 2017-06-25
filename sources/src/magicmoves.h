@@ -48,25 +48,14 @@
  */
 
 #pragma once
-#ifndef _magicmovesh
-#define _magicmovesh
-
-/*********MODIFY THE FOLLOWING IF NECESSARY********/
-//the default configuration is the best
 
 #define USE_INLINING /*the MMINLINE keyword is assumed to be available*/
 
-#ifndef __64_BIT_INTEGER_DEFINED__
-    #define __64_BIT_INTEGER_DEFINED__
-    #if defined(_MSC_VER) && _MSC_VER<1300
-        typedef unsigned __int64 U64; //For the old microsoft compilers
-    #else
-        typedef unsigned long long  U64; //Supported by MSC 13.00+ and C99
-    #endif //defined(_MSC_VER) && _MSC_VER<1300
-#endif //__64_BIT_INTEGER_DEFINED__
-/***********MODIFY THE ABOVE IF NECESSARY**********/
+#include <cstdint>
 
-/*Defining the inlining keyword*/
+using U64 = uint64_t;
+
+// Defining the inlining keyword
 #ifdef USE_INLINING
     #ifdef _MSC_VER
         #define MMINLINE __forceinline
@@ -77,12 +66,9 @@
     #endif
 #endif
 
+// we have a standard way now
 #ifndef C64
-    #if (!defined(_MSC_VER) || _MSC_VER>1300)
-        #define C64(constantU64) constantU64##ULL
-    #else
-        #define C64(constantU64) constantU64
-    #endif
+    #define C64 UINT64_C
 #endif
 
 extern const U64 magicmoves_r_magics[64];
@@ -125,5 +111,3 @@ extern const U64 *magicmoves_r_indices[64];
 #endif //USE_INLINING
 
 void initmagicmoves();
-
-#endif //_magicmoveshvesh
