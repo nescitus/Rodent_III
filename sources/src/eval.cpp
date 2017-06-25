@@ -233,6 +233,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         cnt = BB.PopCnt(bb_control & ~bb_excluded);                        // get mobility count
         mob_mg += Par.r_mob_mg[cnt];
         mob_eg += Par.r_mob_eg[cnt];
+
         // FILE EVALUATION:
 
         bb_file = BB.FillNorth(SqBb(sq)) | BB.FillSouth(SqBb(sq));   // get file
@@ -419,8 +420,8 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
 
 void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
 
-    U64 bb_pieces, stop, mul;
-    int sq, mg_tmp, eg_tmp;
+    U64 bb_pieces, bb_stop;
+    int sq, mg_tmp, eg_tmp, mul;
     int op = Opp(sd);
     int mg_tot = 0;
     int eg_tot = 0;
@@ -428,16 +429,16 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
     bb_pieces = p->Pawns(sd);
     while (bb_pieces) {
         sq = BB.PopFirstBit(&bb_pieces);
-        stop = BB.ShiftFwd(SqBb(sq), sd);
+        bb_stop = BB.ShiftFwd(SqBb(sq), sd);
 
         // pawn can attack enemy piece
 
-        if (!(stop & OccBb(p))) {
-           if (!(stop & e->p_can_take[op])) {
-              if (BB.GetPawnControl(stop, sd) & (p->Bishops(op) | p->Knights(op)))
+        if (!(bb_stop & OccBb(p))) {
+           if (!(bb_stop & e->p_can_take[op])) {
+              if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
                   Add(e, sd, Par.values[P_THR]);
               if (SqBb(sq) & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
-                   U64 next = BB.ShiftFwd(stop, sd);
+                   U64 next = BB.ShiftFwd(bb_stop, sd);
                    if (!(next & OccBb(p))) {
                        if (!(next & e->p_can_take[op])) {
                            if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
@@ -453,15 +454,13 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
         if (!(Mask.passed[sd][sq] & p->Pawns(op))) {
             mul = 100;
 
-            if (stop & OccBb(p)) mul -= Par.values[P_BL_MUL];   // blocked passers score less
+            if (bb_stop & OccBb(p)) mul -= Par.values[P_BL_MUL];   // blocked passers score less
 
-            else if ((stop & e->all_att[sd])  // our control of stop square
-                 && (stop & ~e->all_att[op])) mul += Par.values[P_OURSTOP_MUL];
+            else if ((bb_stop & e->all_att[sd])  // our control of stop square
+                 && (bb_stop & ~e->all_att[op])) mul += Par.values[P_OURSTOP_MUL];
 
-			else if ((stop & e->all_att[op])  // opp control of stop square
-				&& (stop & ~e->all_att[sd])) mul -= Par.values[P_OPPSTOP_MUL];
-
-            // TODO: what about penalty for exclusive enemy control of stop square?
+			else if ((bb_stop & e->all_att[op])  // opp control of stop square
+                 && (bb_stop & ~e->all_att[sd])) mul -= Par.values[P_OPPSTOP_MUL];
 
             // in the midgame, we use just a bonus from the table
             // in the endgame, passed pawn attracts both kings.
