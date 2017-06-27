@@ -91,34 +91,34 @@ U64 Random64() {
     return next;
 }
 
-U64 InitHashKey(POS *p) {
+void POS::InitHashKey() {
 
     U64 key = 0;
 
     for (int i = 0; i < 64; i++)
-        if (p->pc[i] != NO_PC)
-            key ^= zob_piece[p->pc[i]][i];
+        if (pc[i] != NO_PC)
+            key ^= zob_piece[pc[i]][i];
 
-    key ^= zob_castle[p->c_flags];
-    if (p->ep_sq != NO_SQ)
-        key ^= zob_ep[File(p->ep_sq)];
+    key ^= zob_castle[c_flags];
+    if (ep_sq != NO_SQ)
+        key ^= zob_ep[File(ep_sq)];
 
-    if (p->side == BC)
+    if (side == BC)
         key ^= SIDE_RANDOM;
 
-    return key;
+    hash_key = key;
 }
 
-U64 InitPawnKey(POS *p) {
+void POS::InitPawnKey() {
 
     U64 key = 0;
 
     for (int i = 0; i < 64; i++) {
-        if ((p->tp_bb[P] & SqBb(i)) || (p->tp_bb[K] & SqBb(i)))
-            key ^= zob_piece[p->pc[i]][i];
+        if ((tp_bb[P] & SqBb(i)) || (tp_bb[K] & SqBb(i)))
+            key ^= zob_piece[pc[i]][i];
     }
 
-    return key;
+    pawn_key = key;
 }
 
 void PrintMove(int move) {

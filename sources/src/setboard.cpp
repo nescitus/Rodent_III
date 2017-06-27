@@ -138,6 +138,6 @@ void SetPosition(POS *p, const char *epd) {
         if (!(BB.PawnAttacks(Opp(p->side), p->ep_sq) & p->Pawns(p->side)))
             p->ep_sq = NO_SQ;
     }
-    p->hash_key = InitHashKey(p);
-    p->pawn_key = InitPawnKey(p);
+    p->InitHashKey();
+    p->InitPawnKey();
 }

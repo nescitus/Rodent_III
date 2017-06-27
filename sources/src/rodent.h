@@ -307,6 +307,9 @@ struct UNDO {
 
 class POS {
     static int castle_mask[64];
+    static U64 zob_piece[12][64];
+    static U64 zob_castle[16];
+    static U64 zob_ep[8];
   public:
     U64 cl_bb[2];
     U64 tp_bb[6];
@@ -363,6 +366,9 @@ class POS {
     void DoNull(UNDO *u);
     void UndoNull(UNDO *u);
     void UndoMove(int move, UNDO *u);
+
+    void InitHashKey();
+    void InitPawnKey();
 
 };
 
@@ -768,8 +774,6 @@ bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for Generat
 int GetMS();
 U64 GetNps(int elapsed);
 bool InputAvailable();
-U64 InitHashKey(POS *p);
-U64 InitPawnKey(POS *p);
 bool Legal(POS *p, int move);
 void MoveToStr(int move, char *move_str);
 void ParseGo(POS *p, const char *ptr);
@@ -799,9 +803,6 @@ void PrintBb(U64 bbTest);
 extern const int bit_table[64];
 extern const int tp_value[7];
 extern const int ph_value[7];
-extern U64 zob_piece[12][64];
-extern U64 zob_castle[16];
-extern U64 zob_ep[8];
 extern int move_time;
 extern int move_nodes;
 extern int search_depth;
