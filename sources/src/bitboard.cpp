@@ -108,7 +108,7 @@ int cBitBoard::PopCnt(U64 bb) {
 }
 
 #elif defined(USE_MM_POPCNT)
-#include <nmmintrin.h>
+    #include <nmmintrin.h>
     #ifndef _M_AMD64 // 32 bit windows
         int cBitBoard::PopCnt(U64 bb) {
             return _mm_popcnt_u32((unsigned int)(bb >> 32)) + _mm_popcnt_u32((unsigned int)(bb));

@@ -45,26 +45,31 @@ void PrintVersion()
     printf("id name Rodent III 0.203"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
-           " 32-bit"
+            " 32-bit"
 #else
-           " 64-bit"
+            " 64-bit"
 #endif
 
-#if defined(_MSC_VER )
-           "/MSVS"
-#endif
-#if defined(__MINGW32__)
-           "/MINGW " __VERSION__
-#endif
-#if defined(__GNUC__) && !defined(__MINGW32__)
-           "/GCC " __VERSION__
+#if   defined(__clang__)
+            "/CLANG " __clang_version__
+#elif defined(__MINGW32__)
+            "/MINGW " __VERSION__
+#elif defined(__GNUC__)
+            "/GCC " __VERSION__
+#elif defined(_MSC_VER)
+            "/MSVS"
+    #if   _MSC_VER == 1900
+                "2015"
+    #elif _MSC_VER == 1910
+                "2017"
+    #endif
 #endif
 
 #if (defined(_MSC_VER) && defined(USE_MM_POPCNT)) || (defined(__GNUC__) && defined(__POPCNT__))
-           "/POPCNT"
+            "/POPCNT"
 #endif
 
-                                      "\n");
+                        "\n");
 }
 
 int main() {
