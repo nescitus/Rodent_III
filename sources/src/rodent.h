@@ -242,8 +242,8 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 #define ShiftSW(x)      ((x & bbNotA)>>9)
 #define ShiftSE(x)      ((x & bbNotH)>>7)
 
-#define JustOne(bb)     (bb && !(bb & (bb-1)))
-#define MoreThanOne(bb) ( bb & (bb - 1) )
+#define JustOne(bb)     ((bb) && !((bb) & ((bb)-1)))
+#define MoreThanOne(bb) ((bb) & ((bb) - 1))
 
 class cBitBoard {
   private:

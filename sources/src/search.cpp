@@ -596,7 +596,7 @@ void cEngine::Slowdown() {
     // Handling search limited by the number of nodes
 
     if (move_nodes > 0) {
-        if (Glob.nodes >= move_nodes)
+        if (Glob.nodes >= (unsigned)move_nodes)
             Glob.abort_search = true;
     }
 

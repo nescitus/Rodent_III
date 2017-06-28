@@ -517,7 +517,7 @@ void ReadPersonality(const char *fileName) {
 
     while (fgets(line, sizeof(line), personalityFile)) {    // read options line by line
 
-        while (pos = strpbrk(line, "\r\n")) *pos = '\0'; // clean the sh!t
+        while ((pos = strpbrk(line, "\r\n"))) *pos = '\0'; // clean the sh!t
 
         // do we pick opening book within a personality?
         if (strstr(line, "PERSONALITY_BOOKS")) Glob.separate_books = false;

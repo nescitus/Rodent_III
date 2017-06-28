@@ -4,10 +4,10 @@
 
 
 class ChessHeapClass {
-    static const size_t bucket_size_mb = 512;
-    static const size_t max_memory_mb = 4096;
-    static const size_t num_per_bucket = bucket_size_mb * 1024 * 1024 / sizeof(ENTRY);
-    static const size_t arrays_size = max_memory_mb / bucket_size_mb;
+    static const int bucket_size_mb = 512;
+    static const int max_memory_mb = 4096;
+    static const int num_per_bucket = bucket_size_mb * 1024 * 1024 / sizeof(ENTRY);
+    static const int arrays_size = max_memory_mb / bucket_size_mb;
 
     int    bucket_sizs[arrays_size];
     ENTRY *bucket_ptrs[arrays_size];
@@ -59,7 +59,7 @@ class ChessHeapClass {
                 memset(bucket_ptrs[i], 0, 1024 * 1024 * bucket_sizs[i]);
     }
 
-    ENTRY *operator[](size_t entry_number) {
+    ENTRY *operator[](int entry_number) {
 
         const int num_of_bucket = entry_number / num_per_bucket;
 
