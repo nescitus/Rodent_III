@@ -40,6 +40,32 @@ sBook MainBook;
     #include "book_gen.h"
 #endif
 
+void PrintVersion()
+{
+    printf("id name Rodent III 0.203"
+
+#if !(defined(_WIN64) || defined(__x86_64__))
+           " 32-bit"
+#else
+           " 64-bit"
+#endif
+
+#if defined(_MSC_VER )
+           "/MSVS"
+#endif
+#if defined(__MINGW32__)
+           "/MINGW " __VERSION__
+#endif
+#if defined(__GNUC__) && !defined(__MINGW32__)
+           "/GCC " __VERSION__
+#endif
+
+#if (defined(_MSC_VER) && defined(USE_MM_POPCNT)) || (defined(__GNUC__) && defined(__POPCNT__))
+           "/POPCNT"
+#endif
+
+                                      "\n");
+}
 
 int main() {
 
@@ -66,6 +92,8 @@ int main() {
 
     Mask.Init();
     Dist.Init();
+
+    PrintVersion();
 
 #if defined(_WIN32) || defined(_WIN64)
     // if we are on Windows search for books and settings in same directory as rodentII.exe

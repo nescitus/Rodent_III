@@ -755,6 +755,8 @@ struct sPersAliases {
     int count;
 };
 
+void PrintVersion();
+
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
 void AllocTrans(unsigned int mbsize);

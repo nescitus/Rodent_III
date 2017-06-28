@@ -66,7 +66,9 @@ void UciLoop() {
         ptr = ParseToken(command, token);
 
         if (strcmp(token, "uci") == 0)               {
-            printf("id name Rodent III 0.203\n");
+
+            PrintVersion();
+
             Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
             PrintUciOptions();
