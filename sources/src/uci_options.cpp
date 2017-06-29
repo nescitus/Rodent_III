@@ -87,7 +87,7 @@ void PrintUciOptions() {
             printf("option name EvalBlur type spin default %d min 0 max 5000000\n", Par.eval_blur);
             printf("option name NpsLimit type spin default %d min 0 max 5000000\n", Par.nps_limit);
         } else {
-            printf("option name UCI_LimitStrength type check default false\n");
+            printf("option name UCI_LimitStrength type check default %s\n", Par.fl_weakening ? "true" : "false");
             printf("option name UCI_Elo type spin default %d min 800 max 2800\n", Par.elo);
         }
 
@@ -98,9 +98,9 @@ void PrintUciOptions() {
         printf("option name RiskyDepth type spin default %d min 0 max 10\n", Par.riskydepth);
 #endif
     }
-    printf("option name UseBook type check default false\n");
-    printf("option name GuideBookFile type string default guide.bin\n");
-    printf("option name MainBookFile type string default rodent.bin\n");
+    printf("option name UseBook type check default %s\n", Par.use_book ? "true" : "false");
+    printf("option name GuideBookFile type string default %s\n", MainBook.bookName);
+    printf("option name MainBookFile type string default %s\n", GuideBook.bookName);
 
 }
 

@@ -101,7 +101,7 @@ int main() {
     PrintVersion();
 
 #if defined(_WIN32) || defined(_WIN64)
-    // if we are on Windows search for books and settings in same directory as rodentII.exe
+    // if we are on Windows search for books and settings in same directory as rodentIII.exe
     MainBook.SetBookName("books/rodent.bin");
     GuideBook.SetBookName("books/guide.bin");
     ReadPersonality("basic.ini");
@@ -119,16 +119,16 @@ int main() {
     ReadPersonality(MAKESTR(BOOKPATH) "/basic.ini");
     #undef MAKESTR
     #undef MAKESTRHLP
-#else // if no path was given than we assume that files are stored at /usr/share/rodentII
-    MainBook.SetBookName("/usr/share/rodentII/rodent.bin");
-    GuideBook.SetBookName("/usr/share/rodentII/guide.bin");
-    ReadPersonality("/usr/share/rodentII/basic.ini");
+#else // if no path was given than we assume that files are stored at /usr/share/rodentIII
+    MainBook.SetBookName("/usr/share/rodentIII/rodent.bin");
+    GuideBook.SetBookName("/usr/share/rodentIII/guide.bin");
+    ReadPersonality("/usr/share/rodentIII/basic.ini");
 #endif
 
 #else
     // a platform we have not tested yet. We assume that opening books and
     // settings are stored within the same directory. Similiar to Windows.
-    printf("Platform unknown. We assume that opening books and settings are stored within RodentII path");
+    printf("Platform unknown. We assume that opening books and settings are stored within RodentIII path");
     MainBook.SetBookName("books/rodent.bin");
     GuideBook.SetBookName("books/guide.bin");
     ReadPersonality("basic.ini");
