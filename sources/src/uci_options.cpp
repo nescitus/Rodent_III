@@ -553,7 +553,7 @@ void ReadPersonality(const char *fileName) {
         strcpy(pers_aliases.path[cnt], "///");
         cnt++;
     }
-    pers_aliases.count = cnt;
+    if (cnt != 0) pers_aliases.count = cnt;
     fclose(personalityFile);
     Glob.reading_personality = false;
 }
