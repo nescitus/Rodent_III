@@ -393,7 +393,7 @@ void cEngine::Bench(int depth) {
     // calculate and print statistics
 
     int end_time = GetMS() - start_time;
-    unsigned int nps = (Glob.nodes * 1000) / (end_time + 1);
+    unsigned int nps = (unsigned int)((Glob.nodes * 1000) / (end_time + 1));
 
     printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
 }

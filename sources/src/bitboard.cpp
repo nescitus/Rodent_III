@@ -115,7 +115,7 @@ int cBitBoard::PopCnt(U64 bb) {
         }
     #else            // 64 bit windows
         int cBitBoard::PopCnt(U64 bb) {
-            return _mm_popcnt_u64(bb);
+            return (int)_mm_popcnt_u64(bb);
         }
     #endif
 #else

@@ -115,7 +115,7 @@ static void valuebool(bool& param, char *val) {
 
 static char *pseudotrimstring(char *in_str) {
 
-    for (int last = strlen(in_str)-1; last >= 0 && in_str[last] == ' '; last--)
+    for (int last = (int)strlen(in_str)-1; last >= 0 && in_str[last] == ' '; last--)
         in_str[last] = '\0';
 
     while (*in_str == ' ') in_str++;

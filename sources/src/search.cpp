@@ -605,11 +605,11 @@ void cEngine::Slowdown() {
     if (Par.nps_limit > 0) {
         if (Par.nps_limit && root_depth > 1) {
             int time = GetMS() - start_time + 1;
-            int nps = GetNps(time);
-            while ((int)nps > Par.nps_limit) {
+            int nps = (int)GetNps(time);
+            while (nps > Par.nps_limit) {
                 WasteTime(10);
                 time = GetMS() - start_time + 1;
-                nps = GetNps(time);
+                nps = (int)GetNps(time);
                 if ((!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)) {
                     Glob.abort_search = true;
                     return;
