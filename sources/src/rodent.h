@@ -173,48 +173,22 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 // triggered by defines at the top of this file.
 #ifdef USE_FIRST_ONE_INTRINSICS
 
-    #if defined(_WIN32) && !defined(__MINGW32__)
+    #if defined(_MSC_VER)
 
         #include <intrin.h>
 
-        #ifdef _WIN64
+        #ifndef _WIN64
+            #pragma intrinsic(_BitScanForward)
+        #else
             #pragma intrinsic(_BitScanForward64)
         #endif
 
-        #ifdef _MSC_VER
-            #ifndef _WIN64
-                const int lsb_64_table[64] = {
-                    63, 30,  3, 32, 59, 14, 11, 33,
-                    60, 24, 50,  9, 55, 19, 21, 34,
-                    61, 29,  2, 53, 51, 23, 41, 18,
-                    56, 28,  1, 43, 46, 27,  0, 35,
-                    62, 31, 58,  4,  5, 49, 54,  6,
-                    15, 52, 12, 40,  7, 42, 45, 16,
-                    25, 57, 48, 13, 10, 39,  8, 44,
-                    20, 47, 38, 22, 17, 37, 36, 26
-                };
-
-                /**
-                * bitScanForward
-                * @author Matt Taylor (2003)
-                * @param bb bitboard to scan
-                * @precondition bb != 0
-                * @return index (0..63) of least significant one bit
-                */
-                static int FORCEINLINE  bitScanForward(U64 bb) {
-                    unsigned int folded;
-                    bb ^= bb - 1;
-                    folded = (int)bb ^ (bb >> 32);
-                    return lsb_64_table[folded * 0x78291ACF >> 26];
-                }
-            #endif
-        #endif
-
         static int FORCEINLINE FirstOne(U64 x) {
+            unsigned long index;
         #ifndef _WIN64
-            return bitScanForward(x);
+            if (_BitScanForward(&index, (unsigned long)x)) return index;
+            _BitScanForward(&index, x >> 32); return index + 32;
         #else
-            unsigned long index = -1;
             _BitScanForward64(&index, x);
             return index;
         #endif
