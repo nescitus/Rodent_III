@@ -135,12 +135,15 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 #define Rank(x)         ((x) >> 3)
 #define Sq(x, y)        (((y) << 3) | (x))
 
-#define Abs(x)          ((x) > 0 ? (x) : -(x))
-#define Max(x, y)       ((x) > (y) ? (x) : (y))
-#define Min(x, y)       ((x) < (y) ? (x) : (y))
-#define Map0x88(x)      (((x) & 7) | (((x) & ~7) << 1))
-#define Unmap0x88(x)    (((x) & 7) | (((x) & ~7) >> 1))
-#define Sq0x88Off(x)    ((unsigned)(x) & 0x88)
+//#define Abs(x)          ((x) > 0 ? (x) : -(x))
+template<typename T> T Abs(const T& x) { return x > 0 ? x : -x; }
+//#define Max(x, y)       ((x) > (y) ? (x) : (y))
+template<typename T> const T& Max(const T& x, const T& y) { return x > y ? x : y; }
+//#define Min(x, y)       ((x) < (y) ? (x) : (y))
+template<typename T> const T& Min(const T& x, const T& y) { return x < y ? x : y; }
+//#define Map0x88(x)      (((x) & 7) | (((x) & ~7) << 1))
+//#define Unmap0x88(x)    (((x) & 7) | (((x) & ~7) >> 1))
+//#define Sq0x88Off(x)    ((unsigned)(x) & 0x88)
 
 #define Fsq(x)          ((x) & 63)
 #define Tsq(x)          (((x) >> 6) & 63)
@@ -216,8 +219,9 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 #define ShiftSW(x)      ((x & bbNotA)>>9)
 #define ShiftSE(x)      ((x & bbNotH)>>7)
 
-#define JustOne(bb)     ((bb) && !((bb) & ((bb)-1)))
-#define MoreThanOne(bb) ((bb) & ((bb) - 1))
+//#define JustOne(bb)     ((bb) && !((bb) & ((bb)-1)))
+//#define MoreThanOne(bb) ((bb) & ((bb) - 1))
+template<typename T> bool MoreThanOne(const T& bb) { return bb & (bb - 1); }
 
 class cBitBoard {
   private:
