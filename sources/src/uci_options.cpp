@@ -412,7 +412,7 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "isolatedopenmg") == 0)                          {
         Par.values[ISO_OF] = atoi(value);
         Glob.should_clear = true;
-    } else if (strcmp(name, "backwardpawneg") == 0)                          {
+    } else if (strcmp(name, "backwardpawnmg") == 0)                          {
         Par.values[BK_MID] = atoi(value);
         Par.InitBackward();
         Glob.should_clear = true;
