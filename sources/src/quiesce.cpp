@@ -36,7 +36,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
-    local_nodes++;
+    //local_nodes++; unused
     Slowdown();
     if (Glob.abort_search && root_depth > 1) return 0;
     *pv = 0;
@@ -135,7 +135,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
-    local_nodes++;
+    //local_nodes++; unused
     Slowdown();
     if (Glob.abort_search && root_depth > 1) return 0;
     *pv = 0;
@@ -227,7 +227,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
     if (InCheck(p)) return QuiesceFlee(p, ply, alpha, beta, pv);
 
     Glob.nodes++;
-    local_nodes++;
+    //local_nodes++; unused
     Slowdown();
 
     // EARLY EXIT

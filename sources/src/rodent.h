@@ -615,7 +615,7 @@ class cEngine {
     int history[12][64];
     int killer[MAX_PLY][2];
     int refutation[64][64];
-    int local_nodes;
+    //int local_nodes; unused and uninitialized
     const int thread_id;
     int root_depth;
     bool fl_root_choice;
