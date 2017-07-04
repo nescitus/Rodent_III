@@ -199,7 +199,7 @@ template<typename T> const T& Min(const T& x, const T& y) { return x < y ? x : y
 
     #elif defined(__GNUC__)
 
-        #define FirstOne(x) (__builtin_ffsll(x) - 1)
+        #define FirstOne(x) __builtin_ctzll(x)
 
     #endif
 
