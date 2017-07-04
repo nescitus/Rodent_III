@@ -154,7 +154,7 @@ void ParseSetoption(const char *ptr) {
         Glob.thread_no = (atoi(value));
         if (Glob.thread_no > MAX_THREADS) Glob.thread_no = MAX_THREADS;
 
-        if (Glob.thread_no != Engines.size()) {
+        if (Glob.thread_no != (int)Engines.size()) {
             Engines.clear();
             for (int i = 0; i < Glob.thread_no; i++)
                 Engines.emplace_back(i);

@@ -165,7 +165,7 @@ template<typename T> const T& Min(const T& x, const T& y) { return x < y ? x : y
 #define IsOnSq(p, sd, pc, sq) ( PcBb(p, sd, pc) & SqBb(sq) )
 
 #ifndef FORCEINLINE
-    #if defined(_WIN32) && !defined(__MINGW32__)
+    #if defined(_MSC_VER)
         #define FORCEINLINE __forceinline
     #else
         #define FORCEINLINE __inline
