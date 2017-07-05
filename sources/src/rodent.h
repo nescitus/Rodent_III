@@ -199,11 +199,30 @@ template<typename T> const T& Min(const T& x, const T& y) { return x < y ? x : y
 
     #elif defined(__GNUC__)
 
-        #define FirstOne(x) __builtin_ctzll(x)
+        static inline int FirstOne(U64 x) {
+
+        // workaround for GCC's inabitily to inline __builtin_ctzll() on x32 (it calls `__ctzdi2` runtime function instead)
+        #if !defined(__amd64__) && defined(__i386__) && !defined(__clang__)
+            const uint32_t xlo = (uint32_t)x;
+            return xlo ? __builtin_ctz(xlo) : __builtin_ctz(x >> 32) + 32;
+        #else
+            return __builtin_ctzll(x);
+        #endif
+        }
 
     #endif
 
 #else
+    const int bit_table[64] = {
+        0,  1,  2,  7,  3, 13,  8, 19,
+        4, 25, 14, 28,  9, 34, 20, 40,
+        5, 17, 26, 38, 15, 46, 29, 48,
+       10, 31, 35, 54, 21, 50, 41, 57,
+       63,  6, 12, 18, 24, 27, 33, 39,
+       16, 37, 45, 47, 30, 53, 49, 56,
+       62, 11, 23, 32, 36, 44, 52, 55,
+       61, 22, 43, 51, 60, 42, 59, 58
+    };
     #define FirstOne(x)     bit_table[(((x) & (~(x) + 1)) * (U64)0x0218A392CD3D5DBF) >> 58] // first "1" in a bitboard
 #endif
 
