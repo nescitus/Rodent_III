@@ -87,7 +87,7 @@ void PrintUciOptions() {
             printf("option name EvalBlur type spin default %d min 0 max 5000000\n", Par.eval_blur);
             printf("option name NpsLimit type spin default %d min 0 max 5000000\n", Par.nps_limit);
         } else {
-            printf("option name UCI_LimitStrength type check default false\n");
+            printf("option name UCI_LimitStrength type check default %s\n", Par.fl_weakening ? "true" : "false");
             printf("option name UCI_Elo type spin default %d min 800 max 2800\n", Par.elo);
         }
 
@@ -98,9 +98,9 @@ void PrintUciOptions() {
         printf("option name RiskyDepth type spin default %d min 0 max 10\n", Par.riskydepth);
 #endif
     }
-    printf("option name UseBook type check default false\n");
-    printf("option name GuideBookFile type string default guide.bin\n");
-    printf("option name MainBookFile type string default rodent.bin\n");
+    printf("option name UseBook type check default %s\n", Par.use_book ? "true" : "false");
+    printf("option name GuideBookFile type string default %s\n", MainBook.bookName);
+    printf("option name MainBookFile type string default %s\n", GuideBook.bookName);
 
 }
 
@@ -115,7 +115,7 @@ static void valuebool(bool& param, char *val) {
 
 static char *pseudotrimstring(char *in_str) {
 
-    for (int last = strlen(in_str)-1; last >= 0 && in_str[last] == ' '; last--)
+    for (int last = (int)strlen(in_str)-1; last >= 0 && in_str[last] == ' '; last--)
         in_str[last] = '\0';
 
     while (*in_str == ' ') in_str++;
@@ -154,7 +154,7 @@ void ParseSetoption(const char *ptr) {
         Glob.thread_no = (atoi(value));
         if (Glob.thread_no > MAX_THREADS) Glob.thread_no = MAX_THREADS;
 
-        if (Glob.thread_no != Engines.size()) {
+        if (Glob.thread_no != (int)Engines.size()) {
             Engines.clear();
             for (int i = 0; i < Glob.thread_no; i++)
                 Engines.emplace_back(i);
@@ -412,7 +412,7 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "isolatedopenmg") == 0)                          {
         Par.values[ISO_OF] = atoi(value);
         Glob.should_clear = true;
-    } else if (strcmp(name, "backwardpawneg") == 0)                          {
+    } else if (strcmp(name, "backwardpawnmg") == 0)                          {
         Par.values[BK_MID] = atoi(value);
         Par.InitBackward();
         Glob.should_clear = true;
@@ -517,7 +517,7 @@ void ReadPersonality(const char *fileName) {
 
     while (fgets(line, sizeof(line), personalityFile)) {    // read options line by line
 
-        while (pos = strpbrk(line, "\r\n")) *pos = '\0'; // clean the sh!t
+        while ((pos = strpbrk(line, "\r\n"))) *pos = '\0'; // clean the sh!t
 
         // do we pick opening book within a personality?
         if (strstr(line, "PERSONALITY_BOOKS")) Glob.separate_books = false;
@@ -553,7 +553,7 @@ void ReadPersonality(const char *fileName) {
         strcpy(pers_aliases.path[cnt], "///");
         cnt++;
     }
-    pers_aliases.count = cnt;
+    if (cnt != 0) pers_aliases.count = cnt;
     fclose(personalityFile);
     Glob.reading_personality = false;
 }

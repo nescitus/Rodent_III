@@ -145,7 +145,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         bb_control = BB.BishAttacks(OccBb(p), sq);          // get control bitboard
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd]  |= bb_control;
-        if (!(bb_control & Mask.away[sd])) 
+        if (!(bb_control & Mask.away[sd]))
              Add(e, sd, Par.values[B_OVH]);                 // we do not attack enemy half of the board
         if (bb_control & b_checks) att += Par.values[B_CHK];// check threats
 
@@ -631,20 +631,17 @@ int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
 
     if ((Par.riskydepth > 0)
     && (ply >= Par.riskydepth)
-    && (p->side == Par.prog_side)
     && (Abs(eval) > Par.draw_score)
     && (Abs(eval) < 1000)) {
-        eval_adj = eval < 0 ? round(1.0 * eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply) : round(1.0 * eval * (Glob.nodes > 100 ? 2 : 1) * ply / Par.riskydepth);
-        if (eval_adj > 1000) eval_adj = 1000;
-    } else
-    if ((Par.riskydepth > 0)
-    && (ply >= Par.riskydepth)
-    && (p->side != Par.prog_side)
-    && (Abs(eval) > Par.draw_score)
-    && (Abs(eval) < 1000)) {
-        eval_adj = eval < 0 ? round(1.0 * eval * (Glob.nodes > 100 ? 2 : 1) * ply / Par.riskydepth) : round(1.0 * eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply);
+
+        eval_adj = (int)round(
+                (eval < 0) == (p->side == Par.prog_side) ? (double)eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply :
+                                                           (double)eval * (Glob.nodes > 100 ?   2 : 1) * ply / Par.riskydepth
+                             );
+
         if (eval_adj > 1000) eval_adj = 1000;
     }
+
     return eval_adj;
 }
 #endif

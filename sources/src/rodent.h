@@ -135,12 +135,15 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 #define Rank(x)         ((x) >> 3)
 #define Sq(x, y)        (((y) << 3) | (x))
 
-#define Abs(x)          ((x) > 0 ? (x) : -(x))
-#define Max(x, y)       ((x) > (y) ? (x) : (y))
-#define Min(x, y)       ((x) < (y) ? (x) : (y))
-#define Map0x88(x)      (((x) & 7) | (((x) & ~7) << 1))
-#define Unmap0x88(x)    (((x) & 7) | (((x) & ~7) >> 1))
-#define Sq0x88Off(x)    ((unsigned)(x) & 0x88)
+//#define Abs(x)          ((x) > 0 ? (x) : -(x))
+template<typename T> T Abs(const T& x) { return x > 0 ? x : -x; }
+//#define Max(x, y)       ((x) > (y) ? (x) : (y))
+template<typename T> const T& Max(const T& x, const T& y) { return x > y ? x : y; }
+//#define Min(x, y)       ((x) < (y) ? (x) : (y))
+template<typename T> const T& Min(const T& x, const T& y) { return x < y ? x : y; }
+//#define Map0x88(x)      (((x) & 7) | (((x) & ~7) << 1))
+//#define Unmap0x88(x)    (((x) & 7) | (((x) & ~7) >> 1))
+//#define Sq0x88Off(x)    ((unsigned)(x) & 0x88)
 
 #define Fsq(x)          ((x) & 63)
 #define Tsq(x)          (((x) >> 6) & 63)
@@ -162,7 +165,7 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 #define IsOnSq(p, sd, pc, sq) ( PcBb(p, sd, pc) & SqBb(sq) )
 
 #ifndef FORCEINLINE
-    #if defined(_WIN32) && !defined(__MINGW32__)
+    #if defined(_MSC_VER)
         #define FORCEINLINE __forceinline
     #else
         #define FORCEINLINE __inline
@@ -173,48 +176,22 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 // triggered by defines at the top of this file.
 #ifdef USE_FIRST_ONE_INTRINSICS
 
-    #if defined(_WIN32) && !defined(__MINGW32__)
+    #if defined(_MSC_VER)
 
         #include <intrin.h>
 
-        #ifdef _WIN64
+        #ifndef _WIN64
+            #pragma intrinsic(_BitScanForward)
+        #else
             #pragma intrinsic(_BitScanForward64)
         #endif
 
-        #ifdef _MSC_VER
-            #ifndef _WIN64
-                const int lsb_64_table[64] = {
-                    63, 30,  3, 32, 59, 14, 11, 33,
-                    60, 24, 50,  9, 55, 19, 21, 34,
-                    61, 29,  2, 53, 51, 23, 41, 18,
-                    56, 28,  1, 43, 46, 27,  0, 35,
-                    62, 31, 58,  4,  5, 49, 54,  6,
-                    15, 52, 12, 40,  7, 42, 45, 16,
-                    25, 57, 48, 13, 10, 39,  8, 44,
-                    20, 47, 38, 22, 17, 37, 36, 26
-                };
-
-                /**
-                * bitScanForward
-                * @author Matt Taylor (2003)
-                * @param bb bitboard to scan
-                * @precondition bb != 0
-                * @return index (0..63) of least significant one bit
-                */
-                static int FORCEINLINE  bitScanForward(U64 bb) {
-                    unsigned int folded;
-                    bb ^= bb - 1;
-                    folded = (int)bb ^ (bb >> 32);
-                    return lsb_64_table[folded * 0x78291ACF >> 26];
-                }
-            #endif
-        #endif
-
         static int FORCEINLINE FirstOne(U64 x) {
+            unsigned long index;
         #ifndef _WIN64
-            return bitScanForward(x);
+            if (_BitScanForward(&index, (unsigned long)x)) return index;
+            _BitScanForward(&index, x >> 32); return index + 32;
         #else
-            unsigned long index = -1;
             _BitScanForward64(&index, x);
             return index;
         #endif
@@ -222,11 +199,30 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 
     #elif defined(__GNUC__)
 
-        #define FirstOne(x) (__builtin_ffsll(x) - 1)
+        static inline int FirstOne(U64 x) {
+
+        // workaround for GCC's inabitily to inline __builtin_ctzll() on x32 (it calls `__ctzdi2` runtime function instead)
+        #if !defined(__amd64__) && defined(__i386__) && !defined(__clang__)
+            const uint32_t xlo = (uint32_t)x;
+            return xlo ? __builtin_ctz(xlo) : __builtin_ctz(x >> 32) + 32;
+        #else
+            return __builtin_ctzll(x);
+        #endif
+        }
 
     #endif
 
 #else
+    const int bit_table[64] = {
+        0,  1,  2,  7,  3, 13,  8, 19,
+        4, 25, 14, 28,  9, 34, 20, 40,
+        5, 17, 26, 38, 15, 46, 29, 48,
+       10, 31, 35, 54, 21, 50, 41, 57,
+       63,  6, 12, 18, 24, 27, 33, 39,
+       16, 37, 45, 47, 30, 53, 49, 56,
+       62, 11, 23, 32, 36, 44, 52, 55,
+       61, 22, 43, 51, 60, 42, 59, 58
+    };
     #define FirstOne(x)     bit_table[(((x) & (~(x) + 1)) * (U64)0x0218A392CD3D5DBF) >> 58] // first "1" in a bitboard
 #endif
 
@@ -242,8 +238,9 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 #define ShiftSW(x)      ((x & bbNotA)>>9)
 #define ShiftSE(x)      ((x & bbNotH)>>7)
 
-#define JustOne(bb)     (bb && !(bb & (bb-1)))
-#define MoreThanOne(bb) ( bb & (bb - 1) )
+//#define JustOne(bb)     ((bb) && !((bb) & ((bb)-1)))
+//#define MoreThanOne(bb) ((bb) & ((bb) - 1))
+template<typename T> bool MoreThanOne(const T& bb) { return bb & (bb - 1); }
 
 class cBitBoard {
   private:
@@ -307,6 +304,9 @@ struct UNDO {
 
 class POS {
     static int castle_mask[64];
+    static U64 zob_piece[12][64];
+    static U64 zob_castle[16];
+    static U64 zob_ep[8];
   public:
     U64 cl_bb[2];
     U64 tp_bb[6];
@@ -363,6 +363,9 @@ class POS {
     void DoNull(UNDO *u);
     void UndoNull(UNDO *u);
     void UndoMove(int move, UNDO *u);
+
+    void InitHashKey();
+    void InitPawnKey();
 
 };
 
@@ -611,7 +614,7 @@ struct sInternalBook {
     int MoveFromInternal(POS *p);
 #ifndef USEGEN
     void MoveToInternal(U64 hashKey, int move, int val);
-    int LineToInternal(POS *p, const char *ptr, int excludedColor);
+    bool LineToInternal(POS *p, const char *ptr, int excludedColor);
 #endif
     void ReadInternal(POS *p);
 };
@@ -631,7 +634,7 @@ class cEngine {
     int history[12][64];
     int killer[MAX_PLY][2];
     int refutation[64][64];
-    int local_nodes;
+    //int local_nodes; unused and uninitialized
     const int thread_id;
     int root_depth;
     bool fl_root_choice;
@@ -749,10 +752,12 @@ struct sPersAliases {
     int count;
 };
 
+void PrintVersion();
+
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
 void AllocTrans(unsigned int mbsize);
-int Attacked(POS *p, int sq, int sd);
+bool Attacked(POS *p, int sq, int sd);
 U64 AttacksFrom(POS *p, int sq);
 U64 AttacksTo(POS *p, int sq);
 void BuildPv(int *dst, int *src, int move);
@@ -768,8 +773,6 @@ bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for Generat
 int GetMS();
 U64 GetNps(int elapsed);
 bool InputAvailable();
-U64 InitHashKey(POS *p);
-U64 InitPawnKey(POS *p);
 bool Legal(POS *p, int move);
 void MoveToStr(int move, char *move_str);
 void ParseGo(POS *p, const char *ptr);
@@ -796,13 +799,9 @@ void UciLoop();
 void WasteTime(int miliseconds);
 void PrintBb(U64 bbTest);
 
-extern int castle_mask[64];
 extern const int bit_table[64];
 extern const int tp_value[7];
 extern const int ph_value[7];
-extern U64 zob_piece[12][64];
-extern U64 zob_castle[16];
-extern U64 zob_ep[8];
 extern int move_time;
 extern int move_nodes;
 extern int search_depth;

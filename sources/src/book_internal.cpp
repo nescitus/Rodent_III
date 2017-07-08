@@ -6127,13 +6127,13 @@ void sInternalBook::ReadInternal(POS *p) {
 }
 
 #ifndef USEGEN
-int sInternalBook::LineToInternal(POS *p, const char *ptr, int excludedColor) {
+bool sInternalBook::LineToInternal(POS *p, const char *ptr, int excludedColor) {
 
     char token[512];
     UNDO u[1];
     int move;
     int freq;
-    int fl_problem = 0;
+    bool fl_problem = false;
 
     SetPosition(p, START_POS);
 
@@ -6157,7 +6157,7 @@ int sInternalBook::LineToInternal(POS *p, const char *ptr, int excludedColor) {
                 MoveToInternal(p->hash_key, move, freq);
 
             p->DoMove(move, u);
-        } else { fl_problem = 1; break; };
+        } else { fl_problem = true; break; };
 
         if (p->rev_moves == 0)
             p->head = 0;

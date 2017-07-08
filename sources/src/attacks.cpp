@@ -46,7 +46,7 @@ U64 AttacksTo(POS *p, int sq) {
            (p->tp_bb[K] & BB.KingAttacks(sq));
 }
 
-int Attacked(POS *p, int sq, int sd) {
+bool Attacked(POS *p, int sq, int sd) {
 
     return (p->Pawns(sd) & BB.PawnAttacks(Opp(sd), sq)) ||
            (p->Knights(sd) & BB.KnightAttacks(sq)) ||

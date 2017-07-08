@@ -182,7 +182,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
-    local_nodes++;
+    //local_nodes++; unused
     Slowdown();
     if (Glob.abort_search && root_depth > 1) return 0;
     if (ply) *pv = 0;
@@ -596,7 +596,7 @@ void cEngine::Slowdown() {
     // Handling search limited by the number of nodes
 
     if (move_nodes > 0) {
-        if (Glob.nodes >= move_nodes)
+        if (Glob.nodes >= (unsigned)move_nodes)
             Glob.abort_search = true;
     }
 
@@ -605,11 +605,11 @@ void cEngine::Slowdown() {
     if (Par.nps_limit > 0) {
         if (Par.nps_limit && root_depth > 1) {
             int time = GetMS() - start_time + 1;
-            int nps = GetNps(time);
-            while ((int)nps > Par.nps_limit) {
+            int nps = (int)GetNps(time);
+            while (nps > Par.nps_limit) {
                 WasteTime(10);
                 time = GetMS() - start_time + 1;
-                nps = GetNps(time);
+                nps = (int)GetNps(time);
                 if ((!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)) {
                     Glob.abort_search = true;
                     return;

@@ -78,7 +78,7 @@ void AllocTrans(unsigned int mbsize) {
         aflags0 = std::make_unique<std::atomic_flag[]> (number_of_aflags);
         aflags1 = std::make_unique<std::atomic_flag[]> (number_of_aflags);
 
-        for (int i = 0; i < number_of_aflags; i++) {
+        for (unsigned int i = 0; i < number_of_aflags; i++) {
             aflags0[i].clear();
             aflags1[i].clear();
         }

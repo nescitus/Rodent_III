@@ -31,7 +31,6 @@ struct polyglot_move {
 struct sBook {
   private:
     FILE *bookFile;
-    char bookName[256];
     int book_size;
     int moves[100];
     int n_of_choices;
@@ -43,6 +42,7 @@ struct sBook {
     U64 GetPolyglotKey(POS *p);
     U64 ReadInteger(int size);
   public:
+    char bookName[256];
     sBook(): bookFile(NULL) {}
     void SetBookName(const char *name) {
 

@@ -25,7 +25,7 @@ If not, see <http://www.gnu.org/licenses/>.
 int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     int best, score, move, new_pv[MAX_PLY];
-    int mv_type, fl_check;
+    int mv_type;//, fl_check;
     int is_pv = (alpha != beta - 1);
     MOVES m[1];
     UNDO u[1];
@@ -36,7 +36,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
-    local_nodes++;
+    //local_nodes++; unused
     Slowdown();
     if (Glob.abort_search && root_depth > 1) return 0;
     *pv = 0;
@@ -69,7 +69,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         return eval;
     }
 
-    fl_check = InCheck(p);
+    //fl_check = InCheck(p); unused, get rid of warning
 
     // PREPARE FOR SEARCH
 
@@ -126,7 +126,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     int best, score, move, new_pv[MAX_PLY];
-    int mv_type, fl_check;
+    int mv_type;//, fl_check;
     int is_pv = (alpha != beta - 1);
     MOVES m[1];
     UNDO u[1];
@@ -135,7 +135,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
-    local_nodes++;
+    //local_nodes++; unused
     Slowdown();
     if (Glob.abort_search && root_depth > 1) return 0;
     *pv = 0;
@@ -159,7 +159,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         return eval;
     }
 
-    fl_check = InCheck(p);
+    //fl_check = InCheck(p); unused, get rid of warning
 
     // PREPARE FOR MAIN SEARCH
 
@@ -227,7 +227,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
     if (InCheck(p)) return QuiesceFlee(p, ply, alpha, beta, pv);
 
     Glob.nodes++;
-    local_nodes++;
+    //local_nodes++; unused
     Slowdown();
 
     // EARLY EXIT
@@ -259,8 +259,14 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
     && (ply >= Par.riskydepth)
     && (p->side == Par.prog_side)
     && (Abs(best) > 100) && (Abs(best) < 1000)) {
-        int eval_adj = best < 0 ? round(1.0 * best * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply) : round(1.0 * best * (Glob.nodes > 100 ? 2 : 1) * ply / Par.riskydepth);
+
+        int eval_adj = (int)round(
+                                best < 0 ? (double)best * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply :
+                                           (double)best * (Glob.nodes > 100 ?   2 : 1) * ply / Par.riskydepth
+                                 );
+
         if (eval_adj > 1000) eval_adj = 1000;
+
         best = eval_adj;
     }
 #endif

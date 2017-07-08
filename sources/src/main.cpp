@@ -40,6 +40,37 @@ sBook MainBook;
     #include "book_gen.h"
 #endif
 
+void PrintVersion()
+{
+    printf("id name Rodent III 0.203"
+
+#if !(defined(_WIN64) || defined(__x86_64__))
+            " 32-bit"
+#else
+            " 64-bit"
+#endif
+
+#if   defined(__clang__)
+            "/CLANG " __clang_version__
+#elif defined(__MINGW32__)
+            "/MINGW " __VERSION__
+#elif defined(__GNUC__)
+            "/GCC " __VERSION__
+#elif defined(_MSC_VER)
+            "/MSVS"
+    #if   _MSC_VER == 1900
+                "2015"
+    #elif _MSC_VER == 1910
+                "2017"
+    #endif
+#endif
+
+#if (defined(_MSC_VER) && defined(USE_MM_POPCNT)) || (defined(__GNUC__) && defined(__POPCNT__))
+            "/POPCNT"
+#endif
+
+                        "\n");
+}
 
 int main() {
 
@@ -67,8 +98,10 @@ int main() {
     Mask.Init();
     Dist.Init();
 
+    PrintVersion();
+
 #if defined(_WIN32) || defined(_WIN64)
-    // if we are on Windows search for books and settings in same directory as rodentII.exe
+    // if we are on Windows search for books and settings in same directory as rodentIII.exe
     MainBook.SetBookName("books/rodent.bin");
     GuideBook.SetBookName("books/guide.bin");
     ReadPersonality("basic.ini");
@@ -86,16 +119,16 @@ int main() {
     ReadPersonality(MAKESTR(BOOKPATH) "/basic.ini");
     #undef MAKESTR
     #undef MAKESTRHLP
-#else // if no path was given than we assume that files are stored at /usr/share/rodentII
-    MainBook.SetBookName("/usr/share/rodentII/rodent.bin");
-    GuideBook.SetBookName("/usr/share/rodentII/guide.bin");
-    ReadPersonality("/usr/share/rodentII/basic.ini");
+#else // if no path was given than we assume that files are stored at /usr/share/rodentIII
+    MainBook.SetBookName("/usr/share/rodentIII/rodent.bin");
+    GuideBook.SetBookName("/usr/share/rodentIII/guide.bin");
+    ReadPersonality("/usr/share/rodentIII/basic.ini");
 #endif
 
 #else
     // a platform we have not tested yet. We assume that opening books and
     // settings are stored within the same directory. Similiar to Windows.
-    printf("Platform unknown. We assume that opening books and settings are stored within RodentII path");
+    printf("Platform unknown. We assume that opening books and settings are stored within RodentIII path");
     MainBook.SetBookName("books/rodent.bin");
     GuideBook.SetBookName("books/guide.bin");
     ReadPersonality("basic.ini");
