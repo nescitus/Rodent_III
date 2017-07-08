@@ -326,6 +326,12 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "pstopthem") == 0 )                              {
         Par.values[P_OPPSTOP_MUL] = atoi(value);
         Glob.should_clear = true;
+    } else if (strcmp(name, "pdefmul") == 0 )                                {
+        Par.values[P_DEFMUL] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pstopmul") == 0 )                               {
+        Par.values[P_STOPMUL] = atoi(value);
+        Glob.should_clear = true;
     } else if (strcmp(name, "pthr") == 0 )                                   {
         Par.values[P_THR] = atoi(value);
         Glob.should_clear = true;

@@ -186,6 +186,8 @@ void cParam::DefaultWeights() {
 	values[P_BL_MUL] = 23;      // blocked passer
 	values[P_OURSTOP_MUL] = 14; // side with a passer controls its stop square
 	values[P_OPPSTOP_MUL] = 10; // side without a passer controls its stop square
+	values[P_DEFMUL] = 5;       // passer defended by own pawn
+	values[P_STOPMUL] = 5;      // passers' stop square defended by own pawn
 
     // Knight parameters
 
@@ -193,6 +195,7 @@ void cParam::DefaultWeights() {
     values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
 	values[N_OWH] = -5;    // knight can move only to own half of the board
 	values[N_REACH] = 2;   // knight can reach an outpost square
+	values[BN_SHIELD] = 5;
 
     // Bishop parameters
 
@@ -208,6 +211,8 @@ void cParam::DefaultWeights() {
 	values[B_OVH] = -5;    // bishop can move only to own half of the board
 	values[B_REACH] = 2;   // bishop can reach an outpost square
 	values[B_TOUCH] = 4;   // two bishops on adjacent squares
+	values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
+	values[B_OPP_P] = -1;  // enemy pawn on the square of own bishop's color
 
     // Rook parameters
 

@@ -185,7 +185,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             opp_p_cnt = BB.PopCnt(bbBlackSq & p->Pawns(op)) - 4;
         }
 
-        Add(e, sd, -3 * own_p_cnt - opp_p_cnt);
+        Add(e, sd, Par.values[B_OWN_P] * own_p_cnt 
+			     + Par.values[B_OPP_P] * opp_p_cnt);
     }
 
     // Rook eval
@@ -330,6 +331,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         lines_eg += Par.values[RS2_EG];
     }
 
+	// Weighting eval parameters
+
     Add(e, sd, (Par.sd_mob[sd] * mob_mg)  / 100, (Par.sd_mob[sd] * mob_eg)  / 100);
     Add(e, sd, (Par.tropism_weight * tropism_mg) / 100, (Par.tropism_weight * tropism_eg) / 100);
     Add(e, sd, (Par.lines_weight * lines_mg)     / 100, (Par.lines_weight * lines_eg)     / 100);
@@ -351,7 +354,7 @@ void cEngine::EvaluateOutpost(POS *p, eData *e, int sd, int pc, int sq, int *out
     if (SqBb(sq) & Mask.home[sd]) {
         U64 stop = BB.ShiftFwd(SqBb(sq), sd);             // get square in front of a minor
         if (stop & p->Pawns(sd))                          // is it occupied by own pawn?
-            *outpost += 5;                                // bonus for a pawn shielding a minor
+            *outpost += Par.values[BN_SHIELD];            // bonus for a pawn shielding a minor
     }
 
     int tmp = Par.sp_pst[sd][pc][sq];                     // get base outpost bonus
@@ -455,8 +458,8 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
         if (!(Mask.passed[sd][sq] & p->Pawns(op))) {
             mul = 100;
 
-            if (bb_pawn & e->p_takes[sd]) mul += 5;
-            if (bb_stop & e->p_takes[sd]) mul += 5;
+            if (bb_pawn & e->p_takes[sd]) mul += Par.values[P_DEFMUL];
+            if (bb_stop & e->p_takes[sd]) mul += Par.values[P_STOPMUL];
 
             if (bb_stop & OccBb(p)) mul -= Par.values[P_BL_MUL];   // blocked passers score less
 

@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 49.615.265
+// b15: 41.117.267
 
 #pragma once
 
@@ -141,9 +141,6 @@ template<typename T> T Abs(const T& x) { return x > 0 ? x : -x; }
 template<typename T> const T& Max(const T& x, const T& y) { return x > y ? x : y; }
 //#define Min(x, y)       ((x) < (y) ? (x) : (y))
 template<typename T> const T& Min(const T& x, const T& y) { return x < y ? x : y; }
-//#define Map0x88(x)      (((x) & 7) | (((x) & ~7) << 1))
-//#define Unmap0x88(x)    (((x) & 7) | (((x) & ~7) >> 1))
-//#define Sq0x88Off(x)    ((unsigned)(x) & 0x88)
 
 #define Fsq(x)          ((x) & 63)
 #define Tsq(x)          (((x) >> 6) & 63)
@@ -423,12 +420,13 @@ enum Values {
     N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
     N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
     NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
-    N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OVH, N_REACH, B_REACH, B_TOUCH,
+    N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OVH, N_REACH, BN_SHIELD,
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
-    B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop patterns
+    B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
+	B_OPP_P, B_OWN_P, B_REACH, B_TOUCH,
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
 	PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7,             // passed pawns
-    P_BL_MUL, P_OURSTOP_MUL, P_OPPSTOP_MUL, P_THR, P_BIND, P_ISL,                       // pawn special terms
+    P_BL_MUL, P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_THR, P_BIND, P_ISL,// pawn special terms
     ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,     // rook bonuses
     RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK, N_OF_VAL                                   // queen and rook bonuses
 };
