@@ -42,7 +42,7 @@ sBook MainBook;
 
 void PrintVersion()
 {
-    printf("id name Rodent III 0.203"
+    printf("id name Rodent III 0.204"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
             " 32-bit"
@@ -75,15 +75,6 @@ void PrintVersion()
 int main() {
 
     POS p;
-
-	/*
-	float j = 2;
-
-	for (int i = 0; i < 100; i++) {
-		j = j * 1.80;
-		printf("%3d : %d\n", i, (int)j);
-	}
-	*/
 
     srand(GetMS());
 

@@ -169,25 +169,25 @@ void cParam::DefaultWeights() {
 
     values[PMG2] = 11;
     values[PMG3] = 12;
-	values[PMG4] = 30;
-	values[PMG5] = 50;
-	values[PMG6] = 80;
+	values[PMG4] = 24;
+	values[PMG5] = 45;
+	values[PMG6] = 78;
 	values[PMG7] = 130;
 
-	values[PEG2] = 23;
-	values[PEG3] = 24;
-	values[PEG4] = 60;
-	values[PEG5] = 99;
+	values[PEG2] = 22;
+	values[PEG3] = 23;
+	values[PEG4] = 57;
+	values[PEG5] = 96;
 	values[PEG6] = 161;
 	values[PEG7] = 260;
 
 	// Passed pawn value percentage modifiers
 
-	values[P_BL_MUL] = 23;      // blocked passer
+	values[P_BL_MUL] = 24;      // blocked passer
 	values[P_OURSTOP_MUL] = 14; // side with a passer controls its stop square
 	values[P_OPPSTOP_MUL] = 10; // side without a passer controls its stop square
-	values[P_DEFMUL] = 5;       // passer defended by own pawn
-	values[P_STOPMUL] = 5;      // passers' stop square defended by own pawn
+	values[P_DEFMUL] = 4;       // passer defended by own pawn
+	values[P_STOPMUL] = 4;      // passers' stop square defended by own pawn
 
     // Knight parameters
 
