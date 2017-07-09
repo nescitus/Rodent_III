@@ -269,6 +269,39 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "rcon") == 0 )                                   {
         Par.values[R_CONTACT] = atoi(value);
         Glob.should_clear = true;
+    } else if (strcmp(name, "shn") == 0 )                                    {
+        Par.values[P_SH_NONE] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "sh2") == 0 )                                    {
+        Par.values[P_SH_2] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "sh3") == 0 )                                    {
+        Par.values[P_SH_3] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "sh4") == 0 )                                    {
+        Par.values[P_SH_4] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "sh5") == 0 )                                    {
+        Par.values[P_SH_5] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "sh6") == 0 )                                    {
+        Par.values[P_SH_6] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "sh7") == 0 )                                    {
+        Par.values[P_SH_7] = atoi(value);
+		Glob.should_clear = true;
+    } else if (strcmp(name, "stn") == 0 )                                    {
+        Par.values[P_ST_OPEN] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "st3") == 0 )                                    {
+        Par.values[P_ST_3] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "st4") == 0 )                                    {
+        Par.values[P_ST_4] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "st5") == 0 )                                    {
+        Par.values[P_ST_5] = atoi(value);
+        Glob.should_clear = true;
     } else if (strcmp(name, "pmg2") == 0 )                                   {
         Par.values[PMG2] = atoi(value);
         Par.InitPassers();

@@ -41,7 +41,6 @@ void cParam::DefaultWeights() {
     time_percentage = 100;
 
     // Piece values
-	// 0.056823
 
     values[P_MID] = 95;
     values[N_MID] = 310;
@@ -81,30 +80,30 @@ void cParam::DefaultWeights() {
 
     // King attack values
 
-	// "_ATT1" values are awarded for attacking squares not defended by enemy pawns
-	// "_ATT2" values are awarded for attacking squares defended by enemy pawns
-	// "_CHK"  values are awarded for threatening check to enemy king
-	// "_CONTACT" values are awarded for contact checks threats
-	//
-	// All these values are NOT the actual bonuses; their sum is used as index 
-	// to a non-linear king safety table. Tune them with extreme caution.
+    // "_ATT1" values are awarded for attacking squares not defended by enemy pawns
+    // "_ATT2" values are awarded for attacking squares defended by enemy pawns
+    // "_CHK"  values are awarded for threatening check to enemy king
+    // "_CONTACT" values are awarded for contact checks threats
+    //
+    // All these values are NOT the actual bonuses; their sum is used as index 
+    // to a non-linear king safety table. Tune them with extreme caution.
 
-	values[N_ATT1] = 6;
-	values[N_ATT2] = 3;
-	values[B_ATT1] = 6;
-	values[B_ATT2] = 2;
+    values[N_ATT1] = 6;
+    values[N_ATT2] = 3;
+    values[B_ATT1] = 6;
+    values[B_ATT2] = 2;
     values[R_ATT1] = 9;
     values[R_ATT2] = 4;
     values[Q_ATT1] = 16;
     values[Q_ATT2] = 5;
 
-	values[N_CHK] = 4;
-	values[B_CHK] = 6;
-	values[R_CHK] = 11;
-	values[Q_CHK] = 12;
+    values[N_CHK] = 4;
+    values[B_CHK] = 6;
+    values[R_CHK] = 11;
+    values[Q_CHK] = 12;
 
-	values[R_CONTACT] = 24;
-	values[Q_CONTACT] = 36;
+    values[R_CONTACT] = 24;
+    values[Q_CONTACT] = 36;
 
     // King tropism
 
@@ -120,7 +119,7 @@ void cParam::DefaultWeights() {
     // Varia
 
     mat_weight = 100;
-	pst_weight = 75;
+    pst_weight = 75;
     pst_style = 0;
     mob_style = 0;         // 1 is only marginally behind
 
@@ -143,8 +142,8 @@ void cParam::DefaultWeights() {
     tropism_weight = 20;
     forward_weight = 0;
     passers_weight = 100;
-	pawn_mass_weight = 100; // seems optimal
-	pawn_chains_weight = 100;
+    pawn_mass_weight = 100; // seems optimal
+    pawn_chains_weight = 100;
     outposts_weight = 95;
     lines_weight = 100;
     struct_weight = 100;
@@ -161,41 +160,58 @@ void cParam::DefaultWeights() {
     values[BK_MID] = -8;   // backward
     values[BK_END] = -8;
     values[BK_OPE] = -10;  // additional midgame penalty for backward pawn on an open file
-	values[P_BIND] = 5;    // two pawns control central square
-	values[P_ISL] = 7;     // penalty for each pawn island
-	values[P_THR] = 4;     // pawn move threatens to attack enemy minor
+    values[P_BIND] = 5;    // two pawns control central square
+    values[P_ISL] = 7;     // penalty for each pawn island
+    values[P_THR] = 4;     // pawn move threatens to attack enemy minor
 
     // Passed pawn bonuses per rank
 
     values[PMG2] = 11;
     values[PMG3] = 12;
-	values[PMG4] = 24;
-	values[PMG5] = 45;
-	values[PMG6] = 78;
-	values[PMG7] = 130;
+    values[PMG4] = 24;
+    values[PMG5] = 45;
+    values[PMG6] = 78;
+    values[PMG7] = 130;
 
-	values[PEG2] = 22;
-	values[PEG3] = 23;
-	values[PEG4] = 57;
-	values[PEG5] = 96;
-	values[PEG6] = 161;
-	values[PEG7] = 260;
+    values[PEG2] = 22;
+    values[PEG3] = 23;
+    values[PEG4] = 57;
+    values[PEG5] = 96;
+    values[PEG6] = 161;
+    values[PEG7] = 260;
 
-	// Passed pawn value percentage modifiers
+    // Passed pawn value percentage modifiers
 
-	values[P_BL_MUL] = 24;      // blocked passer
-	values[P_OURSTOP_MUL] = 14; // side with a passer controls its stop square
-	values[P_OPPSTOP_MUL] = 10; // side without a passer controls its stop square
-	values[P_DEFMUL] = 4;       // passer defended by own pawn
-	values[P_STOPMUL] = 4;      // passers' stop square defended by own pawn
+    values[P_BL_MUL] = 24;      // blocked passer
+    values[P_OURSTOP_MUL] = 14; // side with a passer controls its stop square
+    values[P_OPPSTOP_MUL] = 10; // side without a passer controls its stop square
+    values[P_DEFMUL] = 4;       // passer defended by own pawn
+    values[P_STOPMUL] = 4;      // passers' stop square defended by own pawn
+
+    // King's pawn shield
+
+    values[P_SH_NONE] = -36;
+    values[P_SH_2]    =   2;
+    values[P_SH_3]    = -11;
+    values[P_SH_4]    = -20;
+    values[P_SH_5]    = -27;
+    values[P_SH_6]    = -32;
+    values[P_SH_7]    = -35;
+
+    // Pawn storm
+
+    values[P_ST_OPEN] = -16;
+    values[P_ST_3] = -32;
+    values[P_ST_4] = -16;
+    values[P_ST_5] = -8;
 
     // Knight parameters
 
     values[N_TRAP] = -150; // trapped knight
     values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
-	values[N_OWH] = -5;    // knight can move only to own half of the board
-	values[N_REACH] = 2;   // knight can reach an outpost square
-	values[BN_SHIELD] = 5;
+    values[N_OWH] = -5;    // knight can move only to own half of the board
+    values[N_REACH] = 2;   // knight can reach an outpost square
+    values[BN_SHIELD] = 5;
 
     // Bishop parameters
 
@@ -208,11 +224,11 @@ void cParam::DefaultWeights() {
     values[B_BF_MG] = -10; // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
     values[B_BF_EG] = -20;
     values[B_WING] = 10;   // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2)
-	values[B_OVH] = -5;    // bishop can move only to own half of the board
-	values[B_REACH] = 2;   // bishop can reach an outpost square
-	values[B_TOUCH] = 4;   // two bishops on adjacent squares
-	values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
-	values[B_OPP_P] = -1;  // enemy pawn on the square of own bishop's color
+    values[B_OVH] = -5;    // bishop can move only to own half of the board
+    values[B_REACH] = 2;   // bishop can reach an outpost square
+    values[B_TOUCH] = 4;   // two bishops on adjacent squares
+    values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
+    values[B_OPP_P] = -1;  // enemy pawn on the square of own bishop's color
 
     // Rook parameters
 
@@ -253,7 +269,7 @@ void cParam::DefaultWeights() {
     InitMobility();
     InitMaterialTweaks();
     InitBackward();
-	InitPassers();
+    InitPassers();
 
     // History limit to prunings and reductions
 
@@ -266,23 +282,23 @@ void cParam::DefaultWeights() {
 
 void cParam::InitPassers() {
 
-	passed_bonus_mg[WC][0] = 0;                passed_bonus_mg[BC][7] = 0;
-	passed_bonus_mg[WC][1] = values[PMG2];     passed_bonus_mg[BC][6] = values[PMG2];
-	passed_bonus_mg[WC][2] = values[PMG3];     passed_bonus_mg[BC][5] = values[PMG3];
-	passed_bonus_mg[WC][3] = values[PMG4];     passed_bonus_mg[BC][4] = values[PMG4];
-	passed_bonus_mg[WC][4] = values[PMG5];     passed_bonus_mg[BC][3] = values[PMG5];
-	passed_bonus_mg[WC][5] = values[PMG6];     passed_bonus_mg[BC][2] = values[PMG6];
-	passed_bonus_mg[WC][6] = values[PMG7];     passed_bonus_mg[BC][1] = values[PMG7];
-	passed_bonus_mg[WC][7] = 0;                passed_bonus_mg[BC][0] = 0;
+    passed_bonus_mg[WC][0] = 0;                passed_bonus_mg[BC][7] = 0;
+    passed_bonus_mg[WC][1] = values[PMG2];     passed_bonus_mg[BC][6] = values[PMG2];
+    passed_bonus_mg[WC][2] = values[PMG3];     passed_bonus_mg[BC][5] = values[PMG3];
+    passed_bonus_mg[WC][3] = values[PMG4];     passed_bonus_mg[BC][4] = values[PMG4];
+    passed_bonus_mg[WC][4] = values[PMG5];     passed_bonus_mg[BC][3] = values[PMG5];
+    passed_bonus_mg[WC][5] = values[PMG6];     passed_bonus_mg[BC][2] = values[PMG6];
+    passed_bonus_mg[WC][6] = values[PMG7];     passed_bonus_mg[BC][1] = values[PMG7];
+    passed_bonus_mg[WC][7] = 0;                passed_bonus_mg[BC][0] = 0;
 
-	passed_bonus_eg[WC][0] = 0;                passed_bonus_eg[BC][7] = 0;
-	passed_bonus_eg[WC][1] = values[PEG2];     passed_bonus_eg[BC][6] = values[PEG2];
-	passed_bonus_eg[WC][2] = values[PEG3];     passed_bonus_eg[BC][5] = values[PEG3];
-	passed_bonus_eg[WC][3] = values[PEG4];     passed_bonus_eg[BC][4] = values[PEG4];
-	passed_bonus_eg[WC][4] = values[PEG5];     passed_bonus_eg[BC][3] = values[PEG5];
-	passed_bonus_eg[WC][5] = values[PEG6];     passed_bonus_eg[BC][2] = values[PEG6];
-	passed_bonus_eg[WC][6] = values[PEG7];     passed_bonus_eg[BC][1] = values[PEG7];
-	passed_bonus_eg[WC][7] = 0;                passed_bonus_eg[BC][0] = 0;
+    passed_bonus_eg[WC][0] = 0;                passed_bonus_eg[BC][7] = 0;
+    passed_bonus_eg[WC][1] = values[PEG2];     passed_bonus_eg[BC][6] = values[PEG2];
+    passed_bonus_eg[WC][2] = values[PEG3];     passed_bonus_eg[BC][5] = values[PEG3];
+    passed_bonus_eg[WC][3] = values[PEG4];     passed_bonus_eg[BC][4] = values[PEG4];
+    passed_bonus_eg[WC][4] = values[PEG5];     passed_bonus_eg[BC][3] = values[PEG5];
+    passed_bonus_eg[WC][5] = values[PEG6];     passed_bonus_eg[BC][2] = values[PEG6];
+    passed_bonus_eg[WC][6] = values[PEG7];     passed_bonus_eg[BC][1] = values[PEG7];
+    passed_bonus_eg[WC][7] = 0;                passed_bonus_eg[BC][0] = 0;
 }
 
 void cParam::InitBackward() {
@@ -410,17 +426,17 @@ void cParam::SetSpeed(int elo) {
 int cParam::EloToSpeed(int elo) {
 
     // this formula abuses Michael Byrne's code from CraftySkill.
-	// He used  it to calculate max nodes per elo. By  dividing,
-	// I derive speed that yields similar result in standart blitz.
+    // He used  it to calculate max nodes per elo. By  dividing,
+    // I derive speed that yields similar result in standart blitz.
     // Formula has a little bit of built-in randomness.
 
-	int lower_elo = elo - 25;
-	int upper_elo = elo + 25;
-	int use_rating = rand() % (upper_elo - lower_elo + 1) + lower_elo;
+    int lower_elo = elo - 25;
+    int upper_elo = elo + 25;
+    int use_rating = rand() % (upper_elo - lower_elo + 1) + lower_elo;
     int search_nodes = (int)pow(1.0069555500567, (((use_rating) / 1200) - 1)
                              + (use_rating - 1200)) * 128;
 
-	return search_nodes / 7;
+    return search_nodes / 7;
 }
 
 int cParam::EloToBlur(int elo) {

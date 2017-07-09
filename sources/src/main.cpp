@@ -84,8 +84,6 @@ int main() {
     Glob.Init();
     Par.DefaultWeights();
     Par.InitTables();
-    Glob.is_tuning = false;
-
     Mask.Init();
     Dist.Init();
 
@@ -134,7 +132,8 @@ int main() {
 
 void cGlobals::Init() {
 
-    is_testing = false;
+	is_testing = false;
+	is_tuning = false;
     reading_personality = false;
     use_personality_files = false;
     separate_books = false;

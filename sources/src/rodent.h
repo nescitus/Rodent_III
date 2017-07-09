@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 41.117.267
+// b15: 38.348.881
 
 #pragma once
 
@@ -424,6 +424,8 @@ enum Values {
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
 	B_OPP_P, B_OWN_P, B_REACH, B_TOUCH,
+	P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
+	P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
 	PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7,             // passed pawns
     P_BL_MUL, P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_THR, P_BIND, P_ISL,// pawn special terms
@@ -632,7 +634,7 @@ class cEngine {
     int history[12][64];
     int killer[MAX_PLY][2];
     int refutation[64][64];
-    //int local_nodes; unused and uninitialized
+    //int local_nodes;
     const int thread_id;
     int root_depth;
     bool fl_root_choice;

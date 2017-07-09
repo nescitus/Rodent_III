@@ -176,22 +176,22 @@ void cEngine::EvaluateKingFile(POS *p, int sd, U64 bb_file, int *shield, int *st
 
 int cEngine::EvaluateFileShelter(U64 bb_own_pawns, int sd) {
 
-    if (!bb_own_pawns) return -36;
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_2]) return    2;
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_3]) return  -11;
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_4]) return  -20;
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_5]) return  -27;
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_6]) return  -32;
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_7]) return  -35;
+    if (!bb_own_pawns) return Par.values[P_SH_NONE];
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_2]) return Par.values[P_SH_2];
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_3]) return Par.values[P_SH_3];
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_4]) return Par.values[P_SH_4];
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_5]) return Par.values[P_SH_5];
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_6]) return Par.values[P_SH_6];
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_7]) return Par.values[P_SH_7];
     return 0;
 }
 
 int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
 
-    if (!bb_opp_pawns) return -16;
-    if (bb_opp_pawns & bb_rel_rank[sd][RANK_3]) return -32;
-    if (bb_opp_pawns & bb_rel_rank[sd][RANK_4]) return -16;
-    if (bb_opp_pawns & bb_rel_rank[sd][RANK_5]) return  -8;
+    if (!bb_opp_pawns) return Par.values[P_ST_OPEN];
+    if (bb_opp_pawns & bb_rel_rank[sd][RANK_3]) return Par.values[P_ST_3];
+    if (bb_opp_pawns & bb_rel_rank[sd][RANK_4]) return Par.values[P_ST_4];
+    if (bb_opp_pawns & bb_rel_rank[sd][RANK_5]) return Par.values[P_ST_5];
     return 0;
 }
 
