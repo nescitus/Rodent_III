@@ -378,12 +378,20 @@ avoid_null:
 
         // EXTENSIONS
 
-        if (is_pv || depth < 9) {
-            new_depth += InCheck(p);                                // check extension, pv or low depth
-            if (is_pv && Tsq(move) == last_capt_sq) new_depth += 1; // recapture extension in pv
-            if (is_pv && depth < 6 && TpOnSq(p, Tsq(move)) == P     // pawn to 7th extension at the tips of pv
-            && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) new_depth += 1;
-        }
+		// 1. check extension, applied in pv nodes or at low depth
+
+        if (is_pv || depth < 9) new_depth += InCheck(p);
+
+		// 2. recapture extension in pv-nodes
+
+        if (is_pv && Tsq(move) == last_capt_sq) new_depth += 1;
+
+		// 3. pawn to 7th rank extension at the tips of pv-line
+
+        if (is_pv 
+        && depth < 6
+        && TpOnSq(p, Tsq(move)) == P     
+        && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) new_depth += 1;
 
         // FUTILITY PRUNING
 
