@@ -380,7 +380,7 @@ avoid_null:
 
 		// 1. check extension, applied in pv nodes or at low depth
 
-        if (is_pv || depth < 9) new_depth += InCheck(p);
+        if (is_pv || depth < 8) new_depth += InCheck(p);
 
 		// 2. recapture extension in pv-nodes
 
