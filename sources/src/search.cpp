@@ -433,7 +433,7 @@ avoid_null:
             // increase reduction on bad history score
 
             if (mv_hist_score < 0
-            && new_depth - reduction > 2)
+            && new_depth - reduction >= 2)
                 reduction++;
 
             // TODO: decrease reduction of moves with good history score

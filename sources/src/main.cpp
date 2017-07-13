@@ -42,7 +42,7 @@ sBook MainBook;
 
 void PrintVersion()
 {
-    printf("id name Rodent III 0.206"
+    printf("id name Rodent III 0.207"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
             " 32-bit"
