@@ -433,8 +433,8 @@ int cParam::EloToSpeed(int elo) {
     int lower_elo = elo - 25;
     int upper_elo = elo + 25;
     int use_rating = rand() % (upper_elo - lower_elo + 1) + lower_elo;
-    int search_nodes = (int)pow(1.0069555500567, (((use_rating) / 1200) - 1)
-                             + (use_rating - 1200)) * 128;
+    int search_nodes = (int)(pow(1.0069555500567, (((use_rating) / 1200) - 1)
+                             + (use_rating - 1200)) * 128);
 
     return search_nodes / 7;
 }
