@@ -1,21 +1,22 @@
-#makefile to compile Rodent II on Linux
+#makefile to compile Rodent III on Linux
+PREFIX=/usr/local
 
 #define the directory for the executable file
-BINDIR = /usr/bin
+BINDIR = $(PREFIX)/bin
 
 #define the directory for the data files
-DATADIR = /usr/share/rodentIII
+DATADIR = $(PREFIX)/share/rodentIII
 
 
 # define the C compiler to use
 CC = g++
 
 # define the compile-time flags
-CFLAGS = -g -w -Wfatal-errors -pipe -DNDEBUG -O3 -fno-rtti -finline-functions -fprefetch-loop-arrays -DBOOKPATH=$(DATADIR)
-C1FLAGS = -g -w -Wfatal-errors -pipe -DWRITEDEBUGFILE -DBOOKPATH=$(DATADIR)
+CFLAGS = -g -std=c++14 -pthread -w -Wfatal-errors -pipe -DNDEBUG -O3 -fno-rtti -finline-functions -fprefetch-loop-arrays -DBOOKPATH=$(DATADIR)
+C1FLAGS = -g -std=c++14 -pthread -w -Wfatal-errors -pipe -DWRITEDEBUGFILE -DBOOKPATH=$(DATADIR)
 
 # define the link options
-LDFLAGS = -s -lm
+LDFLAGS = -s -lm -Wl,--no-as-needed
 LD1FLAGS = -lm
 
 # define outpout name and settings file
