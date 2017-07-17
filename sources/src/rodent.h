@@ -34,7 +34,9 @@ using U64 = uint64_t;
 // define how Rodent is to be compiled
 
 #define USE_MAGIC
-#define USE_MM_POPCNT
+#ifndef NO_MM_POPCNT
+    #define USE_MM_POPCNT
+#endif
 #define USE_FIRST_ONE_INTRINSICS
 //#define USE_TUNING // needs epd.cpp, long compile time, huge file!!!
 
