@@ -1,5 +1,6 @@
 #include "src/attacks.cpp"
 #include "src/bitboard.cpp"
+#include "src/book_internal.cpp"
 #include "src/book.cpp"
 #include "src/data.cpp"
 #include "src/eval.cpp"
