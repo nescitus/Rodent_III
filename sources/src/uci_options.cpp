@@ -99,8 +99,8 @@ void PrintUciOptions() {
 #endif
     }
     printf("option name UseBook type check default %s\n", Par.use_book ? "true" : "false");
-    printf("option name GuideBookFile type string default %s\n", MainBook.bookName);
-    printf("option name MainBookFile type string default %s\n", GuideBook.bookName);
+    printf("option name MainBookFile type string default %s\n", MainBook.bookName);
+    printf("option name GuideBookFile type string default %s\n", GuideBook.bookName);
 
 }
 
