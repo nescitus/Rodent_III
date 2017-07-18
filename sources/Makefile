@@ -12,8 +12,8 @@ DATADIR = $(PREFIX)/share/rodentIII
 CC = g++
 
 # define the compile-time flags
-CFLAGS = -g -std=c++14 -pthread -w -Wfatal-errors -pipe -DNDEBUG -O3 -fno-rtti -finline-functions -fprefetch-loop-arrays -DBOOKPATH=$(DATADIR)
-C1FLAGS = -g -std=c++14 -pthread -w -Wfatal-errors -pipe -DWRITEDEBUGFILE -DBOOKPATH=$(DATADIR)
+CFLAGS = -g -std=c++14 -pthread -w -Wfatal-errors -pipe -DNDEBUG -DUSEGEN -O3 -fno-rtti -finline-functions -fprefetch-loop-arrays -DBOOKPATH=$(DATADIR)
+C1FLAGS = -g -std=c++14 -pthread -w -Wfatal-errors -pipe -DWRITEDEBUGFILE -DUSEGEN -DBOOKPATH=$(DATADIR)
 
 # define the link options
 LDFLAGS = -s -lm -Wl,--no-as-needed
