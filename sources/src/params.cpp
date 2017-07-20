@@ -210,7 +210,7 @@ void cParam::DefaultWeights() {
     values[N_TRAP] = -150; // trapped knight
     values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
     values[N_OWH] = -5;    // knight can move only to own half of the board
-    values[N_REACH] = 2;   // knight can reach an outpost square
+    values[N_REACH] = 4;   // knight can reach an outpost square WAS 2
     values[BN_SHIELD] = 5;
 
     // Bishop parameters

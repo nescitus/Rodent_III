@@ -110,7 +110,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         bb_possible = bb_control & ~e->p_takes[op];         // reachable outposts
         bb_possible &= ~e->p_can_take[op];
         bb_possible &= Mask.outpost_map[sd];
-        if (bb_possible) Add(e, sd, Par.values[N_REACH]);
+        if (bb_possible) Add(e, sd, Par.values[N_REACH], 2);
 
         bb_attack = BB.KnightAttacks(sd);
         if (bb_attack & bb_zone) {                          // king attack
@@ -164,7 +164,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         bb_possible = bb_control & ~e->p_takes[op];         // reachable outposts
         bb_possible &= ~e->p_can_take[op];
         bb_possible &= Mask.outpost_map[sd];
-        if (bb_possible) Add(e, sd, Par.values[B_REACH]);
+        if (bb_possible) Add(e, sd, Par.values[B_REACH], 2);
 
         EvaluateOutpost(p, e, sd, B, sq, &outpost);         // outpost
 
