@@ -6171,7 +6171,7 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
 
     for (int i = 0; i < n_of_records; i++) {
         if (internal_book[i].hash == hashKey
-        &&   internal_book[i].move == move) {
+        &&  internal_book[i].move == move) {
             internal_book[i].freq += val;
             return;
         }
@@ -6188,20 +6188,16 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
 
 int sInternalBook::MoveFromInternal(POS *p) {
 
-    int i;
-    int cur_val = 0;
-    int best_val = 0;
-    int choice = 0;
-    int values[100];
+    int cur_val = 0, best_val = 0, choice = 0;
+    int values[100], moves[100];
     char test_string[12];
-    U64 local_hash = p->hash_key;
 
-    int min_freq = 20; // the higher this value, themore uniform move distribution
+    const int min_freq = 20; // the higher this value, themore uniform move distribution
 
-    n_of_choices = 0;
+    int n_of_choices = 0;
 
-    for (i = 0; i < n_of_records; i++) {
-        if (internal_book[i].hash == local_hash
+    for (int i = 0; i < n_of_records; i++) {
+        if (internal_book[i].hash == p->hash_key
         && Legal(p, internal_book[i].move)) {
             moves[n_of_choices] = internal_book[i].move;
             if (internal_book[i].freq > 0) values[n_of_choices] = internal_book[i].freq + min_freq;
@@ -6212,12 +6208,12 @@ int sInternalBook::MoveFromInternal(POS *p) {
 
     if (n_of_choices) {
 
-        for (i = 0; i < n_of_choices; i++) {
+        for (int i = 0; i < n_of_choices; i++) {
 
             // pick move with the best random value based on frequency
 
             if (values[i] > 0) cur_val = 1 + rand() % values[i];
-            else cur_val = -1;
+            else               cur_val = -1;
 
             if (cur_val > best_val) {
                 best_val = cur_val;
@@ -6229,7 +6225,7 @@ int sInternalBook::MoveFromInternal(POS *p) {
 
         printf("info string ");
 
-        for (i = 0; i < n_of_choices; i++) {
+        for (int i = 0; i < n_of_choices; i++) {
             MoveToStr(moves[i], test_string);
             printf("%s %d; ", test_string, values[i]);
         }

@@ -609,9 +609,6 @@ struct sInternalBook {
     sBookEntry internal_book[48000];
 #endif
 
-    int n_of_choices;
-    int moves[100];
-
     void Init(POS *p);
     int MoveFromInternal(POS *p);
 #ifndef USEGEN
