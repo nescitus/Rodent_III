@@ -354,18 +354,16 @@ static int big_random(int n) {
 
 int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
-    int best_move = 0;
-    int max_weight = 0;
-    int weight_sum = 0;
+    int best_move = 0, max_weight = 0, weight_sum = 0;
     int pos;
     polyglot_move entry[1];
     int move;
     int score;
-    int values[100];
+    int values[100], moves[100];
     U64 key = GetPolyglotKey(p);
     char move_string[6];
 
-    n_of_choices = 0;
+    int n_of_choices = 0;
 
     if (bookFile != NULL) {
 
