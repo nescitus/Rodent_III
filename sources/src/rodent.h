@@ -503,10 +503,10 @@ class cParam {
     void InitTables();
     void DefaultWeights();
     void InitAsymmetric(POS *p);
-    void SetSpeed(int elo);
-    int EloToSpeed(int elo);
-    int EloToBlur(int elo);
-    int EloToBookDepth(int elo);
+    void SetSpeed(int elo_in);
+    int EloToSpeed(int elo_in);
+    int EloToBlur(int elo_in);
+    int EloToBookDepth(int elo_in);
     void SetVal(int slot, int val);
 };
 
