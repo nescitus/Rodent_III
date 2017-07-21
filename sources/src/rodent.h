@@ -503,10 +503,10 @@ class cParam {
     void InitTables();
     void DefaultWeights();
     void InitAsymmetric(POS *p);
-    void SetSpeed(int elo);
-    int EloToSpeed(int elo);
-    int EloToBlur(int elo);
-    int EloToBookDepth(int elo);
+    void SetSpeed(int elo_in);
+    int EloToSpeed(int elo_in);
+    int EloToBlur(int elo_in);
+    int EloToBookDepth(int elo_in);
     void SetVal(int slot, int val);
 };
 
@@ -608,9 +608,6 @@ struct sInternalBook {
 #else
     sBookEntry internal_book[48000];
 #endif
-
-    int n_of_choices;
-    int moves[100];
 
     void Init(POS *p);
     int MoveFromInternal(POS *p);

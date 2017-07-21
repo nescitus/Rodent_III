@@ -412,26 +412,26 @@ void cParam::InitTables() {
     }
 }
 
-void cParam::SetSpeed(int elo) {
+void cParam::SetSpeed(int elo_in) {
     nps_limit = 0;
     eval_blur = 0;
 
     if (fl_weakening) {
-        nps_limit = EloToSpeed(elo);
-        eval_blur = EloToBlur(elo);
-        book_depth = EloToBookDepth(elo);
+        nps_limit = EloToSpeed(elo_in);
+        eval_blur = EloToBlur(elo_in);
+        book_depth = EloToBookDepth(elo_in);
     }
 }
 
-int cParam::EloToSpeed(int elo) {
+int cParam::EloToSpeed(int elo_in) {
 
     // this formula abuses Michael Byrne's code from CraftySkill.
     // He used  it to calculate max nodes per elo. By  dividing,
     // I derive speed that yields similar result in standart blitz.
     // Formula has a little bit of built-in randomness.
 
-    int lower_elo = elo - 25;
-    int upper_elo = elo + 25;
+    const int lower_elo = elo_in - 25;
+    const int upper_elo = elo_in + 25;
     int use_rating = rand() % (upper_elo - lower_elo + 1) + lower_elo;
     int search_nodes = (int)(pow(1.0069555500567, (((use_rating) / 1200) - 1)
                              + (use_rating - 1200)) * 128);
@@ -439,16 +439,16 @@ int cParam::EloToSpeed(int elo) {
     return search_nodes / 7;
 }
 
-int cParam::EloToBlur(int elo) {
+int cParam::EloToBlur(int elo_in) {
 
     // Weaker levels get their evaluation blurred
 
-    if (elo < 1500) return (1500 - elo) / 4;
+    if (elo_in < 1500) return (1500 - elo_in) / 4;
     return 0;
 }
 
-int cParam::EloToBookDepth(int elo) {
-    if (elo < 2000) return (elo - 700) / 100;
+int cParam::EloToBookDepth(int elo_in) {
+    if (elo_in < 2000) return (elo_in - 700) / 100;
     return 256;
 }
 

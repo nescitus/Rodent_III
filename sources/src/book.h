@@ -32,8 +32,6 @@ struct sBook {
   private:
     FILE *bookFile;
     int book_size;
-    int moves[100];
-    int n_of_choices;
     int FindPos(U64 key);
     bool IsInfrequent(int val, int max_freq);
     void ClosePolyglot();
