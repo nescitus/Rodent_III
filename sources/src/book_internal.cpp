@@ -6109,6 +6109,14 @@ void sInternalBook::ReadInternal(POS *p) {
             n_of_records--; i--;
         }
 
+    qsort(internal_book, n_of_records, sizeof(sBookEntry), [](const void* a, const void* b) {
+        const U64 a64 = ((sBookEntry *)a)->hash;
+        const U64 b64 = ((sBookEntry *)b)->hash;
+        if (a64 > b64) return 1;
+        if (a64 < b64) return -1;
+        return 0;
+    });
+
     FILE *f = fopen("book_gen.h", "w");
 
     fprintf(f, "#ifndef GIMMESIZE\n"
