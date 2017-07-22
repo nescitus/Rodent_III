@@ -6103,6 +6103,12 @@ void sInternalBook::ReadInternal(POS *p) {
     printf("info string %d moves loaded from the internal book\n", n_of_records);
 
 #ifdef BOOKGEN
+    for (int i = 0; i < n_of_records; i++) // get rid of really bad moves
+        if (!(internal_book[i].freq > 0)) {
+            memmove(&internal_book[i], &internal_book[i+1], (n_of_records - i - 1) * sizeof(internal_book[0]));
+            n_of_records--; i--;
+        }
+
     FILE *f = fopen("book_gen.h", "w");
 
     fprintf(f, "#ifndef GIMMESIZE\n"
