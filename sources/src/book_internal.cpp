@@ -37,11 +37,7 @@ void sInternalBook::ReadInternal(POS *p) {
             memmove(&internal_book[i], &internal_book[i+1], (n_of_records - i - 1) * sizeof(internal_book[0]));
             n_of_records--; i--;
         }
-#endif
 
-    printf("info string %d moves loaded from the internal book\n", n_of_records);
-
-#ifdef BOOKGEN
     qsort(internal_book, n_of_records, sizeof(sBookEntry), [](const void* a, const void* b) {
         const U64 a64 = ((sBookEntry *)a)->hash;
         const U64 b64 = ((sBookEntry *)b)->hash;
@@ -49,7 +45,11 @@ void sInternalBook::ReadInternal(POS *p) {
         if (a64 < b64) return -1;
         return 0;
     });
+#endif
 
+    printf("info string %d moves loaded from the internal book\n", n_of_records);
+
+#ifdef BOOKGEN
     FILE *f = fopen("book_gen.h", "w");
 
     fprintf(f, "#ifndef GIMMESIZE\n"
@@ -135,40 +135,34 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
 
 int sInternalBook::MoveFromInternal(POS *p) {
 
-    int choice = 0;
-    int values[100], moves[100];
-    char mv_string[6];
+    int choice = 0; char mv_string[6];
 
     const int min_freq = 20; // the higher this value, the more uniform move distribution
 
-    int n_of_choices = 0;
+    int left = 0, right = n_of_records - 1;
 
-    for (int i = 0; i < n_of_records; i++) {
-        if (internal_book[i].hash == p->hash_key
-        && Legal(p, internal_book[i].move)) {
-            moves[n_of_choices] = internal_book[i].move;
-            values[n_of_choices] = internal_book[i].freq + min_freq;
-            n_of_choices++;
-        }
+    while (left < right) { // binary search for the leftmost value
+        int mid = (left + right) / 2;
+
+        if (p->hash_key <= internal_book[mid].hash) right = mid;
+        else                                        left = mid + 1;
     }
 
-    if (n_of_choices) {
+    int vals_acc = 0;
 
-        printf("info string ");
+    for (int i = left; i < n_of_records && internal_book[i].hash == p->hash_key; i++) {
+        if (Legal(p, internal_book[i].move)) {
 
-        int vals_acc = 0;
+            const int freq_with_correction = internal_book[i].freq + min_freq;
 
-        for (int i = 0; i < n_of_choices; i++) {
             // display info about book moves
-            MoveToStr(moves[i], mv_string);
-            printf("%s %d; ", mv_string, values[i]);
+            MoveToStr(internal_book[i].move, mv_string);
+            printf("info string %s %d\n", mv_string, freq_with_correction);
 
             // pick move with the best random value based on frequency
-            vals_acc += values[i];
-            if (big_random(vals_acc) < values[i]) choice = moves[i];
+            vals_acc += freq_with_correction;
+            if (big_random(vals_acc) < freq_with_correction) choice = internal_book[i].move;
         }
-
-        printf("\n");
     }
 
     return choice;

@@ -427,16 +427,14 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
 int sBook::FindPos(U64 key) {
 
-    int left, right, mid;
     polyglot_move entry[1];
 
     // binary search (finds the leftmost entry)
 
-    left = 0;
-    right = book_size - 1;
+    int left = 0, right = book_size - 1;
 
     while (left < right) {
-        mid = (left + right) / 2;
+        int mid = (left + right) / 2;
         ReadEntry(entry, mid);
 
         if (key <= entry->key) right = mid;
