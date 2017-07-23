@@ -797,8 +797,8 @@ void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
 void UciLoop();
 void WasteTime(int miliseconds);
 void PrintBb(U64 bbTest);
+int big_random(int n);
 
-extern const int bit_table[64];
 extern const int tp_value[7];
 extern const int ph_value[7];
 extern int move_time;

@@ -347,7 +347,7 @@ void sBook::OpenPolyglot() {
     }
 }
 
-static int big_random(int n) {
+int big_random(int n) {
 
     return ((rand() << 15) ^ rand()) % n;
 }
@@ -400,7 +400,7 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
         }
 
         // pick a move, filtering out those with significantly lower weight
-        int best_score = 0;
+        int vals_acc = 0;
         for (int i = 0; i < n_of_choices; i++) {
 
             // report about possible choices and rejected moves
@@ -416,8 +416,8 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
             // shall we pick this move?
             if (!IsInfrequent(values[i], max_weight)) {
-                best_score += values[i];
-                if (big_random(best_score) < values[i]) best_move = moves[i];
+                vals_acc += values[i];
+                if (big_random(vals_acc) < values[i]) best_move = moves[i];
             }
         }
     }

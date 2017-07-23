@@ -6098,17 +6098,17 @@ void sInternalBook::ReadInternal(POS *p) {
     for (int i = 0; book[i]; ++i) {
         if (LineToInternal(p, book[i], NO_CL)) { printf("Guide book error: %s\n", book[i]); };
     }
-#endif
 
-    printf("info string %d moves loaded from the internal book\n", n_of_records);
-
-#ifdef BOOKGEN
     for (int i = 0; i < n_of_records; i++) // get rid of really bad moves
         if (!(internal_book[i].freq > 0)) {
             memmove(&internal_book[i], &internal_book[i+1], (n_of_records - i - 1) * sizeof(internal_book[0]));
             n_of_records--; i--;
         }
+#endif
 
+    printf("info string %d moves loaded from the internal book\n", n_of_records);
+
+#ifdef BOOKGEN
     qsort(internal_book, n_of_records, sizeof(sBookEntry), [](const void* a, const void* b) {
         const U64 a64 = ((sBookEntry *)a)->hash;
         const U64 b64 = ((sBookEntry *)b)->hash;
@@ -6202,11 +6202,11 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
 
 int sInternalBook::MoveFromInternal(POS *p) {
 
-    int cur_val = 0, best_val = 0, choice = 0;
+    int choice = 0;
     int values[100], moves[100];
-    char test_string[12];
+    char mv_string[6];
 
-    const int min_freq = 20; // the higher this value, themore uniform move distribution
+    const int min_freq = 20; // the higher this value, the more uniform move distribution
 
     int n_of_choices = 0;
 
@@ -6214,41 +6214,31 @@ int sInternalBook::MoveFromInternal(POS *p) {
         if (internal_book[i].hash == p->hash_key
         && Legal(p, internal_book[i].move)) {
             moves[n_of_choices] = internal_book[i].move;
-            if (internal_book[i].freq > 0) values[n_of_choices] = internal_book[i].freq + min_freq;
-            else                           values[n_of_choices] = -1;
+            values[n_of_choices] = internal_book[i].freq + min_freq;
             n_of_choices++;
         }
     }
 
     if (n_of_choices) {
 
-        for (int i = 0; i < n_of_choices; i++) {
-
-            // pick move with the best random value based on frequency
-
-            if (values[i] > 0) cur_val = 1 + rand() % values[i];
-            else               cur_val = -1;
-
-            if (cur_val > best_val) {
-                best_val = cur_val;
-                choice = i;
-            }
-        }
-
-        // display info about book moves
-
         printf("info string ");
 
+        int vals_acc = 0;
+
         for (int i = 0; i < n_of_choices; i++) {
-            MoveToStr(moves[i], test_string);
-            printf("%s %d; ", test_string, values[i]);
+            // display info about book moves
+            MoveToStr(moves[i], mv_string);
+            printf("%s %d; ", mv_string, values[i]);
+
+            // pick move with the best random value based on frequency
+            vals_acc += values[i];
+            if (big_random(vals_acc) < values[i]) choice = moves[i];
         }
 
         printf("\n");
-
-        return moves[choice];
     }
-    return 0;
+
+    return choice;
 }
 
 void sInternalBook::Init(POS *p) {
