@@ -85,7 +85,7 @@ void cParam::DefaultWeights() {
     // "_CHK"  values are awarded for threatening check to enemy king
     // "_CONTACT" values are awarded for contact checks threats
     //
-    // All these values are NOT the actual bonuses; their sum is used as index 
+    // All these values are NOT the actual bonuses; their sum is used as index
     // to a non-linear king safety table. Tune them with extreme caution.
 
     values[N_ATT1] = 6;

@@ -425,12 +425,12 @@ enum Values {
     N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OVH, N_REACH, BN_SHIELD,
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
-	B_OPP_P, B_OWN_P, B_REACH, B_TOUCH,
-	P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
-	P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
+    B_OPP_P, B_OWN_P, B_REACH, B_TOUCH,
+    P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
+    P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
-	PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7,             // passed pawns
-    P_BL_MUL, P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_THR, P_BIND, P_ISL,// pawn special terms
+    PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7,             // passed pawns
+    P_BL_MUL, P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_THR, P_BIND, P_ISL,  // pawn special terms
     ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,     // rook bonuses
     RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK, N_OF_VAL                                   // queen and rook bonuses
 };
@@ -476,8 +476,8 @@ class cParam {
     int mg_pst[2][6][64];
     int eg_pst[2][6][64];
     int sp_pst[2][6][64];
-	int passed_bonus_mg[2][8];
-	int passed_bonus_eg[2][8];
+    int passed_bonus_mg[2][8];
+    int passed_bonus_eg[2][8];
     int mob_style;
     int pst_style;
     int n_mob_mg[9];
@@ -498,7 +498,7 @@ class cParam {
     void InitPst();
     void InitMobility();
     void InitBackward();
-	void InitPassers();
+    void InitPassers();
     void InitMaterialTweaks();
     void InitTables();
     void DefaultWeights();

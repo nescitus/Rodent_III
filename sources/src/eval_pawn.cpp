@@ -85,16 +85,16 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
 
     int tmp = 0;
     if (e->two_pawns_take[WC] & SqBb(D5)) tmp += Par.values[P_BIND];
-	if (e->two_pawns_take[WC] & SqBb(E5)) tmp += Par.values[P_BIND];
-	if (e->two_pawns_take[WC] & SqBb(D6)) tmp += Par.values[P_BIND];
-	if (e->two_pawns_take[WC] & SqBb(E6)) tmp += Par.values[P_BIND];
+    if (e->two_pawns_take[WC] & SqBb(E5)) tmp += Par.values[P_BIND];
+    if (e->two_pawns_take[WC] & SqBb(D6)) tmp += Par.values[P_BIND];
+    if (e->two_pawns_take[WC] & SqBb(E6)) tmp += Par.values[P_BIND];
     Add(e, WC, tmp, 0);
 
     tmp = 0;
-	if (e->two_pawns_take[BC] & SqBb(D4)) tmp += Par.values[P_BIND];
-	if (e->two_pawns_take[BC] & SqBb(E4)) tmp += Par.values[P_BIND];
-	if (e->two_pawns_take[BC] & SqBb(D3)) tmp += Par.values[P_BIND];
-	if (e->two_pawns_take[BC] & SqBb(E3)) tmp += Par.values[P_BIND];
+    if (e->two_pawns_take[BC] & SqBb(D4)) tmp += Par.values[P_BIND];
+    if (e->two_pawns_take[BC] & SqBb(E4)) tmp += Par.values[P_BIND];
+    if (e->two_pawns_take[BC] & SqBb(D3)) tmp += Par.values[P_BIND];
+    if (e->two_pawns_take[BC] & SqBb(E3)) tmp += Par.values[P_BIND];
     Add(e, BC, tmp, 0);
 
     // King on a wing without pawns
@@ -124,7 +124,7 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     const int b_islands = BB.PopCnt(((~b_pawn_files) >> 1) & b_pawn_files);
     e->mg_pawns[WC] -= (w_islands - b_islands) * Par.values[P_ISL];
     e->eg_pawns[WC] -= (w_islands - b_islands) * Par.values[P_ISL];
-	// pawn islands code would also break detailed score display
+    // pawn islands code would also break detailed score display
 
     // Save stuff in pawn hashtable.
     // Note that we save delta between white and black scores.

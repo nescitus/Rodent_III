@@ -289,7 +289,7 @@ void ParseSetoption(const char *ptr) {
         Glob.should_clear = true;
     } else if (strcmp(name, "sh7") == 0 )                                    {
         Par.values[P_SH_7] = atoi(value);
-		Glob.should_clear = true;
+        Glob.should_clear = true;
     } else if (strcmp(name, "stn") == 0 )                                    {
         Par.values[P_ST_OPEN] = atoi(value);
         Glob.should_clear = true;
