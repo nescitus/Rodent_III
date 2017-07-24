@@ -43,7 +43,9 @@ void sInternalBook::ReadInternal(POS *p) {
         const U64 b64 = ((sBookEntry *)b)->hash;
         if (a64 > b64) return 1;
         if (a64 < b64) return -1;
-        return 0;
+        const int afreq = ((sBookEntry *)a)->freq;
+        const int bfreq = ((sBookEntry *)b)->freq;
+        return bfreq - afreq;
     });
 #endif
 

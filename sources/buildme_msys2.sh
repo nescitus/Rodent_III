@@ -19,7 +19,7 @@ cat src/*.cpp > src/combined.cpp
 
 # Internal book generator
 echo Building instrumental binary ...
-gcc -O2 -march=core2 -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o rodent_bookgen.exe
+gcc -O2 -march=native -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o rodent_bookgen.exe
 ./rodent_bookgen.exe > /dev/null
 rm rodent_bookgen.exe
 
