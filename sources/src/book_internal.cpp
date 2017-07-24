@@ -96,8 +96,8 @@ bool sInternalBook::LineToInternal(POS *p, const char *ptr, int excludedColor) {
         if (Legal(p, move)) {
             // apply move frequency modifiers
             freq = 1;
-            if (strstr(token, "?"))  freq = -100;
-            if (strstr(token, "!"))  freq = +100;
+            if (strchr(token, '?'))  freq = -100;
+            if (strchr(token, '!'))  freq = +100;
             if (strstr(token, "??")) freq = -4900;
             if (strstr(token, "!!")) freq = +900;
 
