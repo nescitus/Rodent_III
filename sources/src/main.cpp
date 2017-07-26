@@ -74,8 +74,6 @@ void PrintVersion()
 
 int main() {
 
-    POS p;
-
     srand(GetMS());
 
     BB.Init();
@@ -123,7 +121,7 @@ int main() {
     ReadPersonality("basic.ini");
 #endif
 
-    InternalBook.Init(&p);
+    InternalBook.Init();
 
 #ifndef BOOKGEN
     UciLoop();

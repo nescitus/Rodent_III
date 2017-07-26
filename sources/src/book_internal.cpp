@@ -22,14 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cstring>
 
-void sInternalBook::ReadInternal(POS *p) {
+void sInternalBook::ReadInternal() {
 #ifndef USEGEN
     #include "book_internal.h"
 
     n_of_records = 0; // clear any preexisting guide book
 
     for (int i = 0; book[i]; ++i) {
-        if (LineToInternal(p, book[i], NO_CL)) { printf("Guide book error: %s\n", book[i]); };
+        if (LineToInternal(book[i], NO_CL)) { printf("Guide book error: %s\n", book[i]); };
     }
 
     for (int i = 0; i < n_of_records; i++) // get rid of really bad moves
@@ -76,13 +76,11 @@ void sInternalBook::ReadInternal(POS *p) {
 }
 
 #ifndef USEGEN
-bool sInternalBook::LineToInternal(POS *p, const char *ptr, int excludedColor) {
+bool sInternalBook::LineToInternal(const char *ptr, int excludedColor) {
 
     char token[512];
-    UNDO u[1];
-    int move;
-    int freq;
-    bool fl_problem = false;
+    POS p[1]; UNDO u[1];
+    int move, freq;
 
     SetPosition(p, START_POS);
 
@@ -106,12 +104,12 @@ bool sInternalBook::LineToInternal(POS *p, const char *ptr, int excludedColor) {
                 MoveToInternal(p->hash_key, move, freq);
 
             p->DoMove(move, u);
-        } else { fl_problem = true; break; };
+        } else { return true; }
 
         if (p->rev_moves == 0)
             p->head = 0;
     }
-    return fl_problem;
+    return false;
 }
 
 void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
@@ -170,7 +168,7 @@ int sInternalBook::MoveFromInternal(POS *p) {
     return choice;
 }
 
-void sInternalBook::Init(POS *p) {
+void sInternalBook::Init() {
 
-    ReadInternal(p);
+    ReadInternal();
 }
