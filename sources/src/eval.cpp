@@ -185,8 +185,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             opp_p_cnt = BB.PopCnt(bbBlackSq & p->Pawns(op)) - 4;
         }
 
-        Add(e, sd, Par.values[B_OWN_P] * own_p_cnt 
-			     + Par.values[B_OPP_P] * opp_p_cnt);
+        Add(e, sd, Par.values[B_OWN_P] * own_p_cnt
+                 + Par.values[B_OPP_P] * opp_p_cnt);
     }
 
     // Rook eval
@@ -331,7 +331,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         lines_eg += Par.values[RS2_EG];
     }
 
-	// Weighting eval parameters
+    // Weighting eval parameters
 
     Add(e, sd, (Par.sd_mob[sd] * mob_mg)  / 100, (Par.sd_mob[sd] * mob_eg)  / 100);
     Add(e, sd, (Par.tropism_weight * tropism_mg) / 100, (Par.tropism_weight * tropism_eg) / 100);
@@ -432,7 +432,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
     bb_pieces = p->Pawns(sd);
     while (bb_pieces) {
         sq = BB.PopFirstBit(&bb_pieces);
-		bb_pawn = SqBb(sq);
+        bb_pawn = SqBb(sq);
         bb_stop = BB.ShiftFwd(SqBb(sq), sd);
 
         // pawn can attack enemy piece
@@ -466,7 +466,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
             else if ((bb_stop & e->all_att[sd])  // our control of stop square
                  && (bb_stop & ~e->all_att[op])) mul += Par.values[P_OURSTOP_MUL];
 
-			else if ((bb_stop & e->all_att[op])  // opp control of stop square
+            else if ((bb_stop & e->all_att[op])  // opp control of stop square
                  && (bb_stop & ~e->all_att[sd])) mul -= Par.values[P_OPPSTOP_MUL];
 
             // in the midgame, we use just a bonus from the table

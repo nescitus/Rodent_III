@@ -74,8 +74,6 @@ void PrintVersion()
 
 int main() {
 
-    POS p;
-
     srand(GetMS());
 
     BB.Init();
@@ -123,7 +121,7 @@ int main() {
     ReadPersonality("basic.ini");
 #endif
 
-    InternalBook.Init(&p);
+    InternalBook.Init();
 
 #ifndef BOOKGEN
     UciLoop();
@@ -132,8 +130,8 @@ int main() {
 
 void cGlobals::Init() {
 
-	is_testing = false;
-	is_tuning = false;
+    is_testing = false;
+    is_tuning = false;
     reading_personality = false;
     use_personality_files = false;
     separate_books = false;
