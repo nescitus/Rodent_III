@@ -229,6 +229,7 @@ void cParam::DefaultWeights() {
     values[B_TOUCH] = 4;   // two bishops on adjacent squares
     values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
     values[B_OPP_P] = -1;  // enemy pawn on the square of own bishop's color
+	values[B_RETURN] = 10; // bishop returning to initial position after castling
 
     // Rook parameters
 

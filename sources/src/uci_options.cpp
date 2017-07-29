@@ -298,6 +298,9 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "fianchetto") == 0)                              {
         Par.values[B_KING] = atoi(value);
         Glob.should_clear = true;
+    } else if (strcmp(name, "returningb") == 0)                              {
+        Par.values[B_RETURN] = atoi(value);
+        Glob.should_clear = true;
     } else if (strcmp(name, "doubledpawnmg") == 0)                           {
         Par.values[DB_MID] = atoi(value);
         Glob.should_clear = true;

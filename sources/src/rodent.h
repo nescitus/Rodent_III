@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 38.213.263
+// b15: 36.846.054
 
 #pragma once
 
@@ -425,7 +425,7 @@ enum Values {
     N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OVH, N_REACH, BN_SHIELD,
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
-    B_OPP_P, B_OWN_P, B_REACH, B_TOUCH,
+    B_OPP_P, B_OWN_P, B_REACH, B_TOUCH, B_RETURN,
     P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
     P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
