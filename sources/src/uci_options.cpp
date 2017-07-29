@@ -227,6 +227,114 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "keepqueen") == 0)                               {
         Par.keep_pc[Q] = atoi(value);
         Glob.should_clear = true;
+    } else if (strcmp(name, "bishoppair") == 0)                              {
+        Par.values[B_PAIR] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "exchangeimbalance") == 0)                       {
+        Par.values[A_EXC] = atoi(value);
+        Par.InitMaterialTweaks();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "knightlikesclosed") == 0)                       {
+        Par.values[N_CL] = atoi(value);
+        Par.InitMaterialTweaks();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "rooklikesopen") == 0)                           {
+        Par.values[R_OP] = atoi(value);
+        Par.InitMaterialTweaks();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "material") == 0)                                {
+        Par.mat_weight = atoi(value);
+        Par.InitPst();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pieceplacement") == 0)                          {
+        Par.pst_weight = atoi(value);
+        Par.InitPst();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "ownattack") == 0)                               {
+        Par.own_att_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "oppattack") == 0)                               {
+        Par.opp_att_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "ownmobility") == 0)                             {
+        Par.own_mob_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "oppmobility") == 0)                             {
+        Par.opp_mob_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "kingtropism") == 0)                             {
+        Par.tropism_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "forwardness") == 0)                             {
+        Par.forward_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "piecepressure") == 0)                           {
+        Par.threats_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "passedpawns") == 0)                             {
+        Par.passers_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pawnstructure") == 0)                           {
+        Par.struct_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pawnmass") == 0)                                {
+        Par.pawn_mass_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pawnchains") == 0)                              {
+        Par.pawn_chains_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pawnshield") == 0)                              {
+        Par.shield_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pawnstorm") == 0)                               {
+        Par.storm_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "outposts") == 0)                                {
+        Par.outposts_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "lines") == 0)                                   {
+        Par.lines_weight = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "fianchetto") == 0)                              {
+        Par.values[B_KING] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "doubledpawnmg") == 0)                           {
+        Par.values[DB_MID] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "doubledpawneg") == 0)                           {
+        Par.values[DB_END] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "isolatedpawnmg") == 0)                          {
+        Par.values[ISO_MG] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "isolatedpawneg") == 0)                          {
+        Par.values[ISO_EG] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "isolatedopenmg") == 0)                          {
+        Par.values[ISO_OF] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "backwardpawnmg") == 0)                          {
+        Par.values[BK_MID] = atoi(value);
+        Par.InitBackward();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "backwardpawneg") == 0)                          {
+        Par.values[BK_END] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "backwardopenmg") == 0)                          {
+        Par.values[BK_OPE] = atoi(value);
+        Glob.should_clear = true;
+    } else if (strcmp(name, "pststyle") == 0)                                {
+        Par.pst_style = atoi(value);
+        Par.InitPst();
+        Glob.should_clear = true;
+    } else if (strcmp(name, "mobilitystyle") == 0)                           {
+        Par.mob_style = atoi(value);
+        Par.InitMobility();
+        Glob.should_clear = true;
+
+    // Here starts a block of very detailed options that are not meant
+    // to be exposed to the end user, but are sybject to manual Texel tuning.
+
     } else if (strcmp(name, "na1") == 0 )                                    {
         Par.values[N_ATT1] = atoi(value);
         Glob.should_clear = true;
@@ -368,107 +476,25 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "pthr") == 0 )                                   {
         Par.values[P_THR] = atoi(value);
         Glob.should_clear = true;
-    } else if (strcmp(name, "bishoppair") == 0)                              {
-        Par.values[B_PAIR] = atoi(value);
+    } else if (strcmp(name, "minorup") == 0)                                 {
+        Par.values[A_MIN] = atoi(value);
+		Par.InitMaterialTweaks();
         Glob.should_clear = true;
-    } else if (strcmp(name, "exchangeimbalance") == 0)                       {
-        Par.values[A_EXC] = atoi(value);
-        Par.InitMaterialTweaks();
+    } else if (strcmp(name, "majorup") == 0)                                 {
+        Par.values[A_MAJ] = atoi(value);
+		Par.InitMaterialTweaks();
         Glob.should_clear = true;
-    } else if (strcmp(name, "knightlikesclosed") == 0)                       {
-        Par.values[N_CL] = atoi(value);
-        Par.InitMaterialTweaks();
+    } else if (strcmp(name, "bothup") == 0)                                  {
+        Par.values[A_ALL] = atoi(value);
+		Par.InitMaterialTweaks();
         Glob.should_clear = true;
-    } else if (strcmp(name, "rooklikesopen") == 0)                           {
-        Par.values[R_OP] = atoi(value);
-        Par.InitMaterialTweaks();
+    } else if (strcmp(name, "twominors") == 0)                               {
+        Par.values[A_TWO] = atoi(value);
+		Par.InitMaterialTweaks();
         Glob.should_clear = true;
-    } else if (strcmp(name, "material") == 0)                                {
-        Par.mat_weight = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
-    } else if (strcmp(name, "pieceplacement") == 0)                          {
-        Par.pst_weight = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
-    } else if (strcmp(name, "ownattack") == 0)                               {
-        Par.own_att_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "oppattack") == 0)                               {
-        Par.opp_att_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "ownmobility") == 0)                             {
-        Par.own_mob_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "oppmobility") == 0)                             {
-        Par.opp_mob_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "kingtropism") == 0)                             {
-        Par.tropism_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "forwardness") == 0)                             {
-        Par.forward_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "piecepressure") == 0)                           {
-        Par.threats_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "passedpawns") == 0)                             {
-        Par.passers_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "pawnstructure") == 0)                           {
-        Par.struct_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "pawnmass") == 0)                                {
-        Par.pawn_mass_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "pawnshield") == 0)                              {
-        Par.shield_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "pawnstorm") == 0)                               {
-        Par.storm_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "outposts") == 0)                                {
-        Par.outposts_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "lines") == 0)                                   {
-        Par.lines_weight = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "fianchetto") == 0)                              {
-        Par.values[B_KING] = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "doubledpawnmg") == 0)                           {
-        Par.values[DB_MID] = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "doubledpawneg") == 0)                           {
-        Par.values[DB_END] = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "isolatedpawnmg") == 0)                          {
-        Par.values[ISO_MG] = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "isolatedpawneg") == 0)                          {
-        Par.values[ISO_EG] = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "isolatedopenmg") == 0)                          {
-        Par.values[ISO_OF] = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "backwardpawnmg") == 0)                          {
-        Par.values[BK_MID] = atoi(value);
-        Par.InitBackward();
-        Glob.should_clear = true;
-    } else if (strcmp(name, "backwardpawneg") == 0)                          {
-        Par.values[BK_END] = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "backwardopenmg") == 0)                          {
-        Par.values[BK_OPE] = atoi(value);
-        Glob.should_clear = true;
-    } else if (strcmp(name, "pststyle") == 0)                                {
-        Par.pst_style = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
-    } else if (strcmp(name, "mobilitystyle") == 0)                           {
-        Par.mob_style = atoi(value);
-        Par.InitMobility();
-        Glob.should_clear = true;
+
+    // Here starts a block of non-eval options
+
     } else if (strcmp(name, "guidebookfile") == 0)                           {
         if (!Glob.separate_books || !Glob.reading_personality)
             GuideBook.SetBookName(value);

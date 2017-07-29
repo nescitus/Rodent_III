@@ -127,7 +127,7 @@ void cParam::DefaultWeights() {
     riskydepth = 0;
 #endif
     draw_score = 0;
-    shut_up = false;           // true suppresses displaing info currmove etc.
+    shut_up = false;       // true suppresses displaing info currmove etc.
 
     // Asymmetric weights - the core of personality mechanism
 
