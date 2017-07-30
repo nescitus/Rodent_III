@@ -10,6 +10,8 @@ for /f "usebackq tokens=*" %%i in (`%vswhere% -latest -products * -requires Micr
 
 call "%InstallDir%\Common7\Tools\VsDevCmd.bat" -arch=x86
 
+set PROF=%1
+
 set POPCNTDEF=
 set ENAME="rodent_vs2017_x32_POPCNT.exe"
 call :build
@@ -29,6 +31,28 @@ set ENAME="rodent_vs2017_x64_noPOPCNT.exe"
 
 :build
 
-cl /O2 /GL /Gw /GS- /wd4577 /wd4530 /analyze- /MP /MT /Zc:inline /fp:fast /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_CRT_SECURE_NO_WARNINGS" /D "USE_THREADS" /D "NEW_THREADS" /D "USEGEN" %POPCNTDEF% src/*.cpp /link /SAFESEH:NO /LTCG /OPT:REF /OPT:ICF /SUBSYSTEM:CONSOLE /LARGEADDRESSAWARE /OUT:%ENAME%
+if "%PROF%"=="prof" goto :doprofiling
 
+call :buildhlp
 del /q *.obj
+
+goto :eof
+
+:doprofiling
+
+call :buildhlp /GENPROFILE
+del /q *.obj
+
+echo Profiling...
+echo bench | %ENAME% > nul
+
+call :buildhlp /USEPROFILE
+del /q *.obj
+del /q *.pgd
+del /q *.pgc
+
+goto :eof
+
+:buildhlp
+
+cl /O2 /GL /Gw /GS- /wd4577 /wd4530 /analyze- /MP /MT /Zc:inline /fp:fast /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_CRT_SECURE_NO_WARNINGS" /D "USE_THREADS" /D "NEW_THREADS" /D "USEGEN" %POPCNTDEF% src/*.cpp /link /SAFESEH:NO /LTCG /OPT:REF /OPT:ICF /SUBSYSTEM:CONSOLE /LARGEADDRESSAWARE /OUT:%ENAME% %1
