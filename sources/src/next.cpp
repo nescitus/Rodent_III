@@ -41,6 +41,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
                 *flag = MV_HASH;
                 return move;
             }
+        // fallthrough
 
         case 1: // helper phase: generate captures
             m->last = GenerateCaptures(m->p, m->move);
@@ -48,6 +49,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
             m->next = m->move;
             m->badp = m->bad;
             m->phase = 2;
+        // fallthrough
 
         case 2: // return good captures, save bad ones on the separate list
             while (m->next < m->last) {
@@ -71,6 +73,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
                 *flag = MV_KILLER;
                 return move;
             }
+        // fallthrough
 
         case 4: // second killer move
             move = m->killer2;
@@ -81,6 +84,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
                 *flag = MV_KILLER;
                 return move;
             }
+        // fallthrough
 
         case 5: // refutation move
             move = m->ref_move;
@@ -93,12 +97,14 @@ int cEngine::NextMove(MOVES *m, int *flag) {
                 *flag = MV_NORMAL;
                 return move;
             }
+        // fallthrough
 
         case 6: // helper phase: generate quiet moves
             m->last = GenerateQuiet(m->p, m->move);
             ScoreQuiet(m);
             m->next = m->move;
             m->phase = 7;
+        // fallthrough
 
         case 7: // return quiet moves
             while (m->next < m->last) {
@@ -114,6 +120,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
 
             m->next = m->bad;
             m->phase = 8;
+        // fallthrough
 
         case 8: // return bad captures
             if (m->next < m->badp) {
@@ -136,6 +143,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
                 *flag = MV_HASH;
                 return move;
             }
+        // fallthrough
 
         case 1: // helper phase: generate captures
             m->last = GenerateCaptures(m->p, m->move);
@@ -143,6 +151,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
             m->next = m->move;
             m->badp = m->bad;
             m->phase = 2;
+        // fallthrough
 
         case 2: // return good captures, prune bad ones
             while (m->next < m->last) {
@@ -155,6 +164,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
                 *flag = MV_CAPTURE;
                 return move;
             }
+        // fallthrough
 
         case 3: // first killer move
             move = m->killer1;
@@ -165,6 +175,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
                 *flag = MV_KILLER;
                 return move;
             }
+        // fallthrough
 
         case 4: // second killer move
             move = m->killer2;
@@ -174,12 +185,14 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
                 *flag = MV_KILLER;
                 return move;
             }
+        // fallthrough
 
         case 5: // helper phase: generate checking moves
             m->last = GenerateSpecial(m->p, m->move);
             ScoreQuiet(m);
             m->next = m->move;
             m->phase = 6;
+        // fallthrough
 
         case 6: // return checking moves
             while (m->next < m->last) {
