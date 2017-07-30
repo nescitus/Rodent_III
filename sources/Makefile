@@ -17,7 +17,7 @@ CFG = -DNDEBUG -DUSEGEN -DUSE_THREADS -DNEW_THREADS -DBOOKPATH=$(DATADIR)
 CFG1 = -DUSEGEN -DUSE_THREADS -DNEW_THREADS -DBOOKPATH=$(DATADIR)
 
 # Define compiler flags
-CXXFLAGS = -g -std=c++14 -Wall -Wextra -O3 -msse -fno-rtti $(CFG)
+CXXFLAGS = -g -std=c++14 -Wall -Wextra -O3 -fno-rtti $(CFG)
 CXX1FLAGS = -g -std=c++14 -Wall -Wextra $(CFG1)
 
 # Define linker options
