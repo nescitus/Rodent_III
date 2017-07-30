@@ -8,30 +8,39 @@ BINDIR = $(PREFIX)/bin
 DATADIR = $(PREFIX)/share/rodentIII
 
 
-# define the C compiler to use
+# Define the CPP compiler 
 CXX = g++
 
-# define features
+# Define features
 # Other options are -DBOOKGEN -DNO_THREADS
 CFG = -DNDEBUG -DUSEGEN -DUSE_THREADS -DNEW_THREADS -DBOOKPATH=$(DATADIR)
 CFG1 = -DWRITEDEBUGFILE -DUSEGEN -DUSE_THREADS -DNEW_THREADS -DBOOKPATH=$(DATADIR)
 
-# define the compile-time flags
+# Define compiler flags
 CXXFLAGS = -g -std=c++14 -Wall -Wextra -O3 -msse -fno-rtti $(CFG)
 CXX1FLAGS = -g -std=c++14 -Wall -Wextra $(CFG1)
 
-# define the link options
+# Define linker options
 LDFLAGS = -s -lpthread -Wl,--no-as-needed,--gc-sections
 LD1FLAGS = -lm -lpthread
 
-#command line switches
+# Command line switches
 lto = yes
+native = no
+
+# Compile with Link Time Optimisation
 ifeq ($(lto),yes)
 	CXXFLAGS += -flto
 	LDFLAGS += -flto
 endif
 
-# define outpout name and settings file
+# Optimise for local machines
+ifeq ($(native),yes)
+	CXXFLAGS += -march=native
+	LDFLAGS += -march=native
+endif
+
+# Define outpout name and settings file
 EXENAME= rodentIII
 CONFIGFILE = basic.ini
 
@@ -113,7 +122,7 @@ install:
 	chmod 755 $(BINDIR)/$(EXENAME)
 	chmod 644 $(DATADIR)/*
 
-# this just performs a copy of rodentIII engine
+# This just performs a copy of rodentIII engine
 update:
 	cp $(EXENAME) $(BINDIR)
 	
@@ -127,10 +136,10 @@ help:
 	@echo ""
 	@echo "make build			> Build Rodent III"
 	@echo "make build-popcnt		> Build with fast popcnt"
-	@echo "make clang-profiled		> Build with pgo optimizations (clang++ required)"
-	@echo "make clang-popcnt-profiled	> Build with pgo+popcnt optimizations (clang++ required)"
-	@echo "make gcc-profiled		> Build with pgo optimizations (g++ required)"
-	@echo "make gcc-popcnt-profiled	> Build with pgo+popcnt optimizations (g++ required)"
+	@echo "make clang-profiled		> Build with pgo optimisations (clang++ required)"
+	@echo "make clang-popcnt-profiled	> Build with pgo+popcnt optimisations (clang++ required)"
+	@echo "make gcc-profiled		> Build with pgo optimisations (g++ required)"
+	@echo "make gcc-popcnt-profiled	> Build with pgo+popcnt optimisations (g++ required)"
 	@echo "make build-static		> Build a static binary"
 	@echo "make build-debug		> Build a binary with Logfile support"
 	@echo "make bookgen			> Build internal book"
