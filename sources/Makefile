@@ -14,7 +14,7 @@ CXX = g++
 # Define features
 # Other options are -DBOOKGEN -DNO_THREADS
 CFG = -DNDEBUG -DUSEGEN -DUSE_THREADS -DNEW_THREADS -DBOOKPATH=$(DATADIR)
-CFG1 = -DWRITEDEBUGFILE -DUSEGEN -DUSE_THREADS -DNEW_THREADS -DBOOKPATH=$(DATADIR)
+CFG1 = -DUSEGEN -DUSE_THREADS -DNEW_THREADS -DBOOKPATH=$(DATADIR)
 
 # Define compiler flags
 CXXFLAGS = -g -std=c++14 -Wall -Wextra -O3 -msse -fno-rtti $(CFG)
@@ -141,7 +141,7 @@ help:
 	@echo "make gcc-profiled		> Build with pgo optimisations (g++ required)"
 	@echo "make gcc-popcnt-profiled	> Build with pgo+popcnt optimisations (g++ required)"
 	@echo "make build-static		> Build a static binary"
-	@echo "make build-debug		> Build a binary with Logfile support"
+	@echo "make build-debug		> Build a debug version"
 	@echo "make bookgen			> Build internal book"
 	@echo "make clean			> Clean up"
 	@echo "make install			> Install RodentIII (root privileges required)"
