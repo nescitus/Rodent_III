@@ -61,7 +61,7 @@ build-popcnt:
 clang-profiled:
 	@echo "Type make help for additional options"
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) -fprofile-instr-generate -o $(EXENAME) src/*.cpp
-	@echo bench 12 | ./rodentIII > /dev/null
+	@echo bench | ./rodentIII > /dev/null
 	@llvm-profdata merge -output=default.profdata default.profraw
 	$(CXX) $(CXXFLAGS) -fprofile-instr-use=default.profdata $(LDFLAGS) -o $(EXENAME) src/*.cpp
 	@echo "SHOW_OPTIONS" > $(CONFIGFILE)
@@ -70,7 +70,7 @@ clang-profiled:
 clang-popcnt-profiled:
 	@echo "Type make help for additional options"
 	$(CXX) $(CXXFLAGS) -msse3 -mpopcnt -fprofile-instr-generate $(LDFLAGS) -o $(EXENAME) src/*.cpp
-	@echo bench 12 | ./rodentIII > /dev/null
+	@echo bench | ./rodentIII > /dev/null
 	@llvm-profdata merge -output=default.profdata default.profraw
 	$(CXX) $(CXXFLAGS) -msse3 -mpopcnt -fprofile-instr-use=default.profdata $(LDFLAGS) -o $(EXENAME) src/*.cpp
 	@echo "SHOW_OPTIONS" > $(CONFIGFILE)
@@ -79,7 +79,7 @@ clang-popcnt-profiled:
 gcc-profiled:
 	@echo "Type make help for additional options"
 	$(CXX) $(CXXFLAGS) -fprofile-generate $(LDFLAGS) -o $(EXENAME) src/*.cpp
-	@echo bench 12 | ./rodentIII > /dev/null
+	@echo bench | ./rodentIII > /dev/null
 	$(CXX) $(CXXFLAGS) -fprofile-use $(LDFLAGS) -o $(EXENAME) src/*.cpp
 	@echo "SHOW_OPTIONS" > $(CONFIGFILE)
 	@rm -f *.gcda
@@ -87,7 +87,7 @@ gcc-profiled:
 gcc-popcnt-profiled:
 	@echo "Type make help for additional options"
 	$(CXX) $(CXXFLAGS) -msse3 -mpopcnt -fprofile-generate $(LDFLAGS) -o $(EXENAME) src/*.cpp
-	@echo bench 12 | ./rodentIII > /dev/null
+	@echo bench | ./rodentIII > /dev/null
 	$(CXX) $(CXXFLAGS) -msse3 -mpopcnt -fprofile-use $(LDFLAGS) -o $(EXENAME) src/*.cpp
 	@echo "SHOW_OPTIONS" > $(CONFIGFILE)
 	@rm -f *.gcda
@@ -105,7 +105,7 @@ build-debug:
 gcc-lcov:
 	@echo "Type make help for additional options"
 	$(CXX) $(CXXFLAGS) -fprofile-generate -ftest-coverage $(LDFLAGS) -o $(EXENAME) src/*.cpp
-	@echo bench 12 | ./rodentIII > /dev/null
+	@echo bench | ./rodentIII > /dev/null
 	@lcov --capture --directory . --no-external --gcov-tool gcov --output-file coverage.info > /dev/null
 	@genhtml coverage.info --output-directory coveragedir > /dev/null
 	@rm -f rodentIII *.gcda *.gcno coverage.info
