@@ -102,6 +102,14 @@ build-debug:
 	$(CXX) $(CXX1FLAGS) $(LD1FLAGS) -o $(EXENAME) src/*.cpp
 	@echo "SHOW_OPTIONS" > $(CONFIGFILE)
 	
+gcc-lcov:
+	@echo "Type make help for additional options"
+	$(CXX) $(CXXFLAGS) -fprofile-generate -ftest-coverage $(LDFLAGS) -lgcov -o $(EXENAME) src/*.cpp
+	@echo bench 12 | ./rodentIII > /dev/null
+	@lcov --capture --directory . --no-external --gcov-tool gcov --output-file coverage.info > /dev/null
+	@genhtml coverage.info --output-directory coveragedir > /dev/null
+	@rm -f rodentIII *.gcda *.gcno coverage.info
+	
 bookgen:
 	@echo "Type make help for additional options"
 	$(CXX) $(CXXFLAGS) -DBOOKGEN $(LDFLAGS) -o $(EXENAME)-bookgen src/*.cpp
@@ -110,7 +118,7 @@ bookgen:
 	@rm -f $(EXENAME)-bookgen 
 
 clean:
-	rm -f $(EXENAME) $(EXENAME).exe book_gen.h basic.ini *.profdata *.profraw *.gcda
+	rm -rf $(EXENAME) $(EXENAME).exe book_gen.h basic.ini *.profdata *.profraw *.gcda *.gcno coverage.info coveragedir
 
 install:
 	mkdir -p $(BINDIR)
@@ -142,6 +150,7 @@ help:
 	@echo "make gcc-popcnt-profiled	> Build with pgo+popcnt optimisations (g++ required)"
 	@echo "make build-static		> Build a static binary"
 	@echo "make build-debug		> Build a debug version"
+	@echo "make gcc-lcov			> Code coverage with lcov (g++ required)"
 	@echo "make bookgen			> Build internal book"
 	@echo "make clean			> Clean up"
 	@echo "make install			> Install RodentIII (root privileges required)"
