@@ -234,6 +234,9 @@ void ParseSetoption(const char *ptr) {
         Par.values[A_EXC] = atoi(value);
         Par.InitMaterialTweaks();
         Glob.should_clear = true;
+    } else if (strcmp(name, "minorvsqueen") == 0)                            {
+        Par.values[ELEPH] = atoi(value);
+        Glob.should_clear = true;
     } else if (strcmp(name, "knightlikesclosed") == 0)                       {
         Par.values[N_CL] = atoi(value);
         Par.InitMaterialTweaks();
