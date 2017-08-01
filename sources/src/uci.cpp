@@ -128,8 +128,12 @@ void ParseMoves(POS *p, const char *ptr) {
 
         if (*token == '\0') break;
 
-        p->DoMove(StrToMove(p, token), u);
-        Glob.moves_from_start++;
+        const int move = StrToMove(p, token);
+        if (Legal(p, move)) {
+            p->DoMove(move, u);
+            Glob.moves_from_start++;
+        }
+        else printf("info string illegal move\n");
 
         // We won't be taking back moves beyond this point:
 
