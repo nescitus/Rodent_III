@@ -377,20 +377,21 @@ void cEngine::Bench(int depth) {
     if (depth == 0) depth = 8; // so that you can call bench without parameters
     ClearTrans();
     ClearAll();
+    dp_completed = 0; // maybe move to ClearAll()?
     Par.shut_up = true;
 
     printf("Bench test started (depth %d): \n", depth);
 
     Glob.nodes = 0;
+    Glob.abort_search = false;
     start_time = GetMS();
     search_depth = depth;
 
     // search each position to desired depth
 
     for (int i = 0; test[i]; ++i) {
-        printf("%s", test[i]);
+        printf("%s\n", test[i]);
         SetPosition(p, test[i]);
-        printf("\n");
         Par.InitAsymmetric(p);
         Glob.depth_reached = 0;
         Iterate(p, pv);
