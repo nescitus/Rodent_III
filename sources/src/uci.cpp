@@ -76,6 +76,8 @@ void UciLoop() {
         } else if (strcmp(token, "ucinewgame") == 0) {
             ClearTrans();
             Glob.ClearData();
+            SetPosition(p, START_POS);
+            srand(GetMS());
         } else if (strcmp(token, "isready") == 0)    {
             printf("readyok\n");
         } else if (strcmp(token, "setoption") == 0)  {
