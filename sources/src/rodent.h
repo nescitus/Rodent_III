@@ -602,24 +602,20 @@ extern cGlobals Glob;
 
 struct sInternalBook {
   public:
+
     int n_of_records;
 
 #ifdef USEGEN
     sBookEntry internal_book[BOOKSIZE];
+    void Init() const;
 #else
     sBookEntry internal_book[48000];
+    void Init();
+    bool LineToInternal(const char *ptr, int excludedColor);
+    void MoveToInternal(U64 hashKey, int move, int val);
 #endif
 
     int MoveFromInternal(POS *p) const;
-#ifndef USEGEN
-    void Init();
-    void MoveToInternal(U64 hashKey, int move, int val);
-    bool LineToInternal(const char *ptr, int excludedColor);
-    void ReadInternal();
-#else
-    void Init() const;
-    void ReadInternal() const;
-#endif
 };
 
 #define ZEROARRAY(x) memset(x, 0, sizeof(x));

@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cstring>
 
-void sInternalBook::ReadInternal()
+void sInternalBook::Init()
 #ifdef USEGEN
     const
 #endif
@@ -170,13 +170,4 @@ int sInternalBook::MoveFromInternal(POS *p) const {
     }
 
     return choice;
-}
-
-void sInternalBook::Init()
-#ifdef USEGEN
-    const
-#endif
-{
-
-    ReadInternal();
 }
