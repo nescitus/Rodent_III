@@ -1,5 +1,5 @@
 #ifndef GIMMESIZE
-sInternalBook InternalBook = {
+extern const sInternalBook InternalBook = {
 40097,
 {
 {0x00000bbcb89d5348,  2942,    1}, {0x00043b3d83b69173,   578,    1}, {0x0007f83a26abd32d,  2683,    1},

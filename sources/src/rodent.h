@@ -610,18 +610,25 @@ struct sInternalBook {
     sBookEntry internal_book[48000];
 #endif
 
-    void Init();
-    int MoveFromInternal(POS *p);
+    int MoveFromInternal(POS *p) const;
 #ifndef USEGEN
+    void Init();
     void MoveToInternal(U64 hashKey, int move, int val);
     bool LineToInternal(const char *ptr, int excludedColor);
-#endif
     void ReadInternal();
+#else
+    void Init() const;
+    void ReadInternal() const;
+#endif
 };
 
 #define ZEROARRAY(x) memset(x, 0, sizeof(x));
 
-extern sInternalBook InternalBook;
+extern
+#ifdef USEGEN
+    const
+#endif
+sInternalBook InternalBook;
 
 void CheckTimeout();
 

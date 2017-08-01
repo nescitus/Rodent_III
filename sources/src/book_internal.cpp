@@ -22,7 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cstring>
 
-void sInternalBook::ReadInternal() {
+void sInternalBook::ReadInternal()
+#ifdef USEGEN
+    const
+#endif
+{
 #ifndef USEGEN
     #include "book_internal.h"
 
@@ -55,7 +59,7 @@ void sInternalBook::ReadInternal() {
     FILE *f = fopen("book_gen.h", "w");
 
     fprintf(f, "#ifndef GIMMESIZE\n"
-               "sInternalBook InternalBook = {\n"
+               "extern const sInternalBook InternalBook = {\n"
                "%d,\n"
                "{\n",
                       n_of_records);
@@ -133,7 +137,7 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
 }
 #endif
 
-int sInternalBook::MoveFromInternal(POS *p) {
+int sInternalBook::MoveFromInternal(POS *p) const {
 
     int choice = 0; char mv_string[6];
 
@@ -168,7 +172,11 @@ int sInternalBook::MoveFromInternal(POS *p) {
     return choice;
 }
 
-void sInternalBook::Init() {
+void sInternalBook::Init()
+#ifdef USEGEN
+    const
+#endif
+{
 
     ReadInternal();
 }
