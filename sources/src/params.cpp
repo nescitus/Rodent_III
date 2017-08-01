@@ -149,6 +149,7 @@ void cParam::DefaultWeights() {
     struct_weight = 100;
     shield_weight = 119;
     storm_weight = 99;
+	center_weight = 50;
 
     // Pawn structure parameters
 

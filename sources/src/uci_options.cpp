@@ -298,6 +298,9 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "lines") == 0)                                   {
         Par.lines_weight = atoi(value);
         Glob.should_clear = true;
+    } else if (strcmp(name, "center") == 0)                                  {
+        Par.center_weight = atoi(value);
+        Glob.should_clear = true;
     } else if (strcmp(name, "fianchetto") == 0)                              {
         Par.values[B_KING] = atoi(value);
         Glob.should_clear = true;

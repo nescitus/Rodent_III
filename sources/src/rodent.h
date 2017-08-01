@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 36.846.054
+// b15: 34.932.402
 
 #pragma once
 
@@ -448,8 +448,6 @@ class cParam {
     int draw_score;
     int prog_side;
     int search_skill;
-    int pawn_mass_weight;
-    int pawn_chains_weight;
     int nps_limit;
     int eval_blur;
     int hist_perc;
@@ -471,6 +469,9 @@ class cParam {
     int storm_weight;
     int struct_weight;
     int passers_weight;
+	int center_weight;
+	int pawn_mass_weight;
+	int pawn_chains_weight;
     int sd_att[2];
     int sd_mob[2];
     int mg_pst[2][6][64];
