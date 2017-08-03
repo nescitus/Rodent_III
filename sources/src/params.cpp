@@ -34,6 +34,7 @@ void cParam::DefaultWeights() {
     // Opening book
 
     use_book = true;
+    verbose_book = true; // TODO: change to false in release
     book_filter = 20;
 
     // Timing

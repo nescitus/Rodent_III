@@ -439,6 +439,7 @@ class cParam {
   public:
     int values[N_OF_VAL];
     bool use_book;
+    bool verbose_book;
     int book_filter;
     int book_depth;
     int elo;
@@ -615,7 +616,7 @@ struct sInternalBook {
     void MoveToInternal(U64 hashKey, int move, int val);
 #endif
 
-    int MoveFromInternal(POS *p) const;
+    int MoveFromInternal(POS *p, bool print_output) const;
 };
 
 #define ZEROARRAY(x) memset(x, 0, sizeof(x));

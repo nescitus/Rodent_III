@@ -355,10 +355,7 @@ int big_random(int n) {
 int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
     int best_move = 0, max_weight = 0, weight_sum = 0;
-    int pos;
     polyglot_move entry[1];
-    int move;
-    int score;
     int values[100], moves[100];
     U64 key = GetPolyglotKey(p);
     char move_string[6];
@@ -367,12 +364,14 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
     if (bookFile != NULL) {
 
-        for (pos = FindPos(key); pos < book_size; pos++) {
+        printf("info string probing \'%s\'...\n", bookName);
+
+        for (int pos = FindPos(key); pos < book_size; pos++) {
 
             ReadEntry(entry, pos);
             if (entry->key != key) break;
-            move = entry->move;
-            score = entry->weight;
+            int move = entry->move;
+            int score = entry->weight;
 
             // ugly hack to convert polyglot move to a real one
 

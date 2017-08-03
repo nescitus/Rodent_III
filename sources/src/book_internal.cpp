@@ -137,7 +137,9 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
 }
 #endif
 
-int sInternalBook::MoveFromInternal(POS *p) const {
+int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
+
+    printf("info string probing the internal book...\n");
 
     int choice = 0; char mv_string[6];
 
@@ -160,8 +162,10 @@ int sInternalBook::MoveFromInternal(POS *p) const {
             const int freq_with_correction = internal_book[i].freq + min_freq;
 
             // display info about book moves
-            MoveToStr(internal_book[i].move, mv_string);
-            printf("info string %s %d\n", mv_string, freq_with_correction);
+            if (print_output) {
+                MoveToStr(internal_book[i].move, mv_string);
+                printf("info string %s %d\n", mv_string, freq_with_correction);
+            }
 
             // pick move with the best random value based on frequency
             vals_acc += freq_with_correction;
