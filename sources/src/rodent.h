@@ -174,6 +174,14 @@ template<typename T> const T& Min(const T& x, const T& y) { return x < y ? x : y
     #endif
 #endif
 
+#ifndef NOINLINE
+    #if defined(_MSC_VER)
+        #define NOINLINE __declspec(noinline)
+    #else
+        #define NOINLINE __attribute__((noinline))
+    #endif
+#endif
+
 // Compiler and architecture dependent versions of FirstOne() function,
 // triggered by defines at the top of this file.
 #ifdef USE_FIRST_ONE_INTRINSICS
@@ -500,11 +508,11 @@ class cParam {
 #ifdef USE_RISKY_PARAMETER
     int riskydepth;
 #endif
-    void InitPst();
-    void InitMobility();
-    void InitBackward();
-    void InitPassers();
-    void InitMaterialTweaks();
+    NOINLINE void InitPst();
+    NOINLINE void InitMobility();
+    NOINLINE void InitBackward();
+    NOINLINE void InitPassers();
+    NOINLINE void InitMaterialTweaks();
     void InitTables();
     void DefaultWeights();
     void InitAsymmetric(POS *p);
