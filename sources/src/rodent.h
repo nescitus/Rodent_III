@@ -42,6 +42,9 @@ using U64 = uint64_t;
 
 #define USE_RISKY_PARAMETER
 
+// max size of an opening book to fully cache in memory (in MB)
+#define BOOK_IN_MEMORY_MB 16
+
 #ifndef NO_THREADS
     #include <thread>
     #ifndef USE_THREADS
@@ -50,7 +53,7 @@ using U64 = uint64_t;
     #ifndef NEW_THREADS
         #define NEW_THREADS
     #endif
-    #define MAX_THREADS 8 // do not change unless threading code is modified (array of cEngine class instances)
+    #define MAX_THREADS 8
 #else
     #undef USE_THREADS
 #endif

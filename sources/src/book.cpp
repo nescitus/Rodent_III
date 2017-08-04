@@ -336,19 +336,30 @@ void sBook::OpenPolyglot() {
 
     bookFile = fopen(bookName, "rb");
 
-    if (bookFile != NULL) {
+    if (bookFile == NULL) return;
 
-        if (fseek(bookFile, 0, SEEK_END) != 0) {
-            ClosePolyglot();
-            return;
-        }
+    if (fseek(bookFile, 0, SEEK_END) != 0) {
+        ClosePolyglot();
+        return;
+    }
 
-        book_size = ftell(bookFile) / 16;
-        if (book_size == 0) {
-            ClosePolyglot();
-            return;
+    bookSizeInEntries = ftell(bookFile) / 16;
+    if (bookSizeInEntries == 0) {
+        ClosePolyglot();
+        return;
+    }
+
+#ifdef BOOK_IN_MEMORY_MB
+    if (bookSizeInEntries < BOOK_IN_MEMORY_MB * 1024 * 1024 / 16) {
+        bookMemory = (unsigned char *)malloc(16 * bookSizeInEntries);
+        if (bookMemory) {
+            rewind(bookFile);
+            fread(bookMemory, 16, bookSizeInEntries, bookFile);
+            fclose(bookFile);
+            bookFile = NULL;
         }
     }
+#endif
 }
 
 int big_random(int n) {
@@ -358,7 +369,7 @@ int big_random(int n) {
 
 int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
-    if (bookFile == NULL) return 0;
+    if (!Success()) return 0;
 
     int best_move = 0, max_weight = 0, weight_sum = 0, n_of_choices = 0;
     int values[100], moves[100];
@@ -367,7 +378,7 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
     printf("info string probing \'%s\'...\n", bookName);
 
-    for (int pos = FindPos(key); pos < book_size && (ReadEntry(entry, pos), entry->key == key); pos++) {
+    for (int pos = FindPos(key); pos < bookSizeInEntries && (ReadEntry(entry, pos), entry->key == key); pos++) {
 
         const int move = entry->move;
         const int score = entry->weight;
@@ -426,7 +437,7 @@ int sBook::FindPos(U64 key) {
 
     // binary search (finds the leftmost entry)
 
-    int left = 0, right = book_size - 1;
+    int left = 0, right = bookSizeInEntries - 1;
 
     while (left < right) {
         int mid = (left + right) / 2;
@@ -438,12 +449,13 @@ int sBook::FindPos(U64 key) {
 
     ReadEntry(entry, left);
 
-    return (entry->key == key) ? left : book_size;
+    return (entry->key == key) ? left : bookSizeInEntries;
 }
 
 void sBook::ReadEntry(polyglot_move *entry, int n) {
 
-    fseek(bookFile, n * 16, SEEK_SET);
+    if (bookFile) fseek(bookFile, n * 16, SEEK_SET);
+    bookMemoryPos = n * 16;
     entry->key = ReadInteger(8);
     entry->move = (int)ReadInteger(2);
     entry->weight = (int)ReadInteger(2);
@@ -456,7 +468,7 @@ U64 sBook::ReadInteger(int size) {
     U64 n = 0;
 
     for (int i = 0; i < size; i++)
-        n = (n << 8) | (unsigned char)fgetc(bookFile);
+        n = (n << 8) | (bookMemory ? bookMemory[bookMemoryPos++] : (unsigned char)fgetc(bookFile));
 
     return n;
 }
@@ -467,6 +479,8 @@ void sBook::ClosePolyglot() {
         fclose(bookFile);
         bookFile = NULL;
     }
+    free(bookMemory); // ISO/IEC 9899:2011: "If ptr is a null pointer, no action occurs."
+    bookMemory = NULL;
 }
 
 bool sBook::IsInfrequent(int val, int max_freq) {
