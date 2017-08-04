@@ -8,26 +8,27 @@ for /f "usebackq tokens=*" %%i in (`%vswhere% -latest -products * -requires Micr
   set InstallDir=%%i
 )
 
-call "%InstallDir%\Common7\Tools\VsDevCmd.bat" -arch=x86
-
+set EXENAME=RodentIII
 set PROF=%1
 
+call "%InstallDir%\Common7\Tools\VsDevCmd.bat" -arch=x86
+
 set POPCNTDEF=
-set ENAME="rodent_vs2017_x32_POPCNT.exe"
+set ENAME="%EXENAME%_x32_POPCNT.exe"
 call :build
 
 set POPCNTDEF=/D NO_MM_POPCNT
-set ENAME="rodent_vs2017_x32_noPOPCNT.exe"
+set ENAME="%EXENAME%_x32_noPOPCNT.exe"
 call :build
 
 call "%InstallDir%\Common7\Tools\VsDevCmd.bat" -arch=amd64
 
 set POPCNTDEF=
-set ENAME="rodent_vs2017_x64_POPCNT.exe"
+set ENAME="%EXENAME%_x64_POPCNT.exe"
 call :build
 
 set POPCNTDEF=/D NO_MM_POPCNT
-set ENAME="rodent_vs2017_x64_noPOPCNT.exe"
+set ENAME="%EXENAME%_x64_noPOPCNT.exe"
 
 :build
 
