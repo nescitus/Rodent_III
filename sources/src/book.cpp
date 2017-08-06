@@ -454,8 +454,8 @@ int sBook::FindPos(U64 key) {
 
 void sBook::ReadEntry(polyglot_move *entry, int n) {
 
-    if (bookFile) fseek(bookFile, n * 16, SEEK_SET);
     bookMemoryPos = n * 16;
+    if (bookFile) fseek(bookFile, bookMemoryPos, SEEK_SET);
     entry->key = ReadInteger(8);
     entry->move = (int)ReadInteger(2);
     entry->weight = (int)ReadInteger(2);
@@ -467,8 +467,12 @@ U64 sBook::ReadInteger(int size) {
 
     U64 n = 0;
 
-    for (int i = 0; i < size; i++)
-        n = (n << 8) | (bookMemory ? bookMemory[bookMemoryPos++] : (unsigned char)fgetc(bookFile));
+    if (bookMemory)
+        for (int i = 0; i < size; i++)
+            n = (n << 8) | bookMemory[bookMemoryPos++];
+    else
+        for (int i = 0; i < size; i++)
+            n = (n << 8) | (unsigned char)fgetc(bookFile);
 
     return n;
 }
