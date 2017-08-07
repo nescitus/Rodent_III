@@ -74,6 +74,11 @@ void PrintVersion()
 
 int main() {
 
+    // catching memory leaks using MS Visual Studio
+#if defined(_MSC_VER) && !defined(NDEBUG)
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
     srand(GetMS());
 
     BB.Init();
