@@ -76,6 +76,8 @@ void UciLoop() {
         } else if (strcmp(token, "ucinewgame") == 0) {
             ClearTrans();
             Glob.ClearData();
+            SetPosition(p, START_POS);
+            srand(GetMS());
         } else if (strcmp(token, "isready") == 0)    {
             printf("readyok\n");
         } else if (strcmp(token, "setoption") == 0)  {
@@ -128,8 +130,12 @@ void ParseMoves(POS *p, const char *ptr) {
 
         if (*token == '\0') break;
 
-        p->DoMove(StrToMove(p, token), u);
-        Glob.moves_from_start++;
+        const int move = StrToMove(p, token);
+        if (Legal(p, move)) {
+            p->DoMove(move, u);
+            Glob.moves_from_start++;
+        }
+        else printf("info string illegal move\n");
 
         // We won't be taking back moves beyond this point:
 
@@ -213,7 +219,7 @@ void SetMoveTime(int base, int inc, int movestogo) {
 
 void ParseGo(POS *p, const char *ptr) {
 
-    char token[80], bestmove_str[6];
+    char token[80];
     int wtime, btime, winc, binc, movestogo; bool strict_time;
     int pvb;
 
@@ -288,14 +294,15 @@ void ParseGo(POS *p, const char *ptr) {
     // get book move
 
     if (Par.use_book && Par.book_depth >= Glob.moves_from_start) {
+
         printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
-        pvb = GuideBook.GetPolyglotMove(p, true);
-        if (!pvb) pvb = MainBook.GetPolyglotMove(p, true);
-        if (!pvb) pvb = InternalBook.MoveFromInternal(p);
+
+        pvb = GuideBook.GetPolyglotMove(p, Par.verbose_book);
+        if (!pvb) pvb = MainBook.GetPolyglotMove(p, Par.verbose_book);
+        if (!pvb) pvb = InternalBook.MoveFromInternal(p, Par.verbose_book);
 
         if (pvb) {
-            MoveToStr(pvb, bestmove_str);
-            printf("bestmove %s\n", bestmove_str);
+            printf("bestmove %s\n", MoveToStr(pvb));
             return;
         }
     }
@@ -371,20 +378,21 @@ void cEngine::Bench(int depth) {
     if (depth == 0) depth = 8; // so that you can call bench without parameters
     ClearTrans();
     ClearAll();
+    dp_completed = 0; // maybe move to ClearAll()?
     Par.shut_up = true;
 
     printf("Bench test started (depth %d): \n", depth);
 
     Glob.nodes = 0;
+    Glob.abort_search = false;
     start_time = GetMS();
     search_depth = depth;
 
     // search each position to desired depth
 
     for (int i = 0; test[i]; ++i) {
-        printf("%s", test[i]);
+        printf("%s\n", test[i]);
         SetPosition(p, test[i]);
-        printf("\n");
         Par.InitAsymmetric(p);
         Glob.depth_reached = 0;
         Iterate(p, pv);

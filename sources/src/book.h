@@ -31,7 +31,9 @@ struct polyglot_move {
 struct sBook {
   private:
     FILE *bookFile;
-    int book_size;
+    int bookSizeInEntries;
+    unsigned char *bookMemory;
+    int bookMemoryPos;
     int FindPos(U64 key);
     bool IsInfrequent(int val, int max_freq);
     void ClosePolyglot();
@@ -41,15 +43,17 @@ struct sBook {
     U64 ReadInteger(int size);
   public:
     char bookName[256];
-    sBook(): bookFile(NULL) {}
+    sBook(): bookFile(NULL), bookMemory(NULL) {}
     void SetBookName(const char *name) {
 
         strcpy(bookName, name);
         OpenPolyglot();
-        printf("info string opening book file \'%s\' (%s)\n", bookName, bookFile == NULL ? "failure" : "success");
+        printf("info string opening book file \'%s\' (%s)\n", bookName,
+                                        Success() ? (bookMemory ? "success/m" : "success/d") : "failure");
     }
-    ~sBook() { ClosePolyglot(); }
+    bool Success() const { return bookFile || bookMemory; }
     int GetPolyglotMove(POS *p, bool print_output);
+    ~sBook() { ClosePolyglot(); }
 };
 
 extern sBook GuideBook;

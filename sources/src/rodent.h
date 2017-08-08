@@ -26,6 +26,14 @@ If not, see <http://www.gnu.org/licenses/>.
     #error Rodent requires C++11 compatible compiler.
 #endif
 
+// catching memory leaks using MS Visual Studio
+// https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library
+#if defined(_MSC_VER) && !defined(NDEBUG)
+    #define _CRTDBG_MAP_ALLOC
+    #include <stdlib.h>
+    #include <crtdbg.h>
+#endif
+
 #include <cstdint>
 #include <cinttypes>
 
@@ -42,6 +50,9 @@ using U64 = uint64_t;
 
 #define USE_RISKY_PARAMETER
 
+// max size of an opening book to fully cache in memory (in MB)
+#define BOOK_IN_MEMORY_MB 16
+
 #ifndef NO_THREADS
     #include <thread>
     #ifndef USE_THREADS
@@ -50,7 +61,7 @@ using U64 = uint64_t;
     #ifndef NEW_THREADS
         #define NEW_THREADS
     #endif
-    #define MAX_THREADS 8 // do not change unless threading code is modified (array of cEngine class instances)
+    #define MAX_THREADS 8
 #else
     #undef USE_THREADS
 #endif
@@ -168,6 +179,14 @@ template<typename T> const T& Min(const T& x, const T& y) { return x < y ? x : y
         #define FORCEINLINE __forceinline
     #else
         #define FORCEINLINE __inline
+    #endif
+#endif
+
+#ifndef NOINLINE
+    #if defined(_MSC_VER)
+        #define NOINLINE __declspec(noinline)
+    #else
+        #define NOINLINE __attribute__((noinline))
     #endif
 #endif
 
@@ -439,6 +458,7 @@ class cParam {
   public:
     int values[N_OF_VAL];
     bool use_book;
+    bool verbose_book;
     int book_filter;
     int book_depth;
     int elo;
@@ -496,11 +516,11 @@ class cParam {
 #ifdef USE_RISKY_PARAMETER
     int riskydepth;
 #endif
-    void InitPst();
-    void InitMobility();
-    void InitBackward();
-    void InitPassers();
-    void InitMaterialTweaks();
+    NOINLINE void InitPst();
+    NOINLINE void InitMobility();
+    NOINLINE void InitBackward();
+    NOINLINE void InitPassers();
+    NOINLINE void InitMaterialTweaks();
     void InitTables();
     void DefaultWeights();
     void InitAsymmetric(POS *p);
@@ -602,26 +622,29 @@ extern cGlobals Glob;
 
 struct sInternalBook {
   public:
+
     int n_of_records;
 
 #ifdef USEGEN
     sBookEntry internal_book[BOOKSIZE];
+    void Init() const;
 #else
     sBookEntry internal_book[48000];
+    void Init();
+    bool LineToInternal(const char *ptr, int excludedColor);
+    void MoveToInternal(U64 hashKey, int move, int val);
 #endif
 
-    void Init();
-    int MoveFromInternal(POS *p);
-#ifndef USEGEN
-    void MoveToInternal(U64 hashKey, int move, int val);
-    bool LineToInternal(const char *ptr, int excludedColor);
-#endif
-    void ReadInternal();
+    int MoveFromInternal(POS *p, bool print_output) const;
 };
 
 #define ZEROARRAY(x) memset(x, 0, sizeof(x));
 
-extern sInternalBook InternalBook;
+extern
+#ifdef USEGEN
+    const
+#endif
+sInternalBook InternalBook;
 
 void CheckTimeout();
 
@@ -774,6 +797,7 @@ int GetMS();
 U64 GetNps(int elapsed);
 bool InputAvailable();
 bool Legal(POS *p, int move);
+char *MoveToStr(int move);
 void MoveToStr(int move, char *move_str);
 void ParseGo(POS *p, const char *ptr);
 void ParseMoves(POS *p, const char *ptr);

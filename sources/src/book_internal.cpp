@@ -22,7 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cstring>
 
-void sInternalBook::ReadInternal() {
+void sInternalBook::Init()
+#ifdef USEGEN
+    const
+#endif
+{
 #ifndef USEGEN
     #include "book_internal.h"
 
@@ -55,7 +59,7 @@ void sInternalBook::ReadInternal() {
     FILE *f = fopen("book_gen.h", "w");
 
     fprintf(f, "#ifndef GIMMESIZE\n"
-               "sInternalBook InternalBook = {\n"
+               "extern const sInternalBook InternalBook = {\n"
                "%d,\n"
                "{\n",
                       n_of_records);
@@ -133,9 +137,11 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
 }
 #endif
 
-int sInternalBook::MoveFromInternal(POS *p) {
+int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
 
-    int choice = 0; char mv_string[6];
+    printf("info string probing the internal book...\n");
+
+    int choice = 0;
 
     const int min_freq = 20; // the higher this value, the more uniform move distribution
 
@@ -156,8 +162,9 @@ int sInternalBook::MoveFromInternal(POS *p) {
             const int freq_with_correction = internal_book[i].freq + min_freq;
 
             // display info about book moves
-            MoveToStr(internal_book[i].move, mv_string);
-            printf("info string %s %d\n", mv_string, freq_with_correction);
+            if (print_output) {
+                printf("info string %s %d\n", MoveToStr(internal_book[i].move), freq_with_correction);
+            }
 
             // pick move with the best random value based on frequency
             vals_acc += freq_with_correction;
@@ -166,9 +173,4 @@ int sInternalBook::MoveFromInternal(POS *p) {
     }
 
     return choice;
-}
-
-void sInternalBook::Init() {
-
-    ReadInternal();
 }

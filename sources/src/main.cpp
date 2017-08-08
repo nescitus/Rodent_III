@@ -74,6 +74,11 @@ void PrintVersion()
 
 int main() {
 
+    // catching memory leaks using MS Visual Studio
+#if defined(_MSC_VER) && !defined(NDEBUG)
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
     srand(GetMS());
 
     BB.Init();
@@ -89,8 +94,8 @@ int main() {
 
 #if defined(_WIN32) || defined(_WIN64)
     // if we are on Windows search for books and settings in same directory as rodentIII.exe
-    MainBook.SetBookName("books/rodent.bin");
     GuideBook.SetBookName("books/guide.bin");
+    MainBook.SetBookName("books/rodent.bin");
     ReadPersonality("basic.ini");
 #elif __linux || __unix
     // if we are on Linux
@@ -98,17 +103,14 @@ int main() {
 #ifdef BOOKPATH
     #define MAKESTRHLP(x) #x
     #define MAKESTR(x) MAKESTRHLP(x)
-    // process Mainbook
-    MainBook.SetBookName(MAKESTR(BOOKPATH) "/rodent.bin");   // store it
-    // process Guidebook
     GuideBook.SetBookName(MAKESTR(BOOKPATH) "/guide.bin");
-    // process Personality file
+    MainBook.SetBookName(MAKESTR(BOOKPATH) "/rodent.bin");
     ReadPersonality(MAKESTR(BOOKPATH) "/basic.ini");
     #undef MAKESTR
     #undef MAKESTRHLP
 #else // if no path was given than we assume that files are stored at /usr/share/rodentIII
-    MainBook.SetBookName("/usr/share/rodentIII/rodent.bin");
     GuideBook.SetBookName("/usr/share/rodentIII/guide.bin");
+    MainBook.SetBookName("/usr/share/rodentIII/rodent.bin");
     ReadPersonality("/usr/share/rodentIII/basic.ini");
 #endif
 
@@ -116,8 +118,8 @@ int main() {
     // a platform we have not tested yet. We assume that opening books and
     // settings are stored within the same directory. Similiar to Windows.
     printf("Platform unknown. We assume that opening books and settings are stored within RodentIII path");
-    MainBook.SetBookName("books/rodent.bin");
     GuideBook.SetBookName("books/guide.bin");
+    MainBook.SetBookName("books/rodent.bin");
     ReadPersonality("basic.ini");
 #endif
 

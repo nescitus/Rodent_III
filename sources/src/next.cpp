@@ -63,6 +63,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
                 *flag = MV_CAPTURE;
                 return move;
             }
+        // fallthrough
 
         case 3: // first killer move
             move = m->killer1;

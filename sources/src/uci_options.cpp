@@ -99,8 +99,9 @@ void PrintUciOptions() {
 #endif
     }
     printf("option name UseBook type check default %s\n", Par.use_book ? "true" : "false");
-    printf("option name MainBookFile type string default %s\n", MainBook.bookName);
+    printf("option name VerboseBook type check default %s\n", Par.verbose_book ? "true" : "false");
     printf("option name GuideBookFile type string default %s\n", GuideBook.bookName);
+    printf("option name MainBookFile type string default %s\n", MainBook.bookName);
 
 }
 
@@ -525,6 +526,8 @@ void ParseSetoption(const char *ptr) {
         valuebool(Par.fl_weakening, value);
     } else if (strcmp(name, "usebook") == 0)                                 {
         valuebool(Par.use_book, value);
+    } else if (strcmp(name, "verbosebook") == 0)                             {
+        valuebool(Par.verbose_book, value);
     } else if (strcmp(name, "searchskill") == 0)                             {
         Par.search_skill = atoi(value);
         Glob.should_clear = true;

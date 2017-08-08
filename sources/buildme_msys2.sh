@@ -2,6 +2,7 @@
 
 CFG="-DUSEGEN -DUSE_THREADS -DNEW_THREADS"
 CC=g++
+EXENAME=rodentiii
 
 if [[ "$MSYSTEM_CARCH" == "i686" ]]; then
 	LSA="-Wl,--large-address-aware,--gc-sections"
@@ -11,7 +12,7 @@ fi
 
 function buildexe {
 
-	$CC -Ofast $2 -s -march=$1 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program -DNDEBUG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA -o rodent_"$MSYSTEM_CARCH"_$1.exe
+	$CC -Ofast $2 -s -march=$1 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program -DNDEBUG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA -o ${EXENAME}_${MSYSTEM_CARCH}_$1.exe
 }
 
 function buildprof {
@@ -19,7 +20,7 @@ function buildprof {
 	buildexe $1 -fprofile-generate
 
 	echo Profiling...
-	echo bench | ./rodent_"$MSYSTEM_CARCH"_$1.exe > /dev/null
+	echo bench | ./${EXENAME}_${MSYSTEM_CARCH}_$1.exe > /dev/null
 
 	echo Using profile...
 	buildexe $1 -fprofile-use
@@ -32,9 +33,9 @@ cat src/*.cpp > src/combined.cpp
 
 # Internal book generator
 echo Building instrumental binary ...
-gcc -O2 -march=native -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o rodent_bookgen.exe
-./rodent_bookgen.exe > /dev/null
-rm rodent_bookgen.exe
+gcc -O2 -march=native -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o ${EXENAME}_bookgen.exe
+./${EXENAME}_bookgen.exe > /dev/null
+rm ${EXENAME}_bookgen.exe
 
 
 # Add required archs here (see https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html)
