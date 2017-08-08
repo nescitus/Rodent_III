@@ -1,0 +1,16 @@
+image: Visual Studio 2017
+
+clone_folder: c:\rodent_iii_src
+shallow_clone: true
+
+before_build:
+  cd c:\rodent_iii_src\sources
+
+build_script:
+  buildme_vs2017.bat prof
+
+after_build:
+  for %%i in (*.exe) do 7z a "%%~ni.zip" "%%i"
+
+artifacts:
+  path: '*.zip'
