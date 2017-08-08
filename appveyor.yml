@@ -13,4 +13,4 @@ after_build:
   for %%i in (*.exe) do 7z a "%%~ni.zip" "%%i"
 
 artifacts:
-  path: '*.zip'
+  path: 'sources\*.zip'
