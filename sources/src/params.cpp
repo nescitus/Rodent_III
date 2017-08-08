@@ -130,12 +130,13 @@ void cParam::DefaultWeights() {
     draw_score = 0;
     shut_up = false;       // true suppresses displaing info currmove etc.
 
-    // Asymmetric weights - the core of personality mechanism
+    // Attack and mobility weights that can be set independently for each side
+	// - the core of personality mechanism
 
-    own_att_weight = 110;
+    own_att_weight = 100;
     opp_att_weight = 100;
     own_mob_weight = 100;
-    opp_mob_weight = 110;
+    opp_mob_weight = 100;
 
     // Positional weights
 
