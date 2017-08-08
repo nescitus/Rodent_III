@@ -2,4 +2,4 @@ Rodent III is an open source chess engine by Pawel Koziol, licensed under GPL 3.
 
 Home page: http://www.pkoziol.cal24.pl/rodent/rodent.htm
 
-Download current builds (master branch): [![Build status](https://ci.appveyor.com/api/projects/status/9cm7pjvhghq02qed?svg=true)](https://ci.appveyor.com/project/tico-tico/rodent-iii/build/artifacts)
+Download current development builds (master branch): [![Build status](https://ci.appveyor.com/api/projects/status/9cm7pjvhghq02qed?svg=true)](https://ci.appveyor.com/project/tico-tico/rodent-iii/build/artifacts)
