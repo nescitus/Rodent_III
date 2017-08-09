@@ -1,16 +1,30 @@
+environment:
+  APPVEYOR_CACHE_ENTRY_ZIP_ARGS: "-t7z -m0=lzma2 -mx=3"
+
 image: Visual Studio 2017
 
 clone_folder: c:\rodent_iii_src
 shallow_clone: true
 
+install:
+  - if not exist c:\tools\msys64 cinst msys2
+
 before_build:
-  cd c:\rodent_iii_src\sources
+  - c:\tools\msys64\usr\bin\pacman -Syu --needed --noconfirm mingw-w64-i686-gcc mingw-w64-x86_64-gcc
+  - c:\tools\msys64\usr\bin\pacman -Scc --noconfirm
+  - cd c:\rodent_iii_src\sources
 
 build_script:
-  buildme_vs2017.bat prof
+  - c:\tools\msys64\msys2_shell.cmd -mingw32 -here buildme_msys2.sh prof
+  - c:\tools\msys64\msys2_shell.cmd -mingw64 -here buildme_msys2.sh prof
+  - buildme_vs2017.bat prof
 
 after_build:
-  for %%i in (*.exe) do 7z a "%%~ni.zip" "%%i"
+  - if exist c:\tools\msys64\var\log rmdir /s /q c:\tools\msys64\var\log
+  - for %%i in (*.exe) do 7z a "%%~ni.zip" "%%i"
 
 artifacts:
-  path: 'sources\*.zip'
+  - path: 'sources\*.zip'
+
+cache:
+  - c:\tools\msys64
