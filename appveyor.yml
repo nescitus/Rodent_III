@@ -26,6 +26,7 @@ after_build:
 
 artifacts:
   - path: '*.zip'
+  - path: '*.7z'
 
 cache:
   - c:\tools\msys64
