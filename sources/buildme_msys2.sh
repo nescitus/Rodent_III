@@ -35,29 +35,51 @@ function buildprof {
 	rm -f *.gcda
 }
 
+# Add default required archs here (see https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html)
+
+#archsDEF=(core2 nehalem skylake bdver2 znver1)
+archsDEF=(core2 bdver2)
+
+if [[ $# -ne 0 ]]; then
+	if [[ $# -eq 1 ]] && [[ "$1" == "pgo" ]]; then
+		archsDEF+=("pgo")
+	else
+		archsDEF=("$@")
+	fi
+fi
+
+archs=()
+PGO=false
+for arch in "${archsDEF[@]}"; do
+	if [[ "$arch" == "pgo" ]]; then
+		PGO=true
+	else
+		archs+=($arch)
+	fi
+done
+
+echo Going to build for [${archs[*]}]...
+echo PGO = $PGO
+
 mv src/book_gen.h src/book_gen.h.bk
 cat src/*.cpp > src/combined.cpp
 
 # Internal book generator
-echo Building instrumental binary ...
-gcc -O2 -march=native -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o ${EXENAME}_bookgen.exe
+echo Building instrumental internal book generator binary ...
+gcc -Ofast -march=native -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o ${EXENAME}_bookgen.exe
 ./${EXENAME}_bookgen.exe > /dev/null
 rm ${EXENAME}_bookgen.exe
 
-
-# Add required archs here (see https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html)
-
-#archs=(core2 nehalem skylake bdver2 znver1)
-archs=(core2 nehalem skylake bdver2 znver1)
-
 for arch in "${archs[@]}"; do
-	echo Building $MSYSTEM_CARCH for $arch ...
+	echo '->' Building $MSYSTEM_CARCH for $arch ...
 
-	if [[ "$1" == "prof" ]]; then
+	if [[ "$PGO" == "true" ]]; then
 		buildprof $arch
 	else
 		buildexe $arch
 	fi
+
+	echo '->' Done.
 done
 
 rm book_gen.h

@@ -32,7 +32,7 @@ set ENAME="%EXENAME%_x64_noPOPCNT.exe"
 
 :build
 
-if "%PROF%"=="prof" goto :doprofiling
+if "%PROF%"=="pgo" goto :doprofiling
 
 call :buildhlp
 del /q *.obj
