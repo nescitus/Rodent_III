@@ -12,7 +12,7 @@ fi
 
 function buildexe {
 
-	$CC -Ofast $2 -s -march=$1 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program -DNDEBUG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA -o ${EXENAME}_${MSYSTEM_CARCH}_$1.exe
+	$CC -Ofast $2 -s -march=$1 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program -DNDEBUG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA -o ${EXENAME}_${MSYSTEM_CARCH}_${1}${3}.exe
 }
 
 function buildprof {
@@ -22,10 +22,17 @@ function buildprof {
 	echo Profiling...
 	echo bench | ./${EXENAME}_${MSYSTEM_CARCH}_$1.exe > /dev/null
 
-	echo Using profile...
-	buildexe $1 -fprofile-use
+	if [[ $? -eq 0 ]]; then
+		rm ${EXENAME}_${MSYSTEM_CARCH}_$1.exe
+		echo Using profile...
+		buildexe ${1} -fprofile-use _pgo
+	else
+		rm ${EXENAME}_${MSYSTEM_CARCH}_$1.exe
+		echo Profiling error!
+		buildexe ${1}
+	fi
 
-	rm *.gcda
+	rm -f *.gcda
 }
 
 mv src/book_gen.h src/book_gen.h.bk
@@ -41,7 +48,7 @@ rm ${EXENAME}_bookgen.exe
 # Add required archs here (see https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html)
 
 #archs=(core2 nehalem skylake bdver2 znver1)
-archs=(core2 bdver2)
+archs=(core2 nehalem skylake bdver2 znver1)
 
 for arch in "${archs[@]}"; do
 	echo Building $MSYSTEM_CARCH for $arch ...

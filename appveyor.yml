@@ -12,14 +12,14 @@ install:
 before_build:
   - c:\tools\msys64\usr\bin\pacman -Syu --needed --noconfirm mingw-w64-i686-gcc mingw-w64-x86_64-gcc
   - c:\tools\msys64\usr\bin\pacman -Scc --noconfirm
-  - cd c:\rodent_iii_src\sources
+  - cd %APPVEYOR_BUILD_FOLDER%\sources
 
 build_script:
-  - c:\tools\msys64\msys2_shell.cmd -mingw32 -here buildme_msys2.sh
-  - c:\tools\msys64\msys2_shell.cmd -mingw64 -here buildme_msys2.sh
-  - for %%i in (*.exe) do 7z a -sdel c:\rodent_iii_src\"%%~ni.7z" "%%i"
+  - c:\tools\msys64\msys2_shell.cmd -mingw32 -here buildme_msys2.sh prof
+  - c:\tools\msys64\msys2_shell.cmd -mingw64 -here buildme_msys2.sh prof
+  - for %%i in (*.exe) do 7z a -sdel %APPVEYOR_BUILD_FOLDER%\mingw-"%%~ni.7z" "%%i"
   - buildme_vs2017.bat prof
-  - for %%i in (*.exe) do 7z a -sdel c:\rodent_iii_src\"%%~ni.zip" "%%i"
+  - for %%i in (*.exe) do 7z a -sdel %APPVEYOR_BUILD_FOLDER%\"%%~ni.zip" "%%i"
 
 after_build:
   - if exist c:\tools\msys64\var\log rmdir /s /q c:\tools\msys64\var\log
