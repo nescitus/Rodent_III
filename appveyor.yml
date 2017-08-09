@@ -21,10 +21,10 @@ build_script:
 
 after_build:
   - if exist c:\tools\msys64\var\log rmdir /s /q c:\tools\msys64\var\log
-  - for %%i in (*.exe) do 7z a "%%~ni.zip" "%%i"
+  - for %%i in (*.exe) do 7z a c:\rodent_iii_src\"%%~ni.zip" "%%i"
 
 artifacts:
-  - path: 'sources\*.zip'
+  - path: '*.zip'
 
 cache:
   - c:\tools\msys64
