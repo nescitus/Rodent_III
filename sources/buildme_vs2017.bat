@@ -41,6 +41,8 @@ goto :eof
 
 :doprofiling
 
+set ENAME=%ENAME:.exe=_pgo.exe%
+
 call :buildhlp /GENPROFILE
 del /q *.obj
 

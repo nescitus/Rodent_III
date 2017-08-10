@@ -10,7 +10,8 @@ install:
   - if not exist c:\tools\msys64 cinst msys2
 
 before_build:
-  - c:\tools\msys64\usr\bin\pacman -Syu --needed --noconfirm mingw-w64-i686-gcc mingw-w64-x86_64-gcc
+  - c:\tools\msys64\usr\bin\pacman -Syu --noconfirm
+  - c:\tools\msys64\usr\bin\pacman -Syu --noconfirm --needed mingw-w64-i686-gcc mingw-w64-x86_64-gcc
   - c:\tools\msys64\usr\bin\pacman -Scc --noconfirm
   - cd %APPVEYOR_BUILD_FOLDER%\sources
 
@@ -23,6 +24,9 @@ build_script:
 
 after_build:
   - if exist c:\tools\msys64\var\log rmdir /s /q c:\tools\msys64\var\log
+
+test: off
+deploy: off
 
 artifacts:
   - path: '*.zip'
