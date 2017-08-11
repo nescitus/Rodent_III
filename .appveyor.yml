@@ -18,9 +18,15 @@ before_build:
 build_script:
   - c:\tools\msys64\msys2_shell.cmd -mingw32 -here buildme_msys2.sh core2 nehalem skylake znver1 pgo
   - c:\tools\msys64\msys2_shell.cmd -mingw64 -here buildme_msys2.sh core2 nehalem skylake znver1 pgo
-  - for %%i in (*.exe) do 7z a -sdel %APPVEYOR_BUILD_FOLDER%\mingw-"%%~ni.7z" "%%i"
+  # print current 7zip version
+  - 7z | findstr /i "copyright"
+  - dir *.exe
+  # pack exe's to 7z's and delete exe's
+  - for %%i in (*.exe) do 7z a -sdel -bso0 %APPVEYOR_BUILD_FOLDER%\mingw-"%%~ni.7z" "%%i"
   - buildme_vs2017.bat pgo
-  - for %%i in (*.exe) do 7z a -sdel %APPVEYOR_BUILD_FOLDER%\"%%~ni.zip" "%%i"
+  - dir *.exe
+  # pack exe's to zip's and delete exe's
+  - for %%i in (*.exe) do 7z a -sdel -bso0 %APPVEYOR_BUILD_FOLDER%\"%%~ni.zip" "%%i"
 
 after_build:
   - if exist c:\tools\msys64\var\log rmdir /s /q c:\tools\msys64\var\log

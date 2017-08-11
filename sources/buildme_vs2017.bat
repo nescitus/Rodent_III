@@ -46,6 +46,7 @@ set ENAME=%ENAME:.exe=_pgo.exe%
 call :buildhlp /GENPROFILE
 del /q *.obj
 
+echo(
 echo Profiling...
 echo bench | %ENAME% > nul
 
@@ -57,5 +58,8 @@ del /q *.pgc
 goto :eof
 
 :buildhlp
+echo(
+echo -^> Building %ENAME% %1...
+echo(
 
-cl /O2 /GL /Gw /GS- /wd4577 /wd4530 /analyze- /MP /MT /Zc:inline /fp:fast /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_CRT_SECURE_NO_WARNINGS" /D "USE_THREADS" /D "NEW_THREADS" /D "USEGEN" %POPCNTDEF% src/*.cpp /link /SAFESEH:NO /LTCG /OPT:REF /OPT:ICF /SUBSYSTEM:CONSOLE /LARGEADDRESSAWARE /OUT:%ENAME% %1
+cl /O2 /GL /Gw /GS- /wd4577 /wd4530 /analyze- /MP /MT /Zc:inline /fp:fast /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_CRT_SECURE_NO_WARNINGS" /D "USE_THREADS" /D "NEW_THREADS" /D "USEGEN" %POPCNTDEF% src/*.cpp /link /SAFESEH:NO /LTCG /OPT:REF /OPT:ICF /SUBSYSTEM:CONSOLE /LARGEADDRESSAWARE /OUT:%ENAME% %1 | findstr /v /i ".cpp .obj"
