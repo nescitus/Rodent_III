@@ -79,7 +79,7 @@ for arch in "${archs[@]}"; do
 		buildexe $arch
 	fi
 
-	echo '->' Done.
+	echo '<-' Done.
 done
 
 rm book_gen.h

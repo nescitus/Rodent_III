@@ -16,8 +16,8 @@ before_build:
   - cd %APPVEYOR_BUILD_FOLDER%\sources
 
 build_script:
-  - c:\tools\msys64\msys2_shell.cmd -mingw32 -here buildme_msys2.sh core2 nehalem skylake znver1 pgo
-  - c:\tools\msys64\msys2_shell.cmd -mingw64 -here buildme_msys2.sh core2 nehalem skylake znver1 pgo
+  - c:\tools\msys64\msys2_shell.cmd -mingw32 -defterm -no-start -here buildme_msys2.sh pentium4 core2 nehalem sandybridge haswell skylake znver1 pgo
+  - c:\tools\msys64\msys2_shell.cmd -mingw64 -defterm -no-start -here buildme_msys2.sh core2 nehalem sandybridge haswell skylake znver1 pgo
   # print current 7zip version
   - 7z | findstr /i "copyright"
   - dir *.exe
