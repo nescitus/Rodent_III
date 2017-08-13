@@ -17,12 +17,12 @@ CFG = -DNDEBUG -DUSEGEN -DUSE_THREADS -DNEW_THREADS -DBOOKPATH=$(DATADIR)
 CFG1 = -DUSEGEN -DUSE_THREADS -DNEW_THREADS -DBOOKPATH=$(DATADIR)
 
 # Define compiler flags
-CXXFLAGS = -g -std=c++14 -Wall -O3 -fno-rtti $(CFG)
-CXX1FLAGS = -g -std=c++14 -Wall $(CFG1)
+CXXFLAGS = -g -std=c++14 -Wall -O3 -fno-rtti -pthread $(CFG)
+CXX1FLAGS = -g -std=c++14 -Wall -pthread $(CFG1)
 
 # Define linker options
-LDFLAGS = -s -lpthread -Wl,--no-as-needed,--gc-sections
-LD1FLAGS = -lm -lpthread
+LDFLAGS = -s -Wl,--no-as-needed,--gc-sections
+LD1FLAGS = -lm
 
 # Command line switches
 lto = yes
