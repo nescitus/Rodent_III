@@ -579,7 +579,9 @@ void SetPieceValue(int pc, int val, int slot) {
 
 void ReadPersonality(const char *fileName) {
 
+    PushCWDAndGo(_PERSONALITIESPATH);
     FILE *personalityFile = fopen(fileName, "r");
+    PushCWDAndGo(); // restore cwd
 
     printf("info string reading \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 

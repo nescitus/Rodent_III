@@ -18,6 +18,9 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "rodent.h"
 #include "book.h"
 #include <cstdlib>
+#ifdef WINRELATIVE
+    #include <windows.h>
+#endif
 
 cGlobals Glob;
 
@@ -92,36 +95,20 @@ int main() {
 
     PrintVersion();
 
-#if defined(_WIN32) || defined(_WIN64)
-    // if we are on Windows search for books and settings in same directory as rodentIII.exe
-    GuideBook.SetBookName("books/guide.bin");
-    MainBook.SetBookName("books/rodent.bin");
-    ReadPersonality("basic.ini");
-#elif __linux || __unix
-    // if we are on Linux
-    // first check, if compiler got told where books and settings are stored
-#ifdef BOOKPATH
-    #define MAKESTRHLP(x) #x
-    #define MAKESTR(x) MAKESTRHLP(x)
-    GuideBook.SetBookName(MAKESTR(BOOKPATH) "/guide.bin");
-    MainBook.SetBookName(MAKESTR(BOOKPATH) "/rodent.bin");
-    ReadPersonality(MAKESTR(BOOKPATH) "/basic.ini");
-    #undef MAKESTR
-    #undef MAKESTRHLP
-#else // if no path was given than we assume that files are stored at /usr/share/rodentIII
-    GuideBook.SetBookName("/usr/share/rodentIII/guide.bin");
-    MainBook.SetBookName("/usr/share/rodentIII/rodent.bin");
-    ReadPersonality("/usr/share/rodentIII/basic.ini");
+    // go to exe's directory, useful for relative paths
+#ifdef WINRELATIVE
+    wchar_t exepath[1024];
+    GetModuleFileNameW(NULL, exepath, sizeof(exepath)/sizeof(wchar_t));
+    *(wcsrchr(exepath, '\\') + 1) = L'\0';
+    #ifndef NDEBUG
+    printf("(debug) going to %ls\n", exepath);
+    #endif
+    SetCurrentDirectoryW(exepath);
 #endif
 
-#else
-    // a platform we have not tested yet. We assume that opening books and
-    // settings are stored within the same directory. Similiar to Windows.
-    printf("Platform unknown. We assume that opening books and settings are stored within RodentIII path");
-    GuideBook.SetBookName("books/guide.bin");
-    MainBook.SetBookName("books/rodent.bin");
+    GuideBook.SetBookName("guide.bin");
+    MainBook.SetBookName("rodent.bin");
     ReadPersonality("basic.ini");
-#endif
 
     InternalBook.Init();
 

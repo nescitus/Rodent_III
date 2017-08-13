@@ -837,6 +837,34 @@ extern unsigned int tt_size;
 extern unsigned int tt_mask;
 extern int tt_date;
 
+#define MAKESTRHLP(x) #x
+#define MAKESTR(x) MAKESTRHLP(x)
+
+#if defined(BOOKSPATH)
+    #define _BOOKSPATH MAKESTR(BOOKSPATH) "/"
+#else
+    #if !defined(_WIN32) && !defined(_WIN64)
+        #error BOOKSPATH must be specified
+    #endif
+    #define _BOOKSPATH L"books/"
+    #define WINRELATIVE
+#endif
+
+#if defined(PERSONALITIESPATH)
+    #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) "/"
+#else
+    #if !defined(_WIN32) && !defined(_WIN64)
+        #error PERSONALITIESPATH must be specified
+    #endif
+    #define _PERSONALITIESPATH L"personalities/"
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+void PushCWDAndGo(const wchar_t *new_path = NULL);
+#else
+void PushCWDAndGo(const char *new_path = NULL);
+#endif
+
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change
 // TODO: perhaps don't search moves that has been searched by another thread to greater depth
 // TODO: changing tt date of used entries (thx Kestutis)

@@ -46,10 +46,12 @@ struct sBook {
     sBook(): bookFile(NULL), bookMemory(NULL) {}
     void SetBookName(const char *name) {
 
+        PushCWDAndGo(_BOOKSPATH);
         strcpy(bookName, name);
         OpenPolyglot();
         printf("info string opening book file \'%s\' (%s)\n", bookName,
                                         Success() ? (bookMemory ? "success/m" : "success/d") : "failure");
+        PushCWDAndGo(); // restore cwd
     }
     bool Success() const { return bookFile || bookMemory; }
     int GetPolyglotMove(POS *p, bool print_output);

@@ -55,5 +55,5 @@ setoption name RiskyDepth value 0
 setoption name SlowMover value 90
 setoption name Selectivity value 175
 setoption name BookFilter value 20
-setoption name GuideBookFile value books/players/ph-anand2.bin
-setoption name MainBookFile value books/hist/_post06.bin
+setoption name GuideBookFile value players/ph-anand2.bin
+setoption name MainBookFile value hist/_post06.bin

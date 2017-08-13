@@ -222,3 +222,27 @@ void WasteTime(int miliseconds) {
     usleep(miliseconds * 1000);
 #endif
 }
+
+#if defined(_WIN32) || defined(_WIN64)
+void PushCWDAndGo(const wchar_t *new_path) {
+
+    static wchar_t cwd_storage[1024];
+
+    if (new_path) {
+        GetCurrentDirectoryW(sizeof(cwd_storage)/sizeof(cwd_storage[0]), cwd_storage);
+        SetCurrentDirectoryW(new_path);
+    }
+    else SetCurrentDirectoryW(cwd_storage);
+}
+#else
+void PushCWDAndGo(const char *new_path) {
+
+    static char cwd_storage[1024];
+
+    if (new_path) {
+        getcwd(cwd_storage, sizeof(cwd_storage)/sizeof(cwd_storage[0]));
+        chdir(new_path);
+    }
+    else chdir(cwd_storage);
+}
+#endif

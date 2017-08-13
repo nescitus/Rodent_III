@@ -53,5 +53,5 @@ setoption name RiskyDepth value 0
 setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name BookFilter value 20
-setoption name GuideBookFile value books/ph-gambitbook.bin
-setoption name MainBookFile value books/rodent.bin
+setoption name GuideBookFile value ph-gambitbook.bin
+setoption name MainBookFile value rodent.bin

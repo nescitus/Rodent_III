@@ -53,7 +53,7 @@ setoption name RiskyDepth value 0
 setoption name SlowMover value 100
 setoption name Selectivity value 125
 setoption name BookFilter value 20
-setoption name GuideBookFile value books/guide/steinitz.bin
-setoption name MainBookFile value books/hist/_pre30.bin
+setoption name GuideBookFile value guide/steinitz.bin
+setoption name MainBookFile value hist/_pre30.bin
 
 
