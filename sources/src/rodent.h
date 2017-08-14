@@ -51,7 +51,9 @@ using U64 = uint64_t;
 #define USE_RISKY_PARAMETER
 
 // max size of an opening book to fully cache in memory (in MB)
-#define BOOK_IN_MEMORY_MB 16
+#ifndef NO_BOOK_IN_MEMORY
+    #define BOOK_IN_MEMORY_MB 16
+#endif
 
 #ifndef NO_THREADS
     #include <thread>
