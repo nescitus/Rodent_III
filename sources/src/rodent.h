@@ -855,7 +855,8 @@ extern int tt_date;
     #else
         #define _PERSONALITIESPATH L"personalities/"
     #endif
-    void ChDir(const wchar_t *new_path);
+    // change dir and return true on success
+    bool ChDir(const wchar_t *new_path);
 #else
     #if defined(BOOKSPATH)
         #define _BOOKSPATH MAKESTR(BOOKSPATH) "/"
@@ -867,7 +868,8 @@ extern int tt_date;
     #else
         #define _PERSONALITIESPATH "personalities/"
     #endif
-    void ChDir(const char *new_path);
+    // change dir and return true on success
+    bool ChDir(const char *new_path);
 #endif
 
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change

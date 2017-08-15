@@ -224,7 +224,7 @@ void WasteTime(int miliseconds) {
 }
 
 #if defined(_WIN32) || defined(_WIN64)
-void ChDir(const wchar_t *new_path) {
+bool ChDir(const wchar_t *new_path) {
 #ifndef ABSOLUTEPATHS
     wchar_t exe_path[1024];
 
@@ -235,14 +235,14 @@ void ChDir(const wchar_t *new_path) {
     SetCurrentDirectoryW(exe_path);
 #endif
     // and now go further, it's for relative paths
-    SetCurrentDirectoryW(new_path);
+    return SetCurrentDirectoryW(new_path);
 }
 #else
-void ChDir(const char *new_path) {
+bool ChDir(const char *new_path) {
 #ifndef ABSOLUTEPATHS
     static bool first_run = true; static char cwd_storage[1024];
 
-    if (first_run) {        // try to get executable path or saving the init location
+    if (first_run) {        // try to get executable path or save the init location
         ssize_t size = readlink("/proc/self/exe", cwd_storage, sizeof(cwd_storage));
         if (size != 0)
             *(strrchr(cwd_storage, '/') + 1) = '\0';
@@ -253,6 +253,6 @@ void ChDir(const char *new_path) {
     else
         chdir(cwd_storage); // go to the init location, it's for relative paths
 #endif
-    chdir(new_path);
+    return chdir(new_path) == 0;
 }
 #endif
