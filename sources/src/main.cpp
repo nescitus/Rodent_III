@@ -18,9 +18,6 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "rodent.h"
 #include "book.h"
 #include <cstdlib>
-#ifdef WINRELATIVE
-    #include <windows.h>
-#endif
 
 cGlobals Glob;
 
@@ -95,15 +92,12 @@ int main() {
 
     PrintVersion();
 
-    // go to exe's directory, useful for relative paths
-#ifdef WINRELATIVE
-    wchar_t exepath[1024];
-    GetModuleFileNameW(NULL, exepath, sizeof(exepath)/sizeof(wchar_t));
-    *(wcsrchr(exepath, '\\') + 1) = L'\0';
-    #ifndef NDEBUG
-    printf("(debug) going to %ls\n", exepath);
-    #endif
-    SetCurrentDirectoryW(exepath);
+#if defined(_WIN32) || defined(_WIN64)
+    printf("info string opening books path \'%ls\'\n", _BOOKSPATH);
+    printf("info string personalities path \'%ls\'\n", _PERSONALITIESPATH);
+#else
+    printf("info string opening books path \'%s\'\n", _BOOKSPATH);
+    printf("info string personalities path \'%s\'\n", _PERSONALITIESPATH);
 #endif
 
     GuideBook.SetBookName("guide.bin");

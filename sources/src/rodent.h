@@ -840,29 +840,34 @@ extern int tt_date;
 #define MAKESTRHLP(x) #x
 #define MAKESTR(x) MAKESTRHLP(x)
 
-#if defined(BOOKSPATH)
-    #define _BOOKSPATH MAKESTR(BOOKSPATH) "/"
-#else
-    #if !defined(_WIN32) && !defined(_WIN64)
-        #error BOOKSPATH must be specified
-    #endif
-    #define _BOOKSPATH L"books/"
-    #define WINRELATIVE
-#endif
-
-#if defined(PERSONALITIESPATH)
-    #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) "/"
-#else
-    #if !defined(_WIN32) && !defined(_WIN64)
-        #error PERSONALITIESPATH must be specified
-    #endif
-    #define _PERSONALITIESPATH L"personalities/"
-#endif
+// macro BOOKSPATH is where books live, default is relative "books/"
+// macro PERSONALITIESPATH is where personalities and `basic.ini` live, default is relative "personalities/"
+// define ABSOLUTEPATHS if your dir paths for books and personalities are absolute (not mandatory)
 
 #if defined(_WIN32) || defined(_WIN64)
-void PushCWDAndGo(const wchar_t *new_path = NULL);
+    #if defined(BOOKSPATH)
+        #define _BOOKSPATH MAKESTR(BOOKSPATH) L"/"
+    #else
+        #define _BOOKSPATH L"books/"
+    #endif
+    #if defined(PERSONALITIESPATH)
+        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) L"/"
+    #else
+        #define _PERSONALITIESPATH L"personalities/"
+    #endif
+    void ChDir(const wchar_t *new_path);
 #else
-void PushCWDAndGo(const char *new_path = NULL);
+    #if defined(BOOKSPATH)
+        #define _BOOKSPATH MAKESTR(BOOKSPATH) "/"
+    #else
+        #define _BOOKSPATH "books/"
+    #endif
+    #if defined(PERSONALITIESPATH)
+        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) "/"
+    #else
+        #define _PERSONALITIESPATH "personalities/"
+    #endif
+    void ChDir(const char *new_path);
 #endif
 
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change

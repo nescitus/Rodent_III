@@ -334,6 +334,7 @@ void sBook::OpenPolyglot() {
 
     ClosePolyglot();
 
+    ChDir(_BOOKSPATH);
     bookFile = fopen(bookName, "rb");
 
     if (bookFile == NULL) return;

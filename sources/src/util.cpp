@@ -224,25 +224,35 @@ void WasteTime(int miliseconds) {
 }
 
 #if defined(_WIN32) || defined(_WIN64)
-void PushCWDAndGo(const wchar_t *new_path) {
+void ChDir(const wchar_t *new_path) {
+#ifndef ABSOLUTEPATHS
+    wchar_t exe_path[1024];
 
-    static wchar_t cwd_storage[1024];
+    // getting the current executable location ...
+    GetModuleFileNameW(NULL, exe_path, sizeof(exe_path)/sizeof(exe_path[0])); *(wcsrchr(exe_path, '\\') + 1) = L'\0';
 
-    if (new_path) {
-        GetCurrentDirectoryW(sizeof(cwd_storage)/sizeof(cwd_storage[0]), cwd_storage);
-        SetCurrentDirectoryW(new_path);
-    }
-    else SetCurrentDirectoryW(cwd_storage);
+    // go there ...
+    SetCurrentDirectoryW(exe_path);
+#endif
+    // and now go further, it's for relative paths
+    SetCurrentDirectoryW(new_path);
 }
 #else
-void PushCWDAndGo(const char *new_path) {
+void ChDir(const char *new_path) {
+#ifndef ABSOLUTEPATHS
+    static bool first_run = true; static char cwd_storage[1024];
 
-    static char cwd_storage[1024];
-
-    if (new_path) {
-        getcwd(cwd_storage, sizeof(cwd_storage)/sizeof(cwd_storage[0]));
-        chdir(new_path);
+    if (first_run) {        // try to get executable path or saving the init location
+        ssize_t size = readlink("/proc/self/exe", cwd_storage, sizeof(cwd_storage));
+        if (size != 0)
+            *(strrchr(cwd_storage, '/') + 1) = '\0';
+        else
+            getcwd(cwd_storage, sizeof(cwd_storage)/sizeof(cwd_storage[0]));
+        first_run = false;
     }
-    else chdir(cwd_storage);
+    else
+        chdir(cwd_storage); // go to the init location, it's for relative paths
+#endif
+    chdir(new_path);
 }
 #endif
