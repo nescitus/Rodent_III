@@ -33,11 +33,8 @@ void PrintUciOptions() {
     printf("option name Clear Hash type button\n");
 
     if (Glob.use_personality_files) {
-        // it's unclear if the default 'rodent.txt' will be loaded by request from the GUI
-        // something should be done with it: 1. read it here or
-        // 2. (better imo) change to 'default ---' to avoid confusion
         if (pers_aliases.count == 0 || Glob.show_pers_file)
-            printf("option name PersonalityFile type string default rodent.txt\n");
+            printf("option name PersonalityFile type string default default.txt\n");
         if (pers_aliases.count != 0) {
             printf("option name Personality type combo default ---"); // `---` in case we want PersonalityFile
             for (int i = 0; i < pers_aliases.count; i++)
@@ -579,10 +576,11 @@ void SetPieceValue(int pc, int val, int slot) {
 
 void ReadPersonality(const char *fileName) {
 
-    if (!ChDir(_PERSONALITIESPATH)) return;
-    FILE *personalityFile = fopen(fileName, "r");
+    FILE *personalityFile = NULL;
+    if (ChDir(_PERSONALITIESPATH))
+        personalityFile = fopen(fileName, "r");
 
-    printf("info string reading \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
+    printf("info string reading personality \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 
     // exit if this personality file doesn't exist
     if (personalityFile == NULL)

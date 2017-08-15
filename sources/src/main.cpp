@@ -104,6 +104,10 @@ int main() {
     MainBook.SetBookName("rodent.bin");
     ReadPersonality("basic.ini");
 
+    // reading default personality
+    if (Glob.use_personality_files)
+        ReadPersonality("default.txt");
+
     InternalBook.Init();
 
 #ifndef BOOKGEN
