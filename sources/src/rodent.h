@@ -842,7 +842,6 @@ extern int tt_date;
 
 // macro BOOKSPATH is where books live, default is relative "books/"
 // macro PERSONALITIESPATH is where personalities and `basic.ini` live, default is relative "personalities/"
-// define ABSOLUTEPATHS if your dir paths for books and personalities are absolute (not mandatory)
 
 #if defined(_WIN32) || defined(_WIN64)
     #if defined(BOOKSPATH)

@@ -224,35 +224,41 @@ void WasteTime(int miliseconds) {
 }
 
 #if defined(_WIN32) || defined(_WIN64)
+// constexpr function for detecting relative paths
+constexpr bool c_relpath(const wchar_t *str) { return str[1] != L':'; }
+constexpr bool relative = c_relpath(_BOOKSPATH) || c_relpath(_PERSONALITIESPATH);
 bool ChDir(const wchar_t *new_path) {
-#ifndef ABSOLUTEPATHS
-    wchar_t exe_path[1024];
+    if (relative) {
+        wchar_t exe_path[1024];
 
-    // getting the current executable location ...
-    GetModuleFileNameW(NULL, exe_path, sizeof(exe_path)/sizeof(exe_path[0])); *(wcsrchr(exe_path, '\\') + 1) = L'\0';
+        // getting the current executable location ...
+        GetModuleFileNameW(NULL, exe_path, sizeof(exe_path)/sizeof(exe_path[0])); *(wcsrchr(exe_path, '\\') + 1) = L'\0';
 
-    // go there ...
-    SetCurrentDirectoryW(exe_path);
-#endif
+        // go there ...
+        SetCurrentDirectoryW(exe_path);
+    }
     // and now go further, it's for relative paths
     return SetCurrentDirectoryW(new_path);
 }
 #else
+// constexpr function for detecting relative paths
+constexpr bool c_relpath(const char *str) { return str[0] != '/'; }
+constexpr bool relative = c_relpath(_BOOKSPATH) || c_relpath(_PERSONALITIESPATH);
 bool ChDir(const char *new_path) {
-#ifndef ABSOLUTEPATHS
-    static bool first_run = true; static char cwd_storage[1024];
+    if (relative) {
+        static bool first_run = true; static char cwd_storage[1024];
 
-    if (first_run) {        // try to get executable path or save the init location
-        ssize_t size = readlink("/proc/self/exe", cwd_storage, sizeof(cwd_storage));
-        if (size != 0)
-            *(strrchr(cwd_storage, '/') + 1) = '\0';
+        if (first_run) {        // try to get executable path or save the init location
+            ssize_t size = readlink("/proc/self/exe", cwd_storage, sizeof(cwd_storage));
+            if (size != 0)
+                *(strrchr(cwd_storage, '/') + 1) = '\0';
+            else
+                getcwd(cwd_storage, sizeof(cwd_storage)/sizeof(cwd_storage[0]));
+            first_run = false;
+        }
         else
-            getcwd(cwd_storage, sizeof(cwd_storage)/sizeof(cwd_storage[0]));
-        first_run = false;
+            chdir(cwd_storage); // go to the init location, it's for relative paths
     }
-    else
-        chdir(cwd_storage); // go to the init location, it's for relative paths
-#endif
     return chdir(new_path) == 0;
 }
 #endif
