@@ -12,7 +12,7 @@ fi
 
 function buildexe {
 
-	$CC -Ofast $2 -s -march=$1 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program -DNDEBUG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA -o ${EXENAME}_${MSYSTEM_CARCH}_${1}${3}.exe
+	$CC -Ofast $2 -s -march=$1 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program $DBG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA -o ${EXENAME}_${MSYSTEM_CARCH}_${1}${3}.exe
 }
 
 function buildprof {
@@ -50,9 +50,12 @@ fi
 
 archs=()
 PGO=false
+DBG=-DNDEBUG
 for arch in "${archsDEF[@]}"; do
 	if [[ "$arch" == "pgo" ]]; then
 		PGO=true
+	elif [[ "$arch" == "debug" ]]; then
+		DBG=-DDEBUG
 	else
 		archs+=($arch)
 	fi
@@ -60,6 +63,7 @@ done
 
 echo Going to build for [${archs[*]}]...
 echo PGO = $PGO
+echo DBG = $DBG
 
 mv src/book_gen.h src/book_gen.h.bk
 cat src/*.cpp > src/combined.cpp

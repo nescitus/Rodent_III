@@ -40,10 +40,8 @@ class ChessHeapClass {
             success = bucket_ptrs[i] != NULL;
             size_mb -= bucket_size_mb;
 
-#ifndef NDEBUG
             if (success)
-                printf("(debug) allocated: %dMB\n", bucket_sizs[i]);
-#endif
+                printf_debug("allocated: %dMB\n", bucket_sizs[i]);
         }
 
         if (!success)

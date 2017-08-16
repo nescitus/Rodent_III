@@ -873,6 +873,12 @@ extern int tt_date;
     bool ChDir(const char *new_path);
 #endif
 
+#ifndef NDEBUG
+    #define printf_debug(...) printf("(debug) " __VA_ARGS__)
+#else
+    #define printf_debug(...)
+#endif
+
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change
 // TODO: perhaps don't search moves that has been searched by another thread to greater depth
 // TODO: changing tt date of used entries (thx Kestutis)

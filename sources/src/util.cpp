@@ -224,9 +224,8 @@ void WasteTime(int miliseconds) {
 }
 
 #if defined(_WIN32) || defined(_WIN64)
-// constexpr function for detecting relative paths
-constexpr bool c_relpath(const wchar_t *str) { return str[1] != L':'; }
-constexpr bool relative = c_relpath(_BOOKSPATH) || c_relpath(_PERSONALITIESPATH);
+// constexpr for detecting relative paths
+constexpr bool relative = _BOOKSPATH[1] != L':' || _PERSONALITIESPATH[1] != L':';
 bool ChDir(const wchar_t *new_path) {
     if (relative) {
         wchar_t exe_path[1024];
@@ -235,15 +234,16 @@ bool ChDir(const wchar_t *new_path) {
         GetModuleFileNameW(NULL, exe_path, sizeof(exe_path)/sizeof(exe_path[0])); *(wcsrchr(exe_path, '\\') + 1) = L'\0';
 
         // go there ...
+        printf_debug("go to \'%ls\'\n", exe_path);
         SetCurrentDirectoryW(exe_path);
     }
     // and now go further, it's for relative paths
+    printf_debug("go to \'%ls\'\n", new_path);
     return SetCurrentDirectoryW(new_path);
 }
 #else
-// constexpr function for detecting relative paths
-constexpr bool c_relpath(const char *str) { return str[0] != '/'; }
-constexpr bool relative = c_relpath(_BOOKSPATH) || c_relpath(_PERSONALITIESPATH);
+// constexpr for detecting relative paths
+constexpr bool relative = _BOOKSPATH[0] != '/' || _PERSONALITIESPATH[0] != '/';
 bool ChDir(const char *new_path) {
     if (relative) {
         static bool first_run = true; static char cwd_storage[1024];
@@ -258,7 +258,9 @@ bool ChDir(const char *new_path) {
         }
         else
             chdir(cwd_storage); // go to the init location, it's for relative paths
+        printf_debug("go to \'%s\'\n", cwd_storage);
     }
+    printf_debug("go to \'%s\'\n", new_path);
     return chdir(new_path) == 0;
 }
 #endif
