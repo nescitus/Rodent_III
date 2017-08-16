@@ -1,0 +1,27 @@
+just to not forget user/builder visible changes
+
+0. RodentIII requires C++11 compatible compiler.
+
+1. polyglot books can be fully cached in memory, controlled by BOOK_IN_MEMORY_MB (default 16MB max), disabled by NO_BOOK_IN_MEMORY.
+   if a book is loaded into memory RodentIII reports `success/m` otherwise `success/d`
+
+2. during compiling macro BOOKSPATH defines where books live (absolute or relative path), default is "books/"
+   during compiling macro PERSONALITIESPATH defines where personalities and `basic.ini` live (absolute or relative path), default is "personalities/"
+
+3. now all books paths are relative to BOOKSPATH or absolute
+   now all personalities paths are relative to PERSONALITIESPATH or absolute
+
+4. new way of defining personalities aliases in `basic.ini`, use like
+   `alias=path/path/name.txt`
+   see included basic_example.ini for example.
+   In this case RodentIII will show `Personality` combo in the options.
+   It is possible to remove `PersonalityFile` from the options if user adds `HIDE_PERSFILE` to basic.ini`
+
+5. BitScanForward and POPCNT are supported on x32 in VS2017. to disable POPCNT define NO_MM_POPCNT (vs2017 only)
+
+6. `buildme_vs2017.bat` builds x32/x64/POPCNT/noPOPCNT executables using VS2017
+   `buildme_vs2017.bat pgo` builds x32/x64/POPCNT/noPOPCNT profiled executables using VS2017
+
+7. if RodentIII is configured to use personalities then it loads default personality "default.txt" on startup
+
+8. if the NDEBUG macro isn't defined during compilation then RodentIII prints some additional debug info.
