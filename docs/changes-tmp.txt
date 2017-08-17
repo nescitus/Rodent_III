@@ -25,3 +25,5 @@ just to not forget user/builder visible changes
 7. if RodentIII is configured to use personalities then it loads default personality "default.txt" on startup
 
 8. if the NDEBUG macro isn't defined during compilation then RodentIII prints some additional debug info.
+
+9. new uci parameter VerboseBook controls if RodentIII prints move choices from an opening book

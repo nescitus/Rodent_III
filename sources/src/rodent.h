@@ -847,25 +847,25 @@ extern int tt_date;
 
 #if defined(_WIN32) || defined(_WIN64)
     #if defined(BOOKSPATH)
-        #define _BOOKSPATH MAKESTR(BOOKSPATH) L"/"
+        #define _BOOKSPATH MAKESTR(BOOKSPATH) L""
     #else
-        #define _BOOKSPATH L"books/"
+        #define _BOOKSPATH L"books\\"
     #endif
     #if defined(PERSONALITIESPATH)
-        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) L"/"
+        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) L""
     #else
-        #define _PERSONALITIESPATH L"personalities/"
+        #define _PERSONALITIESPATH L"personalities\\"
     #endif
     // change dir and return true on success
     bool ChDir(const wchar_t *new_path);
 #else
     #if defined(BOOKSPATH)
-        #define _BOOKSPATH MAKESTR(BOOKSPATH) "/"
+        #define _BOOKSPATH MAKESTR(BOOKSPATH) ""
     #else
         #define _BOOKSPATH "books/"
     #endif
     #if defined(PERSONALITIESPATH)
-        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) "/"
+        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) ""
     #else
         #define _PERSONALITIESPATH "personalities/"
     #endif
