@@ -49,13 +49,18 @@ if [[ $# -ne 0 ]]; then
 fi
 
 archs=()
+
 PGO=false
+BGN=true
 DBG=-DNDEBUG
+
 for arch in "${archsDEF[@]}"; do
 	if [[ "$arch" == "pgo" ]]; then
 		PGO=true
 	elif [[ "$arch" == "debug" ]]; then
 		DBG=-DDEBUG
+	elif [[ "$arch" == "nobook" ]]; then
+		BGN=false
 	else
 		archs+=($arch)
 	fi
@@ -63,16 +68,19 @@ done
 
 echo Going to build for [${archs[*]}]...
 echo PGO = $PGO
+echo BGN = $BGN
 echo DBG = $DBG
 
-mv src/book_gen.h src/book_gen.h.bk
 cat src/*.cpp > src/combined.cpp
 
-# Internal book generator
-echo Building instrumental internal book generator binary ...
-gcc -Ofast -march=native -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o ${EXENAME}_bookgen.exe
-./${EXENAME}_bookgen.exe > /dev/null
-rm ${EXENAME}_bookgen.exe
+if [[ "$BGN" == "true" ]]; then
+	mv src/book_gen.h src/book_gen.h.bk
+	# Internal book generator
+	echo Building instrumental internal book generator binary ...
+	gcc -Ofast -march=native -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o ${EXENAME}_bookgen.exe
+	./${EXENAME}_bookgen.exe > /dev/null
+	rm ${EXENAME}_bookgen.exe
+fi
 
 for arch in "${archs[@]}"; do
 	echo '->' Building $MSYSTEM_CARCH for $arch ...
@@ -86,6 +94,9 @@ for arch in "${archs[@]}"; do
 	echo '<-' Done.
 done
 
-rm book_gen.h
+if [[ "$BGN" == "true" ]]; then
+	rm book_gen.h
+	mv src/book_gen.h.bk src/book_gen.h
+fi
+
 rm src/combined.cpp
-mv src/book_gen.h.bk src/book_gen.h

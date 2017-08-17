@@ -100,6 +100,7 @@ int main() {
     printf("info string personalities path is \'%s\'\n", _PERSONALITIESPATH);
 #endif
 
+#ifndef BOOKGEN
     GuideBook.SetBookName("guide.bin");
     MainBook.SetBookName("rodent.bin");
     ReadPersonality("basic.ini");
@@ -107,6 +108,7 @@ int main() {
     // reading default personality
     if (Glob.use_personality_files)
         ReadPersonality("default.txt");
+#endif
 
     InternalBook.Init();
 
