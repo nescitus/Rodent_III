@@ -1,0 +1,45 @@
+environment:
+  APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma2 -mx=3
+
+image: Visual Studio 2017
+
+clone_folder: c:\rodent_iii_src
+shallow_clone: true
+
+install:
+  - if not exist c:\tools\msys64 cinst msys2
+
+before_build:
+  - c:\tools\msys64\usr\bin\pacman -Syu --noconfirm
+  - c:\tools\msys64\usr\bin\pacman -Syu --noconfirm --needed mingw-w64-i686-gcc mingw-w64-x86_64-gcc
+  - cd %APPVEYOR_BUILD_FOLDER%\sources
+
+build_script:
+  - c:\tools\msys64\msys2_shell.cmd -mingw32 -defterm -no-start -here buildme_msys2.sh pentium4 core2 nehalem sandybridge haswell skylake znver1 pgo
+  - c:\tools\msys64\msys2_shell.cmd -mingw64 -defterm -no-start -here buildme_msys2.sh core2 nehalem sandybridge haswell skylake znver1 pgo
+  # print current 7zip version
+  - 7z | findstr /i "copyright"
+  - dir *.exe
+  # pack exe's to 7z's and delete exe's
+  - for %%i in (*.exe) do 7z a -sdel -bso0 %APPVEYOR_BUILD_FOLDER%\mingw-"%%~ni.7z" "%%i"
+  - buildme_vs2017.bat pgo
+  - dir *.exe
+  # pack exe's to zip's and delete exe's
+  - for %%i in (*.exe) do 7z a -sdel -bso0 %APPVEYOR_BUILD_FOLDER%\"%%~ni.zip" "%%i"
+
+after_build:
+  # clean cache and logs
+  - if exist c:\tools\msys64\var\cache rmdir /s /q c:\tools\msys64\var\cache
+  - if exist c:\tools\msys64\var\log rmdir /s /q c:\tools\msys64\var\log
+  - mkdir c:\tools\msys64\var\cache
+  - mkdir c:\tools\msys64\var\log
+
+test: off
+deploy: off
+
+artifacts:
+  - path: '*.zip'
+  - path: '*.7z'
+
+cache:
+  - c:\tools\msys64
