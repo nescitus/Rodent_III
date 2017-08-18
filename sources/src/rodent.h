@@ -876,7 +876,7 @@ extern int tt_date;
 #ifndef NDEBUG
     #define printf_debug(...) printf("(debug) " __VA_ARGS__)
 #else
-    #define printf_debug(...)
+    #define printf_debug(...) {}
 #endif
 
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change
