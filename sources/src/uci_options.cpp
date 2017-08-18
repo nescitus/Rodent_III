@@ -501,10 +501,10 @@ void ParseSetoption(const char *ptr) {
     // Here starts a block of non-eval options
 
     } else if (strcmp(name, "guidebookfile") == 0)                           {
-        if (!Glob.separate_books || !Glob.reading_personality)
+        if (Glob.use_books_from_pers == Glob.reading_personality || !Glob.use_personality_files)
             GuideBook.SetBookName(value);
     } else if (strcmp(name, "mainbookfile") == 0)                            {
-        if (!Glob.separate_books || !Glob.reading_personality)
+        if (Glob.use_books_from_pers == Glob.reading_personality || !Glob.use_personality_files)
             MainBook.SetBookName(value);
     } else if (strcmp(name, "contempt") == 0)                                {
         Par.draw_score = atoi(value);
@@ -594,18 +594,18 @@ void ReadPersonality(const char *fileName) {
         while ((pos = strpbrk(line, "\r\n"))) *pos = '\0'; // clean the sh!t
 
         // do we pick opening book within a personality?
-        if (strstr(line, "PERSONALITY_BOOKS")) Glob.separate_books = false;
-        if (strstr(line, "GENERAL_BOOKS"))     Glob.separate_books = true;
+        if (strstr(line, "PERSONALITY_BOOKS")) Glob.use_books_from_pers = true; // DEFAULT
+        if (strstr(line, "GENERAL_BOOKS"))     Glob.use_books_from_pers = false;
 
         // how we go about weakening the engine?
-        if (strstr(line, "ELO_SLIDER")) Glob.elo_slider = true;
+        if (strstr(line, "ELO_SLIDER")) Glob.elo_slider = true; // DEFAULT
         if (strstr(line, "NPS_BLUR"))   Glob.elo_slider = false;
 
         // which UCI options are exposed to the user?
         if (strstr(line, "HIDE_OPTIONS")) Glob.use_personality_files = true;
-        if (strstr(line, "SHOW_OPTIONS")) Glob.use_personality_files = false;
+        if (strstr(line, "SHOW_OPTIONS")) Glob.use_personality_files = false; // DEFAULT
 
-        if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false;
+        if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false; // DEFAULT == true
 
         // aliases for personalities
         pos = strchr(line, '=');

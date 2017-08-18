@@ -585,7 +585,7 @@ class cGlobals {
     bool is_tuning;
     glob_bool pondering;
     bool reading_personality;
-    bool separate_books;
+    bool use_books_from_pers;
     bool should_clear;
     bool goodbye;
     bool use_personality_files;
