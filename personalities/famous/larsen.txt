@@ -55,5 +55,5 @@ setoption name RiskyDepth value 0
 setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name BookFilter value 0
-setoption name GuideBookFile value books/players/ph-larsen2.bin
-setoption name MainBookFile value books/hist/_31to80.bin
+setoption name GuideBookFile value players/ph-larsen2.bin
+setoption name MainBookFile value hist/_31to80.bin

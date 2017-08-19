@@ -33,11 +33,8 @@ void PrintUciOptions() {
     printf("option name Clear Hash type button\n");
 
     if (Glob.use_personality_files) {
-        // it's unclear if the default 'rodent.txt' will be loaded by request from the GUI
-        // something should be done with it: 1. read it here or
-        // 2. (better imo) change to 'default ---' to avoid confusion
         if (pers_aliases.count == 0 || Glob.show_pers_file)
-            printf("option name PersonalityFile type string default rodent.txt\n");
+            printf("option name PersonalityFile type string default default.txt\n");
         if (pers_aliases.count != 0) {
             printf("option name Personality type combo default ---"); // `---` in case we want PersonalityFile
             for (int i = 0; i < pers_aliases.count; i++)
@@ -144,9 +141,7 @@ void ParseSetoption(const char *ptr) {
     for (int i = 0; name[i]; i++)   // make `name` lowercase
         name[i] = tolower(name[i]); // we can't lowercase `value` 'coz paths are case-sensitive on linux
 
-#ifndef NDEBUG
-    printf( "(debug) setoption name: '%s' value: '%s'\n", name, value );
-#endif
+    printf_debug("setoption name: '%s' value: '%s'\n", name, value );
 
     if (strcmp(name, "hash") == 0)                                           {
         AllocTrans(atoi(value));
@@ -506,10 +501,10 @@ void ParseSetoption(const char *ptr) {
     // Here starts a block of non-eval options
 
     } else if (strcmp(name, "guidebookfile") == 0)                           {
-        if (!Glob.separate_books || !Glob.reading_personality)
+        if (Glob.use_books_from_pers == Glob.reading_personality || !Glob.use_personality_files)
             GuideBook.SetBookName(value);
     } else if (strcmp(name, "mainbookfile") == 0)                            {
-        if (!Glob.separate_books || !Glob.reading_personality)
+        if (Glob.use_books_from_pers == Glob.reading_personality || !Glob.use_personality_files)
             MainBook.SetBookName(value);
     } else if (strcmp(name, "contempt") == 0)                                {
         Par.draw_score = atoi(value);
@@ -579,9 +574,11 @@ void SetPieceValue(int pc, int val, int slot) {
 
 void ReadPersonality(const char *fileName) {
 
-    FILE *personalityFile = fopen(fileName, "r");
+    FILE *personalityFile = NULL;
+    if (ChDir(_PERSONALITIESPATH))
+        personalityFile = fopen(fileName, "r");
 
-    printf("info string reading \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
+    printf("info string reading personality \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 
     // exit if this personality file doesn't exist
     if (personalityFile == NULL)
@@ -597,18 +594,18 @@ void ReadPersonality(const char *fileName) {
         while ((pos = strpbrk(line, "\r\n"))) *pos = '\0'; // clean the sh!t
 
         // do we pick opening book within a personality?
-        if (strstr(line, "PERSONALITY_BOOKS")) Glob.separate_books = false;
-        if (strstr(line, "GENERAL_BOOKS"))     Glob.separate_books = true;
+        if (strstr(line, "PERSONALITY_BOOKS")) Glob.use_books_from_pers = true; // DEFAULT
+        if (strstr(line, "GENERAL_BOOKS"))     Glob.use_books_from_pers = false;
 
         // how we go about weakening the engine?
-        if (strstr(line, "ELO_SLIDER")) Glob.elo_slider = true;
+        if (strstr(line, "ELO_SLIDER")) Glob.elo_slider = true; // DEFAULT
         if (strstr(line, "NPS_BLUR"))   Glob.elo_slider = false;
 
         // which UCI options are exposed to the user?
         if (strstr(line, "HIDE_OPTIONS")) Glob.use_personality_files = true;
-        if (strstr(line, "SHOW_OPTIONS")) Glob.use_personality_files = false;
+        if (strstr(line, "SHOW_OPTIONS")) Glob.use_personality_files = false; // DEFAULT
 
-        if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false;
+        if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false; // DEFAULT == true
 
         // aliases for personalities
         pos = strchr(line, '=');

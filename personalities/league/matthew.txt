@@ -53,5 +53,5 @@ setoption name Contempt value 10
 setoption name SlowMover value 105
 setoption name Selectivity value 175
 setoption name BookFilter value 20
-setoption name GuideBookFile value books/guide/solid.bin
-setoption name MainBookFile value books/small.bin
+setoption name GuideBookFile value guide/solid.bin
+setoption name MainBookFile value small.bin

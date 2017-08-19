@@ -53,5 +53,5 @@ setoption name RiskyDepth value 4
 setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name BookFilter value 20
-setoption name GuideBookFile value books/micro.bin
-setoption name MainBookFile value books/micro.bin
+setoption name GuideBookFile value micro.bin
+setoption name MainBookFile value micro.bin

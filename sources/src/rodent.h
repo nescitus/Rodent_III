@@ -51,7 +51,9 @@ using U64 = uint64_t;
 #define USE_RISKY_PARAMETER
 
 // max size of an opening book to fully cache in memory (in MB)
-#define BOOK_IN_MEMORY_MB 16
+#ifndef NO_BOOK_IN_MEMORY
+    #define BOOK_IN_MEMORY_MB 16
+#endif
 
 #ifndef NO_THREADS
     #include <thread>
@@ -583,7 +585,7 @@ class cGlobals {
     bool is_tuning;
     glob_bool pondering;
     bool reading_personality;
-    bool separate_books;
+    bool use_books_from_pers;
     bool should_clear;
     bool goodbye;
     bool use_personality_files;
@@ -836,6 +838,46 @@ extern sPersAliases pers_aliases;
 extern unsigned int tt_size;
 extern unsigned int tt_mask;
 extern int tt_date;
+
+#define MAKESTRHLP(x) #x
+#define MAKESTR(x) MAKESTRHLP(x)
+
+// macro BOOKSPATH is where books live, default is relative "books/"
+// macro PERSONALITIESPATH is where personalities and `basic.ini` live, default is relative "personalities/"
+
+#if defined(_WIN32) || defined(_WIN64)
+    #if defined(BOOKSPATH)
+        #define _BOOKSPATH MAKESTR(BOOKSPATH) L""
+    #else
+        #define _BOOKSPATH L"books\\"
+    #endif
+    #if defined(PERSONALITIESPATH)
+        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) L""
+    #else
+        #define _PERSONALITIESPATH L"personalities\\"
+    #endif
+    // change dir and return true on success
+    bool ChDir(const wchar_t *new_path);
+#else
+    #if defined(BOOKSPATH)
+        #define _BOOKSPATH MAKESTR(BOOKSPATH) ""
+    #else
+        #define _BOOKSPATH "books/"
+    #endif
+    #if defined(PERSONALITIESPATH)
+        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) ""
+    #else
+        #define _PERSONALITIESPATH "personalities/"
+    #endif
+    // change dir and return true on success
+    bool ChDir(const char *new_path);
+#endif
+
+#ifndef NDEBUG
+    #define printf_debug(...) printf("(debug) " __VA_ARGS__)
+#else
+    #define printf_debug(...) {}
+#endif
 
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change
 // TODO: perhaps don't search moves that has been searched by another thread to greater depth

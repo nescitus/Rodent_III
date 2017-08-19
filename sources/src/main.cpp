@@ -93,34 +93,21 @@ int main() {
     PrintVersion();
 
 #if defined(_WIN32) || defined(_WIN64)
-    // if we are on Windows search for books and settings in same directory as rodentIII.exe
-    GuideBook.SetBookName("books/guide.bin");
-    MainBook.SetBookName("books/rodent.bin");
-    ReadPersonality("basic.ini");
-#elif __linux || __unix
-    // if we are on Linux
-    // first check, if compiler got told where books and settings are stored
-#ifdef BOOKPATH
-    #define MAKESTRHLP(x) #x
-    #define MAKESTR(x) MAKESTRHLP(x)
-    GuideBook.SetBookName(MAKESTR(BOOKPATH) "/guide.bin");
-    MainBook.SetBookName(MAKESTR(BOOKPATH) "/rodent.bin");
-    ReadPersonality(MAKESTR(BOOKPATH) "/basic.ini");
-    #undef MAKESTR
-    #undef MAKESTRHLP
-#else // if no path was given than we assume that files are stored at /usr/share/rodentIII
-    GuideBook.SetBookName("/usr/share/rodentIII/guide.bin");
-    MainBook.SetBookName("/usr/share/rodentIII/rodent.bin");
-    ReadPersonality("/usr/share/rodentIII/basic.ini");
+    printf("info string opening books path is \'%ls\'\n", _BOOKSPATH);
+    printf("info string personalities path is \'%ls\'\n", _PERSONALITIESPATH);
+#else
+    printf("info string opening books path is \'%s\'\n", _BOOKSPATH);
+    printf("info string personalities path is \'%s\'\n", _PERSONALITIESPATH);
 #endif
 
-#else
-    // a platform we have not tested yet. We assume that opening books and
-    // settings are stored within the same directory. Similiar to Windows.
-    printf("Platform unknown. We assume that opening books and settings are stored within RodentIII path");
-    GuideBook.SetBookName("books/guide.bin");
-    MainBook.SetBookName("books/rodent.bin");
+#ifndef BOOKGEN
+    GuideBook.SetBookName("guide.bin");
+    MainBook.SetBookName("rodent.bin");
     ReadPersonality("basic.ini");
+
+    // reading default personality
+    if (Glob.use_personality_files)
+        ReadPersonality("default.txt");
 #endif
 
     InternalBook.Init();
@@ -136,7 +123,7 @@ void cGlobals::Init() {
     is_tuning = false;
     reading_personality = false;
     use_personality_files = false;
-    separate_books = false;
+    use_books_from_pers = true;
     show_pers_file = true;
     thread_no = 1;
 
