@@ -23,6 +23,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #else
     #include <unistd.h>
     #include <sys/time.h>
+    #include <wordexp.h>
 #endif
 
 #include "rodent.h"
@@ -242,6 +243,31 @@ bool ChDir(const wchar_t *new_path) {
     return SetCurrentDirectoryW(new_path);
 }
 #else
+bool ChDirEnv(const char *env_name) {
+    char *env_path;
+    env_path = getenv(env_name);
+    if (env_path == NULL) return false;
+
+    printf_debug("env: %s = %s\n", env_name, env_path);
+
+    wordexp_t p;
+    switch (wordexp(env_path, &p, 0)) {
+        case 0:
+            break;
+        case WRDE_NOSPACE:
+            wordfree(&p);
+        default:
+            return false;
+    }
+    if (p.we_wordc != 1) { wordfree(&p); return false; }
+
+    printf_debug("env: go to %s\n", p.we_wordv[0]);
+
+    bool result = chdir(p.we_wordv[0]) == 0;
+    wordfree(&p);
+
+    return result;
+}
 // constexpr for detecting relative paths
 constexpr bool relative = _BOOKSPATH[0] != '/' || _PERSONALITIESPATH[0] != '/';
 bool ChDir(const char *new_path) {

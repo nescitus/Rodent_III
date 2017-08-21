@@ -575,8 +575,8 @@ void SetPieceValue(int pc, int val, int slot) {
 void ReadPersonality(const char *fileName) {
 
     FILE *personalityFile = NULL;
-    if (ChDir(_PERSONALITIESPATH))
-        personalityFile = fopen(fileName, "r");
+    if (ChDirEnv("RIIIPERSONALITIES") || ChDir(_PERSONALITIESPATH))
+            personalityFile = fopen(fileName, "r");
 
     printf("info string reading personality \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 

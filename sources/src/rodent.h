@@ -857,6 +857,7 @@ extern int tt_date;
         #define _PERSONALITIESPATH L"personalities\\"
     #endif
     // change dir and return true on success
+    #define ChDirEnv(dummy) false
     bool ChDir(const wchar_t *new_path);
 #else
     #if defined(BOOKSPATH)
@@ -870,6 +871,7 @@ extern int tt_date;
         #define _PERSONALITIESPATH "personalities/"
     #endif
     // change dir and return true on success
+    bool ChDirEnv(const char *env_name);
     bool ChDir(const char *new_path);
 #endif
 
