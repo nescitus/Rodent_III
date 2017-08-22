@@ -272,19 +272,16 @@ bool ChDirEnv(const char *env_name) {
 constexpr bool relative = _BOOKSPATH[0] != '/' || _PERSONALITIESPATH[0] != '/';
 bool ChDir(const char *new_path) {
     if (relative) {
-        static bool first_run = true; static char cwd_storage[1024];
+        char exe_path[1024];
 
-        if (first_run) {        // try to get executable path or save the init location
-            ssize_t size = readlink("/proc/self/exe", cwd_storage, sizeof(cwd_storage));
-            if (size != 0)
-                *(strrchr(cwd_storage, '/') + 1) = '\0';
-            else
-                getcwd(cwd_storage, sizeof(cwd_storage)/sizeof(cwd_storage[0]));
-            first_run = false;
-        }
-        else
-            chdir(cwd_storage); // go to the init location, it's for relative paths
-        printf_debug("go to \'%s\'\n", cwd_storage);
+        #if defined (__APPLE__)
+            # error something should be done here, look for _NSGetExecutablePath(path, &size)
+        #endif
+        // getting the current executable location ...
+        readlink("/proc/self/exe", exe_path, sizeof(exe_path)); *(strrchr(exe_path, '/') + 1) = '\0';
+
+        printf_debug("go to \'%s\'\n", exe_path);
+        chdir(exe_path); // go to the exe location, it's for relative paths
     }
     printf_debug("go to \'%s\'\n", new_path);
     return chdir(new_path) == 0;
