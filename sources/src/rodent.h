@@ -856,6 +856,7 @@ extern int tt_date;
     #else
         #define _PERSONALITIESPATH L"personalities\\"
     #endif
+    #define PrintOverrides() {}
     // change dir and return true on success
     #define ChDirEnv(dummy) false
     bool ChDir(const wchar_t *new_path);
@@ -870,6 +871,7 @@ extern int tt_date;
     #else
         #define _PERSONALITIESPATH "personalities/"
     #endif
+    void PrintOverrides();
     // change dir and return true on success
     bool ChDirEnv(const char *env_name);
     bool ChDir(const char *new_path);

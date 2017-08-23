@@ -378,7 +378,7 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
     polyglot_move entry[1];
     U64 key = GetPolyglotKey(p);
 
-    printf("info string probing \'%s\'...\n", bookName);
+    printf("info string probing '%s'...\n", bookName);
 
     for (int pos = FindPos(key); pos < bookSizeInEntries && (ReadEntry(entry, pos), entry->key == key); pos++) {
 

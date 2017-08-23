@@ -578,7 +578,7 @@ void ReadPersonality(const char *fileName) {
     if (ChDirEnv("RIIIPERSONALITIES") || ChDir(_PERSONALITIESPATH))
             personalityFile = fopen(fileName, "r");
 
-    printf("info string reading personality \'%s\' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
+    printf("info string reading personality '%s' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 
     // exit if this personality file doesn't exist
     if (personalityFile == NULL)

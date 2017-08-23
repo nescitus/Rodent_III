@@ -28,4 +28,4 @@ just to not forget user/builder visible changes
 
 9. new uci parameter VerboseBook controls if RodentIII prints move choices from an opening book
 
-10. On linux BOOKSPATH and/or PERSONALITIESPATH can be overridden by defining RIIIBOOKS and/or RIIIPERSONALITIES environment variables
+10. On linux BOOKSPATH and/or PERSONALITIESPATH can be overridden by defining RIIIBOOKS and/or RIIIPERSONALITIES environment variables. if paths, pointed by RIIIBOOKS and/or RIIIPERSONALITIES don't exist then RodentIII uses built-in BOOKSPATH and/or PERSONALITIESPATH as fallbacks.

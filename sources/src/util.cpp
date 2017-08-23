@@ -235,14 +235,21 @@ bool ChDir(const wchar_t *new_path) {
         GetModuleFileNameW(NULL, exe_path, sizeof(exe_path)/sizeof(exe_path[0])); *(wcsrchr(exe_path, '\\') + 1) = L'\0';
 
         // go there ...
-        printf_debug("go to \'%ls\'\n", exe_path);
+        printf_debug("go to '%ls'\n", exe_path);
         SetCurrentDirectoryW(exe_path);
     }
     // and now go further, it's for relative paths
-    printf_debug("go to \'%ls\'\n", new_path);
+    printf_debug("go to '%ls'\n", new_path);
     return SetCurrentDirectoryW(new_path);
 }
 #else
+void PrintOverrides() {
+
+    if (char *ptr = getenv("RIIIBOOKS"))
+        printf("info string override for books path: '%s'\n", ptr);
+    if (char *ptr = getenv("RIIIPERSONALITIES"))
+        printf("info string override for personalities path: '%s'\n", ptr);
+}
 bool ChDirEnv(const char *env_name) {
     char *env_path;
     env_path = getenv(env_name);
@@ -261,7 +268,7 @@ bool ChDirEnv(const char *env_name) {
     }
     if (p.we_wordc != 1) { wordfree(&p); return false; }
 
-    printf_debug("env: go to %s\n", p.we_wordv[0]);
+    printf_debug("env: go to '%s'\n", p.we_wordv[0]);
 
     bool result = chdir(p.we_wordv[0]) == 0;
     wordfree(&p);
@@ -275,15 +282,15 @@ bool ChDir(const char *new_path) {
         char exe_path[1024];
 
         #if defined (__APPLE__)
-            # error something should be done here, look for _NSGetExecutablePath(path, &size)
+            #error something should be done here, look for _NSGetExecutablePath(path, &size)
         #endif
         // getting the current executable location ...
         readlink("/proc/self/exe", exe_path, sizeof(exe_path)); *(strrchr(exe_path, '/') + 1) = '\0';
 
-        printf_debug("go to \'%s\'\n", exe_path);
+        printf_debug("go to '%s'\n", exe_path);
         chdir(exe_path); // go to the exe location, it's for relative paths
     }
-    printf_debug("go to \'%s\'\n", new_path);
+    printf_debug("go to '%s'\n", new_path);
     return chdir(new_path) == 0;
 }
 #endif
