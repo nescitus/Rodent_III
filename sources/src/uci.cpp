@@ -71,6 +71,7 @@ void UciLoop() {
 
             Glob.is_console = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
+            PrintOverrides();
             PrintUciOptions();
             printf("uciok\n");
         } else if (strcmp(token, "ucinewgame") == 0) {

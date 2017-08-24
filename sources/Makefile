@@ -5,8 +5,11 @@ PREFIX=/usr/local
 BINDIR = $(PREFIX)/bin
 
 #define the directory for the data files
-DATADIRBOOKS = $(PREFIX)/share/rodentIII-books
-DATADIRPERSONALITIES = $(PREFIX)/share/rodentIII-persons
+#SOURCEROOT=..
+#DATADIR=$(SOURCEROOT)
+DATADIR=$(PREFIX)/share/rodentIII
+DATADIRBOOKS = $(DATADIR)/books
+DATADIRPERSONALITIES = $(DATADIR)/personalities
 
 # Define the CPP compiler
 CXX = g++
@@ -144,6 +147,7 @@ remove:
 	rm -f $(BINDIR)/$(EXENAME)
 	rm -rf $(DATADIRBOOKS)
 	rm -rf $(DATADIRPERSONALITIES)
+	rm -rf $(DATADIR)
 
 help:
 	@echo ""

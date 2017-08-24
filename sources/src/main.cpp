@@ -93,12 +93,14 @@ int main() {
     PrintVersion();
 
 #if defined(_WIN32) || defined(_WIN64)
-    printf("info string opening books path is \'%ls\'\n", _BOOKSPATH);
-    printf("info string personalities path is \'%ls\'\n", _PERSONALITIESPATH);
+    printf("info string opening books path is '%ls'\n", _BOOKSPATH);
+    printf("info string personalities path is '%ls'\n", _PERSONALITIESPATH);
 #else
-    printf("info string opening books path is \'%s\'\n", _BOOKSPATH);
-    printf("info string personalities path is \'%s\'\n", _PERSONALITIESPATH);
+    printf("info string opening books path is '%s'\n", _BOOKSPATH);
+    printf("info string personalities path is '%s'\n", _PERSONALITIESPATH);
 #endif
+
+    PrintOverrides();
 
 #ifndef BOOKGEN
     GuideBook.SetBookName("guide.bin");

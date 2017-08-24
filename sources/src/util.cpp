@@ -23,6 +23,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #else
     #include <unistd.h>
     #include <sys/time.h>
+    #include <wordexp.h>
 #endif
 
 #include "rodent.h"
@@ -234,33 +235,62 @@ bool ChDir(const wchar_t *new_path) {
         GetModuleFileNameW(NULL, exe_path, sizeof(exe_path)/sizeof(exe_path[0])); *(wcsrchr(exe_path, '\\') + 1) = L'\0';
 
         // go there ...
-        printf_debug("go to \'%ls\'\n", exe_path);
+        printf_debug("go to '%ls'\n", exe_path);
         SetCurrentDirectoryW(exe_path);
     }
     // and now go further, it's for relative paths
-    printf_debug("go to \'%ls\'\n", new_path);
+    printf_debug("go to '%ls'\n", new_path);
     return SetCurrentDirectoryW(new_path);
 }
 #else
+void PrintOverrides() {
+
+    if (char *ptr = getenv("RIIIBOOKS"))
+        printf("info string override for books path: '%s'\n", ptr);
+    if (char *ptr = getenv("RIIIPERSONALITIES"))
+        printf("info string override for personalities path: '%s'\n", ptr);
+}
+bool ChDirEnv(const char *env_name) {
+    char *env_path;
+    env_path = getenv(env_name);
+    if (env_path == NULL) return false;
+
+    printf_debug("env: %s = %s\n", env_name, env_path);
+
+    wordexp_t p;
+    switch (wordexp(env_path, &p, 0)) {
+        case 0:
+            break;
+        case WRDE_NOSPACE:
+            wordfree(&p);
+        default:
+            return false;
+    }
+    if (p.we_wordc != 1) { wordfree(&p); return false; }
+
+    printf_debug("env: go to '%s'\n", p.we_wordv[0]);
+
+    bool result = chdir(p.we_wordv[0]) == 0;
+    wordfree(&p);
+
+    return result;
+}
 // constexpr for detecting relative paths
 constexpr bool relative = _BOOKSPATH[0] != '/' || _PERSONALITIESPATH[0] != '/';
 bool ChDir(const char *new_path) {
     if (relative) {
-        static bool first_run = true; static char cwd_storage[1024];
+        char exe_path[1024];
 
-        if (first_run) {        // try to get executable path or save the init location
-            ssize_t size = readlink("/proc/self/exe", cwd_storage, sizeof(cwd_storage));
-            if (size != 0)
-                *(strrchr(cwd_storage, '/') + 1) = '\0';
-            else
-                getcwd(cwd_storage, sizeof(cwd_storage)/sizeof(cwd_storage[0]));
-            first_run = false;
-        }
-        else
-            chdir(cwd_storage); // go to the init location, it's for relative paths
-        printf_debug("go to \'%s\'\n", cwd_storage);
+        #if defined (__APPLE__)
+            #error something should be done here, look for _NSGetExecutablePath(path, &size)
+        #endif
+        // getting the current executable location ...
+        readlink("/proc/self/exe", exe_path, sizeof(exe_path)); *(strrchr(exe_path, '/') + 1) = '\0';
+
+        printf_debug("go to '%s'\n", exe_path);
+        chdir(exe_path); // go to the exe location, it's for relative paths
     }
-    printf_debug("go to \'%s\'\n", new_path);
+    printf_debug("go to '%s'\n", new_path);
     return chdir(new_path) == 0;
 }
 #endif
