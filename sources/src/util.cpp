@@ -124,14 +124,9 @@ void POS::InitPawnKey() {
 
 void PrintMove(int move) {
 
-    printf("%s", MoveToStr(move));
-}
-
-char *MoveToStr(int move) {
-
-    static char internalstring[6];
-    MoveToStr(move, internalstring);
-    return internalstring;
+    char moveString[6];
+    MoveToStr(move, moveString);
+    printf("%s", moveString);
 }
 
 void MoveToStr(int move, char *move_str) {
@@ -200,10 +195,12 @@ int StrToMove(POS *p, char *move_str) {
 void PvToStr(int *pv, char *pv_str) {
 
     int *movep;
+    char move_str[6];
 
     pv_str[0] = '\0';
     for (movep = pv; *movep; movep++) {
-        strcat(pv_str, MoveToStr(*movep));
+        MoveToStr(*movep, move_str);
+        strcat(pv_str, move_str);
         strcat(pv_str, " ");
     }
 }

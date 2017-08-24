@@ -799,7 +799,6 @@ int GetMS();
 U64 GetNps(int elapsed);
 bool InputAvailable();
 bool Legal(POS *p, int move);
-char *MoveToStr(int move);
 void MoveToStr(int move, char *move_str);
 void ParseGo(POS *p, const char *ptr);
 void ParseMoves(POS *p, const char *ptr);
