@@ -70,12 +70,6 @@ function setDefault() {
   document.getElementById("PawnChains").value = 100;
   document.getElementById("DoubledPawnMg").value = -23;
   document.getElementById("DoubledPawnEg").value = -12;
-  document.getElementById("IsolatedPawnMg").value = -10;
-  document.getElementById("IsolatedPawnEg").value = -8;
-  document.getElementById("IsolatedOnOpenMg").value = -10;
-  document.getElementById("BackwardPawnMg").value = -8;
-  document.getElementById("BackwardPawnEg").value = -10;
-  document.getElementById("BackwardOnOpenMg").value = -8;
   document.getElementById("Fianchetto").value = 6;
   document.getElementById("ReturningB").value = 10;
   document.getElementById("pst").value = "quirky";
@@ -159,12 +153,6 @@ function savePersonality() {
   
   out += inputToOption("DoubledPawnMg") + '\r\n';
   out += inputToOption("DoubledPawnEg") + '\r\n';
-  out += inputToOption("IsolatedPawnMg") + '\r\n';
-  out += inputToOption("IsolatedPawnEg") + '\r\n';
-  out += inputToOption("IsolatedOnOpenMg") + '\r\n';
-  out += inputToOption("BackwardPawnMg") + '\r\n';
-  out += inputToOption("BackwardPawnEg") + '\r\n';
-  out += inputToOption("BackwardOnOpenMg") + '\r\n';
   
   out += inputToOption("Fianchetto") + '\r\n';
   out += inputToOption("ReturningB") + '\r\n';
@@ -280,23 +268,14 @@ function savePersonality() {
 <p><b>Pawn weaknesses</b></p>
 <p class="mono"> Doubled midgame<input class="window" type="number" id="DoubledPawnMg" value="-12" min="-100" max="0" style="float:right";> </p>
 <p class="mono"> Doubled endgame<input class="window" type="number" id="DoubledPawnEg" value="-23" min="-100" max="0" style="float:right";> </p>
-<p class="mono"> Isolated midgame<input class="window" type="number" id="IsolatedPawnMg" value="-10" min="-100" max="0" style="float:right";> </p>
-<p class="mono"> Isolated endgame<input class="window" type="number" id="IsolatedPawnEg" value="-20" min="-100" max="0" style="float:right";> </p>
-<p class="mono"> Isolated on open<input class="window" type="number" id="IsolatedOnOpenMg" value="-10" min="-100" max="0" style="float:right";> </p>
-<br>
-<p class="mono"> Backward midgame<input class="window" type="number" id="BackwardPawnMg" value="-8" min="-100" max="0" style="float:right";> </p>
-<p class="mono"> Backward endgame<input class="window" type="number" id="BackwardPawnEg" value="-10" min="-100" max="0" style="float:right";> </p>
-<p class="mono"> Backward on open<input class="window" type="number" id="BackwardOnOpenMg" value="-8" min="-100" max="0" style="float:right";> </p>
-<br>
-
-</div>
-
-<div class="tab">
-
+<p>&nbsp;</p>
 <p><b>Patterns</b></p>
 <p class="mono"> Fianchetto<input class="window" type="number" id="Fianchetto" value="6" min="0" max="100" style="float:right";> </p>
 <p class="mono"> Returning Bish<input class="window" type="number" id="ReturningB" value="10" min="0" max="100" style="float:right";> </p>
 
+</div>
+
+<div class="tab">
 
 <p><b>Switches</b></p>
 

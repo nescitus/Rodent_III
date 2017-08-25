@@ -580,11 +580,21 @@ void ReadPersonality(const char *fileName) {
 
     printf("info string reading personality '%s' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 
-    // exit if this personality file doesn't exist
+    // Exit if this personality file doesn't exist
+
     if (personalityFile == NULL)
         return;
 
-    // set flag in case we want to disable some options while reading personality from a file
+	// It is possible that user will attempt to load a personality fo older Rodent version.
+	// There is nothing wrong with that, except that there will be some parameters missing.
+	// and there will be no way of telling whether previous personality used their default
+	// value or not. For that reason now that we found a personality file, we reset params
+	// to their default values.
+
+	Par.DefaultWeights();
+
+    // Set flag in case we want to disable some options while reading personality from a file
+
     Glob.reading_personality = true;
 
     char line[256], token[180]; int cnt = 0; char *pos;
@@ -593,21 +603,25 @@ void ReadPersonality(const char *fileName) {
 
         while ((pos = strpbrk(line, "\r\n"))) *pos = '\0'; // clean the sh!t
 
-        // do we pick opening book within a personality?
+        // Do we pick opening book within a personality?
+
         if (strstr(line, "PERSONALITY_BOOKS")) Glob.use_books_from_pers = true; // DEFAULT
         if (strstr(line, "GENERAL_BOOKS"))     Glob.use_books_from_pers = false;
 
-        // how we go about weakening the engine?
+        // How we go about weakening the engine?
+
         if (strstr(line, "ELO_SLIDER")) Glob.elo_slider = true; // DEFAULT
         if (strstr(line, "NPS_BLUR"))   Glob.elo_slider = false;
 
-        // which UCI options are exposed to the user?
+        // Which UCI options are exposed to the user?
+
         if (strstr(line, "HIDE_OPTIONS")) Glob.use_personality_files = true;
         if (strstr(line, "SHOW_OPTIONS")) Glob.use_personality_files = false; // DEFAULT
 
         if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false; // DEFAULT == true
 
-        // aliases for personalities
+        // Aliases for personalities
+
         pos = strchr(line, '=');
         if (pos) {
             *pos = '\0';
@@ -616,6 +630,8 @@ void ReadPersonality(const char *fileName) {
             cnt++;
             continue;
         }
+
+		// Personality files use the same syntax as UCI options parser (yes I have been lazy)
 
         const char *ptr = ParseToken(line, token);
         if (strcmp(token, "setoption") == 0)
