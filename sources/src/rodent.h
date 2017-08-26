@@ -523,14 +523,14 @@ class cParam {
     NOINLINE void InitBackward();
     NOINLINE void InitPassers();
     NOINLINE void InitMaterialTweaks();
-    void InitTables();
-    void DefaultWeights();
-    void InitAsymmetric(POS *p);
-    void SetSpeed(int elo_in);
-    int EloToSpeed(int elo_in);
-    int EloToBlur(int elo_in);
-    int EloToBookDepth(int elo_in);
-    void SetVal(int slot, int val);
+    NOINLINE void InitTables();
+    NOINLINE void DefaultWeights();
+    NOINLINE void InitAsymmetric(POS *p);
+    NOINLINE void SetSpeed(int elo_in);
+    NOINLINE int EloToSpeed(int elo_in);
+    NOINLINE int EloToBlur(int elo_in);
+    NOINLINE int EloToBookDepth(int elo_in);
+    NOINLINE void SetVal(int slot, int val);
 };
 
 extern cParam Par;

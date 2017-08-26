@@ -334,8 +334,8 @@ void sBook::OpenPolyglot() {
 
     ClosePolyglot();
 
-    if (!ChDirEnv("RIIIBOOKS"))
-        if (!ChDir(_BOOKSPATH)) return;
+    if (!ChDirEnv("RIIIBOOKS"))             // try `RIIIBOOKS` env var first (26/08/17: linux only)
+        if (!ChDir(_BOOKSPATH)) return;     // then buit-in path
     bookFile = fopen(bookName, "rb");
 
     if (bookFile == NULL) return;
@@ -471,10 +471,10 @@ U64 sBook::ReadInteger(int size) {
 
     U64 n = 0;
 
-    if (bookMemory)
+    if (bookMemory)     // book from memory
         for (int i = 0; i < size; i++)
             n = (n << 8) | bookMemory[bookMemoryPos++];
-    else
+    else                // book from file
         for (int i = 0; i < size; i++)
             n = (n << 8) | (unsigned char)fgetc(bookFile);
 
