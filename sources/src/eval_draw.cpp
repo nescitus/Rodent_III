@@ -146,7 +146,6 @@ int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
         &&  p->Kings(op) & bbKingBlockA[sd]) return 0;
     }
 
-    // TODO: perhaps scaling this up, like 72, will help in defending inferior endgames
     return 64; // default
 }
 
