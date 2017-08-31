@@ -731,6 +731,10 @@ class cEngine {
 
     static const int razor_margin[];
     static const int fut_margin[];
+	static const int selective_depth;
+	static const int snp_depth;      // max depth at which static null move pruning is applied
+	static const int razor_depth;    // max depth at which razoring is applied
+	static const int fut_depth;      // max depth at which futility pruning is applied
     static int lmr_size[2][MAX_PLY][MAX_MOVES];
 
   public:

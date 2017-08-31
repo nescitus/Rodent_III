@@ -21,6 +21,13 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstring>
 #include <cmath>
 
+const int cEngine::snp_depth = 3;       // max depth at which static null move pruning is applied
+const int cEngine::razor_depth = 4;     // max depth at which razoring is applied
+const int cEngine::fut_depth = 6;       // max depth at which futility pruning is applied
+
+// this variable controls when evaluation function needs to be called for the sake of pruning
+const int cEngine::selective_depth = Max(Max(snp_depth, razor_depth), fut_depth);
+
 const int cEngine::razor_margin[5] = { 0, 300, 360, 420, 480 };
 const int cEngine::fut_margin[7] = { 0, 100, 160, 220, 280, 340, 400 };
 int cEngine::lmr_size[2][MAX_PLY][MAX_MOVES];
@@ -237,7 +244,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     int eval = 0;
     if (fl_prunable_node
-    && (!was_null || depth <= 6)) {
+    && (!was_null || depth <= selective_depth)) {
         eval = Evaluate(p, &e);
 #ifdef USE_RISKY_PARAMETER
         eval = EvalScaleByDepth(p, ply, eval);
@@ -248,7 +255,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     if (fl_prunable_node
     && Par.search_skill > 7
-    && depth <= 3
+    && depth <= snp_depth
     && !was_null) {
         int sc = eval - 120 * depth;
         if (sc > beta) return sc;
@@ -313,7 +320,7 @@ avoid_null:
     && !move
     && !was_null
     && !(p->Pawns(p->side) & bb_rel_rank[p->side][RANK_7]) // no pawns to promote in one move
-    && depth <= 4) {
+    && depth <= razor_depth) {
         int threshold = beta - razor_margin[depth];
 
         if (eval < threshold) {
@@ -350,7 +357,7 @@ avoid_null:
         && Par.search_skill > 4
         && quiet_tried == 0
         && fl_prunable_node
-        && depth <= 6) {
+        && depth <= fut_depth) {
            if (eval + fut_margin[depth] < beta) fl_futility = 1;
         }
 
@@ -407,7 +414,7 @@ avoid_null:
 
         if (fl_prunable_node
         && Par.search_skill > 5
-        && depth < 4
+        && depth <= 3
         && quiet_tried > 3 * depth
         && !InCheck(p)
         && mv_hist_score < Par.hist_limit
