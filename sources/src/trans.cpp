@@ -29,14 +29,14 @@ If not, see <http://www.gnu.org/licenses/>.
     std::unique_ptr<std::atomic_flag[]> aflags1;
     const unsigned int elem_per_aflag = 4;
 
-    #define LOCK_ME_PLEASE0   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags0[current_aflag].test_and_set());
-    #define UNLOCK_ME_PLEASE0 aflags0[current_aflag].clear()
-    #define LOCK_ME_PLEASE1   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags1[current_aflag].test_and_set());
-    #define UNLOCK_ME_PLEASE1 aflags1[current_aflag].clear()
+    #define LOCK_ME_PLEASE0   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags0[current_aflag].test_and_set(std::memory_order_acquire));
+    #define UNLOCK_ME_PLEASE0 aflags0[current_aflag].clear(std::memory_order_release)
+    #define LOCK_ME_PLEASE1   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag; while (aflags1[current_aflag].test_and_set(std::memory_order_acquire));
+    #define UNLOCK_ME_PLEASE1 aflags1[current_aflag].clear(std::memory_order_release)
 
     #define LOCK_ME_PLEASE01   const unsigned int current_aflag = (key & tt_mask) / elem_per_aflag;\
-                               while (aflags0[current_aflag].test_and_set());\
-                               while (aflags1[current_aflag].test_and_set());
+                               while (aflags0[current_aflag].test_and_set(std::memory_order_acquire));\
+                               while (aflags1[current_aflag].test_and_set(std::memory_order_acquire));
 
 #else
     #define LOCK_ME_PLEASE0
@@ -79,8 +79,8 @@ void AllocTrans(unsigned int mbsize) {
         aflags1 = std::make_unique<std::atomic_flag[]> (number_of_aflags);
 
         for (unsigned int i = 0; i < number_of_aflags; i++) {
-            aflags0[i].clear();
-            aflags1[i].clear();
+            aflags0[i].clear(std::memory_order_relaxed);
+            aflags1[i].clear(std::memory_order_relaxed);
         }
 #endif
     }
