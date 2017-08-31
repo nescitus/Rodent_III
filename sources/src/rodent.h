@@ -153,9 +153,9 @@ static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB
 //#define Abs(x)          ((x) > 0 ? (x) : -(x))
 template<typename T> T Abs(const T& x) { return x > 0 ? x : -x; }
 //#define Max(x, y)       ((x) > (y) ? (x) : (y))
-template<typename T> const T& Max(const T& x, const T& y) { return x > y ? x : y; }
+template<typename T> constexpr const T& Max(const T& x, const T& y) { return x > y ? x : y; }
 //#define Min(x, y)       ((x) < (y) ? (x) : (y))
-template<typename T> const T& Min(const T& x, const T& y) { return x < y ? x : y; }
+template<typename T> constexpr const T& Min(const T& x, const T& y) { return x < y ? x : y; }
 
 #define Fsq(x)          ((x) & 63)
 #define Tsq(x)          (((x) >> 6) & 63)

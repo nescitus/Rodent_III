@@ -12,7 +12,7 @@ fi
 
 function buildexe {
 
-	$CC -Ofast $2 -s -march=$1 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program $DBG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA -o ${EXENAME}_${MSYSTEM_CARCH}_${1}${3}.exe
+	$CC -Ofast $2 -s -march=$1 -std=c++14 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program $DBG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA -o ${EXENAME}_${MSYSTEM_CARCH}_${1}${3}.exe
 }
 
 function buildprof {
@@ -70,7 +70,7 @@ if [[ "$BGN" == "true" ]]; then
 	mv src/book_gen.h src/book_gen.h.bk
 	# Internal book generator
 	echo -n "Building instrumental internal book generator binary ... "
-	gcc -Ofast -march=native -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o ${EXENAME}_bookgen.exe
+	gcc -Ofast -march=native -std=c++14 -fno-rtti -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o ${EXENAME}_bookgen.exe
 	echo "generating ..."
 	./${EXENAME}_bookgen.exe > /dev/null
 	rm ${EXENAME}_bookgen.exe
