@@ -334,8 +334,8 @@ void sBook::OpenPolyglot() {
 
     ClosePolyglot();
 
-    if (!ChDirEnv("RIIIBOOKS"))
-        if (!ChDir(_BOOKSPATH)) return;
+    if (!ChDirEnv("RIIIBOOKS"))             // try `RIIIBOOKS` env var first (26/08/17: linux only)
+        if (!ChDir(_BOOKSPATH)) return;     // then buit-in path
     bookFile = fopen(bookName, "rb");
 
     if (bookFile == NULL) return;
@@ -377,6 +377,7 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
     int values[100], moves[100];
     polyglot_move entry[1];
     U64 key = GetPolyglotKey(p);
+    char move_string[6];
 
     printf("info string probing '%s'...\n", bookName);
 
@@ -400,7 +401,8 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
         // now we want to get a move with full data, not only from and to squares
 
         int internal_move = (tsq << 6) | fsq;
-        internal_move = StrToMove(p, MoveToStr(internal_move));
+        MoveToStr(internal_move, move_string);
+        internal_move = StrToMove(p, move_string);
 
         if (max_weight < score) max_weight = score;
         weight_sum += score;
@@ -469,10 +471,10 @@ U64 sBook::ReadInteger(int size) {
 
     U64 n = 0;
 
-    if (bookMemory)
+    if (bookMemory)     // book from memory
         for (int i = 0; i < size; i++)
             n = (n << 8) | bookMemory[bookMemoryPos++];
-    else
+    else                // book from file
         for (int i = 0; i < size; i++)
             n = (n << 8) | (unsigned char)fgetc(bookFile);
 

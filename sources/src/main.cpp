@@ -100,7 +100,7 @@ int main() {
     printf("info string personalities path is '%s'\n", _PERSONALITIESPATH);
 #endif
 
-    PrintOverrides();
+    PrintOverrides(); // print books and pers paths overrides (26/08/17: linux only)
 
 #ifndef BOOKGEN
     GuideBook.SetBookName("guide.bin");

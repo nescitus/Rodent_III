@@ -93,6 +93,9 @@ void UciLoop() {
             PrintBoard(p);
         } else if (strcmp(token, "step") == 0)       {
             ParseMoves(p, ptr);
+        } else if (strcmp(token, "stepp") == 0)      {
+            ParseMoves(p, ptr);
+            PrintBoard(p);
 #ifdef USE_TUNING
         } else if (strcmp(token, "tune") == 0)       {
             Glob.is_tuning = true;
@@ -220,9 +223,8 @@ void SetMoveTime(int base, int inc, int movestogo) {
 
 void ParseGo(POS *p, const char *ptr) {
 
-    char token[80];
+    char token[80], bestmove_str[6];
     int wtime, btime, winc, binc, movestogo; bool strict_time;
-    int pvb;
 
     move_time = -1;
     move_nodes = 0;
@@ -298,12 +300,13 @@ void ParseGo(POS *p, const char *ptr) {
 
         printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
 
-        pvb = GuideBook.GetPolyglotMove(p, Par.verbose_book);
+        int pvb = GuideBook.GetPolyglotMove(p, Par.verbose_book);
         if (!pvb) pvb = MainBook.GetPolyglotMove(p, Par.verbose_book);
         if (!pvb) pvb = InternalBook.MoveFromInternal(p, Par.verbose_book);
 
         if (pvb) {
-            printf("bestmove %s\n", MoveToStr(pvb));
+            MoveToStr(pvb, bestmove_str);
+            printf("bestmove %s\n", bestmove_str);
             return;
         }
     }
