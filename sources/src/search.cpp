@@ -112,7 +112,7 @@ void cEngine::Iterate(POS *p, int *pv) {
             continue;
         }
 
-        // Perform actual earch
+        // Perform actual search
 
         printf("info depth %d\n", root_depth);
         if (Par.search_skill > 6) cur_val = Widen(p, root_depth, pv, cur_val);

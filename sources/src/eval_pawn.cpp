@@ -53,7 +53,7 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
 
     if (PawnTT[addr].key == p->pawn_key) {
 
-        // pawn hashtable contains delta of wite and black score
+        // pawn hashtable contains delta of white and black score
 
         e->mg_pawns[WC] = PawnTT[addr].mg_pawns;
         e->eg_pawns[WC] = PawnTT[addr].eg_pawns;

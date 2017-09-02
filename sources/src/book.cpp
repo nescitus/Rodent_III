@@ -335,7 +335,7 @@ void sBook::OpenPolyglot() {
     ClosePolyglot();
 
     if (!ChDirEnv("RIIIBOOKS"))             // try `RIIIBOOKS` env var first (26/08/17: linux only)
-        if (!ChDir(_BOOKSPATH)) return;     // then buit-in path
+        if (!ChDir(_BOOKSPATH)) return;     // then built-in path
     bookFile = fopen(bookName, "rb");
 
     if (bookFile == NULL) return;

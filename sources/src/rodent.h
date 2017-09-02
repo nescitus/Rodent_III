@@ -221,7 +221,7 @@ template<typename T> constexpr const T& Min(const T& x, const T& y) { return x <
 
         static inline int FirstOne(U64 x) {
 
-        // workaround for GCC's inabitily to inline __builtin_ctzll() on x32 (it calls `__ctzdi2` runtime function instead)
+        // workaround for GCC's inability to inline __builtin_ctzll() on x32 (it calls `__ctzdi2` runtime function instead)
         #if !defined(__amd64__) && defined(__i386__) && !defined(__clang__)
             const uint32_t xlo = (uint32_t)x;
             return xlo ? __builtin_ctz(xlo) : __builtin_ctz(x >> 32) + 32;
@@ -439,7 +439,7 @@ struct sPawnHashEntry {
 
 enum Values {
     P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,               // piece values
-    B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustements
+    B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustments
     N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
     N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
     NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
@@ -772,15 +772,6 @@ class cEngine {
     extern cEngine EngineSingle;
 #endif
 
-#define PERSALIAS_ALEN       32
-#define PERSALIAS_PLEN       200
-#define PERSALIAS_MAXALIASES 100
-struct sPersAliases {
-    char alias[PERSALIAS_MAXALIASES][PERSALIAS_ALEN];
-    char path[PERSALIAS_MAXALIASES][PERSALIAS_PLEN];
-    int count;
-};
-
 void PrintVersion();
 
 int BulletCorrection(int time);
@@ -835,8 +826,6 @@ extern int move_time;
 extern int move_nodes;
 extern int search_depth;
 extern int start_time;
-
-extern sPersAliases pers_aliases;
 
 extern unsigned int tt_size;
 extern unsigned int tt_mask;

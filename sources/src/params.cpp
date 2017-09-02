@@ -128,7 +128,7 @@ void cParam::DefaultWeights() {
     riskydepth = 0;
 #endif
     draw_score = 0;
-    shut_up = false;       // true suppresses displaing info currmove etc.
+    shut_up = false;       // true suppresses displaying info currmove etc.
 
     // Attack and mobility weights that can be set independently for each side
 	// - the core of personality mechanism
@@ -223,7 +223,7 @@ void cParam::DefaultWeights() {
     values[B_BADF] = -20;  // enemy pawns hamper fianchettoed bishop
     values[B_TRAP_A2] = -150;
     values[B_TRAP_A3] = -50;
-    values[B_BLOCK] = -50; // blocked pawn at d2/e2 hampers bishop's develomement
+    values[B_BLOCK] = -50; // blocked pawn at d2/e2 hampers bishop's development
     values[B_BF_MG] = -10; // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
     values[B_BF_EG] = -20;
     values[B_WING] = 10;   // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2)
@@ -431,7 +431,7 @@ int cParam::EloToSpeed(int elo_in) {
 
     // this formula abuses Michael Byrne's code from CraftySkill.
     // He used  it to calculate max nodes per elo. By  dividing,
-    // I derive speed that yields similar result in standart blitz.
+    // I derive speed that yields similar result in standard blitz.
     // Formula has a little bit of built-in randomness.
 
     const int lower_elo = elo_in - 25;
