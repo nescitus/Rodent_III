@@ -32,7 +32,6 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
 
         // white bishop blocked on its initial square by own pawn
 		// or returning to protect castled king
-        // TODO: perhaps 0 in the endgame is stupid
 
 		if (IsOnSq(p, WC, B, C1)) {
 			if (IsOnSq(p, WC, P, D2) && (SqBb(D3) & OccBb(p))) 
@@ -78,7 +77,6 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
 
         // black bishop blocked on its initial square by own pawn
 		// or returning to protect castled king
-        // TODO: perhaps 0 in the endgame is stupid
 
 		if (IsOnSq(p, BC, B, C8)) {
 			if (IsOnSq(p, BC, P, D7) && (SqBb(D6) & OccBb(p)))
