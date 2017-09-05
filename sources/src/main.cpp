@@ -60,7 +60,7 @@ void PrintVersion()
             "/MSVS"
     #if   _MSC_VER == 1900
                 "2015"
-    #elif _MSC_VER == 1910
+    #elif _MSC_VER >= 1910
                 "2017"
     #endif
 #endif
