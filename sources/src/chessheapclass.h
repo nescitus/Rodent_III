@@ -4,10 +4,12 @@
 
 
 class ChessHeapClass {
-    static const int bucket_size_mb = 512;
-    static const int max_memory_mb = 4096;
-    static const int num_per_bucket = bucket_size_mb * 1024 * 1024 / sizeof(ENTRY);
-    static const int arrays_size = max_memory_mb / bucket_size_mb;
+    static constexpr int bucket_size_mb = 512;
+    static constexpr int max_memory_mb = 4096;
+    static constexpr int num_per_bucket = bucket_size_mb * 1024 * 1024 / sizeof(ENTRY);
+    static constexpr int arrays_size = max_memory_mb / bucket_size_mb;
+
+    static_assert(sizeof(ENTRY) == 16, "ENTRY size must be 16 bytes.");
 
     int    bucket_sizs[arrays_size];
     ENTRY *bucket_ptrs[arrays_size];
