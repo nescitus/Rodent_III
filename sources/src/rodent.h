@@ -650,8 +650,8 @@ sInternalBook InternalBook;
 
 void CheckTimeout();
 
-#define EVAL_HASH_SIZE 512 * 512 / 4
-#define PAWN_HASH_SIZE 512 * 512 / 4
+#define EVAL_HASH_SIZE (512 * 512 / 4)
+#define PAWN_HASH_SIZE (512 * 512 / 4)
 
 class cEngine {
     sEvalHashEntry EvalTT[EVAL_HASH_SIZE];
