@@ -273,7 +273,7 @@ void initmagicmoves() {
         44, 24, 15,  8, 23,  7,  6,  5
     };
 
-    //identical to magicmove_x_indices except without the const modifer
+    //identical to magicmove_x_indices except without the const modifier
     U64 *magicmoves_b_indices2[64] = {
         magicmovesbdb + 4992, magicmovesbdb + 2624,  magicmovesbdb + 256,  magicmovesbdb + 896,
         magicmovesbdb + 1280, magicmovesbdb + 1664, magicmovesbdb + 4800, magicmovesbdb + 5120,

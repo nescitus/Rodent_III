@@ -25,7 +25,7 @@
  *
  *
  *Unsigned 64 bit integers are referenced by this generator as U64.
- *Edit the beginning lines of this header for the defenition of a 64 bit
+ *Edit the beginning lines of this header for the definition of a 64 bit
  *integer if necessary.
  *
  *Copyright (C) 2007 Pradyumna Kannan.

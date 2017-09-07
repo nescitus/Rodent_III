@@ -22,7 +22,14 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstring>
 #include <cctype>
 
-sPersAliases pers_aliases;
+#define PERSALIAS_ALEN       32     // max length for a personality alias
+#define PERSALIAS_PLEN       256    // max length for an alias path
+#define PERSALIAS_MAXALIASES 100    // max number of aliases
+struct {
+    char alias[PERSALIAS_MAXALIASES][PERSALIAS_ALEN];
+    char path[PERSALIAS_MAXALIASES][PERSALIAS_PLEN];
+    int count;
+} pers_aliases;
 
 void PrintUciOptions() {
 
@@ -338,7 +345,7 @@ void ParseSetoption(const char *ptr) {
         Glob.should_clear = true;
 
     // Here starts a block of very detailed options that are not meant
-    // to be exposed to the end user, but are sybject to manual Texel tuning.
+    // to be exposed to the end user, but are subject to manual Texel tuning.
 
     } else if (strcmp(name, "na1") == 0 )                                    {
         Par.values[N_ATT1] = atoi(value);
@@ -576,7 +583,7 @@ void ReadPersonality(const char *fileName) {
 
     FILE *personalityFile = NULL;
     if (ChDirEnv("RIIIPERSONALITIES")       // try `RIIIPERSONALITIES` env var first (26/08/17: linux only)
-        || ChDir(_PERSONALITIESPATH))       // then buit-in path
+        || ChDir(_PERSONALITIESPATH))       // then built-in path
             personalityFile = fopen(fileName, "r");
 
     printf("info string reading personality '%s' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
@@ -586,7 +593,7 @@ void ReadPersonality(const char *fileName) {
     if (personalityFile == NULL)
         return;
 
-	// It is possible that user will attempt to load a personality fo older Rodent version.
+	// It is possible that user will attempt to load a personality of older Rodent version.
 	// There is nothing wrong with that, except that there will be some parameters missing.
 	// and there will be no way of telling whether previous personality used their default
 	// value or not. For that reason now that we found a personality file, we reset params

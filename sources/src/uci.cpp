@@ -326,7 +326,7 @@ void ParseGo(POS *p, const char *ptr) {
     std::thread timer([] {
         while (Glob.abort_search == false) {
 
-            // Check for timeut every 5 miliseconds. This allows Rodent
+            // Check for timeout every 5 milliseconds. This allows Rodent
             // to survive extreme time controls, like 1 s + 10 ms
 
             std::this_thread::sleep_for(5ms);

@@ -28,7 +28,7 @@ Rodent can use several sets of piece/square tables (currently 4).
    also tweaked a bit. They emphasize pawn center and knight placement.
 
 2) Values entered by Jose Velasco in my piece/square table contest as (simplified version of)
-   Ippolit values. They deemphasize pawn placement, reqiring usage of other eval terms,
+   Ippolit values. They deemphasize pawn placement, requiring usage of other eval terms,
    such as pawn phalanxes. Good for positional, neutral and hypermodern personalities.
 
 3) Values from https://chessprogramming.wikispaces.com/Simplified+evaluation+function

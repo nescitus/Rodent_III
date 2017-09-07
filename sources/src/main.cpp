@@ -60,13 +60,15 @@ void PrintVersion()
             "/MSVS"
     #if   _MSC_VER == 1900
                 "2015"
-    #elif _MSC_VER == 1910
+    #elif _MSC_VER >= 1910
                 "2017"
     #endif
 #endif
 
 #if (defined(_MSC_VER) && defined(USE_MM_POPCNT)) || (defined(__GNUC__) && defined(__POPCNT__))
             "/POPCNT"
+#elif defined(__GNUC__) && defined(__SSSE3__) // we are using custom SSSE3 popcount implementation
+            "/SSSE3"
 #endif
 
                         "\n");
