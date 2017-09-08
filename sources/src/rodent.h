@@ -123,7 +123,7 @@ constexpr U64 DIAG_A1H8_BB = 0x8040201008040201;
 constexpr U64 DIAG_A8H1_BB = 0x0102040810204080;
 constexpr U64 DIAG_B8H2_BB = 0x0204081020408000;
 
-#define REL_SQ(sq,cl)   ( sq ^ (cl * 56) )
+#define REL_SQ(sq,cl)   ( (sq) ^ ((cl) * 56) )
 #define RelSqBb(sq,cl)  ( SqBb(REL_SQ(sq,cl) ) )
 
 constexpr U64 bbWhiteSq = 0x55AA55AA55AA55AA;
@@ -249,14 +249,14 @@ template<typename T> constexpr const T& Min(const T& x, const T& y) { return x <
 constexpr U64 bbNotA = ~FILE_A_BB; // 0xfefefefefefefefe
 constexpr U64 bbNotH = ~FILE_H_BB; // 0x7f7f7f7f7f7f7f7f
 
-#define ShiftNorth(x)   (x<<8)
-#define ShiftSouth(x)   (x>>8)
-#define ShiftWest(x)    ((x & bbNotA)>>1)
-#define ShiftEast(x)    ((x & bbNotH)<<1)
-#define ShiftNW(x)      ((x & bbNotA)<<7)
-#define ShiftNE(x)      ((x & bbNotH)<<9)
-#define ShiftSW(x)      ((x & bbNotA)>>9)
-#define ShiftSE(x)      ((x & bbNotH)>>7)
+#define ShiftNorth(x)   ((x)<<8)
+#define ShiftSouth(x)   ((x)>>8)
+#define ShiftWest(x)    (((x) & bbNotA)>>1)
+#define ShiftEast(x)    (((x) & bbNotH)<<1)
+#define ShiftNW(x)      (((x) & bbNotA)<<7)
+#define ShiftNE(x)      (((x) & bbNotH)<<9)
+#define ShiftSW(x)      (((x) & bbNotA)>>9)
+#define ShiftSE(x)      (((x) & bbNotH)>>7)
 
 //#define JustOne(bb)     ((bb) && !((bb) & ((bb)-1)))
 //#define MoreThanOne(bb) ((bb) & ((bb) - 1))
