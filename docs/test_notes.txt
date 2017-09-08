@@ -1,5 +1,9 @@
 2017-09-08
 
+- penalizing bad way of blocking a wing - passed after 1800 games. Version bumped to 0.213
+
+2017-09-08
+
 - outposts weight readjusted after bugfix using Texel tuning - passed after 1400 games. Version bumped to 0.212
 
 2017-09-07

@@ -30,14 +30,14 @@ static const int empty_ks[64] = {
 };
 
 static const int empty_qs[64] = {
-    -30, -20, -10,   0,   0,   0,   0,   0,
-    -30, -20, -10,   0,   0,   0,   0,   0,
-    -30, -20, -10,   0,   0,   0,   0,   0,
-    -30, -20, -10,   0,   0,   0,   0,   0,
-    -30, -20, -10,   0,   0,   0,   0,   0,
-    -30, -20, -10,   0,   0,   0,   0,   0,
-    -30, -20, -10,   0,   0,   0,   0,   0,
-    -30, -20, -10,   0,   0,   0,   0,   0
+  -30, -20, -10,   0,   0,   0,   0,   0,
+  -30, -20, -10,   0,   0,   0,   0,   0,
+  -30, -20, -10,   0,   0,   0,   0,   0,
+  -30, -20, -10,   0,   0,   0,   0,   0,
+  -30, -20, -10,   0,   0,   0,   0,   0,
+  -30, -20, -10,   0,   0,   0,   0,   0,
+  -30, -20, -10,   0,   0,   0,   0,   0,
+  -30, -20, -10,   0,   0,   0,   0,   0
 };
 
 void cEngine::ClearPawnHash() {
@@ -88,6 +88,10 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     if (e->two_pawns_take[WC] & SqBb(E5)) tmp += Par.values[P_BIND];
     if (e->two_pawns_take[WC] & SqBb(D6)) tmp += Par.values[P_BIND];
     if (e->two_pawns_take[WC] & SqBb(E6)) tmp += Par.values[P_BIND];
+
+	if (IsOnSq(p, WC, P, B3) && IsOnSq(p, WC, P, C4) && IsOnSq(p, WC, P, A4)) tmp -= 10;
+	if (IsOnSq(p, WC, P, G3) && IsOnSq(p, WC, P, F4) && IsOnSq(p, WC, P, H4)) tmp -= 10;
+
     Add(e, WC, tmp, 0);
 
     tmp = 0;
@@ -95,6 +99,10 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     if (e->two_pawns_take[BC] & SqBb(E4)) tmp += Par.values[P_BIND];
     if (e->two_pawns_take[BC] & SqBb(D3)) tmp += Par.values[P_BIND];
     if (e->two_pawns_take[BC] & SqBb(E3)) tmp += Par.values[P_BIND];
+
+	if (IsOnSq(p, BC, P, B6) && IsOnSq(p, BC, P, C5) && IsOnSq(p, BC, P, A5)) tmp -= 10;
+	if (IsOnSq(p, BC, P, G6) && IsOnSq(p, BC, P, F5) && IsOnSq(p, BC, P, H5)) tmp -= 10;
+
     Add(e, BC, tmp, 0);
 
     // King on a wing without pawns
