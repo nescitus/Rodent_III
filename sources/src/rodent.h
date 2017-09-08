@@ -89,56 +89,56 @@ enum eSquare {
     NO_SQ
 };
 
-#define PHA_MG Q
-#define DEF_MG K
-#define PHA_EG P
-#define DEF_EG R
+constexpr int PHA_MG = Q;
+constexpr int DEF_MG = K;
+constexpr int PHA_EG = P;
+constexpr int DEF_EG = R;
 
-#define MAX_PLY         64
-#define MAX_MOVES       256
-#define INF             32767
-#define MATE            32000
-#define MAX_EVAL        29999
-#define MAX_HIST        (1 << 15)
+constexpr int MAX_PLY   = 64;
+constexpr int MAX_MOVES = 256;
+constexpr int INF       = 32767;
+constexpr int MATE      = 32000;
+constexpr int MAX_EVAL  = 29999;
+constexpr int MAX_HIST  = 1 << 15;
 
-#define RANK_1_BB       (U64)0x00000000000000FF
-#define RANK_2_BB       (U64)0x000000000000FF00
-#define RANK_3_BB       (U64)0x0000000000FF0000
-#define RANK_4_BB       (U64)0x00000000FF000000
-#define RANK_5_BB       (U64)0x000000FF00000000
-#define RANK_6_BB       (U64)0x0000FF0000000000
-#define RANK_7_BB       (U64)0x00FF000000000000
-#define RANK_8_BB       (U64)0xFF00000000000000
+constexpr U64 RANK_1_BB = 0x00000000000000FF;
+constexpr U64 RANK_2_BB = 0x000000000000FF00;
+constexpr U64 RANK_3_BB = 0x0000000000FF0000;
+constexpr U64 RANK_4_BB = 0x00000000FF000000;
+constexpr U64 RANK_5_BB = 0x000000FF00000000;
+constexpr U64 RANK_6_BB = 0x0000FF0000000000;
+constexpr U64 RANK_7_BB = 0x00FF000000000000;
+constexpr U64 RANK_8_BB = 0xFF00000000000000;
 
-#define FILE_A_BB       (U64)0x0101010101010101
-#define FILE_B_BB       (U64)0x0202020202020202
-#define FILE_C_BB       (U64)0x0404040404040404
-#define FILE_D_BB       (U64)0x0808080808080808
-#define FILE_E_BB       (U64)0x1010101010101010
-#define FILE_F_BB       (U64)0x2020202020202020
-#define FILE_G_BB       (U64)0x4040404040404040
-#define FILE_H_BB       (U64)0x8080808080808080
+constexpr U64 FILE_A_BB = 0x0101010101010101;
+constexpr U64 FILE_B_BB = 0x0202020202020202;
+constexpr U64 FILE_C_BB = 0x0404040404040404;
+constexpr U64 FILE_D_BB = 0x0808080808080808;
+constexpr U64 FILE_E_BB = 0x1010101010101010;
+constexpr U64 FILE_F_BB = 0x2020202020202020;
+constexpr U64 FILE_G_BB = 0x4040404040404040;
+constexpr U64 FILE_H_BB = 0x8080808080808080;
 
-#define DIAG_A1H8_BB    (U64)0x8040201008040201
-#define DIAG_A8H1_BB    (U64)0x0102040810204080
-#define DIAG_B8H2_BB    (U64)0x0204081020408000
+constexpr U64 DIAG_A1H8_BB = 0x8040201008040201;
+constexpr U64 DIAG_A8H1_BB = 0x0102040810204080;
+constexpr U64 DIAG_B8H2_BB = 0x0204081020408000;
 
 #define REL_SQ(sq,cl)   ( sq ^ (cl * 56) )
 #define RelSqBb(sq,cl)  ( SqBb(REL_SQ(sq,cl) ) )
 
-#define bbWhiteSq       (U64)0x55AA55AA55AA55AA
-#define bbBlackSq       (U64)0xAA55AA55AA55AA55
+constexpr U64 bbWhiteSq = 0x55AA55AA55AA55AA;
+constexpr U64 bbBlackSq = 0xAA55AA55AA55AA55;
 
-static const U64 bb_rel_rank[2][8] = {
+constexpr U64 bb_rel_rank[2][8] = {
     { RANK_1_BB, RANK_2_BB, RANK_3_BB, RANK_4_BB, RANK_5_BB, RANK_6_BB, RANK_7_BB, RANK_8_BB },
     { RANK_8_BB, RANK_7_BB, RANK_6_BB, RANK_5_BB, RANK_4_BB, RANK_3_BB, RANK_2_BB, RANK_1_BB }
 };
 
-static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
+constexpr U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
-#define SIDE_RANDOM     (~((U64)0))
+constexpr U64 SIDE_RANDOM = ~UINT64_C(0);
 
-#define START_POS       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -"
+constexpr char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
 #define SqBb(x)         ((U64)1 << (x))
 
@@ -246,8 +246,8 @@ template<typename T> constexpr const T& Min(const T& x, const T& y) { return x <
     #define FirstOne(x)     bit_table[(((x) & (~(x) + 1)) * (U64)0x0218A392CD3D5DBF) >> 58] // first "1" in a bitboard
 #endif
 
-#define bbNotA          (U64)0xfefefefefefefefe // ~FILE_A_BB
-#define bbNotH          (U64)0x7f7f7f7f7f7f7f7f // ~FILE_H_BB
+constexpr U64 bbNotA = ~FILE_A_BB; // 0xfefefefefefefefe
+constexpr U64 bbNotH = ~FILE_H_BB; // 0x7f7f7f7f7f7f7f7f
 
 #define ShiftNorth(x)   (x<<8)
 #define ShiftSouth(x)   (x>>8)
@@ -650,8 +650,8 @@ sInternalBook InternalBook;
 
 void CheckTimeout();
 
-#define EVAL_HASH_SIZE (512 * 512 / 4)
-#define PAWN_HASH_SIZE (512 * 512 / 4)
+constexpr int EVAL_HASH_SIZE = 512 * 512 / 4;
+constexpr int PAWN_HASH_SIZE = 512 * 512 / 4;
 
 class cEngine {
     sEvalHashEntry EvalTT[EVAL_HASH_SIZE];
