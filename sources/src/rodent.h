@@ -547,18 +547,31 @@ extern cDistance Dist;
 class cMask {
   public:
     void Init();
-    U64 k_side;
-    U64 q_side;
-    U64 home[2];
-    U64 away[2];
-    U64 ks_castle[2];
-    U64 qs_castle[2];
-    U64 outpost_map[2];
-    U64 passed[2][64];
+
+    static constexpr U64 home[2] = { RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB,
+                                     RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB };
+    static constexpr U64 away[2] = { RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB,
+                                     RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB };
+
+    static constexpr U64 ks_castle[2] = { SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | SqBb(G2) | SqBb(H2),
+                                          SqBb(F8) | SqBb(G8) | SqBb(H8) | SqBb(F7) | SqBb(G7) | SqBb(H7) };
+    static constexpr U64 qs_castle[2] = { SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2),
+                                          SqBb(A8) | SqBb(B8) | SqBb(C8) | SqBb(A7) | SqBb(B7) | SqBb(C7) };
+
+    static constexpr U64 outpost_map[2] = { (bb_rel_rank[WC][RANK_4] | bb_rel_rank[WC][RANK_5] | bb_rel_rank[WC][RANK_6]) & bbNotA & bbNotH,
+                                            (bb_rel_rank[BC][RANK_4] | bb_rel_rank[BC][RANK_5] | bb_rel_rank[BC][RANK_6]) & bbNotA & bbNotH };
+
+    static constexpr U64 k_side = FILE_F_BB | FILE_G_BB | FILE_H_BB;
+    static constexpr U64 q_side = FILE_A_BB | FILE_B_BB | FILE_C_BB;
+
+    static constexpr U64 wb_special = SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2);
+    static constexpr U64 bb_special = SqBb(A2) | SqBb(A3) | SqBb(B1) | SqBb(H2) | SqBb(H3) | SqBb(G1) | SqBb(C8) | SqBb(F8) | SqBb(G7) | SqBb(B7);
+
     U64 adjacent[8];
+    U64 passed[2][64];
     U64 supported[2][64];
-    U64 wb_special;
-    U64 bb_special;
+
+    static_assert(WC == 0 && BC == 1, "must be WC == 0 && BC == 1");
 };
 
 extern cMask Mask;
