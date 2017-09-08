@@ -17,26 +17,26 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
+// Own/enemy half of the board
+constexpr U64 cMask::home[2];
+constexpr U64 cMask::away[2];
+
+// Castling zones
+constexpr U64 cMask::ks_castle[2];
+constexpr U64 cMask::qs_castle[2];
+
+// Mask of squares with positive outpost score
+constexpr U64 cMask::outpost_map[2];
+
+// King side / queen side
+constexpr U64 cMask::k_side;
+constexpr U64 cMask::q_side;
+
+// Squares requiring bishop pat
+constexpr U64 cMask::wb_special;
+constexpr U64 cMask::bb_special;
+
 void cMask::Init() {
-
-    // Kingside/queenside
-
-    k_side = FILE_F_BB | FILE_G_BB | FILE_H_BB;
-    q_side = FILE_A_BB | FILE_B_BB | FILE_C_BB;
-
-    // Own/enemy half of the board
-
-    home[WC] = RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB;
-    home[BC] = RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB;
-    away[WC] = RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB;
-    away[BC] = RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB;
-
-    // Castling zones
-
-    qs_castle[WC] = SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2);
-    qs_castle[BC] = SqBb(A8) | SqBb(B8) | SqBb(C8) | SqBb(A7) | SqBb(B7) | SqBb(C7);
-    ks_castle[WC] = SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | SqBb(G2) | SqBb(H2);
-    ks_castle[BC] = SqBb(F8) | SqBb(G8) | SqBb(H8) | SqBb(F7) | SqBb(G7) | SqBb(H7);
 
     // Adjacent files (for isolated pawn detection)
 
@@ -64,19 +64,4 @@ void cMask::Init() {
         passed[BC][sq] = BB.FillSouthExcl(SqBb(sq));
         passed[BC][sq] |= BB.ShiftSideways(passed[BC][sq]);
     }
-
-    // Mask of squares with positive outpost score
-
-    outpost_map[WC] = bb_rel_rank[WC][RANK_4] | bb_rel_rank[WC][RANK_5] | bb_rel_rank[WC][RANK_6];
-    outpost_map[BC] = bb_rel_rank[BC][RANK_4] | bb_rel_rank[BC][RANK_5] | bb_rel_rank[BC][RANK_6];
-    outpost_map[WC] = outpost_map[WC] & bbNotA;
-    outpost_map[WC] = outpost_map[WC] & bbNotH;
-    outpost_map[BC] = outpost_map[WC] & bbNotA;
-    outpost_map[BC] = outpost_map[WC] & bbNotH;
-
-    // Squares requiring bishop pattern evaluation
-
-    wb_special = SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2);
-    bb_special = SqBb(A2) | SqBb(A3) | SqBb(B1) | SqBb(H2) | SqBb(H3) | SqBb(G1) | SqBb(C8) | SqBb(F8) | SqBb(G7) | SqBb(B7);
-
 }

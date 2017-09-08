@@ -131,7 +131,7 @@ void cParam::DefaultWeights() {
     shut_up = false;       // true suppresses displaying info currmove etc.
 
     // Attack and mobility weights that can be set independently for each side
-	// - the core of personality mechanism
+    // - the core of personality mechanism
 
     own_att_weight = 100;
     opp_att_weight = 100;
@@ -151,7 +151,7 @@ void cParam::DefaultWeights() {
     struct_weight = 100;
     shield_weight = 119;
     storm_weight = 99;
-	center_weight = 50;
+    center_weight = 50;
 
     // Pawn structure parameters
 
@@ -232,7 +232,7 @@ void cParam::DefaultWeights() {
     values[B_TOUCH] = 4;   // two bishops on adjacent squares
     values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
     values[B_OPP_P] = -1;  // enemy pawn on the square of own bishop's color
-	values[B_RETURN] = 10; // bishop returning to initial position after castling
+    values[B_RETURN] = 10; // bishop returning to initial position after castling
 
     // Rook parameters
 

@@ -31,21 +31,21 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
         if (IsOnSq(p, WC, B, G8) && IsOnSq(p, BC, P, F7)) Add(e, WC, Par.values[B_TRAP_A2]);
 
         // white bishop blocked on its initial square by own pawn
-		// or returning to protect castled king
+        // or returning to protect castled king
 
-		if (IsOnSq(p, WC, B, C1)) {
-			if (IsOnSq(p, WC, P, D2) && (SqBb(D3) & OccBb(p))) 
-				Add(e, WC, Par.values[B_BLOCK], 0);
-			if (p->Kings(WC) & (SqBb(B1) | SqBb(A1) | SqBb(A2) ))
-				Add(e, WC, Par.values[B_RETURN], 0);
-		}
+        if (IsOnSq(p, WC, B, C1)) {
+            if (IsOnSq(p, WC, P, D2) && (SqBb(D3) & OccBb(p)))
+                Add(e, WC, Par.values[B_BLOCK], 0);
+            if (p->Kings(WC) & (SqBb(B1) | SqBb(A1) | SqBb(A2) ))
+                Add(e, WC, Par.values[B_RETURN], 0);
+        }
 
-		if (IsOnSq(p, WC, B, F1)) {
-			if ( IsOnSq(p, WC, P, E2) && (SqBb(E3) & OccBb(p)))
-			Add(e, WC, Par.values[B_BLOCK], 0);
-			if (p->Kings(WC) & (SqBb(G1) | SqBb(H1) | SqBb(H2)))
-				Add(e, WC, Par.values[B_RETURN], 0);
-		}
+        if (IsOnSq(p, WC, B, F1)) {
+            if ( IsOnSq(p, WC, P, E2) && (SqBb(E3) & OccBb(p)))
+            Add(e, WC, Par.values[B_BLOCK], 0);
+            if (p->Kings(WC) & (SqBb(G1) | SqBb(H1) | SqBb(H2)))
+                Add(e, WC, Par.values[B_RETURN], 0);
+        }
 
         // white bishop fianchettoed
 
@@ -76,21 +76,21 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
         if (IsOnSq(p, BC, B, G1) && IsOnSq(p, WC, P, F2)) Add(e, BC, Par.values[B_TRAP_A2]);
 
         // black bishop blocked on its initial square by own pawn
-		// or returning to protect castled king
+        // or returning to protect castled king
 
-		if (IsOnSq(p, BC, B, C8)) {
-			if (IsOnSq(p, BC, P, D7) && (SqBb(D6) & OccBb(p)))
-			    Add(e, BC, Par.values[B_BLOCK], 0);
-			if (p->Kings(BC) & (SqBb(B8) | SqBb(A8) | SqBb(A7)))
-				Add(e, BC, Par.values[B_RETURN], 0);
-		}
+        if (IsOnSq(p, BC, B, C8)) {
+            if (IsOnSq(p, BC, P, D7) && (SqBb(D6) & OccBb(p)))
+                Add(e, BC, Par.values[B_BLOCK], 0);
+            if (p->Kings(BC) & (SqBb(B8) | SqBb(A8) | SqBb(A7)))
+                Add(e, BC, Par.values[B_RETURN], 0);
+        }
 
-		if (IsOnSq(p, BC, B, F8)) {
-			if (IsOnSq(p, BC, P, E7) && (SqBb(E6) & OccBb(p)))
-				Add(e, BC, Par.values[B_BLOCK], 0);
-			if (p->Kings(BC) & (SqBb(G8) | SqBb(H8) | SqBb(H7)))
-				Add(e, BC, Par.values[B_RETURN], 0);
-		}
+        if (IsOnSq(p, BC, B, F8)) {
+            if (IsOnSq(p, BC, P, E7) && (SqBb(E6) & OccBb(p)))
+                Add(e, BC, Par.values[B_BLOCK], 0);
+            if (p->Kings(BC) & (SqBb(G8) | SqBb(H8) | SqBb(H7)))
+                Add(e, BC, Par.values[B_RETURN], 0);
+        }
 
         // black bishop fianchettoed
 

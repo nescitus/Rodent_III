@@ -89,56 +89,56 @@ enum eSquare {
     NO_SQ
 };
 
-#define PHA_MG Q
-#define DEF_MG K
-#define PHA_EG P
-#define DEF_EG R
+constexpr int PHA_MG = Q;
+constexpr int DEF_MG = K;
+constexpr int PHA_EG = P;
+constexpr int DEF_EG = R;
 
-#define MAX_PLY         64
-#define MAX_MOVES       256
-#define INF             32767
-#define MATE            32000
-#define MAX_EVAL        29999
-#define MAX_HIST        (1 << 15)
+constexpr int MAX_PLY   = 64;
+constexpr int MAX_MOVES = 256;
+constexpr int INF       = 32767;
+constexpr int MATE      = 32000;
+constexpr int MAX_EVAL  = 29999;
+constexpr int MAX_HIST  = 1 << 15;
 
-#define RANK_1_BB       (U64)0x00000000000000FF
-#define RANK_2_BB       (U64)0x000000000000FF00
-#define RANK_3_BB       (U64)0x0000000000FF0000
-#define RANK_4_BB       (U64)0x00000000FF000000
-#define RANK_5_BB       (U64)0x000000FF00000000
-#define RANK_6_BB       (U64)0x0000FF0000000000
-#define RANK_7_BB       (U64)0x00FF000000000000
-#define RANK_8_BB       (U64)0xFF00000000000000
+constexpr U64 RANK_1_BB = 0x00000000000000FF;
+constexpr U64 RANK_2_BB = 0x000000000000FF00;
+constexpr U64 RANK_3_BB = 0x0000000000FF0000;
+constexpr U64 RANK_4_BB = 0x00000000FF000000;
+constexpr U64 RANK_5_BB = 0x000000FF00000000;
+constexpr U64 RANK_6_BB = 0x0000FF0000000000;
+constexpr U64 RANK_7_BB = 0x00FF000000000000;
+constexpr U64 RANK_8_BB = 0xFF00000000000000;
 
-#define FILE_A_BB       (U64)0x0101010101010101
-#define FILE_B_BB       (U64)0x0202020202020202
-#define FILE_C_BB       (U64)0x0404040404040404
-#define FILE_D_BB       (U64)0x0808080808080808
-#define FILE_E_BB       (U64)0x1010101010101010
-#define FILE_F_BB       (U64)0x2020202020202020
-#define FILE_G_BB       (U64)0x4040404040404040
-#define FILE_H_BB       (U64)0x8080808080808080
+constexpr U64 FILE_A_BB = 0x0101010101010101;
+constexpr U64 FILE_B_BB = 0x0202020202020202;
+constexpr U64 FILE_C_BB = 0x0404040404040404;
+constexpr U64 FILE_D_BB = 0x0808080808080808;
+constexpr U64 FILE_E_BB = 0x1010101010101010;
+constexpr U64 FILE_F_BB = 0x2020202020202020;
+constexpr U64 FILE_G_BB = 0x4040404040404040;
+constexpr U64 FILE_H_BB = 0x8080808080808080;
 
-#define DIAG_A1H8_BB    (U64)0x8040201008040201
-#define DIAG_A8H1_BB    (U64)0x0102040810204080
-#define DIAG_B8H2_BB    (U64)0x0204081020408000
+constexpr U64 DIAG_A1H8_BB = 0x8040201008040201;
+constexpr U64 DIAG_A8H1_BB = 0x0102040810204080;
+constexpr U64 DIAG_B8H2_BB = 0x0204081020408000;
 
-#define REL_SQ(sq,cl)   ( sq ^ (cl * 56) )
+#define REL_SQ(sq,cl)   ( (sq) ^ ((cl) * 56) )
 #define RelSqBb(sq,cl)  ( SqBb(REL_SQ(sq,cl) ) )
 
-#define bbWhiteSq       (U64)0x55AA55AA55AA55AA
-#define bbBlackSq       (U64)0xAA55AA55AA55AA55
+constexpr U64 bbWhiteSq = 0x55AA55AA55AA55AA;
+constexpr U64 bbBlackSq = 0xAA55AA55AA55AA55;
 
-static const U64 bb_rel_rank[2][8] = {
+constexpr U64 bb_rel_rank[2][8] = {
     { RANK_1_BB, RANK_2_BB, RANK_3_BB, RANK_4_BB, RANK_5_BB, RANK_6_BB, RANK_7_BB, RANK_8_BB },
     { RANK_8_BB, RANK_7_BB, RANK_6_BB, RANK_5_BB, RANK_4_BB, RANK_3_BB, RANK_2_BB, RANK_1_BB }
 };
 
-static const U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
+constexpr U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
-#define SIDE_RANDOM     (~((U64)0))
+constexpr U64 SIDE_RANDOM = ~UINT64_C(0);
 
-#define START_POS       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -"
+constexpr char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
 #define SqBb(x)         ((U64)1 << (x))
 
@@ -246,17 +246,17 @@ template<typename T> constexpr const T& Min(const T& x, const T& y) { return x <
     #define FirstOne(x)     bit_table[(((x) & (~(x) + 1)) * (U64)0x0218A392CD3D5DBF) >> 58] // first "1" in a bitboard
 #endif
 
-#define bbNotA          (U64)0xfefefefefefefefe // ~FILE_A_BB
-#define bbNotH          (U64)0x7f7f7f7f7f7f7f7f // ~FILE_H_BB
+constexpr U64 bbNotA = ~FILE_A_BB; // 0xfefefefefefefefe
+constexpr U64 bbNotH = ~FILE_H_BB; // 0x7f7f7f7f7f7f7f7f
 
-#define ShiftNorth(x)   (x<<8)
-#define ShiftSouth(x)   (x>>8)
-#define ShiftWest(x)    ((x & bbNotA)>>1)
-#define ShiftEast(x)    ((x & bbNotH)<<1)
-#define ShiftNW(x)      ((x & bbNotA)<<7)
-#define ShiftNE(x)      ((x & bbNotH)<<9)
-#define ShiftSW(x)      ((x & bbNotA)>>9)
-#define ShiftSE(x)      ((x & bbNotH)>>7)
+#define ShiftNorth(x)   ((x)<<8)
+#define ShiftSouth(x)   ((x)>>8)
+#define ShiftWest(x)    (((x) & bbNotA)>>1)
+#define ShiftEast(x)    (((x) & bbNotH)<<1)
+#define ShiftNW(x)      (((x) & bbNotA)<<7)
+#define ShiftNE(x)      (((x) & bbNotH)<<9)
+#define ShiftSW(x)      (((x) & bbNotA)>>9)
+#define ShiftSE(x)      (((x) & bbNotH)>>7)
 
 //#define JustOne(bb)     ((bb) && !((bb) & ((bb)-1)))
 //#define MoreThanOne(bb) ((bb) & ((bb) - 1))
@@ -491,9 +491,9 @@ class cParam {
     int storm_weight;
     int struct_weight;
     int passers_weight;
-	int center_weight;
-	int pawn_mass_weight;
-	int pawn_chains_weight;
+    int center_weight;
+    int pawn_mass_weight;
+    int pawn_chains_weight;
     int sd_att[2];
     int sd_mob[2];
     int mg_pst[2][6][64];
@@ -547,18 +547,31 @@ extern cDistance Dist;
 class cMask {
   public:
     void Init();
-    U64 k_side;
-    U64 q_side;
-    U64 home[2];
-    U64 away[2];
-    U64 ks_castle[2];
-    U64 qs_castle[2];
-    U64 outpost_map[2];
-    U64 passed[2][64];
+
+    static constexpr U64 home[2] = { RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB,
+                                     RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB };
+    static constexpr U64 away[2] = { RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB,
+                                     RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB };
+
+    static constexpr U64 ks_castle[2] = { SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | SqBb(G2) | SqBb(H2),
+                                          SqBb(F8) | SqBb(G8) | SqBb(H8) | SqBb(F7) | SqBb(G7) | SqBb(H7) };
+    static constexpr U64 qs_castle[2] = { SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2),
+                                          SqBb(A8) | SqBb(B8) | SqBb(C8) | SqBb(A7) | SqBb(B7) | SqBb(C7) };
+
+    static constexpr U64 outpost_map[2] = { (bb_rel_rank[WC][RANK_4] | bb_rel_rank[WC][RANK_5] | bb_rel_rank[WC][RANK_6]) & bbNotA & bbNotH,
+                                            (bb_rel_rank[BC][RANK_4] | bb_rel_rank[BC][RANK_5] | bb_rel_rank[BC][RANK_6]) & bbNotA & bbNotH };
+
+    static constexpr U64 k_side = FILE_F_BB | FILE_G_BB | FILE_H_BB;
+    static constexpr U64 q_side = FILE_A_BB | FILE_B_BB | FILE_C_BB;
+
+    static constexpr U64 wb_special = SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2);
+    static constexpr U64 bb_special = SqBb(A2) | SqBb(A3) | SqBb(B1) | SqBb(H2) | SqBb(H3) | SqBb(G1) | SqBb(C8) | SqBb(F8) | SqBb(G7) | SqBb(B7);
+
     U64 adjacent[8];
+    U64 passed[2][64];
     U64 supported[2][64];
-    U64 wb_special;
-    U64 bb_special;
+
+    static_assert(WC == 0 && BC == 1, "must be WC == 0 && BC == 1");
 };
 
 extern cMask Mask;
@@ -650,8 +663,8 @@ sInternalBook InternalBook;
 
 void CheckTimeout();
 
-#define EVAL_HASH_SIZE (512 * 512 / 4)
-#define PAWN_HASH_SIZE (512 * 512 / 4)
+constexpr int EVAL_HASH_SIZE = 512 * 512 / 4;
+constexpr int PAWN_HASH_SIZE = 512 * 512 / 4;
 
 class cEngine {
     sEvalHashEntry EvalTT[EVAL_HASH_SIZE];
@@ -731,10 +744,10 @@ class cEngine {
 
     static const int razor_margin[];
     static const int fut_margin[];
-	static const int selective_depth;
-	static const int snp_depth;      // max depth at which static null move pruning is applied
-	static const int razor_depth;    // max depth at which razoring is applied
-	static const int fut_depth;      // max depth at which futility pruning is applied
+    static const int selective_depth;
+    static const int snp_depth;      // max depth at which static null move pruning is applied
+    static const int razor_depth;    // max depth at which razoring is applied
+    static const int fut_depth;      // max depth at which futility pruning is applied
     static int lmr_size[2][MAX_PLY][MAX_MOVES];
 
   public:
@@ -839,14 +852,14 @@ extern int tt_date;
 
 #if defined(_WIN32) || defined(_WIN64)
     #if defined(BOOKSPATH)
-        #define _BOOKSPATH MAKESTR(BOOKSPATH) L""
+        constexpr wchar_t _BOOKSPATH[] = MAKESTR(BOOKSPATH) L"";
     #else
-        #define _BOOKSPATH L"books\\"
+        constexpr wchar_t _BOOKSPATH[] = L"books\\";
     #endif
     #if defined(PERSONALITIESPATH)
-        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) L""
+        constexpr wchar_t _PERSONALITIESPATH[] = MAKESTR(PERSONALITIESPATH) L"";
     #else
-        #define _PERSONALITIESPATH L"personalities\\"
+        constexpr wchar_t _PERSONALITIESPATH[] = L"personalities\\";
     #endif
     #define PrintOverrides() {}
     // change dir and return true on success
@@ -854,14 +867,14 @@ extern int tt_date;
     bool ChDir(const wchar_t *new_path);
 #else
     #if defined(BOOKSPATH)
-        #define _BOOKSPATH MAKESTR(BOOKSPATH) ""
+        constexpr char _BOOKSPATH[] = MAKESTR(BOOKSPATH) "";
     #else
-        #define _BOOKSPATH "books/"
+        constexpr char _BOOKSPATH[] = "books/";
     #endif
     #if defined(PERSONALITIESPATH)
-        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) ""
+        constexpr char _PERSONALITIESPATH[] = MAKESTR(PERSONALITIESPATH) "";
     #else
-        #define _PERSONALITIESPATH "personalities/"
+        constexpr char _PERSONALITIESPATH[] = "personalities/";
     #endif
     void PrintOverrides();
     // change dir and return true on success
