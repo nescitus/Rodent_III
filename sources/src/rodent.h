@@ -852,14 +852,14 @@ extern int tt_date;
 
 #if defined(_WIN32) || defined(_WIN64)
     #if defined(BOOKSPATH)
-        #define _BOOKSPATH MAKESTR(BOOKSPATH) L""
+        constexpr wchar_t _BOOKSPATH[] = MAKESTR(BOOKSPATH) L"";
     #else
-        #define _BOOKSPATH L"books\\"
+        constexpr wchar_t _BOOKSPATH[] = L"books\\";
     #endif
     #if defined(PERSONALITIESPATH)
-        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) L""
+        constexpr wchar_t _PERSONALITIESPATH[] = MAKESTR(PERSONALITIESPATH) L"";
     #else
-        #define _PERSONALITIESPATH L"personalities\\"
+        constexpr wchar_t _PERSONALITIESPATH[] = L"personalities\\";
     #endif
     #define PrintOverrides() {}
     // change dir and return true on success
@@ -867,14 +867,14 @@ extern int tt_date;
     bool ChDir(const wchar_t *new_path);
 #else
     #if defined(BOOKSPATH)
-        #define _BOOKSPATH MAKESTR(BOOKSPATH) ""
+        constexpr char _BOOKSPATH[] = MAKESTR(BOOKSPATH) "";
     #else
-        #define _BOOKSPATH "books/"
+        constexpr char _BOOKSPATH[] = "books/";
     #endif
     #if defined(PERSONALITIESPATH)
-        #define _PERSONALITIESPATH MAKESTR(PERSONALITIESPATH) ""
+        constexpr char _PERSONALITIESPATH[] = MAKESTR(PERSONALITIESPATH) "";
     #else
-        #define _PERSONALITIESPATH "personalities/"
+        constexpr char _PERSONALITIESPATH[] = "personalities/";
     #endif
     void PrintOverrides();
     // change dir and return true on success
