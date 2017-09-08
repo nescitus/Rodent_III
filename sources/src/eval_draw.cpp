@@ -276,7 +276,7 @@ int cEngine::CheckmateHelper(POS *p) {
 
     int result = 0;
 
-	// KQ vs Kx: drive enemy king towards the edge
+    // KQ vs Kx: drive enemy king towards the edge
 
     if (p->cnt[WC][Q] > 0 && p->cnt[WC][P] == 0) {
         if (p->cnt[BC][Q] == 0 && p->cnt[BC][P] == 0 && p->cnt[BC][R] + p->cnt[BC][B] + p->cnt[BC][N] <= 1) {
@@ -298,7 +298,7 @@ int cEngine::CheckmateHelper(POS *p) {
         }
     }
 
-	// Weaker side has bare king (KQK, KRK, KBBK + bigger advantage
+    // Weaker side has bare king (KQK, KRK, KBBK + bigger advantage
 
     if (p->cnt[BC][P] + p->cnt[BC][N] + p->cnt[BC][B] + p->cnt[BC][R] + p->cnt[BC][Q] == 0) {
         if ((p->cnt[WC][Q] + p->cnt[WC][R] > 0) || p->cnt[WC][B] > 1) {
@@ -316,7 +316,7 @@ int cEngine::CheckmateHelper(POS *p) {
         }
     }
 
-	// KBN vs K specialized code
+    // KBN vs K specialized code
 
     if (p->cnt[WC][P] == 0
     &&  p->cnt[BC][P] == 0

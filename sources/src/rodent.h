@@ -491,9 +491,9 @@ class cParam {
     int storm_weight;
     int struct_weight;
     int passers_weight;
-	int center_weight;
-	int pawn_mass_weight;
-	int pawn_chains_weight;
+    int center_weight;
+    int pawn_mass_weight;
+    int pawn_chains_weight;
     int sd_att[2];
     int sd_mob[2];
     int mg_pst[2][6][64];
@@ -744,10 +744,10 @@ class cEngine {
 
     static const int razor_margin[];
     static const int fut_margin[];
-	static const int selective_depth;
-	static const int snp_depth;      // max depth at which static null move pruning is applied
-	static const int razor_depth;    // max depth at which razoring is applied
-	static const int fut_depth;      // max depth at which futility pruning is applied
+    static const int selective_depth;
+    static const int snp_depth;      // max depth at which static null move pruning is applied
+    static const int razor_depth;    // max depth at which razoring is applied
+    static const int fut_depth;      // max depth at which futility pruning is applied
     static int lmr_size[2][MAX_PLY][MAX_MOVES];
 
   public:

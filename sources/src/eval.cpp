@@ -23,8 +23,8 @@ If not, see <http://www.gnu.org/licenses/>.
 
 static const U64 bb_center = SqBb(C3) | SqBb(D3) | SqBb(E3) | SqBb(F3)
                            | SqBb(C4) | SqBb(D4) | SqBb(E4) | SqBb(F4)
-	                       | SqBb(C5) | SqBb(D5) | SqBb(E5) | SqBb(F5)
-	                       | SqBb(C6) | SqBb(D6) | SqBb(E6) | SqBb(F6);
+                           | SqBb(C5) | SqBb(D5) | SqBb(E5) | SqBb(F5)
+                           | SqBb(C6) | SqBb(D6) | SqBb(E6) | SqBb(F6);
 
 void cEngine::ClearAll() {
 
@@ -73,7 +73,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     int outpost = 0;
     int att = 0;
     int wood = 0;
-	int center_control = 2 * BB.PopCnt(e->p_takes[sd] & bb_center);
+    int center_control = 2 * BB.PopCnt(e->p_takes[sd] & bb_center);
 
     // Init king attack zone
 
@@ -107,7 +107,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         }
 
         bb_control = BB.KnightAttacks(sq) & ~p->cl_bb[sd];  // get control bitboard
-		center_control += BB.PopCnt(bb_control & bb_center);
+        center_control += BB.PopCnt(bb_control & bb_center);
         if (!(bb_control  & ~e->p_takes[op] & Mask.away[sd])) // we do not attack enemy half of the board
             Add(e, sd, Par.values[N_OWH]);
         e->all_att[sd] |= BB.KnightAttacks(sq);
@@ -150,7 +150,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
         }
 
         bb_control = BB.BishAttacks(OccBb(p), sq);          // get control bitboard
-		center_control += BB.PopCnt(bb_control & bb_center);
+        center_control += BB.PopCnt(bb_control & bb_center);
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd]  |= bb_control;
         if (!(bb_control & Mask.away[sd]))
@@ -346,7 +346,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     Add(e, sd, (Par.lines_weight * lines_mg)     / 100, (Par.lines_weight * lines_eg)     / 100);
     Add(e, sd, (Par.forward_weight * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
     Add(e, sd, (Par.outposts_weight * outpost) / 100);
-	Add(e, sd, (Par.center_weight * center_control) / 100, 0);
+    Add(e, sd, (Par.center_weight * center_control) / 100, 0);
 
     // King attack eval
 

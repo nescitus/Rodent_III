@@ -490,19 +490,19 @@ void ParseSetoption(const char *ptr) {
         Glob.should_clear = true;
     } else if (strcmp(name, "minorup") == 0)                                 {
         Par.values[A_MIN] = atoi(value);
-		Par.InitMaterialTweaks();
+        Par.InitMaterialTweaks();
         Glob.should_clear = true;
     } else if (strcmp(name, "majorup") == 0)                                 {
         Par.values[A_MAJ] = atoi(value);
-		Par.InitMaterialTweaks();
+        Par.InitMaterialTweaks();
         Glob.should_clear = true;
     } else if (strcmp(name, "bothup") == 0)                                  {
         Par.values[A_ALL] = atoi(value);
-		Par.InitMaterialTweaks();
+        Par.InitMaterialTweaks();
         Glob.should_clear = true;
     } else if (strcmp(name, "twominors") == 0)                               {
         Par.values[A_TWO] = atoi(value);
-		Par.InitMaterialTweaks();
+        Par.InitMaterialTweaks();
         Glob.should_clear = true;
 
     // Here starts a block of non-eval options
@@ -593,13 +593,13 @@ void ReadPersonality(const char *fileName) {
     if (personalityFile == NULL)
         return;
 
-	// It is possible that user will attempt to load a personality of older Rodent version.
-	// There is nothing wrong with that, except that there will be some parameters missing.
-	// and there will be no way of telling whether previous personality used their default
-	// value or not. For that reason now that we found a personality file, we reset params
-	// to their default values.
+    // It is possible that user will attempt to load a personality of older Rodent version.
+    // There is nothing wrong with that, except that there will be some parameters missing.
+    // and there will be no way of telling whether previous personality used their default
+    // value or not. For that reason now that we found a personality file, we reset params
+    // to their default values.
 
-	Par.DefaultWeights();
+    Par.DefaultWeights();
 
     // Set flag in case we want to disable some options while reading personality from a file
 
@@ -639,7 +639,7 @@ void ReadPersonality(const char *fileName) {
             continue;
         }
 
-		// Personality files use the same syntax as UCI options parser (yes I have been lazy)
+        // Personality files use the same syntax as UCI options parser (yes I have been lazy)
 
         const char *ptr = ParseToken(line, token);
         if (strcmp(token, "setoption") == 0)
