@@ -146,7 +146,7 @@ void cParam::DefaultWeights() {
     passers_weight = 100;
     pawn_mass_weight = 100; // seems optimal
     pawn_chains_weight = 100;
-    outposts_weight = 95;
+    outposts_weight = 78;
     lines_weight = 100;
     struct_weight = 100;
     shield_weight = 119;

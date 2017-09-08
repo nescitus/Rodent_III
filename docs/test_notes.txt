@@ -1,3 +1,16 @@
+2017-09-08
+
+- outposts weight readjusted after bugfix using Texel tuning - passed after 1400 games. Version bumped to 0.212
+
+2017-09-07
+
+- material values tuned using brute-force Texel tuning failed after 4500 games
+
+2017-09-04
+
+- small bonus for two rooks on an open file (2 cp per rook)
+  failed after overnight test of 6000 games
+
 2017-09-02
 
 - adding penalty for a bishop blocked on initial square and bonus for returning bishop also in the endgame
