@@ -342,11 +342,11 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     // Weighting eval parameters
 
     Add(e, sd, (Par.sd_mob[sd] * mob_mg)  / 100, (Par.sd_mob[sd] * mob_eg)  / 100);
-    Add(e, sd, (Par.tropism_weight * tropism_mg) / 100, (Par.tropism_weight * tropism_eg) / 100);
-    Add(e, sd, (Par.lines_weight * lines_mg)     / 100, (Par.lines_weight * lines_eg)     / 100);
-    Add(e, sd, (Par.forward_weight * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
-    Add(e, sd, (Par.outposts_weight * outpost) / 100);
-    Add(e, sd, (Par.center_weight * center_control) / 100, 0);
+    Add(e, sd, (Par.values[W_TROPISM] * tropism_mg) / 100, (Par.values[W_TROPISM] * tropism_eg) / 100);
+    Add(e, sd, (Par.values[W_LINES] * lines_mg)     / 100, (Par.values[W_LINES] * lines_eg)     / 100);
+    Add(e, sd, (Par.values[W_FWD] * fwd_bonus[fwd_cnt] * Par.values[W_FWD]) / 100, 0);
+    Add(e, sd, (Par.values[W_OUTPOSTS] * outpost) / 100);
+    Add(e, sd, (Par.values[W_CENTER] * center_control) / 100, 0);
 
     // King attack eval
 
@@ -427,7 +427,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
             AddPawns(e, sd, Par.backward_malus_mg[File(sq)] + Par.values[BK_OPE] * fl_unopposed, Par.values[BK_END]);
     }
 
-    AddPawns(e, sd, (mass_mg * Par.pawn_mass_weight) / 100, (mass_eg * Par.pawn_mass_weight) / 100);
+    AddPawns(e, sd, (mass_mg * Par.values[W_MASS]) / 100, (mass_eg * Par.values[W_MASS]) / 100);
 }
 
 void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
@@ -491,7 +491,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
         }
     }
 
-    Add(e, sd, (mg_tot * Par.passers_weight) / 100, (eg_tot * Par.passers_weight) / 100);
+    Add(e, sd, (mg_tot * Par.values[W_PASSERS]) / 100, (eg_tot * Par.values[W_PASSERS]) / 100);
 }
 
 void cEngine::EvaluateUnstoppable(eData *e, POS *p) {
@@ -628,7 +628,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
         eg += 9;
     }
 
-    Add(e, sd, (Par.threats_weight * mg) / 100, (Par.threats_weight * eg) / 100);
+    Add(e, sd, (Par.values[W_THREATS] * mg) / 100, (Par.values[W_THREATS] * eg) / 100);
 }
 
 #ifdef USE_RISKY_PARAMETER

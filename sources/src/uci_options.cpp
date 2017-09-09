@@ -66,23 +66,23 @@ void PrintUciOptions() {
         printf("option name ExchangeImbalance type spin default %d min -200 max 200\n", Par.values[A_EXC]);
         printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", Par.values[N_CL]);
 
-        printf("option name Material type spin default %d min 0 max 500\n", Par.mat_weight);
+        printf("option name Material type spin default %d min 0 max 500\n", Par.values[W_MATERIAL]);
         printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
-        printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.pst_weight);
-        printf("option name OwnAttack type spin default %d min 0 max 500\n", Par.own_att_weight);
-        printf("option name OppAttack type spin default %d min 0 max 500\n", Par.opp_att_weight);
-        printf("option name OwnMobility type spin default %d min 0 max 500\n", Par.own_mob_weight);
-        printf("option name OppMobility type spin default %d min 0 max 500\n", Par.opp_mob_weight);
-        printf("option name KingTropism type spin default %d min 0 max 500\n", Par.tropism_weight);
-        printf("option name Forwardness type spin default %d min -500 max 500\n", Par.forward_weight);
-        printf("option name PiecePressure type spin default %d min 0 max 500\n", Par.threats_weight);
+        printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.values[W_PST]);
+		printf("option name OwnAttack type spin default %d min 0 max 500\n", Par.values[W_OWN_ATT]);
+        printf("option name OppAttack type spin default %d min 0 max 500\n", Par.values[W_OPP_ATT]);
+        printf("option name OwnMobility type spin default %d min 0 max 500\n", Par.values[W_OWN_MOB]);
+        printf("option name OppMobility type spin default %d min 0 max 500\n", Par.values[W_OPP_MOB]);
+        printf("option name KingTropism type spin default %d min 0 max 500\n", Par.values[W_TROPISM]);
+        printf("option name Forwardness type spin default %d min -500 max 500\n", Par.values[W_FWD]);
+        printf("option name PiecePressure type spin default %d min 0 max 500\n", Par.values[W_THREATS]);
 
-        printf("option name PassedPawns type spin default %d min 0 max 500\n", Par.passers_weight);
-        printf("option name PawnStructure type spin default %d min 0 max 500\n", Par.struct_weight);
-        printf("option name PawnShield type spin default %d min 0 max 500\n", Par.shield_weight);
-        printf("option name PawnStorm type spin default %d min 0 max 500\n", Par.storm_weight);
-        printf("option name Outposts type spin default %d min 0 max 500\n", Par.outposts_weight);
-        printf("option name Lines type spin default %d min 0 max 500\n", Par.lines_weight);
+        printf("option name PassedPawns type spin default %d min 0 max 500\n", Par.values[W_PASSERS]);
+        printf("option name PawnStructure type spin default %d min 0 max 500\n", Par.values[W_STRUCT]);
+        printf("option name PawnShield type spin default %d min 0 max 500\n", Par.values[W_SHIELD]);
+        printf("option name PawnStorm type spin default %d min 0 max 500\n", Par.values[W_STORM]);
+        printf("option name Outposts type spin default %d min 0 max 500\n", Par.values[W_OUTPOSTS]);
+        printf("option name Lines type spin default %d min 0 max 500\n", Par.values[W_LINES]);
         printf("option name Fianchetto type spin default %d min 0 max 100\n", Par.values[B_KING]);
 
         printf("option name Contempt type spin default %d min -500 max 500\n", Par.draw_score);
@@ -249,60 +249,60 @@ void ParseSetoption(const char *ptr) {
         Par.InitMaterialTweaks();
         Glob.should_clear = true;
     } else if (strcmp(name, "material") == 0)                                {
-        Par.mat_weight = atoi(value);
+        Par.values[W_MATERIAL] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
     } else if (strcmp(name, "pieceplacement") == 0)                          {
-        Par.pst_weight = atoi(value);
+        Par.values[W_PST] = atoi(value);
         Par.InitPst();
         Glob.should_clear = true;
     } else if (strcmp(name, "ownattack") == 0)                               {
-        Par.own_att_weight = atoi(value);
+        Par.values[W_OWN_ATT] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "oppattack") == 0)                               {
-        Par.opp_att_weight = atoi(value);
+        Par.values[W_OPP_ATT] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "ownmobility") == 0)                             {
-        Par.own_mob_weight = atoi(value);
+        Par.values[W_OWN_MOB] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "oppmobility") == 0)                             {
-        Par.opp_mob_weight = atoi(value);
+        Par.values[W_OPP_MOB] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "kingtropism") == 0)                             {
-        Par.tropism_weight = atoi(value);
+        Par.values[W_TROPISM] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "forwardness") == 0)                             {
-        Par.forward_weight = atoi(value);
+        Par.values[W_FWD] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "piecepressure") == 0)                           {
-        Par.threats_weight = atoi(value);
+        Par.values[W_THREATS] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "passedpawns") == 0)                             {
-        Par.passers_weight = atoi(value);
+        Par.values[W_PASSERS] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "pawnstructure") == 0)                           {
-        Par.struct_weight = atoi(value);
+        Par.values[W_STRUCT] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "pawnmass") == 0)                                {
-        Par.pawn_mass_weight = atoi(value);
+        Par.values[W_MASS] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "pawnchains") == 0)                              {
-        Par.pawn_chains_weight = atoi(value);
+        Par.values[W_CHAINS] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "pawnshield") == 0)                              {
-        Par.shield_weight = atoi(value);
+        Par.values[W_SHIELD] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "pawnstorm") == 0)                               {
-        Par.storm_weight = atoi(value);
+        Par.values[W_STORM] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "outposts") == 0)                                {
-        Par.outposts_weight = atoi(value);
+        Par.values[W_OUTPOSTS] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "lines") == 0)                                   {
-        Par.lines_weight = atoi(value);
+        Par.values[W_LINES] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "center") == 0)                                  {
-        Par.center_weight = atoi(value);
+        Par.values[W_CENTER] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "fianchetto") == 0)                              {
         Par.values[B_KING] = atoi(value);

@@ -139,8 +139,8 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     // It might become a problem if we decide to print detailed eval score.
 
     PawnTT[addr].key = p->pawn_key;
-    PawnTT[addr].mg_pawns = (Par.struct_weight * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
-    PawnTT[addr].eg_pawns = (Par.struct_weight * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
+    PawnTT[addr].mg_pawns = (Par.values[W_STRUCT] * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
+    PawnTT[addr].eg_pawns = (Par.values[W_STRUCT] * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
 }
 
 void cEngine::EvaluateKing(POS *p, eData *e, int sd) {
@@ -169,7 +169,7 @@ void cEngine::EvaluateKing(POS *p, eData *e, int sd) {
     bb_next_file = ShiftWest(bb_king_file);
     if (bb_next_file) EvaluateKingFile(p, sd, bb_next_file, &shield, &storm);
 
-    AddPawns(e, sd, ((Par.shield_weight * shield) / 100) + ((Par.storm_weight * storm) / 100), 0);
+    AddPawns(e, sd, ((Par.values[W_SHIELD] * shield) / 100) + ((Par.values[W_STORM] * storm) / 100), 0);
     AddPawns(e, sd, EvaluateChains(p, sd), 0);
 }
 
@@ -281,5 +281,5 @@ int cEngine::EvaluateChains(POS *p, int sd) {
         }
     }
 
-    return (mg_result * Par.pawn_chains_weight) / 100;
+    return (mg_result * Par.values[W_CHAINS]) / 100;
 }

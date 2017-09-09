@@ -119,8 +119,8 @@ void cParam::DefaultWeights() {
 
     // Varia
 
-    mat_weight = 100;
-    pst_weight = 75;
+    values[W_MATERIAL] = 100;
+    values[W_PST] = 75;
     pst_style = 0;
     mob_style = 0;         // 1 is only marginally behind
 
@@ -133,25 +133,25 @@ void cParam::DefaultWeights() {
     // Attack and mobility weights that can be set independently for each side
     // - the core of personality mechanism
 
-    own_att_weight = 100;
-    opp_att_weight = 100;
-    own_mob_weight = 100;
-    opp_mob_weight = 100;
+    values[W_OWN_ATT] = 100;
+    values[W_OPP_ATT] = 100;
+    values[W_OWN_MOB] = 100;
+    values[W_OPP_MOB] = 100;
 
     // Positional weights
 
-    threats_weight = 109;
-    tropism_weight = 20;
-    forward_weight = 0;
-    passers_weight = 100;
-    pawn_mass_weight = 100; // seems optimal
-    pawn_chains_weight = 100;
-    outposts_weight = 78;
-    lines_weight = 100;
-    struct_weight = 100;
-    shield_weight = 119;
-    storm_weight = 99;
-    center_weight = 50;
+    values[W_THREATS] = 109;
+    values[W_TROPISM] = 20;
+    values[W_FWD] = 0;
+    values[W_PASSERS] = 100;
+    values[W_MASS] = 100; // seems optimal
+    values[W_CHAINS] = 100;
+    values[W_OUTPOSTS] = 78;
+    values[W_LINES] = 100;
+    values[W_STRUCT] = 100;
+    values[W_SHIELD] = 119;
+    values[W_STORM] = 99;
+    values[W_CENTER] = 50;
 
     // Pawn structure parameters
 
@@ -325,18 +325,18 @@ void cParam::InitPst() {
     for (int sq = 0; sq < 64; sq++) {
         for (int sd = 0; sd < 2; sd++) {
 
-            mg_pst[sd][P][REL_SQ(sq, sd)] = ((values[P_MID] * mat_weight) / 100) + (pstPawnMg  [pst_style][sq] * pst_weight) / 100;
-            eg_pst[sd][P][REL_SQ(sq, sd)] = ((values[P_END] * mat_weight) / 100) + (pstPawnEg  [pst_style][sq] * pst_weight) / 100;
-            mg_pst[sd][N][REL_SQ(sq, sd)] = ((values[N_MID] * mat_weight) / 100) + (pstKnightMg[pst_style][sq] * pst_weight) / 100;
-            eg_pst[sd][N][REL_SQ(sq, sd)] = ((values[N_END] * mat_weight) / 100) + (pstKnightEg[pst_style][sq] * pst_weight) / 100;
-            mg_pst[sd][B][REL_SQ(sq, sd)] = ((values[B_MID] * mat_weight) / 100) + (pstBishopMg[pst_style][sq] * pst_weight) / 100;
-            eg_pst[sd][B][REL_SQ(sq, sd)] = ((values[B_END] * mat_weight) / 100) + (pstBishopEg[pst_style][sq] * pst_weight) / 100;
-            mg_pst[sd][R][REL_SQ(sq, sd)] = ((values[R_MID] * mat_weight) / 100) + (pstRookMg  [pst_style][sq] * pst_weight) / 100;
-            eg_pst[sd][R][REL_SQ(sq, sd)] = ((values[R_END] * mat_weight) / 100) + (pstRookEg  [pst_style][sq] * pst_weight) / 100;
-            mg_pst[sd][Q][REL_SQ(sq, sd)] = ((values[Q_MID] * mat_weight) / 100) + (pstQueenMg [pst_style][sq] * pst_weight) / 100;
-            eg_pst[sd][Q][REL_SQ(sq, sd)] = ((values[Q_END] * mat_weight) / 100) + (pstQueenEg [pst_style][sq] * pst_weight) / 100;
-            mg_pst[sd][K][REL_SQ(sq, sd)] = (pstKingMg  [pst_style][sq] * pst_weight) / 100;
-            eg_pst[sd][K][REL_SQ(sq, sd)] = (pstKingEg  [pst_style][sq] * pst_weight) / 100;
+            mg_pst[sd][P][REL_SQ(sq, sd)] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + (pstPawnMg  [pst_style][sq] * Par.values[W_PST]) / 100;
+            eg_pst[sd][P][REL_SQ(sq, sd)] = ((values[P_END] * Par.values[W_MATERIAL]) / 100) + (pstPawnEg  [pst_style][sq] * Par.values[W_PST]) / 100;
+            mg_pst[sd][N][REL_SQ(sq, sd)] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + (pstKnightMg[pst_style][sq] * Par.values[W_PST]) / 100;
+            eg_pst[sd][N][REL_SQ(sq, sd)] = ((values[N_END] * Par.values[W_MATERIAL]) / 100) + (pstKnightEg[pst_style][sq] * Par.values[W_PST]) / 100;
+            mg_pst[sd][B][REL_SQ(sq, sd)] = ((values[B_MID] * Par.values[W_MATERIAL]) / 100) + (pstBishopMg[pst_style][sq] * Par.values[W_PST]) / 100;
+            eg_pst[sd][B][REL_SQ(sq, sd)] = ((values[B_END] * Par.values[W_MATERIAL]) / 100) + (pstBishopEg[pst_style][sq] * Par.values[W_PST]) / 100;
+            mg_pst[sd][R][REL_SQ(sq, sd)] = ((values[R_MID] * Par.values[W_MATERIAL]) / 100) + (pstRookMg  [pst_style][sq] * Par.values[W_PST]) / 100;
+            eg_pst[sd][R][REL_SQ(sq, sd)] = ((values[R_END] * Par.values[W_MATERIAL]) / 100) + (pstRookEg  [pst_style][sq] * Par.values[W_PST]) / 100;
+            mg_pst[sd][Q][REL_SQ(sq, sd)] = ((values[Q_MID] * Par.values[W_MATERIAL]) / 100) + (pstQueenMg [pst_style][sq] * Par.values[W_PST]) / 100;
+            eg_pst[sd][Q][REL_SQ(sq, sd)] = ((values[Q_END] * Par.values[W_MATERIAL]) / 100) + (pstQueenEg [pst_style][sq] * Par.values[W_PST]) / 100;
+            mg_pst[sd][K][REL_SQ(sq, sd)] = (pstKingMg  [pst_style][sq] * Par.values[W_PST]) / 100;
+            eg_pst[sd][K][REL_SQ(sq, sd)] = (pstKingEg  [pst_style][sq] * Par.values[W_PST]) / 100;
 
             sp_pst[sd][N][REL_SQ(sq, sd)] = pstKnightOutpost[sq];
             sp_pst[sd][B][REL_SQ(sq, sd)] = pstBishopOutpost[sq];
