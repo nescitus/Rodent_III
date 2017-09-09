@@ -851,6 +851,8 @@ extern int tt_date;
     // change dir and return true on success
     #define ChDirEnv(dummy) false
     bool ChDir(const wchar_t *new_path);
+    // classify path
+    constexpr bool isabsolute(const char *path) { return path[0] != '\0' && path[1] == ':'; }
 #else
     #if defined(BOOKSPATH)
         constexpr char _BOOKSPATH[] = MAKESTR(BOOKSPATH) "";
@@ -866,6 +868,8 @@ extern int tt_date;
     // change dir and return true on success
     bool ChDirEnv(const char *env_name);
     bool ChDir(const char *new_path);
+    // classify path
+    constexpr bool isabsolute(const char *path) { return path[0] == '/'; }
 #endif
 
 #ifndef NDEBUG

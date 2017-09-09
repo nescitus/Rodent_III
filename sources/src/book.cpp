@@ -334,8 +334,10 @@ void sBook::OpenPolyglot() {
 
     ClosePolyglot();
 
-    if (!ChDirEnv("RIIIBOOKS"))             // try `RIIIBOOKS` env var first (26/08/17: linux only)
-        if (!ChDir(_BOOKSPATH)) return;     // then built-in path
+    if (!isabsolute(bookName))                  // if known locations don't exist we want to load only from absolute paths
+        if (!ChDirEnv("RIIIBOOKS"))             // try `RIIIBOOKS` env var first (26/08/17: linux only)
+            if (!ChDir(_BOOKSPATH)) return;     // next built-in path
+
     bookFile = fopen(bookName, "rb");
 
     if (bookFile == NULL) return;

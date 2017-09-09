@@ -582,9 +582,10 @@ void SetPieceValue(int pc, int val, int slot) {
 void ReadPersonality(const char *fileName) {
 
     FILE *personalityFile = NULL;
-    if (ChDirEnv("RIIIPERSONALITIES")       // try `RIIIPERSONALITIES` env var first (26/08/17: linux only)
-        || ChDir(_PERSONALITIESPATH))       // then built-in path
-            personalityFile = fopen(fileName, "r");
+    if (isabsolute(fileName)                    // if known locations don't exist we want to load only from absolute paths
+        || ChDirEnv("RIIIPERSONALITIES")        // try `RIIIPERSONALITIES` env var first (26/08/17: linux only)
+            || ChDir(_PERSONALITIESPATH))       // next built-in path
+                personalityFile = fopen(fileName, "r");
 
     printf("info string reading personality '%s' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 
