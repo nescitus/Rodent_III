@@ -64,6 +64,8 @@ echo PGO = $PGO
 echo BGN = $BGN
 echo DBG = $DBG
 
+rm -f src/combined.cpp
+
 cat src/*.cpp > src/combined.cpp
 
 if [[ "$BGN" == "true" ]]; then
