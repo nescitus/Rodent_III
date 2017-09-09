@@ -30,12 +30,6 @@
 
 #include "magicmoves.h"
 
-#ifdef _MSC_VER
-//  #pragma message("MSC compatible compiler detected -- turning off warning 4312, 4146")
-    #pragma warning( disable : 4312 )
-    #pragma warning( disable : 4146 )
-#endif
-
 const unsigned int magicmoves_r_shift[64] = {
     52, 53, 53, 53, 53, 53, 53, 52,
     53, 54, 54, 54, 54, 54, 54, 53,
@@ -316,6 +310,7 @@ void initmagicmoves() {
         int numsquares = 0;
         U64 temp = magicmoves_b_mask[i];
         while (temp) {
+            #pragma warning( suppress : 4146 )
             U64 bit = temp & -temp;
             squares[numsquares++] = initmagicmoves_bitpos64_database[(bit * C64(0x07EDD5E59A4E28C2)) >> 58];
             temp ^= bit;
@@ -330,6 +325,7 @@ void initmagicmoves() {
         int numsquares = 0;
         U64 temp = magicmoves_r_mask[i];
         while (temp) {
+            #pragma warning( suppress : 4146 )
             U64 bit = temp & -temp;
             squares[numsquares++] = initmagicmoves_bitpos64_database[(bit * C64(0x07EDD5E59A4E28C2)) >> 58];
             temp ^= bit;

@@ -26,6 +26,9 @@ If not, see <http://www.gnu.org/licenses/>.
     #error Rodent requires C++11 compatible compiler.
 #endif
 
+#pragma warning( disable : 4577 )
+#pragma warning( disable : 4530 )
+
 // catching memory leaks using MS Visual Studio
 // https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library
 #if defined(_MSC_VER) && !defined(NDEBUG)

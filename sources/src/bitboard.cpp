@@ -77,6 +77,7 @@ void cBitBoard::Init() {
 
 U64 cBitBoard::GetBetween(int sq1, int sq2) {
 
+    #pragma warning( suppress : 4146 )
     const U64 m1 = C64(-1);
     const U64 a2a7 = C64(0x0001010101010100);
     const U64 b2g7 = C64(0x0040201008040200);
@@ -90,6 +91,7 @@ U64 cBitBoard::GetBetween(int sq1, int sq2) {
     line += 2 * (((rank & 7) - 1) >> 58); /* b1g1 if same rank */
     line += (((rank - file) & 15) - 1) & b2g7; /* b2g7 if same diagonal */
     line += (((rank + file) & 15) - 1) & h1b7; /* h1b7 if same antidiag */
+    #pragma warning( suppress : 4146 )
     line *= btwn & -btwn; /* mul acts like shift by smaller square */
     return line & btwn;   /* return the bits on that line in-between */
 }
