@@ -21,39 +21,10 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void ClearPosition(POS *p) {
 
-    // for (int sd = 0; sd < 2; sd++) {
-        // p->cl_bb[sd] = 0;
-        // p->mg_sc[sd] = 0;
-        // p->eg_sc[sd] = 0;
-        // p->king_sq[sd] = NO_SQ;
-    // }
+    *p = {0};
 
-    // for (int pc = 0; pc < 6; pc++) {
-        // p->tp_bb[pc] = 0ULL;
-        // p->cnt[WC][pc] = 0;
-        // p->cnt[BC][pc] = 0;
-    // }
-
-    // for (int sq = 0; sq < 64; sq++)
-        // p->pc[sq] = NO_PC;
-
-    // for (int i = 0; i < 256; i++)
-        // p->rep_list[i] = 0;
-
-    // p->side = WC;
-    // p->ep_sq = NO_SQ;
-    // p->c_flags = 0;
-    // p->rev_moves = 0;
-    // p->head = 0;
-    // p->phase = 0;
-    // p->hash_key = 0;
-    // p->pawn_key = 0;
-    // p->phase = 0;
-
-    memset(p, 0, sizeof(*p));
-
-    for (int sd = 0; sd < 2; sd++)
-        p->king_sq[sd] = NO_SQ;
+    p->king_sq[WC] = NO_SQ;
+    p->king_sq[BC] = NO_SQ;
 
     for (int sq = 0; sq < 64; sq++)
         p->pc[sq] = NO_PC;
