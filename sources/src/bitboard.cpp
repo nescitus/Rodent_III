@@ -204,7 +204,7 @@ U64 cBitBoard::GetFrontSpan(U64 bb, int sd) {
 U64 cBitBoard::ShiftFwd(U64 bb, int sd) {
 
     if (sd == WC) return ShiftNorth(bb);
-    return ShiftSouth(bb);
+    else          return ShiftSouth(bb);
 }
 
 U64 cBitBoard::ShiftSideways(U64 bb) {

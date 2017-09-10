@@ -84,6 +84,11 @@ int GetMS() {
 #endif
 }
 
+int random30bit(int n) {
+
+    return ((rand() << 15) ^ rand()) % n;
+}
+
 U64 Random64() {
 
     static U64 next = 1;

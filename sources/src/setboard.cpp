@@ -64,41 +64,40 @@ void ClearPosition(POS *p) {
 
 void SetPosition(POS *p, const char *epd) {
 
-    int pc;
-    static const char pc_char[13] = "PpNnBbRrQqKk";
+    static const char pc_char[] = "PpNnBbRrQqKk";
 
     ClearPosition(p);
     Glob.moves_from_start = 0;
 
     for (int i = 56; i >= 0; i -= 8) {
-        int j = 0;
+        int j = 0, pc_loop;
         while (j < 8) {
             if (*epd >= '1' && *epd <= '8')
-                for (pc = 0; pc < *epd - '0'; pc++) {
+                for (pc_loop = 0; pc_loop < *epd - '0'; pc_loop++) {
                     p->pc[i + j] = NO_PC;
                     j++;
                 }
             else {
-                for (pc = 0; pc_char[pc] && pc_char[pc] != *epd; pc++)
+                for (pc_loop = 0; pc_char[pc_loop] && pc_char[pc_loop] != *epd; pc_loop++)
                     ;
 
-                if ( !pc_char[pc] ) {
+                if ( !pc_char[pc_loop] ) {
                     printf("info string FEN parsing error\n");
                     SetPosition(p, START_POS);
                     return;
                 }
 
-                p->pc[i + j] = pc;
-                p->cl_bb[Cl(pc)] ^= SqBb(i + j);
-                p->tp_bb[Tp(pc)] ^= SqBb(i + j);
+                p->pc[i + j] = pc_loop;
+                p->cl_bb[Cl(pc_loop)] ^= SqBb(i + j);
+                p->tp_bb[Tp(pc_loop)] ^= SqBb(i + j);
 
-                if (Tp(pc) == K)
-                    p->king_sq[Cl(pc)] = i + j;
+                if (Tp(pc_loop) == K)
+                    p->king_sq[Cl(pc_loop)] = i + j;
 
-                p->mg_sc[Cl(pc)] += Par.mg_pst[Cl(pc)][Tp(pc)][i + j];
-                p->eg_sc[Cl(pc)] += Par.eg_pst[Cl(pc)][Tp(pc)][i + j];
-                p->phase += ph_value[Tp(pc)];
-                p->cnt[Cl(pc)][Tp(pc)]++;
+                p->mg_sc[Cl(pc_loop)] += Par.mg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
+                p->eg_sc[Cl(pc_loop)] += Par.eg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
+                p->phase += ph_value[Tp(pc_loop)];
+                p->cnt[Cl(pc_loop)][Tp(pc_loop)]++;
                 j++;
             }
             epd++;
