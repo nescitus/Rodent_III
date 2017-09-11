@@ -376,7 +376,6 @@ class POS {
     int DrawScore();
     bool Legal(int move);
 
-    void ParseGo(const char *ptr);
     void ParseMoves(const char *ptr);
     void ParsePosition(const char *ptr);
 
@@ -838,6 +837,7 @@ int GetMS();
 U64 GetNps(int elapsed);
 bool InputAvailable();
 void MoveToStr(int move, char *move_str);
+void ParseGo(POS *p, const char *ptr);
 void ParseSetoption(const char *);
 const char *ParseToken(const char *, char *);
 void PrintMove(int move);

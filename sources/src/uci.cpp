@@ -88,7 +88,7 @@ void UciLoop() {
         } else if (strcmp(token, "position") == 0)   {
             p->ParsePosition(ptr);
         } else if (strcmp(token, "go") == 0)         {
-            p->ParseGo(ptr);
+            ParseGo(p, ptr);
         } else if (strcmp(token, "print") == 0)      {
             p->PrintBoard();
         } else if (strcmp(token, "step") == 0)       {
@@ -223,7 +223,7 @@ void SetMoveTime(int base, int inc, int movestogo) {
     }
 }
 
-void POS::ParseGo(const char *ptr) {
+void ParseGo(POS *p, const char *ptr) {
 
     char token[80], bestmove_str[6];
     int wtime, btime, winc, binc, movestogo; bool strict_time;
@@ -280,8 +280,8 @@ void POS::ParseGo(const char *ptr) {
     // set move time
 
     if (!strict_time) {
-        int base = side == WC ? wtime : btime;
-        int inc = side == WC ? winc : binc;
+        int base = p->side == WC ? wtime : btime;
+        int inc = p->side == WC ? winc : binc;
         SetMoveTime(base, inc, movestogo);
     }
 
@@ -294,7 +294,7 @@ void POS::ParseGo(const char *ptr) {
     Glob.depth_reached = 0;
     if (Glob.should_clear)
         Glob.ClearData(); // options has been changed and old tt scores are no longer reliable
-    Par.InitAsymmetric(this);
+    Par.InitAsymmetric(p);
 
     // get book move
 
@@ -302,9 +302,9 @@ void POS::ParseGo(const char *ptr) {
 
         printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
 
-        int pvb = GuideBook.GetPolyglotMove(this, Par.verbose_book);
-        if (!pvb) pvb = MainBook.GetPolyglotMove(this, Par.verbose_book);
-        if (!pvb) pvb = InternalBook.MoveFromInternal(this, Par.verbose_book);
+        int pvb = GuideBook.GetPolyglotMove(p, Par.verbose_book);
+        if (!pvb) pvb = MainBook.GetPolyglotMove(p, Par.verbose_book);
+        if (!pvb) pvb = InternalBook.MoveFromInternal(p, Par.verbose_book);
 
         if (pvb) {
             MoveToStr(pvb, bestmove_str);
@@ -323,7 +323,7 @@ void POS::ParseGo(const char *ptr) {
     Glob.goodbye = false;
 
     for (auto& engine: Engines) // dp_completed cleared in StartThinkThread();
-        engine.StartThinkThread(this);
+        engine.StartThinkThread(p);
 
     std::thread timer([] {
         while (Glob.abort_search == false) {
