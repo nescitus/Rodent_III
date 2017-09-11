@@ -319,6 +319,8 @@ class POS {
     void InitHashKey();
     void InitPawnKey();
 
+    bool CanDiscoverCheck(U64 bb_checkers, int op, int from) const; // for GenerateSpecial()
+
   public:
     U64 cl_bb[2];
     U64 tp_bb[6];
@@ -373,22 +375,21 @@ class POS {
 
     void SetPosition(const char *epd);
 
-    int DrawScore();
-    bool Legal(int move);
+    int DrawScore() const;
+    bool Legal(int move) const;
 
     void ParseMoves(const char *ptr);
     void ParsePosition(const char *ptr);
 
-    void PrintBoard();
+    void PrintBoard() const;
 
-    int *GenerateCaptures(int *list);
-    int *GenerateQuiet(int *list);
-    int *GenerateSpecial(int *list);
-    bool CanDiscoverCheck(U64 bb_checkers, int op, int from); // for GenerateSpecial()
+    int *GenerateCaptures(int *list) const;
+    int *GenerateQuiet(int *list) const;
+    int *GenerateSpecial(int *list) const;
 
     int Swap(int from, int to);
 
-    int StrToMove(char *move_str);
+    int StrToMove(char *move_str) const;
 };
 
 struct MOVES {

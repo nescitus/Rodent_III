@@ -149,7 +149,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.BishAttacks(p->OccBb(), sq);          // get control bitboard
+        bb_control = BB.BishAttacks(p->OccBb(), sq);        // get control bitboard
         center_control += BB.PopCnt(bb_control & bb_center);
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd]  |= bb_control;
@@ -213,7 +213,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.RookAttacks(p->OccBb(), sq);          // get control bitboard
+        bb_control = BB.RookAttacks(p->OccBb(), sq);        // get control bitboard
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd] |= bb_control;
 
@@ -231,7 +231,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             }
         }
 
-        bb_attack = BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);  // get king attack bitboard
+        bb_attack = BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);// get king attack bitboard
 
         if (bb_attack & bb_zone) {                                         // evaluate king attacks
             wood++;
@@ -295,12 +295,12 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.QueenAttacks(p->OccBb(), sq);         // get control bitboard
+        bb_control = BB.QueenAttacks(p->OccBb(), sq);       // get control bitboard
         e->all_att[sd] |= bb_control;                       // update attack map
         if (bb_control & q_checks) {                        // check threat bonus
             att += Par.values[Q_CHK];
 
-            bb_contact = bb_control & BB.KingAttacks(king_sq);// queen contact checks
+            bb_contact = bb_control & BB.KingAttacks(king_sq);  // queen contact checks
             while (bb_contact) {
                 int contactSq = BB.PopFirstBit(&bb_contact);    // find potential contact check square
                 if (p->Swap(sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate

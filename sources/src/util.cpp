@@ -157,7 +157,7 @@ void MoveToStr(int move, char *move_str) {
     }
 }
 
-int POS::StrToMove(char *move_str) {
+int POS::StrToMove(char *move_str) const {
 
     int from = Sq(move_str[0] - 'a', move_str[1] - '1');
     int to   = Sq(move_str[2] - 'a', move_str[3] - '1');

@@ -17,7 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-bool POS::Legal(int move) {
+bool POS::Legal(int move) const {
 
     int sd = side;
     int fsq = Fsq(move);

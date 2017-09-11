@@ -412,7 +412,7 @@ void cEngine::Bench(int depth) {
     printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
 }
 
-void POS::PrintBoard() {
+void POS::PrintBoard() const {
 
     const char *piece_name[] = { "P ", "p ", "N ", "n ", "B ", "b ", "R ", "r ", "Q ", "q ", "K ", "k ", ". " };
 

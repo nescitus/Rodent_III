@@ -17,7 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-int *POS::GenerateCaptures(int *list) {
+int *POS::GenerateCaptures(int *list) const {
 
     U64 bb_pieces, bb_moves;
     int from, to;
@@ -177,7 +177,7 @@ int *POS::GenerateCaptures(int *list) {
     return list;
 }
 
-int *POS::GenerateQuiet(int *list) {
+int *POS::GenerateQuiet(int *list) const {
 
     U64 bb_pieces, bb_moves;
     int sd, from, to;
@@ -281,7 +281,7 @@ int *POS::GenerateQuiet(int *list) {
     return list;
 }
 
-int *POS::GenerateSpecial(int *list) {
+int *POS::GenerateSpecial(int *list) const {
 
     U64 bb_pieces, bb_moves;
     int from, to;
@@ -410,7 +410,7 @@ int *POS::GenerateSpecial(int *list) {
     return list;
 }
 
-bool POS::CanDiscoverCheck(U64 bb_checkers, int op, int from) {
+bool POS::CanDiscoverCheck(U64 bb_checkers, int op, int from) const {
 
     while (bb_checkers) {
         int checker = BB.PopFirstBit(&bb_checkers);
