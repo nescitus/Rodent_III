@@ -372,6 +372,9 @@ class POS {
     void UndoMove(int move, UNDO *u);
 
     void SetPosition(const char *epd);
+
+    int DrawScore();
+    bool Legal(int move);
 };
 
 struct MOVES {
@@ -815,7 +818,6 @@ void AllocTrans(unsigned int mbsize);
 void BuildPv(int *dst, int *src, int move);
 void ClearTrans();
 void DisplayCurrmove(int move, int tried);
-int DrawScore(POS *p);
 void ExtractMove(int *pv);
 int *GenerateCaptures(POS *p, int *list);
 int *GenerateQuiet(POS *p, int *list);
@@ -824,7 +826,6 @@ bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for Generat
 int GetMS();
 U64 GetNps(int elapsed);
 bool InputAvailable();
-bool Legal(POS *p, int move);
 void MoveToStr(int move, char *move_str);
 void ParseGo(POS *p, const char *ptr);
 void ParseMoves(POS *p, const char *ptr);

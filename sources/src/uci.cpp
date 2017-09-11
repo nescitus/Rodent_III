@@ -137,7 +137,7 @@ void ParseMoves(POS *p, const char *ptr) {
         if (*token == '\0') break;
 
         const int move = StrToMove(p, token);
-        if (Legal(p, move)) {
+        if (p->Legal(move)) {
             p->DoMove(move, u);
             Glob.moves_from_start++;
         }

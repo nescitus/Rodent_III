@@ -193,7 +193,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     Slowdown();
     if (Glob.abort_search && root_depth > 1) return 0;
     if (ply) *pv = 0;
-    if (IsDraw(p) && ply) return DrawScore(p);
+    if (IsDraw(p) && ply) return p->DrawScore();
     move = 0;
 
     // MATE DISTANCE PRUNING
@@ -524,7 +524,7 @@ research:
     // RETURN CORRECT CHECKMATE/STALEMATE SCORE
 
     if (best == -INF)
-        return p->InCheck() ? -MATE + ply : DrawScore(p);
+        return p->InCheck() ? -MATE + ply : p->DrawScore();
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
@@ -643,8 +643,8 @@ void cEngine::Slowdown() {
 
 }
 
-int DrawScore(POS *p) {
+int POS::DrawScore() {
 
-    if (p->side == Par.prog_side) return -Par.draw_score;
-    else                          return  Par.draw_score;
+    if (side == Par.prog_side) return -Par.draw_score;
+    else                       return  Par.draw_score;
 }

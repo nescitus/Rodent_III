@@ -36,7 +36,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
     switch (m->phase) {
         case 0: // return transposition table move, if legal
             move = m->trans_move;
-            if (move && Legal(m->p, move)) {
+            if (move && m->p->Legal(move)) {
                 m->phase = 1;
                 *flag = MV_HASH;
                 return move;
@@ -69,7 +69,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
             move = m->killer1;
             if (move && move != m->trans_move
             && m->p->pc[Tsq(move)] == NO_PC
-            && Legal(m->p, move)) {
+            && m->p->Legal(move)) {
                 m->phase = 4;
                 *flag = MV_KILLER;
                 return move;
@@ -80,7 +80,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
             move = m->killer2;
             if (move && move != m->trans_move
             && m->p->pc[Tsq(move)] == NO_PC
-            && Legal(m->p, move)) {
+            && m->p->Legal(move)) {
                 m->phase = 5;
                 *flag = MV_KILLER;
                 return move;
@@ -93,7 +93,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
             &&  m->p->pc[Tsq(move)] == NO_PC
             &&  move != m->killer1
             &&  move != m->killer2
-            && Legal(m->p, move)) {
+            && m->p->Legal(move)) {
                 m->phase = 6;
                 *flag = MV_NORMAL;
                 return move;
@@ -139,7 +139,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
     switch (m->phase) {
         case 0: // return transposition table move, if legal
             move = m->trans_move;
-            if (move && Legal(m->p, move)) {
+            if (move && m->p->Legal(move)) {
                 m->phase = 1;
                 *flag = MV_HASH;
                 return move;
@@ -171,7 +171,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
             move = m->killer1;
             if (move && move != m->trans_move
             && m->p->pc[Tsq(move)] == NO_PC
-            && Legal(m->p, move)) {
+            && m->p->Legal(move)) {
                 m->phase = 4;
                 *flag = MV_KILLER;
                 return move;
@@ -181,7 +181,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         case 4: // second killer move
             move = m->killer2;
             if (move && move != m->trans_move
-            && m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
+            && m->p->pc[Tsq(move)] == NO_PC && m->p->Legal(move)) {
                 m->phase = 5;
                 *flag = MV_KILLER;
                 return move;

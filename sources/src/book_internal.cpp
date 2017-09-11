@@ -95,7 +95,7 @@ bool sInternalBook::LineToInternal(const char *ptr, int excludedColor) {
 
         move = StrToMove(p, token);
 
-        if (Legal(p, move)) {
+        if (p->Legal(move)) {
             // apply move frequency modifiers
             freq = 1;
             if (strchr(token, '?'))  freq = -100;
@@ -157,7 +157,7 @@ int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
     int vals_acc = 0;
 
     for (int i = left; i < n_of_records && internal_book[i].hash == p->hash_key; i++) {
-        if (Legal(p, internal_book[i].move)) {
+        if (p->Legal(internal_book[i].move)) {
 
             const int freq_with_correction = internal_book[i].freq + min_freq;
 
