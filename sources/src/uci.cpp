@@ -86,15 +86,15 @@ void UciLoop() {
         } else if (strcmp(token, "so") == 0)         {
             ParseSetoption(ptr);
         } else if (strcmp(token, "position") == 0)   {
-            ParsePosition(p, ptr);
+            p->ParsePosition(ptr);
         } else if (strcmp(token, "go") == 0)         {
-            ParseGo(p, ptr);
+            p->ParseGo(ptr);
         } else if (strcmp(token, "print") == 0)      {
             PrintBoard(p);
         } else if (strcmp(token, "step") == 0)       {
-            ParseMoves(p, ptr);
+            p->ParseMoves(ptr);
         } else if (strcmp(token, "stepp") == 0)      {
-            ParseMoves(p, ptr);
+            p->ParseMoves(ptr);
             PrintBoard(p);
 #ifdef USE_TUNING
         } else if (strcmp(token, "tune") == 0)       {
@@ -121,7 +121,7 @@ void UciLoop() {
     }
 }
 
-void ParseMoves(POS *p, const char *ptr) {
+void POS::ParseMoves(const char *ptr) {
 
     char token[180];
     UNDO u[1];
@@ -136,20 +136,20 @@ void ParseMoves(POS *p, const char *ptr) {
 
         if (*token == '\0') break;
 
-        const int move = StrToMove(p, token);
-        if (p->Legal(move)) {
-            p->DoMove(move, u);
+        const int move = StrToMove(this, token);
+        if (Legal(move)) {
+            DoMove(move, u);
             Glob.moves_from_start++;
         }
         else printf("info string illegal move\n");
 
         // We won't be taking back moves beyond this point:
 
-        if (p->rev_moves == 0) p->head = 0;
+        if (rev_moves == 0) head = 0;
     }
 }
 
-void ParsePosition(POS *p, const char *ptr) {
+void POS::ParsePosition(const char *ptr) {
 
     char token[80], fen[80];
 
@@ -163,13 +163,13 @@ void ParsePosition(POS *p, const char *ptr) {
             strcat(fen, token);
             strcat(fen, " ");
         }
-        p->SetPosition(fen);
+        SetPosition(fen);
     } else {
         ptr = ParseToken(ptr, token);
-        p->SetPosition(START_POS);
+        SetPosition(START_POS);
     }
     if (strcmp(token, "moves") == 0)
-        ParseMoves(p, ptr);
+        ParseMoves(ptr);
 }
 
 int BulletCorrection(int time) {
@@ -223,7 +223,7 @@ void SetMoveTime(int base, int inc, int movestogo) {
     }
 }
 
-void ParseGo(POS *p, const char *ptr) {
+void POS::ParseGo(const char *ptr) {
 
     char token[80], bestmove_str[6];
     int wtime, btime, winc, binc, movestogo; bool strict_time;
@@ -280,8 +280,8 @@ void ParseGo(POS *p, const char *ptr) {
     // set move time
 
     if (!strict_time) {
-        int base = p->side == WC ? wtime : btime;
-        int inc = p->side == WC ? winc : binc;
+        int base = side == WC ? wtime : btime;
+        int inc = side == WC ? winc : binc;
         SetMoveTime(base, inc, movestogo);
     }
 
@@ -294,7 +294,7 @@ void ParseGo(POS *p, const char *ptr) {
     Glob.depth_reached = 0;
     if (Glob.should_clear)
         Glob.ClearData(); // options has been changed and old tt scores are no longer reliable
-    Par.InitAsymmetric(p);
+    Par.InitAsymmetric(this);
 
     // get book move
 
@@ -302,9 +302,9 @@ void ParseGo(POS *p, const char *ptr) {
 
         printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
 
-        int pvb = GuideBook.GetPolyglotMove(p, Par.verbose_book);
-        if (!pvb) pvb = MainBook.GetPolyglotMove(p, Par.verbose_book);
-        if (!pvb) pvb = InternalBook.MoveFromInternal(p, Par.verbose_book);
+        int pvb = GuideBook.GetPolyglotMove(this, Par.verbose_book);
+        if (!pvb) pvb = MainBook.GetPolyglotMove(this, Par.verbose_book);
+        if (!pvb) pvb = InternalBook.MoveFromInternal(this, Par.verbose_book);
 
         if (pvb) {
             MoveToStr(pvb, bestmove_str);
@@ -323,7 +323,7 @@ void ParseGo(POS *p, const char *ptr) {
     Glob.goodbye = false;
 
     for (auto& engine: Engines) // dp_completed cleared in StartThinkThread();
-        engine.StartThinkThread(p);
+        engine.StartThinkThread(this);
 
     std::thread timer([] {
         while (Glob.abort_search == false) {
