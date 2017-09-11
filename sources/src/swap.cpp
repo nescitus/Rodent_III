@@ -58,6 +58,7 @@ int Swap(POS *p, int from, int to) {
 
         // eliminate it from consideration
 
+        #pragma warning( suppress : 4146 )
         occ ^= type_bb & -type_bb;
 
         // has new attacker been discovered?

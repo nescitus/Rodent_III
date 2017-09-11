@@ -95,11 +95,11 @@ int main() {
     PrintVersion();
 
 #if defined(_WIN32) || defined(_WIN64)
-    printf("info string opening books path is '%ls'\n", _BOOKSPATH);
-    printf("info string personalities path is '%ls'\n", _PERSONALITIESPATH);
+    printf("info string opening books path is '%ls' (%s)\n", _BOOKSPATH, ChDir(_BOOKSPATH) ? "exists" : "doesn't exist");
+    printf("info string personalities path is '%ls' (%s)\n", _PERSONALITIESPATH, ChDir(_PERSONALITIESPATH) ? "exists" : "doesn't exist");
 #else
-    printf("info string opening books path is '%s'\n", _BOOKSPATH);
-    printf("info string personalities path is '%s'\n", _PERSONALITIESPATH);
+    printf("info string opening books path is '%s' (%s)\n", _BOOKSPATH, ChDir(_BOOKSPATH) ? "exists" : "doesn't exist");
+    printf("info string personalities path is '%s' (%s)\n", _PERSONALITIESPATH, ChDir(_PERSONALITIESPATH) ? "exists" : "doesn't exist");
 #endif
 
     PrintOverrides(); // print books and pers paths overrides (26/08/17: linux only)

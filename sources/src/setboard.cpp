@@ -21,39 +21,10 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void ClearPosition(POS *p) {
 
-    // for (int sd = 0; sd < 2; sd++) {
-        // p->cl_bb[sd] = 0;
-        // p->mg_sc[sd] = 0;
-        // p->eg_sc[sd] = 0;
-        // p->king_sq[sd] = NO_SQ;
-    // }
+    *p = {0};
 
-    // for (int pc = 0; pc < 6; pc++) {
-        // p->tp_bb[pc] = 0ULL;
-        // p->cnt[WC][pc] = 0;
-        // p->cnt[BC][pc] = 0;
-    // }
-
-    // for (int sq = 0; sq < 64; sq++)
-        // p->pc[sq] = NO_PC;
-
-    // for (int i = 0; i < 256; i++)
-        // p->rep_list[i] = 0;
-
-    // p->side = WC;
-    // p->ep_sq = NO_SQ;
-    // p->c_flags = 0;
-    // p->rev_moves = 0;
-    // p->head = 0;
-    // p->phase = 0;
-    // p->hash_key = 0;
-    // p->pawn_key = 0;
-    // p->phase = 0;
-
-    memset(p, 0, sizeof(*p));
-
-    for (int sd = 0; sd < 2; sd++)
-        p->king_sq[sd] = NO_SQ;
+    p->king_sq[WC] = NO_SQ;
+    p->king_sq[BC] = NO_SQ;
 
     for (int sq = 0; sq < 64; sq++)
         p->pc[sq] = NO_PC;
@@ -64,41 +35,40 @@ void ClearPosition(POS *p) {
 
 void SetPosition(POS *p, const char *epd) {
 
-    int pc;
-    static const char pc_char[13] = "PpNnBbRrQqKk";
+    static const char pc_char[] = "PpNnBbRrQqKk";
 
     ClearPosition(p);
     Glob.moves_from_start = 0;
 
     for (int i = 56; i >= 0; i -= 8) {
-        int j = 0;
+        int j = 0, pc_loop;
         while (j < 8) {
             if (*epd >= '1' && *epd <= '8')
-                for (pc = 0; pc < *epd - '0'; pc++) {
+                for (pc_loop = 0; pc_loop < *epd - '0'; pc_loop++) {
                     p->pc[i + j] = NO_PC;
                     j++;
                 }
             else {
-                for (pc = 0; pc_char[pc] && pc_char[pc] != *epd; pc++)
+                for (pc_loop = 0; pc_char[pc_loop] && pc_char[pc_loop] != *epd; pc_loop++)
                     ;
 
-                if ( !pc_char[pc] ) {
+                if ( !pc_char[pc_loop] ) {
                     printf("info string FEN parsing error\n");
                     SetPosition(p, START_POS);
                     return;
                 }
 
-                p->pc[i + j] = pc;
-                p->cl_bb[Cl(pc)] ^= SqBb(i + j);
-                p->tp_bb[Tp(pc)] ^= SqBb(i + j);
+                p->pc[i + j] = pc_loop;
+                p->cl_bb[Cl(pc_loop)] ^= SqBb(i + j);
+                p->tp_bb[Tp(pc_loop)] ^= SqBb(i + j);
 
-                if (Tp(pc) == K)
-                    p->king_sq[Cl(pc)] = i + j;
+                if (Tp(pc_loop) == K)
+                    p->king_sq[Cl(pc_loop)] = i + j;
 
-                p->mg_sc[Cl(pc)] += Par.mg_pst[Cl(pc)][Tp(pc)][i + j];
-                p->eg_sc[Cl(pc)] += Par.eg_pst[Cl(pc)][Tp(pc)][i + j];
-                p->phase += ph_value[Tp(pc)];
-                p->cnt[Cl(pc)][Tp(pc)]++;
+                p->mg_sc[Cl(pc_loop)] += Par.mg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
+                p->eg_sc[Cl(pc_loop)] += Par.eg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
+                p->phase += ph_value[Tp(pc_loop)];
+                p->cnt[Cl(pc_loop)][Tp(pc_loop)]++;
                 j++;
             }
             epd++;

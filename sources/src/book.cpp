@@ -334,8 +334,10 @@ void sBook::OpenPolyglot() {
 
     ClosePolyglot();
 
-    if (!ChDirEnv("RIIIBOOKS"))             // try `RIIIBOOKS` env var first (26/08/17: linux only)
-        if (!ChDir(_BOOKSPATH)) return;     // then built-in path
+    if (!isabsolute(bookName))                  // if known locations don't exist we want to load only from absolute paths
+        if (!ChDirEnv("RIIIBOOKS"))             // try `RIIIBOOKS` env var first (26/08/17: linux only)
+            if (!ChDir(_BOOKSPATH)) return;     // next built-in path
+
     bookFile = fopen(bookName, "rb");
 
     if (bookFile == NULL) return;
@@ -362,11 +364,6 @@ void sBook::OpenPolyglot() {
         }
     }
 #endif
-}
-
-int big_random(int n) {
-
-    return ((rand() << 15) ^ rand()) % n;
 }
 
 int sBook::GetPolyglotMove(POS *p, bool print_output) {
@@ -428,7 +425,7 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
         // shall we pick this move?
         if (!IsInfrequent(values[i], max_weight)) {
             vals_acc += values[i];
-            if (big_random(vals_acc) < values[i]) best_move = moves[i];
+            if (random30bit(vals_acc) < values[i]) best_move = moves[i];
         }
     }
 

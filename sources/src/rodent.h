@@ -26,6 +26,9 @@ If not, see <http://www.gnu.org/licenses/>.
     #error Rodent requires C++11 compatible compiler.
 #endif
 
+#pragma warning( disable : 4577 )
+#pragma warning( disable : 4530 )
+
 // catching memory leaks using MS Visual Studio
 // https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library
 #if defined(_MSC_VER) && !defined(NDEBUG)
@@ -68,15 +71,15 @@ using U64 = uint64_t;
     #undef USE_THREADS
 #endif
 
-enum eColor {WC, BC, NO_CL};
-enum ePieceType {P, N, B, R, Q, K, NO_TP};
-enum ePiece {WP, BP, WN, BN, WB, BBi, WR, BR, WQ, BQ, WK, BK, NO_PC};
-enum eFile {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H};
-enum eRank {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8};
+enum eColor      { WC, BC, NO_CL };
+enum ePieceType  { P, N, B, R, Q, K, NO_TP };
+enum ePiece      { WP, BP, WN, BN, WB, BBi, WR, BR, WQ, BQ, WK, BK, NO_PC };
+enum eFile       { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
+enum eRank       { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
 enum eCastleFlag { W_KS = 1, W_QS = 2, B_KS = 4, B_QS = 8 };
-enum eMoveType {NORMAL, CASTLE, EP_CAP, EP_SET, N_PROM, B_PROM, R_PROM, Q_PROM};
-enum eMoveFlag { MV_NORMAL, MV_HASH, MV_CAPTURE, MV_REFUTATION, MV_KILLER, MV_BADCAPT };
-enum eHashType {NONE, UPPER, LOWER, EXACT};
+enum eMoveType   { NORMAL, CASTLE, EP_CAP, EP_SET, N_PROM, B_PROM, R_PROM, Q_PROM };
+enum eMoveFlag   { MV_NORMAL, MV_HASH, MV_CAPTURE, MV_REFUTATION, MV_KILLER, MV_BADCAPT };
+enum eHashType   { NONE, UPPER, LOWER, EXACT };
 enum eSquare {
     A1, B1, C1, D1, E1, F1, G1, H1,
     A2, B2, C2, D2, E2, F2, G2, H2,
@@ -140,7 +143,7 @@ constexpr U64 SIDE_RANDOM = ~UINT64_C(0);
 
 constexpr char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
-#define SqBb(x)         ((U64)1 << (x))
+#define SqBb(x)         (UINT64_C(1) << (x))
 
 #define Cl(x)           ((x) & 1)
 #define Tp(x)           ((x) >> 1)
@@ -150,11 +153,8 @@ constexpr char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq
 #define Rank(x)         ((x) >> 3)
 #define Sq(x, y)        (((y) << 3) | (x))
 
-//#define Abs(x)          ((x) > 0 ? (x) : -(x))
-template<typename T> T Abs(const T& x) { return x > 0 ? x : -x; }
-//#define Max(x, y)       ((x) > (y) ? (x) : (y))
+template<typename T> constexpr T Abs(const T& x) { return x > 0 ? x : -x; }
 template<typename T> constexpr const T& Max(const T& x, const T& y) { return x > y ? x : y; }
-//#define Min(x, y)       ((x) < (y) ? (x) : (y))
 template<typename T> constexpr const T& Min(const T& x, const T& y) { return x < y ? x : y; }
 
 #define Fsq(x)          ((x) & 63)
@@ -219,7 +219,7 @@ template<typename T> constexpr const T& Min(const T& x, const T& y) { return x <
 
     #elif defined(__GNUC__)
 
-        static inline int FirstOne(U64 x) {
+        constexpr int FirstOne(const U64& x) {
 
         // workaround for GCC's inability to inline __builtin_ctzll() on x32 (it calls `__ctzdi2` runtime function instead)
         #if !defined(__amd64__) && defined(__i386__) && !defined(__clang__)
@@ -258,9 +258,7 @@ constexpr U64 bbNotH = ~FILE_H_BB; // 0x7f7f7f7f7f7f7f7f
 #define ShiftSW(x)      (((x) & bbNotA)>>9)
 #define ShiftSE(x)      (((x) & bbNotH)>>7)
 
-//#define JustOne(bb)     ((bb) && !((bb) & ((bb)-1)))
-//#define MoreThanOne(bb) ((bb) & ((bb) - 1))
-template<typename T> bool MoreThanOne(const T& bb) { return bb & (bb - 1); }
+constexpr bool MoreThanOne(const U64& bb) { return bb & (bb - 1); }
 
 class cBitBoard {
   private:
@@ -512,11 +510,11 @@ class cParam {
     NOINLINE void InitTables();
     NOINLINE void DefaultWeights();
     NOINLINE void InitAsymmetric(POS *p);
-    NOINLINE void SetSpeed(int elo_in);
-    NOINLINE int EloToSpeed(int elo_in);
-    NOINLINE int EloToBlur(int elo_in);
-    NOINLINE int EloToBookDepth(int elo_in);
-    NOINLINE void SetVal(int slot, int val);
+    void SetSpeed(int elo_in);
+    int EloToSpeed(int elo_in);
+    int EloToBlur(int elo_in);
+    int EloToBookDepth(int elo_in);
+    void SetVal(int slot, int val);
 };
 
 extern cParam Par;
@@ -565,13 +563,13 @@ extern cMask Mask;
 #if defined(USE_THREADS) && defined(NEW_THREADS)
     #include <atomic>
 
-    typedef std::atomic<bool>     glob_bool;
-    typedef std::atomic<int>      glob_int;
-    typedef std::atomic<uint64_t> glob_U64;
+    using glob_bool = std::atomic<bool>;
+    using glob_int  = std::atomic<int>;
+    using glob_U64  = std::atomic<uint64_t>;
 #else
-    typedef bool glob_bool;
-    typedef int  glob_int;
-    typedef U64  glob_U64;
+    using glob_bool = bool;
+    using glob_int  = int;
+    using glob_U64  = uint64_t;
 #endif
 
 class cGlobals {
@@ -817,7 +815,7 @@ void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
 void UciLoop();
 void WasteTime(int miliseconds);
 void PrintBb(U64 bbTest);
-int big_random(int n);
+int random30bit(int n);
 
 extern const int tp_value[7];
 extern const int ph_value[7];
@@ -851,6 +849,8 @@ extern int tt_date;
     // change dir and return true on success
     #define ChDirEnv(dummy) false
     bool ChDir(const wchar_t *new_path);
+    // classify path
+    constexpr bool isabsolute(const char *path) { return path[0] != '\0' && path[1] == ':'; }
 #else
     #if defined(BOOKSPATH)
         constexpr char _BOOKSPATH[] = MAKESTR(BOOKSPATH) "";
@@ -866,6 +866,8 @@ extern int tt_date;
     // change dir and return true on success
     bool ChDirEnv(const char *env_name);
     bool ChDir(const char *new_path);
+    // classify path
+    constexpr bool isabsolute(const char *path) { return path[0] == '/'; }
 #endif
 
 #ifndef NDEBUG
