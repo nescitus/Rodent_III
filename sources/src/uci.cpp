@@ -90,12 +90,12 @@ void UciLoop() {
         } else if (strcmp(token, "go") == 0)         {
             p->ParseGo(ptr);
         } else if (strcmp(token, "print") == 0)      {
-            PrintBoard(p);
+            p->PrintBoard();
         } else if (strcmp(token, "step") == 0)       {
             p->ParseMoves(ptr);
         } else if (strcmp(token, "stepp") == 0)      {
             p->ParseMoves(ptr);
-            PrintBoard(p);
+            p->PrintBoard();
 #ifdef USE_TUNING
         } else if (strcmp(token, "tune") == 0)       {
             Glob.is_tuning = true;
@@ -412,15 +412,15 @@ void cEngine::Bench(int depth) {
     printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
 }
 
-void PrintBoard(POS *p) {
+void POS::PrintBoard() {
 
     const char *piece_name[] = { "P ", "p ", "N ", "n ", "B ", "b ", "R ", "r ", "Q ", "q ", "K ", "k ", ". " };
 
     printf("--------------------------------------------\n");
     for (int sq = 0; sq < 64; sq++) {
-        printf("%s", piece_name[p->pc[sq ^ (BC * 56)]]);
+        printf("%s", piece_name[pc[sq ^ (BC * 56)]]);
         if ((sq + 1) % 8 == 0) printf(" %d\n", 9 - ((sq + 1) / 8));
     }
 
-    printf("\na b c d e f g h\n%s\n--------------------------------------------\n", p->side == WC ? "(w)" : "(b)");
+    printf("\na b c d e f g h\n%s\n--------------------------------------------\n", side == WC ? "(w)" : "(b)");
 }

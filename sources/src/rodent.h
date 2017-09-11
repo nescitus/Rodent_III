@@ -380,6 +380,7 @@ class POS {
     void ParseMoves(const char *ptr);
     void ParsePosition(const char *ptr);
 
+    void PrintBoard();
 };
 
 struct MOVES {
@@ -834,7 +835,6 @@ bool InputAvailable();
 void MoveToStr(int move, char *move_str);
 void ParseSetoption(const char *);
 const char *ParseToken(const char *, char *);
-void PrintBoard(POS *p);
 void PrintMove(int move);
 void PrintSingleOption(int ind);
 void PrintUciOptions();
