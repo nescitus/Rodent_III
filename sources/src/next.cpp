@@ -281,7 +281,7 @@ int cEngine::BadCapture(POS *p, int move) {
     if (MoveType(move) == EP_CAP)
         return 0;
 
-    return Swap(p, fsq, tsq) < 0;
+    return p->Swap(fsq, tsq) < 0;
 }
 
 int cEngine::MvvLva(POS *p, int move) {

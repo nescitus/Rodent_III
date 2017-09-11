@@ -17,29 +17,29 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-int Swap(POS *p, int from, int to) {
+int POS::Swap(int from, int to) {
 
     int side, ply, type, score[32];
     U64 attackers, occ, type_bb;
 
-    attackers = p->AttacksTo(to);
-    occ = p->OccBb();
-    score[0] = tp_value[p->TpOnSq(to)];
-    type = p->TpOnSq(from);
+    attackers = AttacksTo(to);
+    occ = OccBb();
+    score[0] = tp_value[TpOnSq(to)];
+    type = TpOnSq(from);
     occ ^= SqBb(from);
 
     // find all attackers
 
-    attackers |= (BB.BishAttacks(occ, to) & (p->tp_bb[B] | p->tp_bb[Q])) |
-                 (BB.RookAttacks(occ, to) & (p->tp_bb[R] | p->tp_bb[Q]));
+    attackers |= (BB.BishAttacks(occ, to) & (tp_bb[B] | tp_bb[Q])) |
+                 (BB.RookAttacks(occ, to) & (tp_bb[R] | tp_bb[Q]));
     attackers &= occ;
 
-    side = ((SqBb(from) & p->cl_bb[BC]) == 0); // so that we can call Swap() out of turn
+    side = ((SqBb(from) & cl_bb[BC]) == 0); // so that we can call Swap() out of turn
     ply = 1;
 
     // iterate through attackers
 
-    while (attackers & p->cl_bb[side]) {
+    while (attackers & cl_bb[side]) {
 
         // break on king capture
 
@@ -53,7 +53,7 @@ int Swap(POS *p, int from, int to) {
         // find next weakest attacker
 
         for (type = P; type <= K; type++)
-            if ((type_bb = p->PcBb(side, type) & attackers))
+            if ((type_bb = PcBb(side, type) & attackers))
                 break;
 
         // eliminate it from consideration
@@ -63,8 +63,8 @@ int Swap(POS *p, int from, int to) {
 
         // has new attacker been discovered?
 
-        attackers |= (BB.BishAttacks(occ, to) & (p->tp_bb[B] | p->tp_bb[Q])) |
-                     (BB.RookAttacks(occ, to) & (p->tp_bb[R] | p->tp_bb[Q]));
+        attackers |= (BB.BishAttacks(occ, to) & (tp_bb[B] | tp_bb[Q])) |
+                     (BB.RookAttacks(occ, to) & (tp_bb[R] | tp_bb[Q]));
         attackers &= occ;
 
         side ^= 1;

@@ -224,7 +224,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
             while (bb_contact) {
                 int contactSq = BB.PopFirstBit(&bb_contact);    // find a potential contact check
-                if (Swap(p, sq, contactSq) >= 0) {              // rook exchanges are also accepted
+                if (p->Swap(sq, contactSq) >= 0) {              // rook exchanges are also accepted
                     att += Par.values[R_CONTACT];
                     break;
                 }
@@ -303,7 +303,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             bb_contact = bb_control & BB.KingAttacks(king_sq);// queen contact checks
             while (bb_contact) {
                 int contactSq = BB.PopFirstBit(&bb_contact);    // find potential contact check square
-                if (Swap(p, sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate
+                if (p->Swap(sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate
                     att += Par.values[Q_CONTACT];
                     break;
                 }
