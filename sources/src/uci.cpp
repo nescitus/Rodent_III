@@ -59,7 +59,7 @@ void UciLoop() {
 
     setbuf(stdin, NULL);
     setbuf(stdout, NULL);
-    SetPosition(p, START_POS);
+    p->SetPosition(START_POS);
     AllocTrans(16);
     for (;;) {
         ReadLine(command, sizeof(command));
@@ -77,7 +77,7 @@ void UciLoop() {
         } else if (strcmp(token, "ucinewgame") == 0) {
             ClearTrans();
             Glob.ClearData();
-            SetPosition(p, START_POS);
+            p->SetPosition(START_POS);
             srand(GetMS());
         } else if (strcmp(token, "isready") == 0)    {
             printf("readyok\n");
@@ -163,10 +163,10 @@ void ParsePosition(POS *p, const char *ptr) {
             strcat(fen, token);
             strcat(fen, " ");
         }
-        SetPosition(p, fen);
+        p->SetPosition(fen);
     } else {
         ptr = ParseToken(ptr, token);
-        SetPosition(p, START_POS);
+        p->SetPosition(START_POS);
     }
     if (strcmp(token, "moves") == 0)
         ParseMoves(p, ptr);
@@ -398,7 +398,7 @@ void cEngine::Bench(int depth) {
 
     for (int i = 0; test[i]; ++i) {
         printf("%s\n", test[i]);
-        SetPosition(p, test[i]);
+        p->SetPosition(test[i]);
         Par.InitAsymmetric(p);
         Glob.depth_reached = 0;
         Iterate(p, pv);

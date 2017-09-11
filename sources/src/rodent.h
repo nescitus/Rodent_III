@@ -314,6 +314,11 @@ class POS {
     static U64 zob_piece[12][64];
     static U64 zob_castle[16];
     static U64 zob_ep[8];
+
+    void ClearPosition();
+    void InitHashKey();
+    void InitPawnKey();
+
   public:
     U64 cl_bb[2];
     U64 tp_bb[6];
@@ -366,8 +371,7 @@ class POS {
     void UndoNull(UNDO *u);
     void UndoMove(int move, UNDO *u);
 
-    void InitHashKey();
-    void InitPawnKey();
+    void SetPosition(const char *epd);
 };
 
 struct MOVES {
@@ -810,7 +814,6 @@ int Clip(int sc, int lim);
 void AllocTrans(unsigned int mbsize);
 void BuildPv(int *dst, int *src, int move);
 void ClearTrans();
-void ClearPosition(POS *p);
 void DisplayCurrmove(int move, int tried);
 int DrawScore(POS *p);
 void ExtractMove(int *pv);
@@ -836,7 +839,6 @@ void PvToStr(int *, char *);
 U64 Random64();
 void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
-void SetPosition(POS *p, const char *epd);
 void SetMoveTime(int base, int inc, int movestogo);
 void SetPieceValue(int pc, int val, int slot);
 int StrToMove(POS *p, char *move_str);

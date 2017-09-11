@@ -19,25 +19,25 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstdio>
 #include <cstring>
 
-void ClearPosition(POS *p) {
+void POS::ClearPosition() {
 
-    *p = {0};
+    *this = {0};
 
-    p->king_sq[WC] = NO_SQ;
-    p->king_sq[BC] = NO_SQ;
+    king_sq[WC] = NO_SQ;
+    king_sq[BC] = NO_SQ;
 
     for (int sq = 0; sq < 64; sq++)
-        p->pc[sq] = NO_PC;
+        pc[sq] = NO_PC;
 
-    p->side = WC;
-    p->ep_sq = NO_SQ;
+    side = WC;
+    ep_sq = NO_SQ;
 }
 
-void SetPosition(POS *p, const char *epd) {
+void POS::SetPosition(const char *epd) {
 
     static const char pc_char[] = "PpNnBbRrQqKk";
 
-    ClearPosition(p);
+    ClearPosition();
     Glob.moves_from_start = 0;
 
     for (int i = 56; i >= 0; i -= 8) {
@@ -45,7 +45,7 @@ void SetPosition(POS *p, const char *epd) {
         while (j < 8) {
             if (*epd >= '1' && *epd <= '8')
                 for (pc_loop = 0; pc_loop < *epd - '0'; pc_loop++) {
-                    p->pc[i + j] = NO_PC;
+                    pc[i + j] = NO_PC;
                     j++;
                 }
             else {
@@ -54,21 +54,21 @@ void SetPosition(POS *p, const char *epd) {
 
                 if ( !pc_char[pc_loop] ) {
                     printf("info string FEN parsing error\n");
-                    SetPosition(p, START_POS);
+                    SetPosition(START_POS);
                     return;
                 }
 
-                p->pc[i + j] = pc_loop;
-                p->cl_bb[Cl(pc_loop)] ^= SqBb(i + j);
-                p->tp_bb[Tp(pc_loop)] ^= SqBb(i + j);
+                pc[i + j] = pc_loop;
+                cl_bb[Cl(pc_loop)] ^= SqBb(i + j);
+                tp_bb[Tp(pc_loop)] ^= SqBb(i + j);
 
                 if (Tp(pc_loop) == K)
-                    p->king_sq[Cl(pc_loop)] = i + j;
+                    king_sq[Cl(pc_loop)] = i + j;
 
-                p->mg_sc[Cl(pc_loop)] += Par.mg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
-                p->eg_sc[Cl(pc_loop)] += Par.eg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
-                p->phase += ph_value[Tp(pc_loop)];
-                p->cnt[Cl(pc_loop)][Tp(pc_loop)]++;
+                mg_sc[Cl(pc_loop)] += Par.mg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
+                eg_sc[Cl(pc_loop)] += Par.eg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
+                phase += ph_value[Tp(pc_loop)];
+                cnt[Cl(pc_loop)][Tp(pc_loop)]++;
                 j++;
             }
             epd++;
@@ -76,38 +76,38 @@ void SetPosition(POS *p, const char *epd) {
         epd++;
     }
     if (*epd++ == 'w')
-        p->side = WC;
+        side = WC;
     else
-        p->side = BC;
+        side = BC;
     epd++;
     if (*epd == '-')
         epd++;
     else {
         if (*epd == 'K') {
-            p->c_flags |= 1;
+            c_flags |= 1;
             epd++;
         }
         if (*epd == 'Q') {
-            p->c_flags |= 2;
+            c_flags |= 2;
             epd++;
         }
         if (*epd == 'k') {
-            p->c_flags |= 4;
+            c_flags |= 4;
             epd++;
         }
         if (*epd == 'q') {
-            p->c_flags |= 8;
+            c_flags |= 8;
             epd++;
         }
     }
     epd++;
     if (*epd == '-')
-        p->ep_sq = NO_SQ;
+        ep_sq = NO_SQ;
     else {
-        p->ep_sq = Sq(*epd - 'a', *(epd + 1) - '1');
-        if (!(BB.PawnAttacks(Opp(p->side), p->ep_sq) & p->Pawns(p->side)))
-            p->ep_sq = NO_SQ;
+        ep_sq = Sq(*epd - 'a', *(epd + 1) - '1');
+        if (!(BB.PawnAttacks(Opp(side), ep_sq) & Pawns(side)))
+            ep_sq = NO_SQ;
     }
-    p->InitHashKey();
-    p->InitPawnKey();
+    InitHashKey();
+    InitPawnKey();
 }

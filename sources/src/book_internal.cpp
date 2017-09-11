@@ -86,7 +86,7 @@ bool sInternalBook::LineToInternal(const char *ptr, int excludedColor) {
     POS p[1]; UNDO u[1];
     int move, freq;
 
-    SetPosition(p, START_POS);
+    p->SetPosition(START_POS);
 
     for (;;) {
         ptr = ParseToken(ptr, token);
