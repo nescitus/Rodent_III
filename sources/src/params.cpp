@@ -164,8 +164,18 @@ void cParam::DefaultWeights() {
     values[BK_END] = -8;
     values[BK_OPE] = -10;  // additional midgame penalty for backward pawn on an open file
     values[P_BIND] = 5;    // two pawns control central square
+	values[P_BADBIND] = 10; // penalty for a "wing triangle" like a4-b3-c4
     values[P_ISL] = 7;     // penalty for each pawn island
     values[P_THR] = 4;     // pawn move threatens to attack enemy minor
+
+    // Pawn chain values
+
+    values[P_BIGCHAIN] = 18; // general penalty for a compact pawn chain pointing at our king
+    values[P_SMALLCHAIN] = 13; // similar penalty for a chain that is not fully blocked by enemy pawns
+    values[P_CS1] = 4;         // additional evaluation of a pawn storm next to a fixed chain - like g5 in King's Indian
+    values[P_CS2] = 12;        // as above, this time like g4 in King's Indian
+    values[P_CSFAIL] = 10;     // penalty for a badly performed pawn strom next to a chain
+
 
     // Passed pawn bonuses per rank
 
@@ -472,4 +482,13 @@ void cDistance::Init() {
 
 void cParam::SetVal(int slot, int val) {
     values[slot] = val;
+}
+
+void cParam::PrintValues() {
+
+    for (int i = 0; i < N_OF_VAL; ++i) {
+        printf("%14s : %4d     ", paramNames[i], Par.values[i]);
+        if (i % 4 == 0) printf("\n");
+    }
+    printf("\n");
 }

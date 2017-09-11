@@ -80,8 +80,8 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     EvaluateKing(p, e, WC);
     EvaluateKing(p, e, BC);
 
-    // Center binds
-    // (important squares controlled by two pawns)
+    // Center binds (good) and wing binds (bad)
+    // - important squares controlled by two pawns
 
     int tmp = 0;
     if (e->two_pawns_take[WC] & SqBb(D5)) tmp += Par.values[P_BIND];
@@ -89,8 +89,8 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     if (e->two_pawns_take[WC] & SqBb(D6)) tmp += Par.values[P_BIND];
     if (e->two_pawns_take[WC] & SqBb(E6)) tmp += Par.values[P_BIND];
 
-	if (IsOnSq(p, WC, P, B3) && IsOnSq(p, WC, P, C4) && IsOnSq(p, WC, P, A4)) tmp -= 10;
-	if (IsOnSq(p, WC, P, G3) && IsOnSq(p, WC, P, F4) && IsOnSq(p, WC, P, H4)) tmp -= 10;
+    if (IsOnSq(p, WC, P, B3) && (e->two_pawns_take[WC] & SqBb(B5))) tmp -= Par.values[P_BADBIND];
+    if (IsOnSq(p, WC, P, G3) && (e->two_pawns_take[WC] & SqBb(G5))) tmp -= Par.values[P_BADBIND];
 
     Add(e, WC, tmp, 0);
 
@@ -100,10 +100,11 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     if (e->two_pawns_take[BC] & SqBb(D3)) tmp += Par.values[P_BIND];
     if (e->two_pawns_take[BC] & SqBb(E3)) tmp += Par.values[P_BIND];
 
-	if (IsOnSq(p, BC, P, B6) && IsOnSq(p, BC, P, C5) && IsOnSq(p, BC, P, A5)) tmp -= 10;
-	if (IsOnSq(p, BC, P, G6) && IsOnSq(p, BC, P, F5) && IsOnSq(p, BC, P, H5)) tmp -= 10;
+    if (IsOnSq(p, BC, P, B6) && (e->two_pawns_take[BC] & SqBb(B4))) tmp -= Par.values[P_BADBIND];
+    if (IsOnSq(p, BC, P, G6) && (e->two_pawns_take[BC] & SqBb(G4))) tmp -= Par.values[P_BADBIND];
 
     Add(e, BC, tmp, 0);
+
 
     // King on a wing without pawns
 
@@ -209,11 +210,6 @@ int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
 #define OWN_PAWN(sq) (p->Pawns(sd) & RelSqBb(sq,sd))
 #define OPP_PAWN(sq) (p->Pawns(op) & RelSqBb(sq,sd))
 #define CONTAINS(bb, s1, s2) (bb & SQ(s1)) && (bb & SQ(s2))
-static const int bigChainScore = 18;    // substracted
-static const int smallChainScore = 13;  // substracted
-static const int chainStorm1 = 4;       // substracted
-static const int chainStorm2 = 12;      // substracted, consider raising
-static const int failedChainScore = 10; // added
 
 // @brief EvaluateChains() gives a penalty to side being at the receiving end of the pawn chain
 
@@ -229,26 +225,26 @@ int cEngine::EvaluateChains(POS *p, int sd) {
 
         if (OPP_PAWN(E4)) {
             if (CONTAINS(opPawns, D5, C6)) // c6-d5-e4 triad
-                mg_result -= (CONTAINS(sdPawns, D4, E3)) ? bigChainScore : smallChainScore;
+                mg_result -= (CONTAINS(sdPawns, D4, E3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
 
             if (CONTAINS(opPawns, D5, F3)) // d5-e4-f3 triad
-                mg_result -= (OWN_PAWN(E3)) ? bigChainScore : smallChainScore;
+                mg_result -= (OWN_PAWN(E3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
         }
 
         if (OPP_PAWN(E5)) {
             if (CONTAINS(opPawns, F4, D6)) { // d6-e5-f4 triad
                 // storm of a "g" pawn in the King's Indian
                 if (OPP_PAWN(G5)) {
-                    mg_result -= chainStorm1;
-                    if (OPP_PAWN(H4)) return failedChainScore; // opponent did us a favour, rendering his chain immobile
+                    mg_result -= Par.values[P_CS1];
+                    if (OPP_PAWN(H4)) return Par.values[P_CSFAIL]; // opponent did us a favour, rendering his chain immobile
                 }
-                if (OPP_PAWN(G4)) mg_result -= chainStorm2;
+                if (OPP_PAWN(G4)) mg_result -= Par.values[P_CS2];
 
-                mg_result -= (CONTAINS(sdPawns, E4, D5)) ? bigChainScore : smallChainScore;
+                mg_result -= (CONTAINS(sdPawns, E4, D5)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
             }
 
             if (CONTAINS(opPawns, G3, F4)) // e5-f4-g3 triad
-                mg_result -= (OWN_PAWN(F3)) ? bigChainScore : smallChainScore;
+                mg_result -= (OWN_PAWN(F3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
         }
     }
 
@@ -258,26 +254,26 @@ int cEngine::EvaluateChains(POS *p, int sd) {
 
         if (OPP_PAWN(D4)) {
             if (CONTAINS(opPawns, E5, F6))
-                mg_result -= (CONTAINS(sdPawns, E4, D3)) ? bigChainScore : smallChainScore;
+                mg_result -= (CONTAINS(sdPawns, E4, D3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
 
             if (CONTAINS(opPawns, F5, C3))
-                mg_result -= (SQ(D3) & sdPawns) ? bigChainScore : smallChainScore;
+                mg_result -= (SQ(D3) & sdPawns) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
         }
 
         if (OPP_PAWN(D5)) {
             if (CONTAINS(opPawns, C4, E6)) {
                 // storm of a "b" pawn
                 if (OPP_PAWN(B5)) {
-                    mg_result -= chainStorm1;
-                    if (OPP_PAWN(A4)) return failedChainScore; // opponent did us a favour, rendering his chain immobile
+                    mg_result -= Par.values[P_CS1];
+                    if (OPP_PAWN(A4)) return Par.values[P_CSFAIL]; // opponent did us a favour, rendering his chain immobile
                 }
-                if (OPP_PAWN(B4)) mg_result -= chainStorm2;
+                if (OPP_PAWN(B4)) mg_result -= Par.values[P_CS2];
 
-                mg_result -= (CONTAINS(sdPawns, E4, D5)) ? bigChainScore : smallChainScore;
+                mg_result -= (CONTAINS(sdPawns, E4, D5)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
             }
 
             if (CONTAINS(opPawns, B3, C4))
-                mg_result -= (OWN_PAWN(C3)) ? bigChainScore : smallChainScore;
+                mg_result -= (OWN_PAWN(C3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
         }
     }
 

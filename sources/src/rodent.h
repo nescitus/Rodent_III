@@ -436,27 +436,52 @@ struct sPawnHashEntry {
 };
 
 enum Values {
-	P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,               // piece values
-	B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustments
-	N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
-	N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
-	NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
-	N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OVH, N_REACH, BN_SHIELD,
-	N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
-	B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
-	B_OPP_P, B_OWN_P, B_REACH, B_TOUCH, B_RETURN,
-	P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
-	P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
-	ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
-	PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7,             // passed pawns
-	P_BL_MUL, P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_THR, P_BIND, P_ISL,  // pawn special terms
-	ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,     // rook bonuses
-	RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK,                                            // queen and rook bonuses
-	W_MATERIAL, W_PST, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,           // weights part 1
-	W_TROPISM, W_FWD, W_PASSERS, W_SHIELD, W_STORM, W_MASS, W_CHAINS, W_STRUCT,         // weights part 2
-	W_LINES, W_OUTPOSTS, W_CENTER,
-	N_OF_VAL
+    P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,               // piece values
+    B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustments
+    N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
+    N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
+    NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
+    N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OVH, N_REACH, BN_SHIELD,
+    N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
+    B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
+    B_OPP_P, B_OWN_P, B_REACH, B_TOUCH, B_RETURN,
+    P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
+    P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
+    ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
+    PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7, P_BL_MUL,   // passed pawns
+    P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_THR, P_BIND, P_BADBIND, P_ISL, // pawn special terms
+    P_BIGCHAIN, P_SMALLCHAIN, P_CS1, P_CS2, P_CSFAIL,
+    ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,     // rook bonuses
+    RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK,                                            // queen and rook bonuses
+    W_MATERIAL, W_PST, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,           // weights part 1
+    W_TROPISM, W_FWD, W_PASSERS, W_SHIELD, W_STORM, W_MASS, W_CHAINS, W_STRUCT,         // weights part 2
+    W_LINES, W_OUTPOSTS, W_CENTER,
+    N_OF_VAL
 };
+
+const char* const paramNames[N_OF_VAL] = {
+    "P_MID", "P_END", "N_MID", "N_END", "B_MID", "B_END", "R_MID", "R_END", "Q_MID", "Q_END",  // piece values
+    "B_PAIR", "N_PAIR", "R_PAIR", "ELEPH", "A_EXC", "A_TWO", "A_MAJ", "A_MIN", "A_ALL",        // material adjustments
+    "N_ATT1", "N_ATT2", "B_ATT1", "B_ATT2", "R_ATT1", "R_ATT2", "Q_ATT1", "Q_ATT2",            // attacks against enemy king zone
+    "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
+    "NTR_MG", "NTR_EG", "BTR_MG", "BTR_EG", "RTR_MG", "RTR_EG", "QTR_MG", "QTR_EG",            // king tropism
+    "N_FWD", "B_FWD", "R_FWD", "Q_FWD", "N_OWH", "B_OVH", "N_REACH", "BN_SHIELD",
+    "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT", "K_CASTLE",
+    "B_TRAP_A2", "B_TRAP_A3", "B_BLOCK", "B_FIANCH", "B_BADF", "B_KING", "B_BF_MG", "B_BF_EG", "B_WING",  // bishop parameters
+    "B_OPP_P", "B_OWN_P", "B_REACH", "B_TOUCH", "B_RETURN",
+    "P_SH_NONE", "P_SH_2", "P_SH_3", "P_SH_4", "P_SH_5", "P_SH_6", "P_SH_7",                    // king's pawn shield
+    "P_ST_OPEN", "P_ST_3", "P_ST_4", "P_ST_5",                                                  // pawn storm on enemy king
+    "ISO_MG", "ISO_EG", "ISO_OF", "BK_MID", "BK_END", "BK_OPE", "DB_MID", "DB_END",             // pawn weaknesses
+    "PMG2", "PMG3", "PMG4", "PMG5", "PMG6", "PMG7", "PEG2", "PEG3", "PEG4", "PEG5", "PEG6", "PEG7", "P_BL_MUL",   // passed pawns
+    "P_OURSTOP_MUL", "P_OPPSTOP_MUL", "P_DEFMUL", "P_STOPMUL", "P_THR", "P_BIND", "P_BADBIND", "P_ISL", // pawn special terms
+    "P_BIGCHAIN", "P_SMALLCHAIN", "P_CS1", "P_CS2", "P_CSFAIL",
+    "ROF_MG", "ROF_EG", "RGH_MG", "RGH_EG", "RBH_MG", "RBH_EG", "RSR_MG", "RSR_EG", "ROQ_MG", "ROQ_EG",     // rook bonuses
+    "RS2_MG", "RS2_EG", "QSR_MG", "QSR_EG", "R_BLOCK",                                          // queen and rook bonuses
+    "W_MATERIAL", "W_PST", "W_OWN_ATT", "W_OPP_ATT", "W_OWN_MOB", "W_OPP_MOB", "W_THREATS",     // weights part 1
+    "W_TROPISM", "W_FWD", "W_PASSERS", "W_SHIELD", "W_STORM", "W_MASS", "W_CHAINS", "W_STRUCT", // weights part 2
+    "W_LINES", "W_OUTPOSTS", "W_CENTER"
+};
+
 
 class cParam {
   public:
@@ -510,6 +535,7 @@ class cParam {
     NOINLINE void InitTables();
     NOINLINE void DefaultWeights();
     NOINLINE void InitAsymmetric(POS *p);
+	NOINLINE void PrintValues();
     void SetSpeed(int elo_in);
     int EloToSpeed(int elo_in);
     int EloToBlur(int elo_in);
