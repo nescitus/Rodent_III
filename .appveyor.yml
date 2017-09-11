@@ -10,8 +10,9 @@ install:
   - if not exist c:\tools\msys64 cinst msys2
 
 before_build:
-  - c:\tools\msys64\usr\bin\pacman -Syu --noconfirm
-  - c:\tools\msys64\usr\bin\pacman -Syu --noconfirm --needed mingw-w64-i686-gcc mingw-w64-x86_64-gcc
+  - set PATH=c:\tools\msys64\usr\bin;%PATH%
+  - pacman -Syu --noconfirm
+  - pacman -Syu --noconfirm --needed mingw-w64-i686-gcc mingw-w64-x86_64-gcc
   - cd %APPVEYOR_BUILD_FOLDER%\sources
 
 build_script:
