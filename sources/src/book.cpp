@@ -399,7 +399,7 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
         int internal_move = (tsq << 6) | fsq;
         MoveToStr(internal_move, move_string);
-        internal_move = StrToMove(p, move_string);
+        internal_move = p->StrToMove(move_string);
 
         if (max_weight < score) max_weight = score;
         weight_sum += score;

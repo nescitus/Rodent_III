@@ -157,7 +157,7 @@ void MoveToStr(int move, char *move_str) {
     }
 }
 
-int StrToMove(POS *p, char *move_str) {
+int POS::StrToMove(char *move_str) {
 
     int from = Sq(move_str[0] - 'a', move_str[1] - '1');
     int to   = Sq(move_str[2] - 'a', move_str[3] - '1');
@@ -165,10 +165,10 @@ int StrToMove(POS *p, char *move_str) {
 
     // change move type if necessary
 
-    if (p->TpOnSq(from) == K && Abs(to - from) == 2)
+    if (TpOnSq(from) == K && Abs(to - from) == 2)
         type = CASTLE;
-    else if (p->TpOnSq(from) == P) {
-        if (to == p->ep_sq)
+    else if (TpOnSq(from) == P) {
+        if (to == ep_sq)
             type = EP_CAP;
         else if (Abs(to - from) == 16)
             type = EP_SET;

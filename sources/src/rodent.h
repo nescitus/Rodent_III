@@ -388,6 +388,8 @@ class POS {
     bool CanDiscoverCheck(U64 bb_checkers, int op, int from); // for GenerateSpecial()
 
     int Swap(int from, int to);
+
+    int StrToMove(char *move_str);
 };
 
 struct MOVES {
@@ -847,7 +849,6 @@ void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
 void SetMoveTime(int base, int inc, int movestogo);
 void SetPieceValue(int pc, int val, int slot);
-int StrToMove(POS *p, char *move_str);
 bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
 void TransRetrieveMove(U64 key, int *move);
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
