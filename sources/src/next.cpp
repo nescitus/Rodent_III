@@ -44,7 +44,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         // fallthrough
 
         case 1: // helper phase: generate captures
-            m->last = GenerateCaptures(m->p, m->move);
+            m->last = m->p->GenerateCaptures(m->move);
             ScoreCaptures(m);
             m->next = m->move;
             m->badp = m->bad;
@@ -101,7 +101,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         // fallthrough
 
         case 6: // helper phase: generate quiet moves
-            m->last = GenerateQuiet(m->p, m->move);
+            m->last = m->p->GenerateQuiet(m->move);
             ScoreQuiet(m);
             m->next = m->move;
             m->phase = 7;
@@ -147,7 +147,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         // fallthrough
 
         case 1: // helper phase: generate captures
-            m->last = GenerateCaptures(m->p, m->move);
+            m->last = m->p->GenerateCaptures(m->move);
             ScoreCaptures(m);
             m->next = m->move;
             m->badp = m->bad;
@@ -189,7 +189,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         // fallthrough
 
         case 5: // helper phase: generate checking moves
-            m->last = GenerateSpecial(m->p, m->move);
+            m->last = m->p->GenerateSpecial(m->move);
             ScoreQuiet(m);
             m->next = m->move;
             m->phase = 6;
@@ -212,7 +212,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
 void cEngine::InitCaptures(POS *p, MOVES *m) {
 
     m->p = p;
-    m->last = GenerateCaptures(m->p, m->move);
+    m->last = m->p->GenerateCaptures(m->move);
     ScoreCaptures(m);
     m->next = m->move;
 }

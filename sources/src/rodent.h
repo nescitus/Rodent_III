@@ -381,6 +381,11 @@ class POS {
     void ParsePosition(const char *ptr);
 
     void PrintBoard();
+
+    int *GenerateCaptures(int *list);
+    int *GenerateQuiet(int *list);
+    int *GenerateSpecial(int *list);
+    bool CanDiscoverCheck(U64 bb_checkers, int op, int from); // for GenerateSpecial()
 };
 
 struct MOVES {
@@ -825,10 +830,6 @@ void BuildPv(int *dst, int *src, int move);
 void ClearTrans();
 void DisplayCurrmove(int move, int tried);
 void ExtractMove(int *pv);
-int *GenerateCaptures(POS *p, int *list);
-int *GenerateQuiet(POS *p, int *list);
-int *GenerateSpecial(POS *p, int *list);
-bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for GenerateSpecial()
 int GetMS();
 U64 GetNps(int elapsed);
 bool InputAvailable();
