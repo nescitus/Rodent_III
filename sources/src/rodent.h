@@ -143,6 +143,10 @@ constexpr U64 SIDE_RANDOM = ~UINT64_C(0);
 
 constexpr char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
+template<typename T> constexpr T Abs(const T& x) { return x > 0 ? x : -x; }
+template<typename T> constexpr const T& Max(const T& x, const T& y) { return x > y ? x : y; }
+template<typename T> constexpr const T& Min(const T& x, const T& y) { return x < y ? x : y; }
+
 #define SqBb(x)         (UINT64_C(1) << (x))
 
 #define Cl(x)           ((x) & 1)
@@ -153,10 +157,6 @@ constexpr char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq
 #define Rank(x)         ((x) >> 3)
 #define Sq(x, y)        (((y) << 3) | (x))
 
-template<typename T> constexpr T Abs(const T& x) { return x > 0 ? x : -x; }
-template<typename T> constexpr const T& Max(const T& x, const T& y) { return x > y ? x : y; }
-template<typename T> constexpr const T& Min(const T& x, const T& y) { return x < y ? x : y; }
-
 #define Fsq(x)          ((x) & 63)
 #define Tsq(x)          (((x) >> 6) & 63)
 #define MoveType(x)     ((x) >> 12)
@@ -164,17 +164,6 @@ template<typename T> constexpr const T& Min(const T& x, const T& y) { return x <
 #define PromType(x)     (((x) >> 12) - 3)
 
 #define Opp(x)          ((x) ^ 1)
-
-#define InCheck(p)      Attacked(p, KingSq(p, p->side), Opp(p->side))
-#define Illegal(p)      Attacked(p, KingSq(p, Opp(p->side)), p->side)
-#define MayNull(p)      (((p)->cl_bb[(p)->side] & ~((p)->tp_bb[P] | (p)->tp_bb[K])) != 0)
-
-#define PcBb(p, x, y)   ((p)->cl_bb[x] & (p)->tp_bb[y])
-#define OccBb(p)        ((p)->cl_bb[WC] | (p)->cl_bb[BC])
-#define UnoccBb(p)      (~OccBb(p))
-#define TpOnSq(p, x)    (Tp((p)->pc[x]))
-#define KingSq(p, x)    ((p)->king_sq[x])
-#define IsOnSq(p, sd, pc, sq) ( PcBb(p, sd, pc) & SqBb(sq) )
 
 #ifndef FORCEINLINE
     #if defined(_MSC_VER)
@@ -345,37 +334,32 @@ class POS {
 
     static void Init();
 
-    U64 Pawns(int sd) const {
-        return (cl_bb[sd] & tp_bb[P]);
-    }
+    U64 Pawns(int sd)   const { return cl_bb[sd] & tp_bb[P]; }
+    U64 Knights(int sd) const { return cl_bb[sd] & tp_bb[N]; }
+    U64 Bishops(int sd) const { return cl_bb[sd] & tp_bb[B]; }
+    U64 Rooks(int sd)   const { return cl_bb[sd] & tp_bb[R]; }
+    U64 Queens(int sd)  const { return cl_bb[sd] & tp_bb[Q]; }
+    U64 Kings(int sd)   const { return cl_bb[sd] & tp_bb[K]; }
 
-    U64 Knights(int sd) const {
-        return (cl_bb[sd] & tp_bb[N]);
-    }
+    U64 StraightMovers(int sd) const { return cl_bb[sd] & (tp_bb[R] | tp_bb[Q]); }
+    U64 DiagMovers(int sd)     const { return cl_bb[sd] & (tp_bb[B] | tp_bb[Q]); }
 
-    U64 Bishops(int sd) const {
-        return (cl_bb[sd] & tp_bb[B]);
-    }
+    U64 PcBb(int sd, int tp) const { return cl_bb[sd] & tp_bb[tp]; }
+    U64 OccBb()   const { return cl_bb[WC] | cl_bb[BC]; }
+    U64 UnoccBb() const { return ~OccBb(); }
 
-    U64 Rooks(int sd) const {
-        return (cl_bb[sd] & tp_bb[R]);
-    }
+    int KingSq(int sd) const { return king_sq[sd]; }
+    int TpOnSq(int sq) const { return Tp(pc[sq]); }
 
-    U64 Queens(int sd) const {
-        return (cl_bb[sd] & tp_bb[Q]);
-    }
+    bool MayNull() const { return (cl_bb[side] & ~(tp_bb[P] | tp_bb[K])) != 0; }
+    bool IsOnSq(int sd, int pc, int sq) const{ return PcBb(sd, pc) & SqBb(sq); }
 
-    U64 Kings(int sd) const {
-        return (cl_bb[sd] & tp_bb[K]);
-    }
+    bool InCheck() const { return Attacked(KingSq(side), Opp(side)); }
+    bool Illegal() const { return Attacked(KingSq(Opp(side)), side); }
 
-    U64 StraightMovers(int sd) const {
-        return (cl_bb[sd] & (tp_bb[R] | tp_bb[Q]));
-    }
-
-    U64 DiagMovers(int sd) const {
-        return (cl_bb[sd] & (tp_bb[B] | tp_bb[Q]));
-    }
+    U64 AttacksFrom(int sq) const;
+    U64 AttacksTo(int sq) const;
+    bool Attacked(int sq, int sd) const;
 
     void DoMove(int move, UNDO *u);
     void DoNull(UNDO *u);
@@ -384,7 +368,6 @@ class POS {
 
     void InitHashKey();
     void InitPawnKey();
-
 };
 
 struct MOVES {
@@ -825,9 +808,6 @@ void PrintVersion();
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
 void AllocTrans(unsigned int mbsize);
-bool Attacked(POS *p, int sq, int sd);
-U64 AttacksFrom(POS *p, int sq);
-U64 AttacksTo(POS *p, int sq);
 void BuildPv(int *dst, int *src, int move);
 void ClearTrans();
 void ClearPosition(POS *p);

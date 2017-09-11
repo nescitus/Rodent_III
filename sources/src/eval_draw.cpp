@@ -157,11 +157,11 @@ int cEngine::ScaleKNPK(POS *p, int sd, int op) {
     &&  p->cnt[sd][P] == 1
     &&  p->cnt[op][P] == 0) {
 
-        if ((RelSqBb(A7, sd) & PcBb(p, sd, P))
-        && (RelSqBb(A8, sd) & PcBb(p, op, K))) return 0; // dead draw
+        if ((RelSqBb(A7, sd) & p->PcBb(sd, P))
+        && (RelSqBb(A8, sd) & p->PcBb(op, K))) return 0; // dead draw
 
-        if ((RelSqBb(H7, sd) & PcBb(p, sd, P))
-        && (RelSqBb(H8, sd) & PcBb(p, op, K))) return 0; // dead draw
+        if ((RelSqBb(H7, sd) & p->PcBb(sd, P))
+        && (RelSqBb(H8, sd) & p->PcBb(op, K))) return 0; // dead draw
     }
 
     return 64; // default
