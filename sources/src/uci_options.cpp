@@ -598,9 +598,15 @@ void ReadPersonality(const char *fileName) {
     // There is nothing wrong with that, except that there will be some parameters missing.
     // and there will be no way of telling whether previous personality used their default
     // value or not. For that reason now that we found a personality file, we reset params
-    // to their default values.
+    // to the values that are best for setting a new personality.
+	//
+	// Please note that we use Par.InitialPersonalityWeights() and not Par.DefaultWeights().
+	// This is because since version 0.214 Par.DefaultWeights() contains automatically tuned
+	// values,  which are at times counterintuitive. In particular, king tropism values used
+	// there  are negative, and that would break the king tropism functionality intended for
+	// Rodent personalities.
 
-    Par.DefaultWeights();
+    Par.InitialPersonalityWeights();
 
     // Set flag in case we want to disable some options while reading personality from a file
 

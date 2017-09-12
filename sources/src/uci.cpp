@@ -102,7 +102,9 @@ void UciLoop() {
 #ifndef USE_THREADS
             printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));
 #else
-            printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().pv_eng));
+           // printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().pv_eng));
+			Engines.front().TuneMe(p, Engines.front().pv_eng, 2000);
+
 #endif
             Glob.is_tuning = false;
 #endif

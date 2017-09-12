@@ -21,7 +21,281 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cmath>
 
-void cParam::DefaultWeights() {
+void cParam::DefaultWeights() {  // tuned automatically
+
+    // Switch off weakening parameters
+
+    search_skill = 10;
+    nps_limit = 0;
+    fl_weakening = false;
+    elo = 2800;
+    eval_blur = 0;
+    book_depth = 256;
+
+    // Opening book
+
+    use_book = true;
+    verbose_book = true; // TODO: change to false in release
+    book_filter = 20;
+
+    // Timing
+
+    time_percentage = 100;
+
+    // Piece values
+
+	SetVal(P_MID, 91, 50, 150, true);
+	SetVal(N_MID, 308, 200, 400, true);
+	SetVal(B_MID, 333, 200, 400, true);
+	SetVal(R_MID, 503, 400, 600, true);
+	SetVal(Q_MID, 1001, 800, 1200, true);
+
+	SetVal(P_END, 104, 50, 150, true);
+	SetVal(N_END, 301, 200, 400, true);
+	SetVal(B_END, 317, 200, 400, true);
+	SetVal(R_END, 541, 400, 600, true);
+	SetVal(Q_END, 1015, 800, 1200, true);
+
+    // Tendency to keep own pieces
+
+    keep_pc[P] = 0;
+    keep_pc[N] = 0;
+    keep_pc[B] = 0;
+    keep_pc[R] = 0;
+    keep_pc[Q] = 0;
+    keep_pc[K] = 0;
+    keep_pc[K + 1] = 0;
+
+    // Material adjustments
+
+	SetVal(B_PAIR, 51, 0, 100, true);
+	SetVal(N_PAIR, 0, -50, 50, true);
+	SetVal(R_PAIR, -19, -50, 50, true);
+	SetVal(ELEPH, 12, -50, 50, true);   // queen loses that much with each enemy minor on the board
+	SetVal(A_EXC, 32, -50, 50, true);   // exchange advantage additional bonus
+	SetVal(A_MIN, 60, 0, 100, true);    // additional bonus for a minor piece advantage
+	SetVal(A_MAJ, 55, 0, 100, true);    // additional bonus for a major piece advantage
+	SetVal(A_TWO, 30, 0, 100, true);    // additional bonus for two minors against a rook
+	SetVal(A_ALL, 67, 0, 100, true);    // additional bonus for advantage in both majors and minors
+	SetVal(N_CL, 6, -50, 50, true);     // knight gains this much with each own pawn present on the board
+	SetVal(R_OP, 1, -50, 50, true);     // rook loses that much with each own pawn present on the board  
+
+    // King attack values
+
+    // "_ATT1" values are awarded for attacking squares not defended by enemy pawns
+    // "_ATT2" values are awarded for attacking squares defended by enemy pawns
+    // "_CHK"  values are awarded for threatening check to enemy king
+    // "_CONTACT" values are awarded for contact checks threats
+    //
+    // All these values are NOT the actual bonuses; their sum is used as index
+    // to a non-linear king safety table. Tune them with extreme caution.
+
+    values[N_ATT1] = 6;
+    values[N_ATT2] = 4;
+    values[B_ATT1] = 7;
+    values[B_ATT2] = 2;
+    values[R_ATT1] = 10;
+    values[R_ATT2] = 4;
+    values[Q_ATT1] = 16;
+    values[Q_ATT2] = 5;
+
+    values[N_CHK] = 11;
+    values[B_CHK] = 18;
+    values[R_CHK] = 16;
+    values[Q_CHK] = 12;
+
+    values[R_CONTACT] = 29;
+    values[Q_CONTACT] = 36;
+
+    // King tropism
+
+    values[NTR_MG] = 13;
+    values[NTR_EG] = -10;
+    values[BTR_MG] = 2;
+    values[BTR_EG] = -8;
+    values[RTR_MG] = -1;
+    values[RTR_EG] = -7;
+    values[QTR_MG] = 7;
+    values[QTR_EG] = 12;
+
+    // Varia
+
+    values[W_MATERIAL] = 98;
+    values[W_PST] = 73;
+    pst_style = 0;
+    mob_style = 0;         // 1 is only marginally behind
+
+#ifdef USE_RISKY_PARAMETER
+    riskydepth = 0;
+#endif
+    draw_score = 0;
+    shut_up = false;       // true suppresses displaying info currmove etc.
+
+    // Attack and mobility weights that can be set independently for each side
+    // - the core of personality mechanism
+
+    values[W_OWN_ATT] = 100;
+    values[W_OPP_ATT] = 100;
+    values[W_OWN_MOB] = 103;
+    values[W_OPP_MOB] = 103;
+
+    // Positional weights
+
+    values[W_THREATS] = 109;
+    values[W_TROPISM] = 25;
+    values[W_FWD] = 0;
+    values[W_PASSERS] = 101;
+    values[W_MASS] = 98; // seems optimal
+    values[W_CHAINS] = 100;
+    values[W_OUTPOSTS] = 77;
+    values[W_LINES] = 108;
+    values[W_STRUCT] = 107;
+    values[W_SHIELD] = 120;
+    values[W_STORM] = 95;
+    values[W_CENTER] = 48;
+
+    // Pawn structure parameters
+
+    values[DB_MID] = -12;  // doubled
+    values[DB_END] = -23;
+    values[ISO_MG] = -7;  // isolated
+    values[ISO_EG] = -10;
+    values[ISO_OF] = -13;  // additional midgame penalty for isolated pawn on an open file
+    values[BK_MID] = -5;   // backward
+    values[BK_END] = -5;
+    values[BK_OPE] = -10;  // additional midgame penalty for backward pawn on an open file
+    values[P_BIND] = 5;    // two pawns control central square
+	values[P_BADBIND] = 10; // penalty for a "wing triangle" like a4-b3-c4
+    values[P_ISL] = 7;     // penalty for each pawn island
+    values[P_THR] = 4;     // pawn move threatens to attack enemy minor
+
+    // Pawn chain values
+
+    values[P_BIGCHAIN] = 31; // general penalty for a compact pawn chain pointing at our king
+    values[P_SMALLCHAIN] = 24; // similar penalty for a chain that is not fully blocked by enemy pawns
+    values[P_CS1] = 9;         // additional evaluation of a pawn storm next to a fixed chain - like g5 in King's Indian
+    values[P_CS2] = 6;        // as above, this time like g4 in King's Indian
+    values[P_CSFAIL] = 31;     // penalty for a badly performed pawn strom next to a chain
+
+
+    // Passed pawn bonuses per rank
+
+    values[PMG2] = 2;
+    values[PMG3] = 2;
+    values[PMG4] = 13;
+    values[PMG5] = 34;
+    values[PMG6] = 71;
+    values[PMG7] = 132;
+
+    values[PEG2] = 12;
+    values[PEG3] = 21;
+    values[PEG4] = 49;
+    values[PEG5] = 93;
+    values[PEG6] = 161;
+    values[PEG7] = 266;
+
+    // Passed pawn value percentage modifiers
+
+    values[P_BL_MUL] = 40;      // blocked passer
+    values[P_OURSTOP_MUL] = 26; // side with a passer controls its stop square
+    values[P_OPPSTOP_MUL] = 23; // side without a passer controls its stop square
+    values[P_DEFMUL] = 3;       // passer defended by own pawn
+    values[P_STOPMUL] = 6;      // passers' stop square defended by own pawn
+
+    // King's pawn shield
+
+    values[P_SH_NONE] = -40;
+    values[P_SH_2]    =   2;
+    values[P_SH_3]    =  -6;
+    values[P_SH_4]    = -17;
+    values[P_SH_5]    = -21;
+    values[P_SH_6]    = -25;
+    values[P_SH_7]    = -35;
+
+    // Pawn storm
+
+    values[P_ST_OPEN] = -5;
+    values[P_ST_3] = -21;
+    values[P_ST_4] = -18;
+    values[P_ST_5] = -4;
+
+    // Knight parameters
+
+    values[N_TRAP] = -165; // trapped knight
+    values[N_BLOCK] = -15; // knight blocks c pawn in queen pawn openings
+    values[N_OWH] = -1;    // knight can move only to own half of the board
+    values[N_REACH] = 10;   // knight can reach an outpost square WAS 2
+    values[BN_SHIELD] = 5;
+
+    // Bishop parameters
+
+    values[B_FIANCH] = 12;  // general bonus for fianchettoed bishop
+    values[B_KING] = 20;    // fianchettoed bishop near king: 0
+    values[B_BADF] = -28;  // enemy pawns hamper fianchettoed bishop
+    values[B_TRAP_A2] = -138;
+    values[B_TRAP_A3] = -45;
+    values[B_BLOCK] = -45; // blocked pawn at d2/e2 hampers bishop's development
+    values[B_BF_MG] = -12; // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
+    values[B_BF_EG] = -20;
+    values[B_WING] = 5;   // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2)
+    values[B_OVH] = -6;    // bishop can move only to own half of the board
+    values[B_REACH] = 3;   // bishop can reach an outpost square
+    values[B_TOUCH] = 5;   // two bishops on adjacent squares
+    values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
+    values[B_OPP_P] = 0;  // enemy pawn on the square of own bishop's color
+    values[B_RETURN] = 7; // bishop returning to initial position after castling
+
+    // Rook parameters
+
+    values[RSR_MG] = 16; // rook on 7th rank
+    values[RSR_EG] = 32;
+    values[RS2_MG] = 20;  // additional bonus for two rooks on 7th rank
+    values[RS2_EG] = 31;
+    values[ROF_MG] = 30; // rook on open file
+    values[ROF_EG] = 4;
+    values[RGH_MG] = 15;  // rook on half-open file with undefended enemy pawn
+    values[RGH_EG] = 17;
+    values[RBH_MG] = 0;  // rook on half-open file with defended enemy pawn
+    values[RBH_EG] = 0;
+    values[ROQ_MG] = 9;  // rook and queen on the same file, open or closed
+    values[ROQ_EG] = 17;
+    values[R_BLOCK] = -53;
+
+    // Queen parameters
+
+    values[QSR_MG] = 0;  // queen on the 7th rank
+    values[QSR_EG] = 4;
+
+    // King parameters
+
+    values[K_NO_LUFT] = -13;
+    values[K_CASTLE] = 25;
+
+    // Forwardness parameters
+
+    values[N_FWD] = 1;
+    values[B_FWD] = 1;
+    values[R_FWD] = 2;
+    values[Q_FWD] = 4;
+
+    // Specialized functions
+
+    InitPst();
+    InitMobility();
+    InitMaterialTweaks();
+    InitBackward();
+    InitPassers();
+
+    // History limit to prunings and reductions
+
+    hist_perc = 175;
+    hist_limit = 24576;
+
+    // when testing a personality, place changes in relation to default below:
+
+}
+
+void cParam::InitialPersonalityWeights() { // tuned manually for good experience of Rodent personalities
 
     // Switch off weakening parameters
 
@@ -481,15 +755,19 @@ void cDistance::Init() {
     }
 }
 
-void cParam::SetVal(int slot, int val) {
+void cParam::SetVal(int slot, int val, int min, int max, bool tune) {
     values[slot] = val;
+	min_val[slot] = min;
+	max_val[slot] = max;
+	tunable[slot] = tune;
 }
 
 void cParam::PrintValues() {
 
+	printf("\n\n");
     for (int i = 0; i < N_OF_VAL; ++i) {
         printf("%14s : %4d     ", paramNames[i], Par.values[i]);
         if (i % 4 == 0) printf("\n");
     }
-    printf("\n");
+    printf("\n\n");
 }

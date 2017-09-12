@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 34.039.715
+// b15: 34.000.473
 
 #pragma once
 
@@ -485,7 +485,10 @@ const char* const paramNames[N_OF_VAL] = {
 
 class cParam {
   public:
-    int values[N_OF_VAL];
+    int values[N_OF_VAL]; // evaluation parameters
+	int max_val[N_OF_VAL];
+	int min_val[N_OF_VAL];
+	bool tunable[N_OF_VAL];
     bool use_book;
     bool verbose_book;
     int book_filter;
@@ -534,13 +537,14 @@ class cParam {
     NOINLINE void InitMaterialTweaks();
     NOINLINE void InitTables();
     NOINLINE void DefaultWeights();
+	NOINLINE void InitialPersonalityWeights();
     NOINLINE void InitAsymmetric(POS *p);
 	NOINLINE void PrintValues();
     void SetSpeed(int elo_in);
     int EloToSpeed(int elo_in);
     int EloToBlur(int elo_in);
     int EloToBookDepth(int elo_in);
-    void SetVal(int slot, int val);
+    void SetVal(int slot, int val, int min, int max, bool tune);
 };
 
 extern cParam Par;
@@ -785,7 +789,16 @@ class cEngine {
     void Bench(int depth);
     void ClearAll();
     void Think(POS *p);
-    double TexelFit(POS *p, int *pv);
+
+#ifdef USE_TUNING
+
+	double best_tune;
+	double TexelFit(POS *p, int *pv);
+	bool TuneOne(POS *p, int *pv, int par);
+	void TuneMe(POS *p, int *pv, int iterations);
+
+#endif
+
 };
 
 #ifdef USE_THREADS
