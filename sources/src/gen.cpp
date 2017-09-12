@@ -290,11 +290,11 @@ int *POS::GenerateSpecial(int *list) const {
 
     // squares from which normal (non-discovered) checks are possible
 
-    int king_sq = KingSq(op);
-    U64 n_check = BB.KnightAttacks(king_sq);
-    U64 r_check = BB.RookAttacks(OccBb(), king_sq);
-    U64 b_check = BB.BishAttacks(OccBb(), king_sq);
-    U64 p_check = BB.ShiftFwd(BB.ShiftSideways(SqBb(king_sq)), op);
+    const int k_sq = KingSq(op);
+    U64 n_check = BB.KnightAttacks(k_sq);
+    U64 r_check = BB.RookAttacks(OccBb(), k_sq);
+    U64 b_check = BB.BishAttacks(OccBb(), k_sq);
+    U64 p_check = BB.ShiftFwd(BB.ShiftSideways(SqBb(k_sq)), op);
 
     // TODO: discovered checks by a pawn
 

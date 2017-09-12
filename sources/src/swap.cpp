@@ -19,7 +19,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 int POS::Swap(int from, int to) {
 
-    int side, ply, type, score[32];
+    int side_l, ply, type, score[32];
     U64 attackers, occ, type_bb;
 
     attackers = AttacksTo(to);
@@ -34,12 +34,12 @@ int POS::Swap(int from, int to) {
                  (BB.RookAttacks(occ, to) & (tp_bb[R] | tp_bb[Q]));
     attackers &= occ;
 
-    side = ((SqBb(from) & cl_bb[BC]) == 0); // so that we can call Swap() out of turn
+    side_l = ((SqBb(from) & cl_bb[BC]) == 0); // so that we can call Swap() out of turn
     ply = 1;
 
     // iterate through attackers
 
-    while (attackers & cl_bb[side]) {
+    while (attackers & cl_bb[side_l]) {
 
         // break on king capture
 
@@ -53,7 +53,7 @@ int POS::Swap(int from, int to) {
         // find next weakest attacker
 
         for (type = P; type <= K; type++)
-            if ((type_bb = PcBb(side, type) & attackers))
+            if ((type_bb = PcBb(side_l, type) & attackers))
                 break;
 
         // eliminate it from consideration
@@ -67,7 +67,7 @@ int POS::Swap(int from, int to) {
                      (BB.RookAttacks(occ, to) & (tp_bb[R] | tp_bb[Q]));
         attackers &= occ;
 
-        side ^= 1;
+        side_l ^= 1;
         ply++;
     }
 

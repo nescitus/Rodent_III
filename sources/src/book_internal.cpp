@@ -93,7 +93,7 @@ bool sInternalBook::LineToInternal(const char *ptr, int excludedColor) {
 
         if (*token == '\0') break;
 
-        move = StrToMove(p, token);
+        move = p->StrToMove(token);
 
         if (p->Legal(move)) {
             // apply move frequency modifiers

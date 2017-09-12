@@ -359,7 +359,7 @@ class POS {
     int TpOnSq(int sq) const { return Tp(pc[sq]); }
 
     bool MayNull() const { return (cl_bb[side] & ~(tp_bb[P] | tp_bb[K])) != 0; }
-    bool IsOnSq(int sd, int pc, int sq) const{ return PcBb(sd, pc) & SqBb(sq); }
+    bool IsOnSq(int sd, int tp, int sq) const{ return PcBb(sd, tp) & SqBb(sq); }
 
     bool InCheck() const { return Attacked(KingSq(side), Opp(side)); }
     bool Illegal() const { return Attacked(KingSq(Opp(side)), side); }
