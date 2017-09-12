@@ -68,7 +68,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         case 3: // first killer move
             move = m->killer1;
             if (move && move != m->trans_move
-            && m->p->pc[Tsq(move)] == NO_PC
+            && m->p->mPc[Tsq(move)] == NO_PC
             && m->p->Legal(move)) {
                 m->phase = 4;
                 *flag = MV_KILLER;
@@ -79,7 +79,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         case 4: // second killer move
             move = m->killer2;
             if (move && move != m->trans_move
-            && m->p->pc[Tsq(move)] == NO_PC
+            && m->p->mPc[Tsq(move)] == NO_PC
             && m->p->Legal(move)) {
                 m->phase = 5;
                 *flag = MV_KILLER;
@@ -90,7 +90,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         case 5: // refutation move
             move = m->ref_move;
             if (move && move != m->trans_move
-            &&  m->p->pc[Tsq(move)] == NO_PC
+            &&  m->p->mPc[Tsq(move)] == NO_PC
             &&  move != m->killer1
             &&  move != m->killer2
             && m->p->Legal(move)) {
@@ -170,7 +170,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         case 3: // first killer move
             move = m->killer1;
             if (move && move != m->trans_move
-            && m->p->pc[Tsq(move)] == NO_PC
+            && m->p->mPc[Tsq(move)] == NO_PC
             && m->p->Legal(move)) {
                 m->phase = 4;
                 *flag = MV_KILLER;
@@ -181,7 +181,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         case 4: // second killer move
             move = m->killer2;
             if (move && move != m->trans_move
-            && m->p->pc[Tsq(move)] == NO_PC && m->p->Legal(move)) {
+            && m->p->mPc[Tsq(move)] == NO_PC && m->p->Legal(move)) {
                 m->phase = 5;
                 *flag = MV_KILLER;
                 return move;
@@ -243,7 +243,7 @@ void cEngine::ScoreQuiet(MOVES *m) {
 
     valuep = m->value;
     for (movep = m->move; movep < m->last; movep++) {
-        int mv_score = history[m->p->pc[Fsq(*movep)]][Tsq(*movep)]; // use history score
+        int mv_score = history[m->p->mPc[Fsq(*movep)]][Tsq(*movep)]; // use history score
         if (Fsq(*movep) == m->ref_sq) mv_score += 2048;             // but bump up refutation move
         *valuep++ = mv_score;
     }
@@ -286,7 +286,7 @@ int cEngine::BadCapture(POS *p, int move) {
 
 int cEngine::MvvLva(POS *p, int move) {
 
-    if (p->pc[Tsq(move)] != NO_PC)
+    if (p->mPc[Tsq(move)] != NO_PC)
         return p->TpOnSq(Tsq(move)) * 6 + 5 - p->TpOnSq(Fsq(move));
 
     if (IsProm(move))
@@ -324,13 +324,13 @@ void cEngine::UpdateHistory(POS *p, int last_move, int move, int depth, int ply)
 
     // No update on a move that changes material balance
 
-    if (p->pc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
+    if (p->mPc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
         return;
 
     // Update history table, making sure that scores don't grow too high
 
-    history[p->pc[Fsq(move)]][Tsq(move)] += 2 * depth * depth;
-    if (history[p->pc[Fsq(move)]][Tsq(move)] > MAX_HIST) TrimHist();
+    history[p->mPc[Fsq(move)]][Tsq(move)] += 2 * depth * depth;
+    if (history[p->mPc[Fsq(move)]][Tsq(move)] > MAX_HIST) TrimHist();
 
     // Update refutation table, saving new move in the table indexed
     // by the coordinates of last move. last_move == 0 is a null move,
@@ -352,13 +352,13 @@ void cEngine::DecreaseHistory(POS *p, int move, int depth) {
 
     // No update on a move that changes material balance
 
-    if (p->pc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
+    if (p->mPc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
         return;
 
     // Update history table, making sure that scores don't fall too low
 
-    history[p->pc[Fsq(move)]][Tsq(move)] -= depth * depth;
-    if (history[p->pc[Fsq(move)]][Tsq(move)] < -MAX_HIST) TrimHist();
+    history[p->mPc[Fsq(move)]][Tsq(move)] -= depth * depth;
+    if (history[p->mPc[Fsq(move)]][Tsq(move)] < -MAX_HIST) TrimHist();
 }
 
 int cEngine::Refutation(int move) {

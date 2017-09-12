@@ -19,15 +19,15 @@ If not, see <http://www.gnu.org/licenses/>.
 
 bool POS::Legal(int move) const {
 
-    int sd = side;
+    int sd = mSide;
     int fsq = Fsq(move);
     int tsq = Tsq(move);
     int ftp = TpOnSq(fsq);
     int ttp = TpOnSq(tsq);
 
-    if (ftp == NO_TP || Cl(pc[fsq]) != sd)
+    if (ftp == NO_TP || Cl(mPc[fsq]) != sd)
         return false;
-    if (ttp != NO_TP && Cl(pc[tsq]) == sd)
+    if (ttp != NO_TP && Cl(mPc[tsq]) == sd)
         return false;
     switch (MoveType(move)) {
         case NORMAL:
@@ -37,11 +37,11 @@ bool POS::Legal(int move) const {
                 if (fsq != E1)
                     return false;
                 if (tsq > fsq) {
-                    if ((c_flags & 1) && !(OccBb() & (U64)0x0000000000000060))
+                    if ((mCFlags & 1) && !(OccBb() & (U64)0x0000000000000060))
                         if (!Attacked(E1, BC) && !Attacked(F1, BC))
                             return true;
                 } else {
-                    if ((c_flags & 2) && !(OccBb() & (U64)0x000000000000000E))
+                    if ((mCFlags & 2) && !(OccBb() & (U64)0x000000000000000E))
                         if (!Attacked(E1, BC) && !Attacked(D1, BC))
                             return true;
                 }
@@ -49,22 +49,22 @@ bool POS::Legal(int move) const {
                 if (fsq != E8)
                     return false;
                 if (tsq > fsq) {
-                    if ((c_flags & 4) && !(OccBb() & (U64)0x6000000000000000))
+                    if ((mCFlags & 4) && !(OccBb() & (U64)0x6000000000000000))
                         if (!Attacked(E8, WC) && !Attacked(F8, WC))
                             return true;
                 } else {
-                    if ((c_flags & 8) && !(OccBb() & (U64)0x0E00000000000000))
+                    if ((mCFlags & 8) && !(OccBb() & (U64)0x0E00000000000000))
                         if (!Attacked(E8, WC) && !Attacked(D8, WC))
                             return true;
                 }
             }
             return false;
         case EP_CAP:
-            if (ftp == P && tsq == ep_sq)
+            if (ftp == P && tsq == mEpSq)
                 return true;
             return false;
         case EP_SET:
-            if (ftp == P && ttp == NO_TP && pc[tsq ^ 8] == NO_PC)
+            if (ftp == P && ttp == NO_TP && mPc[tsq ^ 8] == NO_PC)
                 if ((tsq > fsq && sd == WC) ||
                         (tsq < fsq && sd == BC))
                     return true;

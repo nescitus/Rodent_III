@@ -23,14 +23,14 @@ void POS::ClearPosition() {
 
     *this = {0};
 
-    king_sq[WC] = NO_SQ;
-    king_sq[BC] = NO_SQ;
+    mKingSq[WC] = NO_SQ;
+    mKingSq[BC] = NO_SQ;
 
     for (int sq = 0; sq < 64; sq++)
-        pc[sq] = NO_PC;
+        mPc[sq] = NO_PC;
 
-    side = WC;
-    ep_sq = NO_SQ;
+    mSide = WC;
+    mEpSq = NO_SQ;
 }
 
 void POS::SetPosition(const char *epd) {
@@ -45,7 +45,7 @@ void POS::SetPosition(const char *epd) {
         while (j < 8) {
             if (*epd >= '1' && *epd <= '8')
                 for (pc_loop = 0; pc_loop < *epd - '0'; pc_loop++) {
-                    pc[i + j] = NO_PC;
+                    mPc[i + j] = NO_PC;
                     j++;
                 }
             else {
@@ -58,17 +58,17 @@ void POS::SetPosition(const char *epd) {
                     return;
                 }
 
-                pc[i + j] = pc_loop;
-                cl_bb[Cl(pc_loop)] ^= SqBb(i + j);
-                tp_bb[Tp(pc_loop)] ^= SqBb(i + j);
+                mPc[i + j] = pc_loop;
+                mClBb[Cl(pc_loop)] ^= SqBb(i + j);
+                mTpBb[Tp(pc_loop)] ^= SqBb(i + j);
 
                 if (Tp(pc_loop) == K)
-                    king_sq[Cl(pc_loop)] = i + j;
+                    mKingSq[Cl(pc_loop)] = i + j;
 
-                mg_sc[Cl(pc_loop)] += Par.mg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
-                eg_sc[Cl(pc_loop)] += Par.eg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
-                phase += ph_value[Tp(pc_loop)];
-                cnt[Cl(pc_loop)][Tp(pc_loop)]++;
+                mMgSc[Cl(pc_loop)] += Par.mg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
+                mEgSc[Cl(pc_loop)] += Par.eg_pst[Cl(pc_loop)][Tp(pc_loop)][i + j];
+                mPhase += ph_value[Tp(pc_loop)];
+                mCnt[Cl(pc_loop)][Tp(pc_loop)]++;
                 j++;
             }
             epd++;
@@ -76,37 +76,37 @@ void POS::SetPosition(const char *epd) {
         epd++;
     }
     if (*epd++ == 'w')
-        side = WC;
+        mSide = WC;
     else
-        side = BC;
+        mSide = BC;
     epd++;
     if (*epd == '-')
         epd++;
     else {
         if (*epd == 'K') {
-            c_flags |= 1;
+            mCFlags |= 1;
             epd++;
         }
         if (*epd == 'Q') {
-            c_flags |= 2;
+            mCFlags |= 2;
             epd++;
         }
         if (*epd == 'k') {
-            c_flags |= 4;
+            mCFlags |= 4;
             epd++;
         }
         if (*epd == 'q') {
-            c_flags |= 8;
+            mCFlags |= 8;
             epd++;
         }
     }
     epd++;
     if (*epd == '-')
-        ep_sq = NO_SQ;
+        mEpSq = NO_SQ;
     else {
-        ep_sq = Sq(*epd - 'a', *(epd + 1) - '1');
-        if (!(BB.PawnAttacks(Opp(side), ep_sq) & Pawns(side)))
-            ep_sq = NO_SQ;
+        mEpSq = Sq(*epd - 'a', *(epd + 1) - '1');
+        if (!(BB.PawnAttacks(Opp(mSide), mEpSq) & Pawns(mSide)))
+            mEpSq = NO_SQ;
     }
     InitHashKey();
     InitPawnKey();

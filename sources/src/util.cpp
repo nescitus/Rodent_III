@@ -102,17 +102,17 @@ void POS::InitHashKey() {
     U64 key = 0;
 
     for (int i = 0; i < 64; i++)
-        if (pc[i] != NO_PC)
-            key ^= zob_piece[pc[i]][i];
+        if (mPc[i] != NO_PC)
+            key ^= zob_piece[mPc[i]][i];
 
-    key ^= zob_castle[c_flags];
-    if (ep_sq != NO_SQ)
-        key ^= zob_ep[File(ep_sq)];
+    key ^= zob_castle[mCFlags];
+    if (mEpSq != NO_SQ)
+        key ^= zob_ep[File(mEpSq)];
 
-    if (side == BC)
+    if (mSide == BC)
         key ^= SIDE_RANDOM;
 
-    hash_key = key;
+    mHashKey = key;
 }
 
 void POS::InitPawnKey() {
@@ -120,11 +120,11 @@ void POS::InitPawnKey() {
     U64 key = 0;
 
     for (int i = 0; i < 64; i++) {
-        if ((tp_bb[P] & SqBb(i)) || (tp_bb[K] & SqBb(i)))
-            key ^= zob_piece[pc[i]][i];
+        if ((mTpBb[P] & SqBb(i)) || (mTpBb[K] & SqBb(i)))
+            key ^= zob_piece[mPc[i]][i];
     }
 
-    pawn_key = key;
+    mPawnKey = key;
 }
 
 void PrintMove(int move) {
@@ -168,7 +168,7 @@ int POS::StrToMove(char *move_str) const {
     if (TpOnSq(from) == K && Abs(to - from) == 2)
         type = CASTLE;
     else if (TpOnSq(from) == P) {
-        if (to == ep_sq)
+        if (to == mEpSq)
             type = EP_CAP;
         else if (Abs(to - from) == 16)
             type = EP_SET;

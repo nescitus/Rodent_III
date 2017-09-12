@@ -21,31 +21,31 @@ bool cEngine::IsDraw(POS *p) {
 
     // Draw by 50 move rule
 
-    if (p->rev_moves > 100) return true;
+    if (p->mRevMoves > 100) return true;
 
     // Draw by repetition
 
-    for (int i = 4; i <= p->rev_moves; i += 2)
-        if (p->hash_key == p->rep_list[p->head - i]) return true;
+    for (int i = 4; i <= p->mRevMoves; i += 2)
+        if (p->mHashKey == p->mRepList[p->mHead - i]) return true;
 
     // With no major pieces on the board, we have some heuristic draws to consider
 
-    if (p->cnt[WC][Q] + p->cnt[BC][Q] + p->cnt[WC][R] + p->cnt[BC][R] == 0) {
+    if (p->mCnt[WC][Q] + p->mCnt[BC][Q] + p->mCnt[WC][R] + p->mCnt[BC][R] == 0) {
 
         // Draw by insufficient material (bare kings or Km vs K)
 
         if (!p->Illegal()) {
-            if (p->cnt[WC][P] + p->cnt[BC][P] == 0) {
-                if (p->cnt[WC][N] + p->cnt[BC][N] + p->cnt[WC][B] + p->cnt[BC][B] <= 1) return true; // KK, KmK
+            if (p->mCnt[WC][P] + p->mCnt[BC][P] == 0) {
+                if (p->mCnt[WC][N] + p->mCnt[BC][N] + p->mCnt[WC][B] + p->mCnt[BC][B] <= 1) return true; // KK, KmK
             }
         }
 
         // Trivially drawn KPK endgames
 
-        if (p->cnt[WC][B] + p->cnt[BC][B] + p->cnt[WC][N] + p->cnt[BC][N] == 0) {
-            if (p->cnt[WC][P] + p->cnt[BC][P] == 1) {
-                if (p->cnt[WC][P] == 1) return KPKdraw(p, WC);  // exactly one white pawn
-                if (p->cnt[BC][P] == 1) return KPKdraw(p, BC);  // exactly one black pawn
+        if (p->mCnt[WC][B] + p->mCnt[BC][B] + p->mCnt[WC][N] + p->mCnt[BC][N] == 0) {
+            if (p->mCnt[WC][P] + p->mCnt[BC][P] == 1) {
+                if (p->mCnt[WC][P] == 1) return KPKdraw(p, WC);  // exactly one white pawn
+                if (p->mCnt[BC][P] == 1) return KPKdraw(p, BC);  // exactly one black pawn
             }
         } // pawns only
     }
@@ -64,21 +64,21 @@ bool cEngine::KPKdraw(POS *p, int sd) {
 
     // opposition through a pawn
 
-    if (p->side == sd
+    if (p->mSide == sd
     && (bbWeakKing & BB.ShiftFwd(bbPawn, sd))
     && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
        ) return true;
 
     // weaker side can create opposition through a pawn in one move
 
-    if (p->side == op
-    && (BB.KingAttacks(p->king_sq[op]) & BB.ShiftFwd(bbPawn, sd))
+    if (p->mSide == op
+    && (BB.KingAttacks(p->mKingSq[op]) & BB.ShiftFwd(bbPawn, sd))
     && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
        ) if (!p->Illegal()) return true;
 
     // opposition next to a pawn
 
-    if (p->side == sd
+    if (p->mSide == sd
     && (bbStrongKing & BB.ShiftSideways(bbPawn))
     && (bbWeakKing & BB.ShiftFwd(BB.ShiftFwd(bbStrongKing, sd), sd))
        ) return true;

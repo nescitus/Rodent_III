@@ -322,47 +322,47 @@ class POS {
     bool CanDiscoverCheck(U64 bb_checkers, int op, int from) const; // for GenerateSpecial()
 
   public:
-    U64 cl_bb[2];
-    U64 tp_bb[6];
-    int pc[64];
-    int king_sq[2];
-    int phase;
-    int cnt[2][6];
-    int mg_sc[2];
-    int eg_sc[2];
-    int side;
-    int c_flags;
-    int ep_sq;
-    int rev_moves;
-    int head;
-    U64 hash_key;
-    U64 pawn_key;
-    U64 rep_list[256];
+    U64 mClBb[2];
+    U64 mTpBb[6];
+    int mPc[64];
+    int mKingSq[2];
+    int mPhase;
+    int mCnt[2][6];
+    int mMgSc[2];
+    int mEgSc[2];
+    int mSide;
+    int mCFlags;
+    int mEpSq;
+    int mRevMoves;
+    int mHead;
+    U64 mHashKey;
+    U64 mPawnKey;
+    U64 mRepList[256];
 
     static void Init();
 
-    U64 Pawns(int sd)   const { return cl_bb[sd] & tp_bb[P]; }
-    U64 Knights(int sd) const { return cl_bb[sd] & tp_bb[N]; }
-    U64 Bishops(int sd) const { return cl_bb[sd] & tp_bb[B]; }
-    U64 Rooks(int sd)   const { return cl_bb[sd] & tp_bb[R]; }
-    U64 Queens(int sd)  const { return cl_bb[sd] & tp_bb[Q]; }
-    U64 Kings(int sd)   const { return cl_bb[sd] & tp_bb[K]; }
+    U64 Pawns(int sd)   const { return mClBb[sd] & mTpBb[P]; }
+    U64 Knights(int sd) const { return mClBb[sd] & mTpBb[N]; }
+    U64 Bishops(int sd) const { return mClBb[sd] & mTpBb[B]; }
+    U64 Rooks(int sd)   const { return mClBb[sd] & mTpBb[R]; }
+    U64 Queens(int sd)  const { return mClBb[sd] & mTpBb[Q]; }
+    U64 Kings(int sd)   const { return mClBb[sd] & mTpBb[K]; }
 
-    U64 StraightMovers(int sd) const { return cl_bb[sd] & (tp_bb[R] | tp_bb[Q]); }
-    U64 DiagMovers(int sd)     const { return cl_bb[sd] & (tp_bb[B] | tp_bb[Q]); }
+    U64 StraightMovers(int sd) const { return mClBb[sd] & (mTpBb[R] | mTpBb[Q]); }
+    U64 DiagMovers(int sd)     const { return mClBb[sd] & (mTpBb[B] | mTpBb[Q]); }
 
-    U64 PcBb(int sd, int tp) const { return cl_bb[sd] & tp_bb[tp]; }
-    U64 OccBb()   const { return cl_bb[WC] | cl_bb[BC]; }
+    U64 PcBb(int sd, int tp) const { return mClBb[sd] & mTpBb[tp]; }
+    U64 OccBb()   const { return mClBb[WC] | mClBb[BC]; }
     U64 UnoccBb() const { return ~OccBb(); }
 
-    int KingSq(int sd) const { return king_sq[sd]; }
-    int TpOnSq(int sq) const { return Tp(pc[sq]); }
+    int KingSq(int sd) const { return mKingSq[sd]; }
+    int TpOnSq(int sq) const { return Tp(mPc[sq]); }
 
-    bool MayNull() const { return (cl_bb[side] & ~(tp_bb[P] | tp_bb[K])) != 0; }
+    bool MayNull() const { return (mClBb[mSide] & ~(mTpBb[P] | mTpBb[K])) != 0; }
     bool IsOnSq(int sd, int tp, int sq) const{ return PcBb(sd, tp) & SqBb(sq); }
 
-    bool InCheck() const { return Attacked(KingSq(side), Opp(side)); }
-    bool Illegal() const { return Attacked(KingSq(Opp(side)), side); }
+    bool InCheck() const { return Attacked(KingSq(mSide), Opp(mSide)); }
+    bool Illegal() const { return Attacked(KingSq(Opp(mSide)), mSide); }
 
     U64 AttacksFrom(int sq) const;
     U64 AttacksTo(int sq) const;

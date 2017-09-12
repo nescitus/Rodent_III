@@ -19,75 +19,75 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void POS::DoMove(int move, UNDO *u) {
 
-    int sd = side;          // moving side
+    int sd = mSide;          // moving side
     int op = Opp(sd);       // side not to move
     int fsq = Fsq(move);    // start square
     int tsq = Tsq(move);    // target square
-    int ftp = Tp(pc[fsq]);  // moving piece
-    int ttp = Tp(pc[tsq]);  // captured piece
+    int ftp = Tp(mPc[fsq]);  // moving piece
+    int ttp = Tp(mPc[tsq]);  // captured piece
 
     // Save data for undoing a move
 
     u->ttp = ttp;
-    u->c_flags = c_flags;
-    u->ep_sq = ep_sq;
-    u->rev_moves = rev_moves;
-    u->hash_key = hash_key;
-    u->pawn_key = pawn_key;
+    u->c_flags = mCFlags;
+    u->ep_sq = mEpSq;
+    u->rev_moves = mRevMoves;
+    u->hash_key = mHashKey;
+    u->pawn_key = mPawnKey;
 
     // Update reversible moves counter
 
-    rep_list[head++] = hash_key;
-    if (ftp == P || ttp != NO_TP) rev_moves = 0;
-    else                          rev_moves++;
+    mRepList[mHead++] = mHashKey;
+    if (ftp == P || ttp != NO_TP) mRevMoves = 0;
+    else                          mRevMoves++;
 
     // Update pawn hash on pawn or king move
 
     if (ftp == P || ftp == K)
-        pawn_key ^= zob_piece[Pc(sd, ftp)][fsq] ^ zob_piece[Pc(sd, ftp)][tsq];
+        mPawnKey ^= zob_piece[Pc(sd, ftp)][fsq] ^ zob_piece[Pc(sd, ftp)][tsq];
 
     // Update castling rights
 
-    hash_key ^= zob_castle[c_flags];
-    c_flags &= castle_mask[fsq] & castle_mask[tsq];
-    hash_key ^= zob_castle[c_flags];
+    mHashKey ^= zob_castle[mCFlags];
+    mCFlags &= castle_mask[fsq] & castle_mask[tsq];
+    mHashKey ^= zob_castle[mCFlags];
 
     // Clear en passant square
 
-    if (ep_sq != NO_SQ) {
-        hash_key ^= zob_ep[File(ep_sq)];
-        ep_sq = NO_SQ;
+    if (mEpSq != NO_SQ) {
+        mHashKey ^= zob_ep[File(mEpSq)];
+        mEpSq = NO_SQ;
     }
 
     // Move own piece
 
-    pc[fsq] = NO_PC;
-    pc[tsq] = Pc(sd, ftp);
-    hash_key ^= zob_piece[Pc(sd, ftp)][fsq] ^ zob_piece[Pc(sd, ftp)][tsq];
-    cl_bb[sd] ^= SqBb(fsq) | SqBb(tsq);
-    tp_bb[ftp] ^= SqBb(fsq) | SqBb(tsq);
-    mg_sc[sd] += Par.mg_pst[sd][ftp][tsq] - Par.mg_pst[sd][ftp][fsq];
-    eg_sc[sd] += Par.eg_pst[sd][ftp][tsq] - Par.eg_pst[sd][ftp][fsq];
+    mPc[fsq] = NO_PC;
+    mPc[tsq] = Pc(sd, ftp);
+    mHashKey ^= zob_piece[Pc(sd, ftp)][fsq] ^ zob_piece[Pc(sd, ftp)][tsq];
+    mClBb[sd] ^= SqBb(fsq) | SqBb(tsq);
+    mTpBb[ftp] ^= SqBb(fsq) | SqBb(tsq);
+    mMgSc[sd] += Par.mg_pst[sd][ftp][tsq] - Par.mg_pst[sd][ftp][fsq];
+    mEgSc[sd] += Par.eg_pst[sd][ftp][tsq] - Par.eg_pst[sd][ftp][fsq];
 
     // Update king location
 
     if (ftp == K)
-        king_sq[sd] = tsq;
+        mKingSq[sd] = tsq;
 
     // Capture enemy piece
 
     if (ttp != NO_TP) {
-        hash_key ^= zob_piece[Pc(op, ttp)][tsq];
+        mHashKey ^= zob_piece[Pc(op, ttp)][tsq];
 
         if (ttp == P)
-            pawn_key ^= zob_piece[Pc(op, ttp)][tsq]; // pawn hash
+            mPawnKey ^= zob_piece[Pc(op, ttp)][tsq]; // pawn hash
 
-        cl_bb[op] ^= SqBb(tsq);
-        tp_bb[ttp] ^= SqBb(tsq);
-        mg_sc[op] -= Par.mg_pst[op][ttp][tsq];
-        eg_sc[op] -= Par.eg_pst[op][ttp][tsq];
-        phase -= ph_value[ttp];
-        cnt[op][ttp]--; // piece count
+        mClBb[op] ^= SqBb(tsq);
+        mTpBb[ttp] ^= SqBb(tsq);
+        mMgSc[op] -= Par.mg_pst[op][ttp][tsq];
+        mEgSc[op] -= Par.eg_pst[op][ttp][tsq];
+        mPhase -= ph_value[ttp];
+        mCnt[op][ttp]--; // piece count
     }
 
     switch (MoveType(move)) {
@@ -107,28 +107,28 @@ void POS::DoMove(int move, UNDO *u) {
                 case G8: { fsq = H8; tsq = F8; break; }
             }
 
-            pc[fsq] = NO_PC;
-            pc[tsq] = Pc(sd, R);
-            hash_key ^= zob_piece[Pc(sd, R)][fsq] ^ zob_piece[Pc(sd, R)][tsq];
-            cl_bb[sd] ^= SqBb(fsq) | SqBb(tsq);
-            tp_bb[R] ^= SqBb(fsq) | SqBb(tsq);
-            mg_sc[sd] += Par.mg_pst[sd][R][tsq] - Par.mg_pst[sd][R][fsq];
-            eg_sc[sd] += Par.eg_pst[sd][R][tsq] - Par.eg_pst[sd][R][fsq];
+            mPc[fsq] = NO_PC;
+            mPc[tsq] = Pc(sd, R);
+            mHashKey ^= zob_piece[Pc(sd, R)][fsq] ^ zob_piece[Pc(sd, R)][tsq];
+            mClBb[sd] ^= SqBb(fsq) | SqBb(tsq);
+            mTpBb[R] ^= SqBb(fsq) | SqBb(tsq);
+            mMgSc[sd] += Par.mg_pst[sd][R][tsq] - Par.mg_pst[sd][R][fsq];
+            mEgSc[sd] += Par.eg_pst[sd][R][tsq] - Par.eg_pst[sd][R][fsq];
             break;
 
         // En passant capture
 
         case EP_CAP:
             tsq ^= 8;
-            pc[tsq] = NO_PC;
-            hash_key ^= zob_piece[Pc(op, P)][tsq];
-            pawn_key ^= zob_piece[Pc(op, P)][tsq];
-            cl_bb[op] ^= SqBb(tsq);
-            tp_bb[P] ^= SqBb(tsq);
-            mg_sc[op] -= Par.mg_pst[op][P][tsq];
-            eg_sc[op] -= Par.eg_pst[op][P][tsq];
-            phase -= ph_value[P];
-            cnt[op][P]--;
+            mPc[tsq] = NO_PC;
+            mHashKey ^= zob_piece[Pc(op, P)][tsq];
+            mPawnKey ^= zob_piece[Pc(op, P)][tsq];
+            mClBb[op] ^= SqBb(tsq);
+            mTpBb[P] ^= SqBb(tsq);
+            mMgSc[op] -= Par.mg_pst[op][P][tsq];
+            mEgSc[op] -= Par.eg_pst[op][P][tsq];
+            mPhase -= ph_value[P];
+            mCnt[op][P]--;
             break;
 
         // Double pawn move
@@ -136,8 +136,8 @@ void POS::DoMove(int move, UNDO *u) {
         case EP_SET:
             tsq ^= 8;
             if (BB.PawnAttacks(sd, tsq) & Pawns(op)) {
-                ep_sq = tsq;
-                hash_key ^= zob_ep[File(tsq)];
+                mEpSq = tsq;
+                mHashKey ^= zob_ep[File(tsq)];
             }
             break;
 
@@ -145,35 +145,35 @@ void POS::DoMove(int move, UNDO *u) {
 
         case N_PROM: case B_PROM: case R_PROM: case Q_PROM:
             ftp = PromType(move);
-            pc[tsq] = Pc(sd, ftp);
-            hash_key ^= zob_piece[Pc(sd, P)][tsq] ^ zob_piece[Pc(sd, ftp)][tsq];
-            pawn_key ^= zob_piece[Pc(sd, P)][tsq];
-            tp_bb[P] ^= SqBb(tsq);
-            tp_bb[ftp] ^= SqBb(tsq);
-            mg_sc[sd] += Par.mg_pst[sd][ftp][tsq] - Par.mg_pst[sd][P][tsq];
-            eg_sc[sd] += Par.eg_pst[sd][ftp][tsq] - Par.eg_pst[sd][P][tsq];
-            phase += ph_value[ftp] - ph_value[P];
-            cnt[sd][P]--;
-            cnt[sd][ftp]++;
+            mPc[tsq] = Pc(sd, ftp);
+            mHashKey ^= zob_piece[Pc(sd, P)][tsq] ^ zob_piece[Pc(sd, ftp)][tsq];
+            mPawnKey ^= zob_piece[Pc(sd, P)][tsq];
+            mTpBb[P] ^= SqBb(tsq);
+            mTpBb[ftp] ^= SqBb(tsq);
+            mMgSc[sd] += Par.mg_pst[sd][ftp][tsq] - Par.mg_pst[sd][P][tsq];
+            mEgSc[sd] += Par.eg_pst[sd][ftp][tsq] - Par.eg_pst[sd][P][tsq];
+            mPhase += ph_value[ftp] - ph_value[P];
+            mCnt[sd][P]--;
+            mCnt[sd][ftp]++;
             break;
     }
 
     // Change side to move
 
-    side ^= 1;
-    hash_key ^= SIDE_RANDOM;
+    mSide ^= 1;
+    mHashKey ^= SIDE_RANDOM;
 }
 
 void POS::DoNull(UNDO *u) {
 
-    u->ep_sq = ep_sq;
-    u->hash_key = hash_key;
-    rep_list[head++] = hash_key;
-    rev_moves++;
-    if (ep_sq != NO_SQ) {
-        hash_key ^= zob_ep[File(ep_sq)];
-        ep_sq = NO_SQ;
+    u->ep_sq = mEpSq;
+    u->hash_key = mHashKey;
+    mRepList[mHead++] = mHashKey;
+    mRevMoves++;
+    if (mEpSq != NO_SQ) {
+        mHashKey ^= zob_ep[File(mEpSq)];
+        mEpSq = NO_SQ;
     }
-    side ^= 1;
-    hash_key ^= SIDE_RANDOM;
+    mSide ^= 1;
+    mHashKey ^= SIDE_RANDOM;
 }

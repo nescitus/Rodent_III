@@ -49,9 +49,9 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
 
     // Try to retrieve score from pawn hashtable
 
-    int addr = p->pawn_key % PAWN_HASH_SIZE;
+    int addr = p->mPawnKey % PAWN_HASH_SIZE;
 
-    if (PawnTT[addr].key == p->pawn_key) {
+    if (PawnTT[addr].key == p->mPawnKey) {
 
         // pawn hashtable contains delta of white and black score
 
@@ -112,13 +112,13 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
 
     if (bb_all_pawns) {
         if (!(bb_all_pawns & Mask.k_side)) {
-            AddPawns(e, WC, empty_ks[p->king_sq[WC]], empty_ks[p->king_sq[WC]]);
-            AddPawns(e, BC, empty_ks[p->king_sq[BC]], empty_ks[p->king_sq[BC]]);
+            AddPawns(e, WC, empty_ks[p->mKingSq[WC]], empty_ks[p->mKingSq[WC]]);
+            AddPawns(e, BC, empty_ks[p->mKingSq[BC]], empty_ks[p->mKingSq[BC]]);
         }
 
         if (!(bb_all_pawns & Mask.q_side)) {
-            AddPawns(e, WC, empty_qs[p->king_sq[WC]], empty_qs[p->king_sq[WC]]);
-            AddPawns(e, BC, empty_qs[p->king_sq[BC]], empty_qs[p->king_sq[BC]]);
+            AddPawns(e, WC, empty_qs[p->mKingSq[WC]], empty_qs[p->mKingSq[WC]]);
+            AddPawns(e, BC, empty_qs[p->mKingSq[BC]], empty_qs[p->mKingSq[BC]]);
         }
     }
 
@@ -139,7 +139,7 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     // Note that we save delta between white and black scores.
     // It might become a problem if we decide to print detailed eval score.
 
-    PawnTT[addr].key = p->pawn_key;
+    PawnTT[addr].key = p->mPawnKey;
     PawnTT[addr].mg_pawns = (Par.values[W_STRUCT] * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
     PawnTT[addr].eg_pawns = (Par.values[W_STRUCT] * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
 }
@@ -216,7 +216,7 @@ int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
 int cEngine::EvaluateChains(POS *p, int sd) {
 
     int mg_result = 0;
-    int sq = p->king_sq[sd];
+    int sq = p->mKingSq[sd];
     int op = Opp(sd);
 
     // basic pointy chain

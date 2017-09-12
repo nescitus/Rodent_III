@@ -34,7 +34,7 @@ int cEngine::lmr_size[2][MAX_PLY][MAX_MOVES];
 
 void cParam::InitAsymmetric(POS *p) {
 
-    prog_side = p->side;
+    prog_side = p->mSide;
 
     if (prog_side == WC) { // TODO: no if/else, but progside/op_side
 		sd_att[WC] = values[W_OWN_ATT];
@@ -216,7 +216,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (TransRetrieve(p->hash_key, &move, &score, alpha, beta, depth, ply)) {
+    if (TransRetrieve(p->mHashKey, &move, &score, alpha, beta, depth, ply)) {
         if (score >= beta) UpdateHistory(p, last_move, move, depth, ply);
         if (!is_pv && Par.search_skill > 0) return score;
     }
@@ -278,7 +278,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
         // omit null move search if normal search to the same depth wouldn't exceed beta
         // (sometimes we can check it for free via hash table)
 
-        if (TransRetrieve(p->hash_key, &move, &null_score, alpha, beta, new_depth, ply)) {
+        if (TransRetrieve(p->mHashKey, &move, &null_score, alpha, beta, new_depth, ply)) {
             if (null_score < beta) goto avoid_null;
         }
 
@@ -289,7 +289,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
         // get location of a piece whose capture refuted null move
         // its escape will be prioritised in the move ordering
 
-        TransRetrieve(p->hash_key, &null_refutation, &null_score, alpha, beta, depth, ply);
+        TransRetrieve(p->mHashKey, &null_refutation, &null_score, alpha, beta, depth, ply);
         if (null_refutation > 0) ref_sq = Tsq(null_refutation);
 
         p->UndoNull(u);
@@ -319,7 +319,7 @@ avoid_null:
     && Par.search_skill > 3
     && !move
     && !was_null
-    && !(p->Pawns(p->side) & bb_rel_rank[p->side][RANK_7]) // no pawns to promote in one move
+    && !(p->Pawns(p->mSide) & bb_rel_rank[p->mSide][RANK_7]) // no pawns to promote in one move
     && depth <= razor_depth) {
         int threshold = beta - razor_margin[depth];
 
@@ -336,7 +336,7 @@ avoid_null:
     && !move
     && depth > 6) {
         Search(p, ply, alpha, beta, depth - 2, 0, -1, last_capt_sq, pv);
-        TransRetrieveMove(p->hash_key, &move);
+        TransRetrieveMove(p->mHashKey, &move);
     }
 
     // TODO: internal iterative deepening in cut nodes
@@ -363,7 +363,7 @@ avoid_null:
 
         // MAKE MOVE
 
-        mv_hist_score = history[p->pc[Fsq(move)]][Tsq(move)];
+        mv_hist_score = history[p->mPc[Fsq(move)]][Tsq(move)];
         victim = p->TpOnSq(Tsq(move));
         if (victim != NO_TP) last_capt = Tsq(move);
         else last_capt = -1;
@@ -496,7 +496,7 @@ research:
                     DecreaseHistory(p, mv_played[mv], depth);
                 }
             }
-            TransStore(p->hash_key, move, score, LOWER, depth, ply);
+            TransStore(p->mHashKey, move, score, LOWER, depth, ply);
 
             // At root, change the best move and show the new pv
 
@@ -535,9 +535,9 @@ research:
                 DecreaseHistory(p, mv_played[mv], depth);
             }
         }
-        TransStore(p->hash_key, *pv, best, EXACT, depth, ply);
+        TransStore(p->mHashKey, *pv, best, EXACT, depth, ply);
     } else
-        TransStore(p->hash_key, 0, best, UPPER, depth, ply);
+        TransStore(p->mHashKey, 0, best, UPPER, depth, ply);
 
     return best;
 }
@@ -645,6 +645,6 @@ void cEngine::Slowdown() {
 
 int POS::DrawScore() const {
 
-    if (side == Par.prog_side) return -Par.draw_score;
+    if (mSide == Par.prog_side) return -Par.draw_score;
     else                       return  Par.draw_score;
 }

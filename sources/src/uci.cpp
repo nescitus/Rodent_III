@@ -145,7 +145,7 @@ void POS::ParseMoves(const char *ptr) {
 
         // We won't be taking back moves beyond this point:
 
-        if (rev_moves == 0) head = 0;
+        if (mRevMoves == 0) mHead = 0;
     }
 }
 
@@ -280,8 +280,8 @@ void ParseGo(POS *p, const char *ptr) {
     // set move time
 
     if (!strict_time) {
-        int base = p->side == WC ? wtime : btime;
-        int inc = p->side == WC ? winc : binc;
+        int base = p->mSide == WC ? wtime : btime;
+        int inc = p->mSide == WC ? winc : binc;
         SetMoveTime(base, inc, movestogo);
     }
 
@@ -418,9 +418,9 @@ void POS::PrintBoard() const {
 
     printf("--------------------------------------------\n");
     for (int sq = 0; sq < 64; sq++) {
-        printf("%s", piece_name[pc[sq ^ (BC * 56)]]);
+        printf("%s", piece_name[mPc[sq ^ (BC * 56)]]);
         if ((sq + 1) % 8 == 0) printf(" %d\n", 9 - ((sq + 1) / 8));
     }
 
-    printf("\na b c d e f g h\n%s\n--------------------------------------------\n", side == WC ? "(w)" : "(b)");
+    printf("\na b c d e f g h\n%s\n--------------------------------------------\n", mSide == WC ? "(w)" : "(b)");
 }

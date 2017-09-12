@@ -19,42 +19,42 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void POS::UndoMove(int move, UNDO *u) {
 
-    int sd = Opp(side);
+    int sd = Opp(mSide);
     int op = Opp(sd);
     int fsq = Fsq(move);
     int tsq = Tsq(move);
-    int ftp = Tp(pc[tsq]); // moving piece
+    int ftp = Tp(mPc[tsq]); // moving piece
     int ttp = u->ttp;
 
-    c_flags = u->c_flags;
-    ep_sq = u->ep_sq;
-    rev_moves = u->rev_moves;
-    hash_key = u->hash_key;
-    pawn_key = u->pawn_key;
+    mCFlags = u->c_flags;
+    mEpSq = u->ep_sq;
+    mRevMoves = u->rev_moves;
+    mHashKey = u->hash_key;
+    mPawnKey = u->pawn_key;
 
-    head--;
+    mHead--;
 
-    pc[fsq] = Pc(sd, ftp);
-    pc[tsq] = NO_PC;
-    cl_bb[sd] ^= SqBb(fsq) | SqBb(tsq);
-    tp_bb[ftp] ^= SqBb(fsq) | SqBb(tsq);
-    mg_sc[sd] += Par.mg_pst[sd][ftp][fsq] - Par.mg_pst[sd][ftp][tsq];
-    eg_sc[sd] += Par.eg_pst[sd][ftp][fsq] - Par.eg_pst[sd][ftp][tsq];
+    mPc[fsq] = Pc(sd, ftp);
+    mPc[tsq] = NO_PC;
+    mClBb[sd] ^= SqBb(fsq) | SqBb(tsq);
+    mTpBb[ftp] ^= SqBb(fsq) | SqBb(tsq);
+    mMgSc[sd] += Par.mg_pst[sd][ftp][fsq] - Par.mg_pst[sd][ftp][tsq];
+    mEgSc[sd] += Par.eg_pst[sd][ftp][fsq] - Par.eg_pst[sd][ftp][tsq];
 
     // Change king location
 
-    if (ftp == K) king_sq[sd] = fsq;
+    if (ftp == K) mKingSq[sd] = fsq;
 
     // Uncapture enemy piece
 
     if (ttp != NO_TP) {
-        pc[tsq] = Pc(op, ttp);
-        cl_bb[op] ^= SqBb(tsq);
-        tp_bb[ttp] ^= SqBb(tsq);
-        mg_sc[op] += Par.mg_pst[op][ttp][tsq];
-        eg_sc[op] += Par.eg_pst[op][ttp][tsq];
-        phase += ph_value[ttp];
-        cnt[op][ttp]++;
+        mPc[tsq] = Pc(op, ttp);
+        mClBb[op] ^= SqBb(tsq);
+        mTpBb[ttp] ^= SqBb(tsq);
+        mMgSc[op] += Par.mg_pst[op][ttp][tsq];
+        mEgSc[op] += Par.eg_pst[op][ttp][tsq];
+        mPhase += ph_value[ttp];
+        mCnt[op][ttp]++;
     }
 
     switch (MoveType(move)) {
@@ -73,48 +73,48 @@ void POS::UndoMove(int move, UNDO *u) {
                 case G8: { fsq = H8; tsq = F8; break; }
             }
 
-            pc[tsq] = NO_PC;
-            pc[fsq] = Pc(sd, R);
-            cl_bb[sd] ^= SqBb(fsq) | SqBb(tsq);
-            tp_bb[R] ^= SqBb(fsq) | SqBb(tsq);
-            mg_sc[sd] += Par.mg_pst[sd][R][fsq] - Par.mg_pst[sd][R][tsq];
-            eg_sc[sd] += Par.eg_pst[sd][R][fsq] - Par.eg_pst[sd][R][tsq];
+            mPc[tsq] = NO_PC;
+            mPc[fsq] = Pc(sd, R);
+            mClBb[sd] ^= SqBb(fsq) | SqBb(tsq);
+            mTpBb[R] ^= SqBb(fsq) | SqBb(tsq);
+            mMgSc[sd] += Par.mg_pst[sd][R][fsq] - Par.mg_pst[sd][R][tsq];
+            mEgSc[sd] += Par.eg_pst[sd][R][fsq] - Par.eg_pst[sd][R][tsq];
             break;
 
         case EP_CAP:
             tsq ^= 8;
-            pc[tsq] = Pc(op, P);
-            cl_bb[op] ^= SqBb(tsq);
-            tp_bb[P] ^= SqBb(tsq);
-            mg_sc[op] += Par.mg_pst[op][P][tsq];
-            eg_sc[op] += Par.eg_pst[op][P][tsq];
-            phase += ph_value[P];
-            cnt[op][P]++;
+            mPc[tsq] = Pc(op, P);
+            mClBb[op] ^= SqBb(tsq);
+            mTpBb[P] ^= SqBb(tsq);
+            mMgSc[op] += Par.mg_pst[op][P][tsq];
+            mEgSc[op] += Par.eg_pst[op][P][tsq];
+            mPhase += ph_value[P];
+            mCnt[op][P]++;
             break;
 
         case EP_SET:
             break;
 
         case N_PROM: case B_PROM: case R_PROM: case Q_PROM:
-            pc[fsq] = Pc(sd, P);
-            tp_bb[P] ^= SqBb(fsq);
-            tp_bb[ftp] ^= SqBb(fsq);
-            mg_sc[sd] += Par.mg_pst[sd][P][fsq] - Par.mg_pst[sd][ftp][fsq];
-            eg_sc[sd] += Par.eg_pst[sd][P][fsq] - Par.eg_pst[sd][ftp][fsq];
-            phase += ph_value[P] - ph_value[ftp];
-            cnt[sd][P]++;
-            cnt[sd][ftp]--;
+            mPc[fsq] = Pc(sd, P);
+            mTpBb[P] ^= SqBb(fsq);
+            mTpBb[ftp] ^= SqBb(fsq);
+            mMgSc[sd] += Par.mg_pst[sd][P][fsq] - Par.mg_pst[sd][ftp][fsq];
+            mEgSc[sd] += Par.eg_pst[sd][P][fsq] - Par.eg_pst[sd][ftp][fsq];
+            mPhase += ph_value[P] - ph_value[ftp];
+            mCnt[sd][P]++;
+            mCnt[sd][ftp]--;
             break;
     }
 
-    side ^= 1;
+    mSide ^= 1;
 }
 
 void POS::UndoNull(UNDO *u) {
 
-    ep_sq = u->ep_sq;
-    hash_key = u->hash_key;
-    head--;
-    rev_moves--;
-    side ^= 1;
+    mEpSq = u->ep_sq;
+    mHashKey = u->hash_key;
+    mHead--;
+    mRevMoves--;
+    mSide ^= 1;
 }

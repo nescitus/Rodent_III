@@ -64,72 +64,72 @@ int cEngine::GetDrawFactor(POS *p, int sd) {  // refactoring may be needed
 
     int op = Opp(sd); // weaker side
 
-    if (p->phase < 2) {
+    if (p->mPhase < 2) {
         if (p->Pawns(sd) == 0) return 0;                                                                 // KK, KmK, KmKp, KmKpp
     }
 
-    if (p->phase == 0) return ScalePawnsOnly(p, sd, op);
+    if (p->mPhase == 0) return ScalePawnsOnly(p, sd, op);
 
-    if (p->phase == 1) {
-        if (p->cnt[sd][B] == 1) return ScaleKBPK(p, sd, op);                                             // KBPK, see below
-        if (p->cnt[sd][N] == 1) return ScaleKNPK(p, sd, op);                                             // KBPK, see below
+    if (p->mPhase == 1) {
+        if (p->mCnt[sd][B] == 1) return ScaleKBPK(p, sd, op);                                             // KBPK, see below
+        if (p->mCnt[sd][N] == 1) return ScaleKNPK(p, sd, op);                                             // KBPK, see below
     }
 
-    if (p->phase == 2) {
+    if (p->mPhase == 2) {
 
-        if (p->cnt[sd][N] == 2 && p->cnt[sd][P] == 0) {
-            if (p->cnt[op][P] == 0) return 0;                                                            // KNNK(m)
+        if (p->mCnt[sd][N] == 2 && p->mCnt[sd][P] == 0) {
+            if (p->mCnt[op][P] == 0) return 0;                                                            // KNNK(m)
             else return 8;                                                                               // KNNK(m)(p)
         }
 
-        if (p->cnt[sd][B] == 2 && p->cnt[sd][P] == 0) {                                                  // KBBK, same coloured bishops
+        if (p->mCnt[sd][B] == 2 && p->mCnt[sd][P] == 0) {                                                  // KBBK, same coloured bishops
             if (MoreThanOne(p->Bishops(sd) & bbWhiteSq)
             ||  MoreThanOne(p->Bishops(sd) & bbBlackSq)) return 0;
         }
 
-        if (p->cnt[sd][B] == 1                                                                           // KBPKm, king blocks
-        && p->cnt[op][B] + p->cnt[op][N] == 1
-        && p->cnt[sd][P] == 1
-        && p->cnt[op][P] == 0
-        && (SqBb(p->king_sq[op]) & BB.GetFrontSpan(p->Pawns(sd), sd))
-        && NotOnBishColor(p, sd, p->king_sq[op]))
+        if (p->mCnt[sd][B] == 1                                                                           // KBPKm, king blocks
+        && p->mCnt[op][B] + p->mCnt[op][N] == 1
+        && p->mCnt[sd][P] == 1
+        && p->mCnt[op][P] == 0
+        && (SqBb(p->mKingSq[op]) & BB.GetFrontSpan(p->Pawns(sd), sd))
+        && NotOnBishColor(p, sd, p->mKingSq[op]))
             return 0;
 
-        if (p->cnt[sd][B] == 1 && p->cnt[op][B] == 1
+        if (p->mCnt[sd][B] == 1 && p->mCnt[op][B] == 1
         && DifferentBishops(p)) {
             if (Mask.home[sd] & p->Pawns(sd)
-            &&  p->cnt[sd][P] == 1 && p->cnt[op][P] == 0) return 8;                                      // KBPKB, BOC, pawn on own half
+            &&  p->mCnt[sd][P] == 1 && p->mCnt[op][P] == 0) return 8;                                      // KBPKB, BOC, pawn on own half
 
             return 32;                                                                                   // BOC, any number of pawns
         }
     }
 
-    if (p->phase == 3 && p->cnt[sd][P] == 0) {
-        if (p->cnt[sd][R] == 1 && p->cnt[op][B] + p->cnt[op][N] == 1) return 16;                         // KRKm(p)
-        if (p->cnt[sd][B] + p->cnt[sd][N] == 2 && p->cnt[op][B] == 1) return 8;                          // KmmKB(p)
-        if (p->cnt[sd][B] == 1 && p->cnt[sd][N] == 1 && p->cnt[op][B] + p->cnt[op][N] == 1) return 8;    // KBNKm(p)
+    if (p->mPhase == 3 && p->mCnt[sd][P] == 0) {
+        if (p->mCnt[sd][R] == 1 && p->mCnt[op][B] + p->mCnt[op][N] == 1) return 16;                         // KRKm(p)
+        if (p->mCnt[sd][B] + p->mCnt[sd][N] == 2 && p->mCnt[op][B] == 1) return 8;                          // KmmKB(p)
+        if (p->mCnt[sd][B] == 1 && p->mCnt[sd][N] == 1 && p->mCnt[op][B] + p->mCnt[op][N] == 1) return 8;    // KBNKm(p)
     }
 
-    if (p->phase == 4 && p->cnt[sd][R] == 1 && p->cnt[op][R] == 1) {
+    if (p->mPhase == 4 && p->mCnt[sd][R] == 1 && p->mCnt[op][R] == 1) {
 
-        if (p->cnt[sd][P] == 0 && p->cnt[op][P] == 0) return 8;                                          // KRKR
-        if (p->cnt[sd][P] == 1 && p->cnt[op][P] == 0) return ScaleKRPKR(p, sd, op);                      // KRPKR, see below
+        if (p->mCnt[sd][P] == 0 && p->mCnt[op][P] == 0) return 8;                                          // KRKR
+        if (p->mCnt[sd][P] == 1 && p->mCnt[op][P] == 0) return ScaleKRPKR(p, sd, op);                      // KRPKR, see below
     }
 
-    if (p->phase == 5 && p->cnt[sd][P] == 0) {
-        if (p->cnt[sd][R] == 1 && p->cnt[sd][B] + p->cnt[sd][N] == 1 && p->cnt[op][R] == 1) return 16;   // KRMKR(p)
+    if (p->mPhase == 5 && p->mCnt[sd][P] == 0) {
+        if (p->mCnt[sd][R] == 1 && p->mCnt[sd][B] + p->mCnt[sd][N] == 1 && p->mCnt[op][R] == 1) return 16;   // KRMKR(p)
     }
 
-    if (p->phase == 6 && p->cnt[sd][Q] == 1 && p->cnt[op][R] == 1 && p->cnt[sd][P] == 0)
+    if (p->mPhase == 6 && p->mCnt[sd][Q] == 1 && p->mCnt[op][R] == 1 && p->mCnt[sd][P] == 0)
         return ScaleKQKRP(p, sd, op);
 
-    if (p->phase == 7 && p->cnt[sd][P] == 0) {
-        if (p->cnt[sd][R] == 2 && p->cnt[op][B] + p->cnt[op][N] == 1 && p->cnt[op][R] == 1) return 16;   // KRRKRm(p)
+    if (p->mPhase == 7 && p->mCnt[sd][P] == 0) {
+        if (p->mCnt[sd][R] == 2 && p->mCnt[op][B] + p->mCnt[op][N] == 1 && p->mCnt[op][R] == 1) return 16;   // KRRKRm(p)
     }
 
-    if (p->phase == 9 && p->cnt[sd][P] == 0) {
-        if (p->cnt[sd][R] == 2 && p->cnt[sd][B] + p->cnt[sd][N] == 1 && p->cnt[op][R] == 2) return 16;   // KRRMKRR(p)
-        if (p->cnt[sd][Q] == 1 && p->cnt[sd][B] + p->cnt[sd][N] == 1 && p->cnt[op][Q] == 1) return 16;   // KQmKQ(p)
+    if (p->mPhase == 9 && p->mCnt[sd][P] == 0) {
+        if (p->mCnt[sd][R] == 2 && p->mCnt[sd][B] + p->mCnt[sd][N] == 1 && p->mCnt[op][R] == 2) return 16;   // KRRMKRR(p)
+        if (p->mCnt[sd][Q] == 1 && p->mCnt[sd][B] + p->mCnt[sd][N] == 1 && p->mCnt[op][Q] == 1) return 16;   // KQmKQ(p)
     }
 
     return 64;
@@ -137,7 +137,7 @@ int cEngine::GetDrawFactor(POS *p, int sd) {  // refactoring may be needed
 
 int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
 
-    if (p->cnt[op][P] == 0) {  // TODO: accept pawns for a weaker side
+    if (p->mCnt[op][P] == 0) {  // TODO: accept pawns for a weaker side
 
         if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_H_BB)) // all pawns on the h file
         &&  p->Kings(op) & bbKingBlockH[sd]) return 0;
@@ -153,9 +153,9 @@ int cEngine::ScaleKNPK(POS *p, int sd, int op) {
 
     // rare KNPK draw rule: king blocking an edge pawn on 7th rank draws
 
-    if (p->cnt[sd][N] == 1
-    &&  p->cnt[sd][P] == 1
-    &&  p->cnt[op][P] == 0) {
+    if (p->mCnt[sd][N] == 1
+    &&  p->mCnt[sd][P] == 1
+    &&  p->mCnt[op][P] == 0) {
 
         if ((RelSqBb(A7, sd) & p->PcBb(sd, P))
         && (RelSqBb(A8, sd) & p->PcBb(op, K))) return 0; // dead draw
@@ -196,11 +196,11 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
 
     U64 bb_span = BB.GetFrontSpan(p->Pawns(sd), sd);
     int prom_sq = FirstOne(bb_rel_rank[sd][RANK_8] & bb_span);
-    int strong_king = p->king_sq[sd];
-    int weak_king = p->king_sq[op];
+    int strong_king = p->mKingSq[sd];
+    int weak_king = p->mKingSq[op];
     int strong_pawn = FirstOne(p->Pawns(sd));
     int weak_rook = FirstOne(p->Rooks(op));
-    int tempo = (p->side == sd);
+    int tempo = (p->mSide == sd);
     U64 bb_safe_zone = Mask.home[sd] ^ bb_rel_rank[sd][RANK_5];
 
     if (p->Pawns(sd) & bb_safe_zone) {
@@ -244,7 +244,7 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
 int cEngine::ScaleKQKRP(POS *p, int sd, int op) {
 
     U64 bb_defended = p->Pawns(op) & bb_rel_rank[sd][RANK_7];
-    bb_defended &= BB.KingAttacks(p->king_sq[op]);
+    bb_defended &= BB.KingAttacks(p->mKingSq[op]);
 
     // fortress: rook defended by a pawn on the third rank, pawn defended by the king
 
@@ -278,58 +278,58 @@ int cEngine::CheckmateHelper(POS *p) {
 
     // KQ vs Kx: drive enemy king towards the edge
 
-    if (p->cnt[WC][Q] > 0 && p->cnt[WC][P] == 0) {
-        if (p->cnt[BC][Q] == 0 && p->cnt[BC][P] == 0 && p->cnt[BC][R] + p->cnt[BC][B] + p->cnt[BC][N] <= 1) {
+    if (p->mCnt[WC][Q] > 0 && p->mCnt[WC][P] == 0) {
+        if (p->mCnt[BC][Q] == 0 && p->mCnt[BC][P] == 0 && p->mCnt[BC][R] + p->mCnt[BC][B] + p->mCnt[BC][N] <= 1) {
 
             result += 200;
-            result += 10 * Dist.bonus[p->king_sq[WC]][p->king_sq[BC]];
-            result -= Par.eg_pst[BC][K][p->king_sq[BC]];
+            result += 10 * Dist.bonus[p->mKingSq[WC]][p->mKingSq[BC]];
+            result -= Par.eg_pst[BC][K][p->mKingSq[BC]];
             return result;
         }
     }
 
-    if (p->cnt[BC][Q] > 0 && p->cnt[BC][P] == 0) {
-        if (p->cnt[WC][Q] == 0 && p->cnt[WC][P] == 0 && p->cnt[WC][R] + p->cnt[WC][B] + p->cnt[WC][N] <= 1) {
+    if (p->mCnt[BC][Q] > 0 && p->mCnt[BC][P] == 0) {
+        if (p->mCnt[WC][Q] == 0 && p->mCnt[WC][P] == 0 && p->mCnt[WC][R] + p->mCnt[WC][B] + p->mCnt[WC][N] <= 1) {
 
             result -= 200;
-            result -= 10 * Dist.bonus[p->king_sq[WC]][p->king_sq[BC]];
-            result += Par.eg_pst[BC][K][p->king_sq[BC]];
+            result -= 10 * Dist.bonus[p->mKingSq[WC]][p->mKingSq[BC]];
+            result += Par.eg_pst[BC][K][p->mKingSq[BC]];
             return result;
         }
     }
 
     // Weaker side has bare king (KQK, KRK, KBBK + bigger advantage
 
-    if (p->cnt[BC][P] + p->cnt[BC][N] + p->cnt[BC][B] + p->cnt[BC][R] + p->cnt[BC][Q] == 0) {
-        if ((p->cnt[WC][Q] + p->cnt[WC][R] > 0) || p->cnt[WC][B] > 1) {
+    if (p->mCnt[BC][P] + p->mCnt[BC][N] + p->mCnt[BC][B] + p->mCnt[BC][R] + p->mCnt[BC][Q] == 0) {
+        if ((p->mCnt[WC][Q] + p->mCnt[WC][R] > 0) || p->mCnt[WC][B] > 1) {
             result += 200;
-            result += 10 * Dist.bonus[p->king_sq[WC]][p->king_sq[BC]];
-            result -= Par.eg_pst[BC][K][p->king_sq[BC]];
+            result += 10 * Dist.bonus[p->mKingSq[WC]][p->mKingSq[BC]];
+            result -= Par.eg_pst[BC][K][p->mKingSq[BC]];
         }
     }
 
-    if (p->cnt[WC][P] + p->cnt[WC][N] + p->cnt[WC][B] + p->cnt[WC][R] + p->cnt[WC][Q] == 0) {
-        if ((p->cnt[BC][Q] + p->cnt[BC][R] > 0) || p->cnt[BC][B] > 1) {
+    if (p->mCnt[WC][P] + p->mCnt[WC][N] + p->mCnt[WC][B] + p->mCnt[WC][R] + p->mCnt[WC][Q] == 0) {
+        if ((p->mCnt[BC][Q] + p->mCnt[BC][R] > 0) || p->mCnt[BC][B] > 1) {
             result -= 200;
-            result -= 10 * Dist.bonus[p->king_sq[WC]][p->king_sq[BC]];
-            result += Par.eg_pst[BC][K][p->king_sq[BC]];
+            result -= 10 * Dist.bonus[p->mKingSq[WC]][p->mKingSq[BC]];
+            result += Par.eg_pst[BC][K][p->mKingSq[BC]];
         }
     }
 
     // KBN vs K specialized code
 
-    if (p->cnt[WC][P] == 0
-    &&  p->cnt[BC][P] == 0
-    &&  p->phase == 2) {
+    if (p->mCnt[WC][P] == 0
+    &&  p->mCnt[BC][P] == 0
+    &&  p->mPhase == 2) {
 
-        if (p->cnt[WC][B] == 1 && p->cnt[WC][N] == 1) {  // mate with black bishop and knight
-            if (p->Bishops(WC) & bbWhiteSq) result -= 2 * BN_bb[p->king_sq[BC]];
-            if (p->Bishops(WC) & bbBlackSq) result -= 2 * BN_wb[p->king_sq[BC]];
+        if (p->mCnt[WC][B] == 1 && p->mCnt[WC][N] == 1) {  // mate with black bishop and knight
+            if (p->Bishops(WC) & bbWhiteSq) result -= 2 * BN_bb[p->mKingSq[BC]];
+            if (p->Bishops(WC) & bbBlackSq) result -= 2 * BN_wb[p->mKingSq[BC]];
         }
 
-        if (p->cnt[BC][B] == 1 && p->cnt[BC][N] == 1) {  // mate with white bishop and knight
-            if (p->Bishops(BC) & bbWhiteSq) result += 2 * BN_bb[p->king_sq[WC]];
-            if (p->Bishops(BC) & bbBlackSq) result += 2 * BN_wb[p->king_sq[WC]];
+        if (p->mCnt[BC][B] == 1 && p->mCnt[BC][N] == 1) {  // mate with white bishop and knight
+            if (p->Bishops(BC) & bbWhiteSq) result += 2 * BN_bb[p->mKingSq[WC]];
+            if (p->Bishops(BC) & bbBlackSq) result += 2 * BN_wb[p->mKingSq[WC]];
         }
     }
 

@@ -104,14 +104,14 @@ bool sInternalBook::LineToInternal(const char *ptr, int excludedColor) {
             if (strstr(token, "!!")) freq = +900;
 
             // add move to book if we accept moves of a given color
-            if (p->side != excludedColor)
-                MoveToInternal(p->hash_key, move, freq);
+            if (p->mSide != excludedColor)
+                MoveToInternal(p->mHashKey, move, freq);
 
             p->DoMove(move, u);
         } else { return true; }
 
-        if (p->rev_moves == 0)
-            p->head = 0;
+        if (p->mRevMoves == 0)
+            p->mHead = 0;
     }
     return false;
 }
@@ -150,13 +150,13 @@ int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
     while (left < right) { // binary search for the leftmost value
         int mid = (left + right) / 2;
 
-        if (p->hash_key <= internal_book[mid].hash) right = mid;
+        if (p->mHashKey <= internal_book[mid].hash) right = mid;
         else                                        left = mid + 1;
     }
 
     int vals_acc = 0;
 
-    for (int i = left; i < n_of_records && internal_book[i].hash == p->hash_key; i++) {
+    for (int i = left; i < n_of_records && internal_book[i].hash == p->mHashKey; i++) {
         if (p->Legal(internal_book[i].move)) {
 
             const int freq_with_correction = internal_book[i].freq + min_freq;

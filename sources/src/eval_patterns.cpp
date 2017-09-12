@@ -157,7 +157,7 @@ void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
         // White castling rights
 
         if (p->IsOnSq(WC, K, E1)) {
-            if ((p->c_flags & W_KS) || (p->c_flags & W_QS)) Add(e, WC, Par.values[K_CASTLE], 0);
+            if ((p->mCFlags & W_KS) || (p->mCFlags & W_QS)) Add(e, WC, Par.values[K_CASTLE], 0);
         }
     }
 
@@ -194,7 +194,7 @@ void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
         // Black castling rights
 
         if (p->IsOnSq(BC, K, E8)) {
-            if ((p->c_flags & B_KS) || (p->c_flags & B_QS)) Add(e, BC, Par.values[K_CASTLE], 0);
+            if ((p->mCFlags & B_KS) || (p->mCFlags & B_QS)) Add(e, BC, Par.values[K_CASTLE], 0);
         }
     }
 }
