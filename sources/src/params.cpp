@@ -44,17 +44,17 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Piece values
 
-	SetVal(P_MID, 91, 50, 150, true);
-	SetVal(N_MID, 308, 200, 400, true);
-	SetVal(B_MID, 333, 200, 400, true);
-	SetVal(R_MID, 503, 400, 600, true);
-	SetVal(Q_MID, 1001, 800, 1200, true);
+    SetVal(P_MID, 91, 50, 150, true);
+    SetVal(N_MID, 308, 200, 400, true);
+    SetVal(B_MID, 333, 200, 400, true);
+    SetVal(R_MID, 503, 400, 600, true);
+    SetVal(Q_MID, 1001, 800, 1200, true);
 
-	SetVal(P_END, 104, 50, 150, true);
-	SetVal(N_END, 301, 200, 400, true);
-	SetVal(B_END, 317, 200, 400, true);
-	SetVal(R_END, 541, 400, 600, true);
-	SetVal(Q_END, 1015, 800, 1200, true);
+    SetVal(P_END, 104, 50, 150, true);
+    SetVal(N_END, 301, 200, 400, true);
+    SetVal(B_END, 317, 200, 400, true);
+    SetVal(R_END, 541, 400, 600, true);
+    SetVal(Q_END, 1015, 800, 1200, true);
 
     // Tendency to keep own pieces
 
@@ -68,17 +68,17 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Material adjustments
 
-	SetVal(B_PAIR, 51, 0, 100, true);
-	SetVal(N_PAIR, 0, -50, 50, true);
-	SetVal(R_PAIR, -19, -50, 50, true);
-	SetVal(ELEPH, 12, -50, 50, true);   // queen loses that much with each enemy minor on the board
-	SetVal(A_EXC, 32, -50, 50, true);   // exchange advantage additional bonus
-	SetVal(A_MIN, 60, 0, 100, true);    // additional bonus for a minor piece advantage
-	SetVal(A_MAJ, 55, 0, 100, true);    // additional bonus for a major piece advantage
-	SetVal(A_TWO, 30, 0, 100, true);    // additional bonus for two minors against a rook
-	SetVal(A_ALL, 67, 0, 100, true);    // additional bonus for advantage in both majors and minors
-	SetVal(N_CL, 6, -50, 50, true);     // knight gains this much with each own pawn present on the board
-	SetVal(R_OP, 1, -50, 50, true);     // rook loses that much with each own pawn present on the board  
+    SetVal(B_PAIR, 51, 0, 100, true);
+    SetVal(N_PAIR, 0, -50, 50, true);
+    SetVal(R_PAIR, -19, -50, 50, true);
+    SetVal(ELEPH, 12, -50, 50, true);   // queen loses that much with each enemy minor on the board
+    SetVal(A_EXC, 32, -50, 50, true);   // exchange advantage additional bonus
+    SetVal(A_MIN, 60, 0, 100, true);    // additional bonus for a minor piece advantage
+    SetVal(A_MAJ, 55, 0, 100, true);    // additional bonus for a major piece advantage
+    SetVal(A_TWO, 30, 0, 100, true);    // additional bonus for two minors against a rook
+    SetVal(A_ALL, 67, 0, 100, true);    // additional bonus for advantage in both majors and minors
+    SetVal(N_CL, 6, -50, 50, true);     // knight gains this much with each own pawn present on the board
+    SetVal(R_OP, 1, -50, 50, true);     // rook loses that much with each own pawn present on the board  
 
     // King attack values
 
@@ -90,46 +90,40 @@ void cParam::DefaultWeights() {  // tuned automatically
     // All these values are NOT the actual bonuses; their sum is used as index
     // to a non-linear king safety table. Tune them with extreme caution.
 
-    values[N_ATT1] = 6;
-    values[N_ATT2] = 4;
-    values[B_ATT1] = 7;
-    values[B_ATT2] = 2;
-    values[R_ATT1] = 10;
-    values[R_ATT2] = 4;
-    values[Q_ATT1] = 16;
-    values[Q_ATT2] = 5;
+    SetVal(N_ATT1, 6,  0, 50, false);
+    SetVal(N_ATT2, 4,  0, 50, false);
+    SetVal(B_ATT1, 7,  0, 50, false);
+    SetVal(B_ATT2, 2,  0, 50, false);
+    SetVal(R_ATT1, 10, 0, 50, false);
+    SetVal(R_ATT2, 4,  0, 50, false);
+    SetVal(Q_ATT1, 16, 0, 50, false);
+    SetVal(Q_ATT2, 5,  0, 50, false);
 
-    values[N_CHK] = 11;
-    values[B_CHK] = 18;
-    values[R_CHK] = 16;
-    values[Q_CHK] = 12;
+    SetVal(N_CHK,  11, 0, 50, false);
+    SetVal(B_CHK,  18, 0, 50, false);
+    SetVal(R_CHK,  16, 0, 50, false);
+    SetVal(Q_CHK,  12, 0, 50, false);
 
-    values[R_CONTACT] = 29;
-    values[Q_CONTACT] = 36;
+    SetVal(R_CONTACT, 29, 0, 50, false);
+    SetVal(Q_CONTACT, 36, 0, 50, false);
 
     // King tropism
 
-    values[NTR_MG] = 13;
-    values[NTR_EG] = -10;
-    values[BTR_MG] = 2;
-    values[BTR_EG] = -8;
-    values[RTR_MG] = -1;
-    values[RTR_EG] = -7;
-    values[QTR_MG] = 7;
-    values[QTR_EG] = 12;
+    SetVal(NTR_MG,  13, -50, 50, true);
+    SetVal(NTR_EG, -10, -50, 50, true);
+    SetVal(BTR_MG,   2, -50, 50, true);
+    SetVal(BTR_EG,  -8, -50, 50, true);
+    SetVal(RTR_MG,  -1, -50, 50, true);
+    SetVal(RTR_EG,  -7, -50, 50, true);
+    SetVal(QTR_MG,   7, -50, 50, true);
+    SetVal(QTR_EG,  12, -50, 50, true);
 
     // Varia
 
-    values[W_MATERIAL] = 98;
-    values[W_PST] = 73;
+    SetVal(W_MATERIAL, 98,  0, 200, true);
+    SetVal(W_PST, 73, 0, 200, true);
     pst_style = 0;
-    mob_style = 0;         // 1 is only marginally behind
-
-#ifdef USE_RISKY_PARAMETER
-    riskydepth = 0;
-#endif
-    draw_score = 0;
-    shut_up = false;       // true suppresses displaying info currmove etc.
+    mob_style = 0;
 
     // Attack and mobility weights that can be set independently for each side
     // - the core of personality mechanism
@@ -165,7 +159,7 @@ void cParam::DefaultWeights() {  // tuned automatically
     values[BK_END] = -5;
     values[BK_OPE] = -10;  // additional midgame penalty for backward pawn on an open file
     values[P_BIND] = 5;    // two pawns control central square
-	values[P_BADBIND] = 10; // penalty for a "wing triangle" like a4-b3-c4
+    values[P_BADBIND] = 10; // penalty for a "wing triangle" like a4-b3-c4
     values[P_ISL] = 7;     // penalty for each pawn island
     values[P_THR] = 4;     // pawn move threatens to attack enemy minor
 
@@ -278,6 +272,12 @@ void cParam::DefaultWeights() {  // tuned automatically
     values[R_FWD] = 2;
     values[Q_FWD] = 4;
 
+#ifdef USE_RISKY_PARAMETER
+    riskydepth = 0;
+#endif
+    draw_score = 0;
+    shut_up = false;       // true suppresses displaying info currmove etc.
+
     // Specialized functions
 
     InitPst();
@@ -290,9 +290,6 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     hist_perc = 175;
     hist_limit = 24576;
-
-    // when testing a personality, place changes in relation to default below:
-
 }
 
 void cParam::InitialPersonalityWeights() { // tuned manually for good experience of Rodent personalities
@@ -439,7 +436,7 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[BK_END] = -8;
     values[BK_OPE] = -10;  // additional midgame penalty for backward pawn on an open file
     values[P_BIND] = 5;    // two pawns control central square
-	values[P_BADBIND] = 10; // penalty for a "wing triangle" like a4-b3-c4
+    values[P_BADBIND] = 10; // penalty for a "wing triangle" like a4-b3-c4
     values[P_ISL] = 7;     // penalty for each pawn island
     values[P_THR] = 4;     // pawn move threatens to attack enemy minor
 
@@ -756,15 +753,16 @@ void cDistance::Init() {
 }
 
 void cParam::SetVal(int slot, int val, int min, int max, bool tune) {
+
     values[slot] = val;
-	min_val[slot] = min;
-	max_val[slot] = max;
-	tunable[slot] = tune;
+    min_val[slot] = min;
+    max_val[slot] = max;
+    tunable[slot] = tune;
 }
 
 void cParam::PrintValues() {
 
-	printf("\n\n");
+    printf("\n\n");
     for (int i = 0; i < N_OF_VAL; ++i) {
         printf("%14s : %4d     ", paramNames[i], Par.values[i]);
         if (i % 4 == 0) printf("\n");
