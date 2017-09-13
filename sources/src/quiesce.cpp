@@ -40,7 +40,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     Slowdown();
     if (Glob.abort_search && root_depth > 1) return 0;
     *pv = 0;
-    if (IsDraw(p) && ply) return p->DrawScore();
+    if (p->IsDraw() && ply) return p->DrawScore();
     move = 0;
 
     // DETERMINE FLOOR VALUE
@@ -139,7 +139,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     Slowdown();
     if (Glob.abort_search && root_depth > 1) return 0;
     *pv = 0;
-    if (IsDraw(p) && ply) return p->DrawScore();
+    if (p->IsDraw() && ply) return p->DrawScore();
     move = 0;
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
@@ -234,7 +234,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
     if (Glob.abort_search && root_depth > 1) return 0;
     *pv = 0;
-    if (IsDraw(p)) return p->DrawScore();
+    if (p->IsDraw()) return p->DrawScore();
 
     // SAFEGUARD AGAINST HITTIMG MAX PLY LIMIT
 

@@ -375,6 +375,9 @@ class POS {
 
     void SetPosition(const char *epd);
 
+    bool IsDraw() const;
+    bool KPKdraw(int sd) const;
+
     int DrawScore() const;
     bool Legal(int move) const;
 
@@ -733,8 +736,6 @@ class cEngine {
     int QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv);
     int QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv);
     int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
-    bool IsDraw(POS *p);
-    bool KPKdraw(POS *p, int sd);
     void DisplayPv(int score, int *pv);
     void Slowdown();
 

@@ -193,7 +193,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     Slowdown();
     if (Glob.abort_search && root_depth > 1) return 0;
     if (ply) *pv = 0;
-    if (IsDraw(p) && ply) return p->DrawScore();
+    if (p->IsDraw() && ply) return p->DrawScore();
     move = 0;
 
     // MATE DISTANCE PRUNING

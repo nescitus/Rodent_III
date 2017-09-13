@@ -17,35 +17,35 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-bool cEngine::IsDraw(POS *p) {
+bool POS::IsDraw() const {
 
     // Draw by 50 move rule
 
-    if (p->mRevMoves > 100) return true;
+    if (mRevMoves > 100) return true;
 
     // Draw by repetition
 
-    for (int i = 4; i <= p->mRevMoves; i += 2)
-        if (p->mHashKey == p->mRepList[p->mHead - i]) return true;
+    for (int i = 4; i <= mRevMoves; i += 2)
+        if (mHashKey == mRepList[mHead - i]) return true;
 
     // With no major pieces on the board, we have some heuristic draws to consider
 
-    if (p->mCnt[WC][Q] + p->mCnt[BC][Q] + p->mCnt[WC][R] + p->mCnt[BC][R] == 0) {
+    if (mCnt[WC][Q] + mCnt[BC][Q] + mCnt[WC][R] + mCnt[BC][R] == 0) {
 
         // Draw by insufficient material (bare kings or Km vs K)
 
-        if (!p->Illegal()) {
-            if (p->mCnt[WC][P] + p->mCnt[BC][P] == 0) {
-                if (p->mCnt[WC][N] + p->mCnt[BC][N] + p->mCnt[WC][B] + p->mCnt[BC][B] <= 1) return true; // KK, KmK
+        if (!Illegal()) {
+            if (mCnt[WC][P] + mCnt[BC][P] == 0) {
+                if (mCnt[WC][N] + mCnt[BC][N] + mCnt[WC][B] + mCnt[BC][B] <= 1) return true; // KK, KmK
             }
         }
 
         // Trivially drawn KPK endgames
 
-        if (p->mCnt[WC][B] + p->mCnt[BC][B] + p->mCnt[WC][N] + p->mCnt[BC][N] == 0) {
-            if (p->mCnt[WC][P] + p->mCnt[BC][P] == 1) {
-                if (p->mCnt[WC][P] == 1) return KPKdraw(p, WC);  // exactly one white pawn
-                if (p->mCnt[BC][P] == 1) return KPKdraw(p, BC);  // exactly one black pawn
+        if (mCnt[WC][B] + mCnt[BC][B] + mCnt[WC][N] + mCnt[BC][N] == 0) {
+            if (mCnt[WC][P] + mCnt[BC][P] == 1) {
+                if (mCnt[WC][P] == 1) return KPKdraw(WC);  // exactly one white pawn
+                if (mCnt[BC][P] == 1) return KPKdraw(BC);  // exactly one black pawn
             }
         } // pawns only
     }
@@ -55,30 +55,30 @@ bool cEngine::IsDraw(POS *p) {
     return false;
 }
 
-bool cEngine::KPKdraw(POS *p, int sd) {
+bool POS::KPKdraw(int sd) const {
 
     int op = Opp(sd);
-    U64 bbPawn = p->Pawns(sd);
-    U64 bbStrongKing = p->Kings(sd);
-    U64 bbWeakKing = p->Kings(op);
+    U64 bbPawn = Pawns(sd);
+    U64 bbStrongKing = Kings(sd);
+    U64 bbWeakKing = Kings(op);
 
     // opposition through a pawn
 
-    if (p->mSide == sd
+    if (mSide == sd
     && (bbWeakKing & BB.ShiftFwd(bbPawn, sd))
     && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
        ) return true;
 
     // weaker side can create opposition through a pawn in one move
 
-    if (p->mSide == op
-    && (BB.KingAttacks(p->mKingSq[op]) & BB.ShiftFwd(bbPawn, sd))
+    if (mSide == op
+    && (BB.KingAttacks(mKingSq[op]) & BB.ShiftFwd(bbPawn, sd))
     && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
-       ) if (!p->Illegal()) return true;
+       ) if (!Illegal()) return true;
 
     // opposition next to a pawn
 
-    if (p->mSide == sd
+    if (mSide == sd
     && (bbStrongKing & BB.ShiftSideways(bbPawn))
     && (bbWeakKing & BB.ShiftFwd(BB.ShiftFwd(bbStrongKing, sd), sd))
        ) return true;
