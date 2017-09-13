@@ -128,149 +128,152 @@ void cParam::DefaultWeights() {  // tuned automatically
     // Attack and mobility weights that can be set independently for each side
     // - the core of personality mechanism
 
-    values[W_OWN_ATT] = 100;
-    values[W_OPP_ATT] = 100;
-    values[W_OWN_MOB] = 103;
-    values[W_OPP_MOB] = 103;
+    SetVal(W_OWN_ATT, 100, 0, 500, false);
+    SetVal(W_OPP_ATT, 100, 0, 500, false);
+    SetVal(W_OWN_MOB, 103, 0, 500, false);
+    SetVal(W_OPP_MOB, 103, 0, 500, false);
 
     // Positional weights
 
-    values[W_THREATS] = 109;
-    values[W_TROPISM] = 25;
-    values[W_FWD] = 0;
-    values[W_PASSERS] = 101;
-    values[W_MASS] = 98; // seems optimal
-    values[W_CHAINS] = 100;
-    values[W_OUTPOSTS] = 77;
-    values[W_LINES] = 108;
-    values[W_STRUCT] = 107;
-    values[W_SHIELD] = 120;
-    values[W_STORM] = 95;
-    values[W_CENTER] = 48;
+    SetVal(W_THREATS, 109, 0, 500, true);
+    SetVal(W_TROPISM,  25, 0, 500, true);
+    SetVal(W_FWD,       0, 0, 500, false);
+    SetVal(W_PASSERS, 101, 0, 500, true);
+    SetVal(W_MASS,     98, 0, 500, true);
+    SetVal(W_CHAINS,  100, 0, 500, true);
+    SetVal(W_OUTPOSTS, 77, 0, 500, true);
+    SetVal(W_LINES,   108, 0, 500, true);
+    SetVal(W_STRUCT,  107, 0, 500, true);
+    SetVal(W_SHIELD,  120, 0, 500, true);
+    SetVal(W_STORM,    95, 0, 500, true);
+    SetVal(W_CENTER,   48, 0, 500, true);
 
     // Pawn structure parameters
 
-    values[DB_MID] = -12;  // doubled
-    values[DB_END] = -23;
-    values[ISO_MG] = -7;  // isolated
-    values[ISO_EG] = -10;
-    values[ISO_OF] = -13;  // additional midgame penalty for isolated pawn on an open file
-    values[BK_MID] = -5;   // backward
-    values[BK_END] = -5;
-    values[BK_OPE] = -10;  // additional midgame penalty for backward pawn on an open file
-    values[P_BIND] = 5;    // two pawns control central square
-    values[P_BADBIND] = 10; // penalty for a "wing triangle" like a4-b3-c4
-    values[P_ISL] = 7;     // penalty for each pawn island
-    values[P_THR] = 4;     // pawn move threatens to attack enemy minor
+    SetVal(DB_MID, -12, -50, 0, true);  // doubled
+    SetVal(DB_END, -23, -50, 0, true);
+
+    SetVal(ISO_MG, -7,  -50, 0, true);  // isolated
+    SetVal(ISO_EG, -10, -50, 0, true);
+	SetVal(ISO_OF, -13, -50, 0, true);  // additional midgame penalty for isolated pawn on an open file
+
+    SetVal(BK_MID,  -5, -50, 0, true);  // backward
+    SetVal(BK_END,  -5, -50, 0, true); 
+	SetVal(BK_OPE, -10, -50, 0, true);  // additional midgame penalty for backward pawn on an open file
+
+    SetVal(P_BIND, 5, 0, 50, true);     // two pawns control central square
+	SetVal(P_BADBIND, 10, 0, 50, true); // penalty for a "wing triangle" like a4-b3-c4
+
+	SetVal(P_ISL, 7, 0, 50, true);      // penalty for each pawn island
+    SetVal(P_THR, 4, 0, 50, true);      // pawn move threatens to attack enemy minor
 
     // Pawn chain values
 
-    values[P_BIGCHAIN] = 31; // general penalty for a compact pawn chain pointing at our king
-    values[P_SMALLCHAIN] = 24; // similar penalty for a chain that is not fully blocked by enemy pawns
-    values[P_CS1] = 9;         // additional evaluation of a pawn storm next to a fixed chain - like g5 in King's Indian
-    values[P_CS2] = 6;        // as above, this time like g4 in King's Indian
-    values[P_CSFAIL] = 31;     // penalty for a badly performed pawn strom next to a chain
-
+    SetVal(P_BIGCHAIN, 31, 0, 50, true);   // general penalty for a compact pawn chain pointing at our king
+    SetVal(P_SMALLCHAIN, 24, 0, 50, true); // similar penalty for a chain that is not fully blocked by enemy pawns
+    SetVal(P_CS1, 9, 0, 50, true); // additional bonus for a pawn storm next to a fixed chain - like g5 in King's Indian
+	SetVal(P_CS2, 6, 0, 50, true); // as above, this time like g4 in King's Indian
+    SetVal(P_CSFAIL, 31, 0, 50, true); // penalty for misplaying pawn strom next to a chain
 
     // Passed pawn bonuses per rank
 
-    values[PMG2] = 2;
-    values[PMG3] = 2;
-    values[PMG4] = 13;
-    values[PMG5] = 34;
-    values[PMG6] = 71;
-    values[PMG7] = 132;
+    SetVal(PMG2,   2, 0, 300, true);
+    SetVal(PMG3,   2, 0, 300, true);
+    SetVal(PMG4,  13, 0, 300, true);
+    SetVal(PMG5,  34, 0, 300, true);
+    SetVal(PMG6,  71, 0, 300, true);
+	SetVal(PMG7, 132, 0, 300, true);
 
-    values[PEG2] = 12;
-    values[PEG3] = 21;
-    values[PEG4] = 49;
-    values[PEG5] = 93;
-    values[PEG6] = 161;
-    values[PEG7] = 266;
+    SetVal(PEG2,  12, 0, 300, true);
+	SetVal(PEG3,  21, 0, 300, true);
+    SetVal(PEG4,  49, 0, 300, true);
+    SetVal(PEG5,  93, 0, 300, true);
+    SetVal(PEG6, 161, 0, 300, true);
+    SetVal(PEG7, 266, 0, 300, true);
 
     // Passed pawn value percentage modifiers
-
-    values[P_BL_MUL] = 40;      // blocked passer
-    values[P_OURSTOP_MUL] = 26; // side with a passer controls its stop square
-    values[P_OPPSTOP_MUL] = 23; // side without a passer controls its stop square
-    values[P_DEFMUL] = 3;       // passer defended by own pawn
-    values[P_STOPMUL] = 6;      // passers' stop square defended by own pawn
+	
+	SetVal(P_BL_MUL, 40, 0, 50, true);      // blocked passer
+	SetVal(P_OURSTOP_MUL, 26, 0, 50, true); // side with a passer controls its stop square
+    SetVal(P_OPPSTOP_MUL, 23, 0, 50, true); // side playing against a passer controls its stop square
+    SetVal(P_DEFMUL, 3, 0, 50, true);       // passer defended by own pawn
+    SetVal(P_STOPMUL, 6, 0, 50, true);      // passers' stop square defended by own pawn
 
     // King's pawn shield
 
-    values[P_SH_NONE] = -40;
-    values[P_SH_2]    =   2;
-    values[P_SH_3]    =  -6;
-    values[P_SH_4]    = -17;
-    values[P_SH_5]    = -21;
-    values[P_SH_6]    = -25;
-    values[P_SH_7]    = -35;
+    SetVal(P_SH_NONE, -40, -50, 50, true);
+    SetVal(P_SH_2,   2, -50, 50, true);
+    SetVal(P_SH_3,  -6, -50, 50, true);
+    SetVal(P_SH_4, -17, -50, 50, true);
+    SetVal(P_SH_5, -21, -50, 50, true);
+    SetVal(P_SH_6, -25, -50, 50, true);
+    SetVal(P_SH_7, -35, -50, 50, true);
 
     // Pawn storm
 
-    values[P_ST_OPEN] = -5;
-    values[P_ST_3] = -21;
-    values[P_ST_4] = -18;
-    values[P_ST_5] = -4;
+    SetVal(P_ST_OPEN, -5, -50, 50, true);
+    SetVal(P_ST_3, -21, -50, 50, true);
+    SetVal(P_ST_4, -18, -50, 50, true);
+	SetVal(P_ST_5, -4, -50, 50, true);
 
     // Knight parameters
 
-    values[N_TRAP] = -165; // trapped knight
-    values[N_BLOCK] = -15; // knight blocks c pawn in queen pawn openings
-    values[N_OWH] = -1;    // knight can move only to own half of the board
-    values[N_REACH] = 10;   // knight can reach an outpost square WAS 2
-    values[BN_SHIELD] = 5;
+    SetVal(N_TRAP, -165, -300, 0, true); // trapped knight
+    SetVal(N_BLOCK, -15, -50, 0, true);  // knight blocks c pawn in queen pawn openings
+    SetVal(N_OWH, -1, -50, 0, true);     // knight can move only to own half of the board
+    SetVal(N_REACH, 10, 0, 50, true);    // knight can reach an outpost square
+    SetVal(BN_SHIELD,  5,  0, 50, true); // pawn in front of a minor
 
     // Bishop parameters
-
-    values[B_FIANCH] = 12;  // general bonus for fianchettoed bishop
-    values[B_KING] = 20;    // fianchettoed bishop near king: 0
-    values[B_BADF] = -28;  // enemy pawns hamper fianchettoed bishop
-    values[B_TRAP_A2] = -138;
-    values[B_TRAP_A3] = -45;
-    values[B_BLOCK] = -45; // blocked pawn at d2/e2 hampers bishop's development
-    values[B_BF_MG] = -12; // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
-    values[B_BF_EG] = -20;
-    values[B_WING] = 5;   // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2)
-    values[B_OVH] = -6;    // bishop can move only to own half of the board
-    values[B_REACH] = 3;   // bishop can reach an outpost square
-    values[B_TOUCH] = 5;   // two bishops on adjacent squares
-    values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
-    values[B_OPP_P] = 0;  // enemy pawn on the square of own bishop's color
-    values[B_RETURN] = 7; // bishop returning to initial position after castling
+	
+    SetVal(B_FIANCH, 12, 0, 50, true);   // general bonus for fianchettoed bishop
+    SetVal(B_KING, 20, 0, 50, true);     // fianchettoed bishop near own king
+    SetVal(B_BADF, -28, -50, 0, true);   // enemy pawns hamper fianchettoed bishop 
+    SetVal(B_TRAP_A2, -138, -300, 0, true);
+    SetVal(B_TRAP_A3, -45, -300, 0, true);
+    SetVal(B_BLOCK, -45, -100, 0, true); // blocked pawn at d2/e2 hampers bishop's development
+    SetVal(B_BF_MG, -12, -50, 0, true);  // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
+    SetVal(B_BF_EG, -20, -50, 0, true);
+    SetVal(B_WING, 5, 0, 50, true);      // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2) 
+    SetVal(B_OVH, -6, -50, 0, true);     // bishop can move only to own half of the board
+    SetVal(B_REACH, 3, 0, 50, true);     // bishop can reach an outpost square
+    SetVal(B_TOUCH, 5, 0, 50, true);     // two bishops on adjacent squares
+    SetVal(B_OWN_P, -3, -50, 0, true);   // own pawn on the square of own bishop's color
+    SetVal(B_OPP_P,  0, -50, 0, true);   // enemy pawn on the square of own bishop's color
+    SetVal(B_RETURN, 7, 0, 50, true);    // bishop returning to initial position after castling
 
     // Rook parameters
 
-    values[RSR_MG] = 16; // rook on 7th rank
-    values[RSR_EG] = 32;
-    values[RS2_MG] = 20;  // additional bonus for two rooks on 7th rank
-    values[RS2_EG] = 31;
-    values[ROF_MG] = 30; // rook on open file
-    values[ROF_EG] = 4;
-    values[RGH_MG] = 15;  // rook on half-open file with undefended enemy pawn
-    values[RGH_EG] = 17;
-    values[RBH_MG] = 0;  // rook on half-open file with defended enemy pawn
-    values[RBH_EG] = 0;
-    values[ROQ_MG] = 9;  // rook and queen on the same file, open or closed
-    values[ROQ_EG] = 17;
-    values[R_BLOCK] = -53;
+    SetVal(RSR_MG, 16, 0, 50, true); // rook on the 7th rank
+    SetVal(RSR_EG, 32, 0, 50, true);
+    SetVal(RS2_MG, 20, 0, 50, true); // additional bonus for two rooks on 7th rank
+	SetVal(RS2_EG, 31, 0, 50, true);
+    SetVal(ROF_MG, 30, 0, 50, true); // rook on open file
+    SetVal(ROF_EG,  4, 0, 50, true);
+    SetVal(RGH_MG, 15, 0, 50, true); // rook on half-open file with undefended enemy pawn
+    SetVal(RGH_EG, 17, 0, 50, true);
+    SetVal(RBH_MG,  0, 0, 50, true); // rook on half-open file with defended enemy pawn
+    SetVal(RBH_EG,  0, 0, 50, true);
+	SetVal(ROQ_MG,  9, 0, 50, true); // rook and queen on the same file, open or closed
+    SetVal(ROQ_EG, 17, 0, 50, true);
+    SetVal(R_BLOCK, -53, -100, 0, true);
 
     // Queen parameters
 
-    values[QSR_MG] = 0;  // queen on the 7th rank
-    values[QSR_EG] = 4;
+	SetVal(QSR_MG, 0, 0, 50, true);       // queen on the 7th rank
+    SetVal(QSR_EG, 4, 0, 50, true);
 
     // King parameters
 
-    values[K_NO_LUFT] = -13;
-    values[K_CASTLE] = 25;
+    SetVal(K_NO_LUFT, -13, -50, 0, true); // queen on the 7th rank
+    SetVal(K_CASTLE, 25, 0, 50, true);
 
     // Forwardness parameters
 
-    values[N_FWD] = 1;
-    values[B_FWD] = 1;
-    values[R_FWD] = 2;
-    values[Q_FWD] = 4;
+    SetVal(N_FWD,   1, 0, 50, false);
+    SetVal(B_FWD,   1, 0, 50, false);
+    SetVal(R_FWD,   2, 0, 50, false);
+    SetVal(Q_FWD,   4, 0, 50, false);
 
 #ifdef USE_RISKY_PARAMETER
     riskydepth = 0;
@@ -758,6 +761,8 @@ void cParam::SetVal(int slot, int val, int min, int max, bool tune) {
     min_val[slot] = min;
     max_val[slot] = max;
     tunable[slot] = tune;
+	if (val < min || val > max)
+		printf("%14s ERROR\n", paramNames[slot]);
 }
 
 void cParam::PrintValues() {
