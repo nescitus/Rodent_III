@@ -19,12 +19,12 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void POS::DoMove(int move, UNDO *u) {
 
-    int sd = mSide;          // moving side
+    int sd = mSide;         // moving side
     int op = Opp(sd);       // side not to move
     int fsq = Fsq(move);    // start square
     int tsq = Tsq(move);    // target square
-    int ftp = Tp(mPc[fsq]);  // moving piece
-    int ttp = Tp(mPc[tsq]);  // captured piece
+    int ftp = Tp(mPc[fsq]); // moving piece
+    int ttp = Tp(mPc[tsq]); // captured piece
 
     // Save data for undoing a move
 

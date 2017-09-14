@@ -243,7 +243,7 @@ void cEngine::ScoreQuiet(MOVES *m) {
 
     valuep = m->value;
     for (movep = m->move; movep < m->last; movep++) {
-        int mv_score = history[m->p->mPc[Fsq(*movep)]][Tsq(*movep)]; // use history score
+        int mv_score = history[m->p->mPc[Fsq(*movep)]][Tsq(*movep)];// use history score
         if (Fsq(*movep) == m->ref_sq) mv_score += 2048;             // but bump up refutation move
         *valuep++ = mv_score;
     }

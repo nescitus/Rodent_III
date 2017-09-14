@@ -646,5 +646,5 @@ void cEngine::Slowdown() {
 int POS::DrawScore() const {
 
     if (mSide == Par.prog_side) return -Par.draw_score;
-    else                       return  Par.draw_score;
+    else                        return  Par.draw_score;
 }

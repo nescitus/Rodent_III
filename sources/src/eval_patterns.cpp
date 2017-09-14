@@ -36,7 +36,7 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
         if (p->IsOnSq(WC, B, C1)) {
             if (p->IsOnSq(WC, P, D2) && (SqBb(D3) & p->OccBb()))
                 Add(e, WC, Par.values[B_BLOCK], 0);
-            if (p->Kings(WC) & (SqBb(B1) | SqBb(A1) | SqBb(A2) ))
+            if (p->Kings(WC) & (SqBb(B1) | SqBb(A1) | SqBb(A2)))
                 Add(e, WC, Par.values[B_RETURN], 0);
         }
 

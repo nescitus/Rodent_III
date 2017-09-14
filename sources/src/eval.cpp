@@ -447,19 +447,19 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
         // pawn can attack enemy piece
 
         if (!(bb_stop & p->OccBb())) {
-           if (!(bb_stop & e->p_can_take[op])) {
-              if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
-                  Add(e, sd, Par.values[P_THR]);
-              if (bb_pawn & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
-                   U64 next = BB.ShiftFwd(bb_stop, sd);
-                   if (!(next & p->OccBb())) {
-                       if (!(next & e->p_can_take[op])) {
-                           if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
-                               Add(e, sd, Par.values[P_THR]);
-                       }
-                   }
-               }
-           }
+            if (!(bb_stop & e->p_can_take[op])) {
+                if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
+                    Add(e, sd, Par.values[P_THR]);
+                if (bb_pawn & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
+                    U64 next = BB.ShiftFwd(bb_stop, sd);
+                    if (!(next & p->OccBb())) {
+                        if (!(next & e->p_can_take[op])) {
+                            if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
+                                Add(e, sd, Par.values[P_THR]);
+                        }
+                    }
+                }
+            }
         }
 
         // passed pawns
@@ -648,7 +648,7 @@ int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
 
         eval_adj = (int)round(
                 (eval < 0) == (p->mSide == Par.prog_side) ? (double)eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply :
-                                                           (double)eval * (Glob.nodes > 100 ?   2 : 1) * ply / Par.riskydepth
+                                                            (double)eval * (Glob.nodes > 100 ?   2 : 1) * ply / Par.riskydepth
                              );
 
         if (eval_adj > 1000) eval_adj = 1000;

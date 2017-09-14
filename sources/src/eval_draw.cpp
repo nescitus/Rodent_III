@@ -65,21 +65,21 @@ int cEngine::GetDrawFactor(POS *p, int sd) {  // refactoring may be needed
     int op = Opp(sd); // weaker side
 
     if (p->mPhase < 2) {
-        if (p->Pawns(sd) == 0) return 0;                                                                 // KK, KmK, KmKp, KmKpp
+        if (p->Pawns(sd) == 0) return 0;                                                                   // KK, KmK, KmKp, KmKpp
     }
 
     if (p->mPhase == 0) return ScalePawnsOnly(p, sd, op);
 
     if (p->mPhase == 1) {
-        if (p->mCnt[sd][B] == 1) return ScaleKBPK(p, sd, op);                                             // KBPK, see below
-        if (p->mCnt[sd][N] == 1) return ScaleKNPK(p, sd, op);                                             // KBPK, see below
+        if (p->mCnt[sd][B] == 1) return ScaleKBPK(p, sd, op);                                              // KBPK, see below
+        if (p->mCnt[sd][N] == 1) return ScaleKNPK(p, sd, op);                                              // KBPK, see below
     }
 
     if (p->mPhase == 2) {
 
         if (p->mCnt[sd][N] == 2 && p->mCnt[sd][P] == 0) {
-            if (p->mCnt[op][P] == 0) return 0;                                                            // KNNK(m)
-            else return 8;                                                                               // KNNK(m)(p)
+            if (p->mCnt[op][P] == 0) return 0;                                                             // KNNK(m)
+            else return 8;                                                                                 // KNNK(m)(p)
         }
 
         if (p->mCnt[sd][B] == 2 && p->mCnt[sd][P] == 0) {                                                  // KBBK, same coloured bishops
@@ -87,7 +87,7 @@ int cEngine::GetDrawFactor(POS *p, int sd) {  // refactoring may be needed
             ||  MoreThanOne(p->Bishops(sd) & bbBlackSq)) return 0;
         }
 
-        if (p->mCnt[sd][B] == 1                                                                           // KBPKm, king blocks
+        if (p->mCnt[sd][B] == 1                                                                            // KBPKm, king blocks
         && p->mCnt[op][B] + p->mCnt[op][N] == 1
         && p->mCnt[sd][P] == 1
         && p->mCnt[op][P] == 0
@@ -100,14 +100,14 @@ int cEngine::GetDrawFactor(POS *p, int sd) {  // refactoring may be needed
             if (Mask.home[sd] & p->Pawns(sd)
             &&  p->mCnt[sd][P] == 1 && p->mCnt[op][P] == 0) return 8;                                      // KBPKB, BOC, pawn on own half
 
-            return 32;                                                                                   // BOC, any number of pawns
+            return 32;                                                                                     // BOC, any number of pawns
         }
     }
 
     if (p->mPhase == 3 && p->mCnt[sd][P] == 0) {
-        if (p->mCnt[sd][R] == 1 && p->mCnt[op][B] + p->mCnt[op][N] == 1) return 16;                         // KRKm(p)
-        if (p->mCnt[sd][B] + p->mCnt[sd][N] == 2 && p->mCnt[op][B] == 1) return 8;                          // KmmKB(p)
-        if (p->mCnt[sd][B] == 1 && p->mCnt[sd][N] == 1 && p->mCnt[op][B] + p->mCnt[op][N] == 1) return 8;    // KBNKm(p)
+        if (p->mCnt[sd][R] == 1 && p->mCnt[op][B] + p->mCnt[op][N] == 1) return 16;                        // KRKm(p)
+        if (p->mCnt[sd][B] + p->mCnt[sd][N] == 2 && p->mCnt[op][B] == 1) return 8;                         // KmmKB(p)
+        if (p->mCnt[sd][B] == 1 && p->mCnt[sd][N] == 1 && p->mCnt[op][B] + p->mCnt[op][N] == 1) return 8;  // KBNKm(p)
     }
 
     if (p->mPhase == 4 && p->mCnt[sd][R] == 1 && p->mCnt[op][R] == 1) {
@@ -117,19 +117,19 @@ int cEngine::GetDrawFactor(POS *p, int sd) {  // refactoring may be needed
     }
 
     if (p->mPhase == 5 && p->mCnt[sd][P] == 0) {
-        if (p->mCnt[sd][R] == 1 && p->mCnt[sd][B] + p->mCnt[sd][N] == 1 && p->mCnt[op][R] == 1) return 16;   // KRMKR(p)
+        if (p->mCnt[sd][R] == 1 && p->mCnt[sd][B] + p->mCnt[sd][N] == 1 && p->mCnt[op][R] == 1) return 16; // KRMKR(p)
     }
 
     if (p->mPhase == 6 && p->mCnt[sd][Q] == 1 && p->mCnt[op][R] == 1 && p->mCnt[sd][P] == 0)
         return ScaleKQKRP(p, sd, op);
 
     if (p->mPhase == 7 && p->mCnt[sd][P] == 0) {
-        if (p->mCnt[sd][R] == 2 && p->mCnt[op][B] + p->mCnt[op][N] == 1 && p->mCnt[op][R] == 1) return 16;   // KRRKRm(p)
+        if (p->mCnt[sd][R] == 2 && p->mCnt[op][B] + p->mCnt[op][N] == 1 && p->mCnt[op][R] == 1) return 16; // KRRKRm(p)
     }
 
     if (p->mPhase == 9 && p->mCnt[sd][P] == 0) {
-        if (p->mCnt[sd][R] == 2 && p->mCnt[sd][B] + p->mCnt[sd][N] == 1 && p->mCnt[op][R] == 2) return 16;   // KRRMKRR(p)
-        if (p->mCnt[sd][Q] == 1 && p->mCnt[sd][B] + p->mCnt[sd][N] == 1 && p->mCnt[op][Q] == 1) return 16;   // KQmKQ(p)
+        if (p->mCnt[sd][R] == 2 && p->mCnt[sd][B] + p->mCnt[sd][N] == 1 && p->mCnt[op][R] == 2) return 16; // KRRMKRR(p)
+        if (p->mCnt[sd][Q] == 1 && p->mCnt[sd][B] + p->mCnt[sd][N] == 1 && p->mCnt[op][Q] == 1) return 16; // KQmKQ(p)
     }
 
     return 64;
