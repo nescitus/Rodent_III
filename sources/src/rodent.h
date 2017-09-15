@@ -319,6 +319,10 @@ class POS {
     void InitHashKey();
     void InitPawnKey();
 
+    U64 AttacksFrom(int sq) const;
+    U64 AttacksTo(int sq) const;
+    bool Attacked(int sq, int sd) const;
+
     bool CanDiscoverCheck(U64 bb_checkers, int op, int from) const; // for GenerateSpecial()
 
   public:
@@ -359,14 +363,10 @@ class POS {
     int TpOnSq(int sq) const { return Tp(mPc[sq]); }
 
     bool MayNull() const { return (mClBb[mSide] & ~(mTpBb[P] | mTpBb[K])) != 0; }
-    bool IsOnSq(int sd, int tp, int sq) const{ return PcBb(sd, tp) & SqBb(sq); }
+    bool IsOnSq(int sd, int tp, int sq) const { return PcBb(sd, tp) & SqBb(sq); }
 
     bool InCheck() const { return Attacked(KingSq(mSide), Opp(mSide)); }
     bool Illegal() const { return Attacked(KingSq(Opp(mSide)), mSide); }
-
-    U64 AttacksFrom(int sq) const;
-    U64 AttacksTo(int sq) const;
-    bool Attacked(int sq, int sd) const;
 
     void DoMove(int move, UNDO *u);
     void DoNull(UNDO *u);
@@ -687,7 +687,7 @@ struct sInternalBook {
     int MoveFromInternal(POS *p, bool print_output) const;
 };
 
-#define ZEROARRAY(x) memset(x, 0, sizeof(x));
+#define ZEROARRAY(x) memset(x, 0, sizeof(x))
 
 extern
 #ifdef USEGEN
