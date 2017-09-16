@@ -840,8 +840,6 @@ class cEngine {
 void PrintVersion();
 
 int Clip(int sc, int lim);
-void AllocTrans(unsigned int mbsize);
-void ClearTrans();
 void DisplayCurrmove(int move, int tried);
 void ExtractMove(int *pv);
 int GetMS();
@@ -858,19 +856,12 @@ U64 Random64();
 void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
 void SetPieceValue(int pc, int val, int slot);
-bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
-void TransRetrieveMove(U64 key, int *move);
-void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
 void UciLoop();
 void PrintBb(U64 bbTest);
 int random30bit(int n);
 
 extern const int tp_value[7];
 extern const int ph_value[7];
-
-extern unsigned int tt_size;
-extern unsigned int tt_mask;
-extern int tt_date;
 
 #define MAKESTRHLP(x) #x
 #define MAKESTR(x) MAKESTRHLP(x)
@@ -919,6 +910,9 @@ extern int tt_date;
 #else
     #define printf_debug(...) {}
 #endif
+
+#include "chessheapclass.h"
+extern ChessHeapClass chc;
 
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change
 // TODO: perhaps don't search moves that has been searched by another thread to greater depth

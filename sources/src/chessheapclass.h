@@ -14,7 +14,12 @@ class ChessHeapClass {
     int    bucket_sizs[arrays_size];
     ENTRY *bucket_ptrs[arrays_size];
 
-    void Free() {
+    unsigned int tt_size;
+    unsigned int tt_mask;
+
+    bool success;
+
+    void Free() {           // free the allocated memory and zeroize bucket_ptrs[]
 
         for (int i = 0; i < arrays_size && bucket_ptrs[i]; i++) {
             free(bucket_ptrs[i]);
@@ -22,13 +27,21 @@ class ChessHeapClass {
         }
     }
 
-  public:
+    void ZeroMem() {        // zeroize the allocated memory
 
-    bool success;
+        if (success)
+            for (int i = 0; i < arrays_size && bucket_ptrs[i]; i++)
+                memset(bucket_ptrs[i], 0, 1024 * 1024 * bucket_sizs[i]);
+    }
 
-    ChessHeapClass(): bucket_ptrs{}, success{false} {};
+    ENTRY *MakeAddr(int entry_number) const {     // calculate address of the entry with entry_number
 
-    bool Alloc(int size_mb) {
+        const int num_of_bucket = entry_number / num_per_bucket;
+
+        return bucket_ptrs[num_of_bucket] + entry_number - num_per_bucket * num_of_bucket;
+    }
+
+    bool Alloc(int size_mb) {       // allocate size_mb megabyte of memory and return true on success
 
         if (size_mb > max_memory_mb)
             return false;
@@ -52,22 +65,20 @@ class ChessHeapClass {
         return success;
     }
 
-    void ZeroMem() {
+  public:
 
-        if (success)
-            for (int i = 0; i < arrays_size && bucket_ptrs[i]; i++)
-                memset(bucket_ptrs[i], 0, 1024 * 1024 * bucket_sizs[i]);
-    }
+    int tt_date;
 
-    ENTRY *operator[](int entry_number) {
-
-        const int num_of_bucket = entry_number / num_per_bucket;
-
-        return bucket_ptrs[num_of_bucket] + entry_number - num_per_bucket * num_of_bucket;
-    }
+    ChessHeapClass(): bucket_ptrs{}, success{false} {};
 
     ~ChessHeapClass() {
 
         Free();
     }
+
+    void AllocTrans(unsigned int mbsize);
+    void ClearTrans();
+    bool TransRetrieve(U64 key, int * move, int * score, int alpha, int beta, int depth, int ply);
+    void TransRetrieveMove(U64 key, int * move);
+    void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
 };

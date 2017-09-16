@@ -60,7 +60,7 @@ void UciLoop() {
     setbuf(stdin, NULL);
     setbuf(stdout, NULL);
     p->SetPosition(START_POS);
-    AllocTrans(16);
+    chc.AllocTrans(16);
     for (;;) {
         ReadLine(command, sizeof(command));
         ptr = ParseToken(command, token);
@@ -75,7 +75,7 @@ void UciLoop() {
             PrintUciOptions();
             printf("uciok\n");
         } else if (strcmp(token, "ucinewgame") == 0) {
-            ClearTrans();
+            chc.ClearTrans();
             Glob.ClearData();
             p->SetPosition(START_POS);
             srand(GetMS());
@@ -288,7 +288,7 @@ void ParseGo(POS *p, const char *ptr) {
     // set global variables
 
     cEngine::start_time = GetMS();
-    tt_date = (tt_date + 1) & 255;
+    chc.tt_date = (chc.tt_date + 1) & 255;
     Glob.nodes = 0;
     Glob.abort_search = false;
     Glob.depth_reached = 0;
@@ -382,7 +382,7 @@ void cEngine::Bench(int depth) {
     }; // test positions taken from DiscoCheck by Lucas Braesch
 
     if (depth == 0) depth = 8; // so that you can call bench without parameters
-    ClearTrans();
+    chc.ClearTrans();
     ClearAll();
     dp_completed = 0; // maybe move to ClearAll()?
     Par.shut_up = true;

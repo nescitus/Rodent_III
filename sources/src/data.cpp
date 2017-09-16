@@ -30,7 +30,4 @@ int cEngine::move_time;
 int cEngine::move_nodes;
 int cEngine::search_depth;
 int cEngine::start_time;
-ENTRY *tt;
-unsigned int tt_size;
-unsigned int tt_mask;
-int tt_date;
+//ENTRY *tt;

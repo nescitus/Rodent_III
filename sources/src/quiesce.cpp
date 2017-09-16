@@ -54,7 +54,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (TransRetrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
+    if (chc.TransRetrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
         if (!is_pv) return score;
     }
@@ -94,7 +94,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         // BETA CUTOFF
 
         if (score >= beta) {
-            TransStore(p->mHashKey, move, score, LOWER, 0, ply);
+            chc.TransStore(p->mHashKey, move, score, LOWER, 0, ply);
             return score;
         }
 
@@ -117,8 +117,8 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
-    if (*pv) TransStore(p->mHashKey, *pv, best, EXACT, 0, ply);
-    else     TransStore(p->mHashKey,   0, best, UPPER, 0, ply);
+    if (*pv) chc.TransStore(p->mHashKey, *pv, best, EXACT, 0, ply);
+    else     chc.TransStore(p->mHashKey,   0, best, UPPER, 0, ply);
 
     return best;
 }
@@ -144,7 +144,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (TransRetrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
+    if (chc.TransRetrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
         if (!is_pv) return score;
     }
@@ -185,7 +185,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         // BETA CUTOFF
 
         if (score >= beta) {
-            TransStore(p->mHashKey, move, score, LOWER, 0, ply);
+            chc.TransStore(p->mHashKey, move, score, LOWER, 0, ply);
             return score;
         }
 
@@ -208,8 +208,8 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
-    if (*pv) TransStore(p->mHashKey, *pv, best, EXACT, 0, ply);
-    else     TransStore(p->mHashKey,   0, best, UPPER, 0, ply);
+    if (*pv) chc.TransStore(p->mHashKey, *pv, best, EXACT, 0, ply);
+    else     chc.TransStore(p->mHashKey,   0, best, UPPER, 0, ply);
 
     return best;
 }

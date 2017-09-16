@@ -51,7 +51,7 @@ void cParam::InitAsymmetric(POS *p) {
 
 void cGlobals::ClearData() {
 
-    ClearTrans();
+    chc.ClearTrans();
 #ifndef USE_THREADS
     EngineSingle.ClearAll();
 #else
@@ -216,7 +216,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (TransRetrieve(p->mHashKey, &move, &score, alpha, beta, depth, ply)) {
+    if (chc.TransRetrieve(p->mHashKey, &move, &score, alpha, beta, depth, ply)) {
         if (score >= beta) UpdateHistory(p, last_move, move, depth, ply);
         if (!is_pv && Par.search_skill > 0) return score;
     }
@@ -278,7 +278,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
         // omit null move search if normal search to the same depth wouldn't exceed beta
         // (sometimes we can check it for free via hash table)
 
-        if (TransRetrieve(p->mHashKey, &move, &null_score, alpha, beta, new_depth, ply)) {
+        if (chc.TransRetrieve(p->mHashKey, &move, &null_score, alpha, beta, new_depth, ply)) {
             if (null_score < beta) goto avoid_null;
         }
 
@@ -289,7 +289,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
         // get location of a piece whose capture refuted null move
         // its escape will be prioritised in the move ordering
 
-        TransRetrieve(p->mHashKey, &null_refutation, &null_score, alpha, beta, depth, ply);
+        chc.TransRetrieve(p->mHashKey, &null_refutation, &null_score, alpha, beta, depth, ply);
         if (null_refutation > 0) ref_sq = Tsq(null_refutation);
 
         p->UndoNull(u);
@@ -336,7 +336,7 @@ avoid_null:
     && !move
     && depth > 6) {
         Search(p, ply, alpha, beta, depth - 2, 0, -1, last_capt_sq, pv);
-        TransRetrieveMove(p->mHashKey, &move);
+        chc.TransRetrieveMove(p->mHashKey, &move);
     }
 
     // TODO: internal iterative deepening in cut nodes
@@ -496,7 +496,7 @@ research:
                     DecreaseHistory(p, mv_played[mv], depth);
                 }
             }
-            TransStore(p->mHashKey, move, score, LOWER, depth, ply);
+            chc.TransStore(p->mHashKey, move, score, LOWER, depth, ply);
 
             // At root, change the best move and show the new pv
 
@@ -535,9 +535,9 @@ research:
                 DecreaseHistory(p, mv_played[mv], depth);
             }
         }
-        TransStore(p->mHashKey, *pv, best, EXACT, depth, ply);
+        chc.TransStore(p->mHashKey, *pv, best, EXACT, depth, ply);
     } else
-        TransStore(p->mHashKey, 0, best, UPPER, depth, ply);
+        chc.TransStore(p->mHashKey, 0, best, UPPER, depth, ply);
 
     return best;
 }

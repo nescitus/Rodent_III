@@ -157,7 +157,7 @@ void ParseSetoption(const char *ptr) {
     printf_debug("setoption name: '%s' value: '%s'\n", name, value );
 
     if (strcmp(name, "hash") == 0)                                           {
-        AllocTrans(atoi(value));
+        chc.AllocTrans(atoi(value));
 #ifdef USE_THREADS
     } else if (strcmp(name, "threads") == 0)                                 {
         Glob.thread_no = (atoi(value));
@@ -170,7 +170,7 @@ void ParseSetoption(const char *ptr) {
         }
 #endif
     } else if (strcmp(name, "clear hash") == 0)                              {
-        ClearTrans();
+        chc.ClearTrans();
     } else if (strcmp(name, "pawnvaluemg") == 0)                             {
         Par.values[P_MID] = atoi(value);
         Par.InitPst();
