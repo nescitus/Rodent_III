@@ -237,7 +237,7 @@ void ParseGo(POS *p, const char *ptr) {
     binc = 0;
     movestogo = 40;
     strict_time = false;
-    search_depth = 64;
+    cEngine::search_depth = 64;
     Par.shut_up = false;
 
     for (;;) {
@@ -248,7 +248,7 @@ void ParseGo(POS *p, const char *ptr) {
             Glob.pondering = true;
         } else if (strcmp(token, "depth") == 0)     {
             ptr = ParseToken(ptr, token);
-            search_depth = atoi(token);
+            cEngine::search_depth = atoi(token);
             strict_time = true;
         } else if (strcmp(token, "movetime") == 0)  {
             ptr = ParseToken(ptr, token);

@@ -17,7 +17,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-int max_depth_completed;
+//int max_depth_completed;
 int POS::castle_mask[64];
 
 const int tp_value[7] = { 100, 325, 325, 500, 1000,  0,   0 };
@@ -28,7 +28,7 @@ U64 POS::zob_castle[16];
 U64 POS::zob_ep[8];
 int cEngine::move_time;
 int cEngine::move_nodes;
-int search_depth;
+int cEngine::search_depth;
 int start_time;
 ENTRY *tt;
 unsigned int tt_size;

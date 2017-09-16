@@ -790,6 +790,7 @@ class cEngine {
 
     static int move_time;
     static int move_nodes;
+    static int search_depth;
 
     static void InitSearch();
 
@@ -865,7 +866,6 @@ int random30bit(int n);
 
 extern const int tp_value[7];
 extern const int ph_value[7];
-extern int search_depth;
 extern int start_time;
 
 extern unsigned int tt_size;
