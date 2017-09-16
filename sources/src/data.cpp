@@ -29,7 +29,7 @@ U64 POS::zob_ep[8];
 int cEngine::move_time;
 int cEngine::move_nodes;
 int cEngine::search_depth;
-int start_time;
+int cEngine::start_time;
 ENTRY *tt;
 unsigned int tt_size;
 unsigned int tt_mask;

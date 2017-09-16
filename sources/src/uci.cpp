@@ -287,7 +287,7 @@ void ParseGo(POS *p, const char *ptr) {
 
     // set global variables
 
-    start_time = GetMS();
+    cEngine::start_time = GetMS();
     tt_date = (tt_date + 1) & 255;
     Glob.nodes = 0;
     Glob.abort_search = false;
