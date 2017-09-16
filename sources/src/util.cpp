@@ -197,7 +197,7 @@ int POS::StrToMove(char *move_str) const {
     return (type << 12) | (to << 6) | from;
 }
 
-void PvToStr(int *pv, char *pv_str) {
+void cEngine::PvToStr(int *pv, char *pv_str) {
 
     int *movep;
     char move_str[6];
@@ -210,19 +210,19 @@ void PvToStr(int *pv, char *pv_str) {
     }
 }
 
-void BuildPv(int *dst, int *src, int move) {
+void cEngine::BuildPv(int *dst, int *src, int move) {
 
     *dst++ = move;
     while ((*dst++ = *src++))
         ;
 }
 
-void WasteTime(int miliseconds) {
+void cEngine::WasteTime(int milliseconds) {
 
 #if defined(_WIN32) || defined(_WIN64)
-    Sleep(miliseconds);
+    Sleep(milliseconds);
 #else
-    usleep(miliseconds * 1000);
+    usleep(milliseconds * 1000);
 #endif
 }
 

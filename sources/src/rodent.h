@@ -782,6 +782,10 @@ class cEngine {
     static const int fut_depth;      // max depth at which futility pruning is applied
     static int lmr_size[2][MAX_PLY][MAX_MOVES];
 
+    static void PvToStr(int * pv, char * pv_str);
+    static void BuildPv(int * dst, int * src, int move);
+    static void WasteTime(int milliseconds);
+
   public:
 
     static void InitSearch();
@@ -831,7 +835,6 @@ void PrintVersion();
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
 void AllocTrans(unsigned int mbsize);
-void BuildPv(int *dst, int *src, int move);
 void ClearTrans();
 void DisplayCurrmove(int move, int tried);
 void ExtractMove(int *pv);
@@ -845,7 +848,6 @@ const char *ParseToken(const char *, char *);
 void PrintMove(int move);
 void PrintSingleOption(int ind);
 void PrintUciOptions();
-void PvToStr(int *, char *);
 U64 Random64();
 void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
@@ -855,7 +857,6 @@ bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int dept
 void TransRetrieveMove(U64 key, int *move);
 void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
 void UciLoop();
-void WasteTime(int miliseconds);
 void PrintBb(U64 bbTest);
 int random30bit(int n);
 
