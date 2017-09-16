@@ -413,11 +413,11 @@ struct MOVES {
 
 struct ENTRY {
     U64 key;
-    short date;
-    short move;
-    short score;
-    unsigned char flags;
-    unsigned char depth;
+    int16_t date;
+    int16_t move;
+    int16_t score;
+    uint8_t flags;
+    uint8_t depth;
 };
 
 struct eData {
