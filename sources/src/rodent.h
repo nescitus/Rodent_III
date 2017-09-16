@@ -776,6 +776,7 @@ class cEngine {
     static void PvToStr(int * pv, char * pv_str);
     static void BuildPv(int * dst, int * src, int move);
     static void WasteTime(int milliseconds);
+    static int BulletCorrection(int time);
 
     static const int razor_margin[];
     static const int fut_margin[];
@@ -786,6 +787,8 @@ class cEngine {
     static int lmr_size[2][MAX_PLY][MAX_MOVES];
 
   public:
+
+    static int move_time;
 
     static void InitSearch();
 
@@ -806,6 +809,8 @@ class cEngine {
     ~cEngine() { WaitThinkThread(); };  // should fix crash on windows on console closing
     void WaitThinkThread() { if (worker.joinable()) worker.join(); }
 #endif
+
+    static void SetMoveTime(int base, int inc, int movestogo);
 
     void Bench(int depth);
     void ClearAll();
@@ -831,7 +836,6 @@ class cEngine {
 
 void PrintVersion();
 
-int BulletCorrection(int time);
 int Clip(int sc, int lim);
 void AllocTrans(unsigned int mbsize);
 void ClearTrans();
@@ -850,7 +854,6 @@ void PrintUciOptions();
 U64 Random64();
 void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
-void SetMoveTime(int base, int inc, int movestogo);
 void SetPieceValue(int pc, int val, int slot);
 bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
 void TransRetrieveMove(U64 key, int *move);
@@ -861,7 +864,6 @@ int random30bit(int n);
 
 extern const int tp_value[7];
 extern const int ph_value[7];
-extern int move_time;
 extern int move_nodes;
 extern int search_depth;
 extern int start_time;

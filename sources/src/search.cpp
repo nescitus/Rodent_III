@@ -602,7 +602,7 @@ void CheckTimeout() {
             Glob.pondering = false;
     }
 
-    if (!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)
+    if (!Glob.pondering && cEngine::move_time >= 0 && GetMS() - start_time >= cEngine::move_time)
         Glob.abort_search = true;
 }
 

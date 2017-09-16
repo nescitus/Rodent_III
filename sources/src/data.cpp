@@ -26,7 +26,7 @@ const int ph_value[7] = {   0,   1,   1,   2,    4,  0,   0 };
 U64 POS::zob_piece[12][64];
 U64 POS::zob_castle[16];
 U64 POS::zob_ep[8];
-int move_time;
+int cEngine::move_time;
 int move_nodes;
 int search_depth;
 int start_time;

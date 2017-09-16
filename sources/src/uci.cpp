@@ -172,7 +172,7 @@ void POS::ParsePosition(const char *ptr) {
         ParseMoves(ptr);
 }
 
-int BulletCorrection(int time) {
+int cEngine::BulletCorrection(int time) {
 
     if (time < 200)       return (time * 23) / 32;
     else if (time <  400) return (time * 26) / 32;
@@ -192,7 +192,7 @@ void ExtractMove(int *pv) {
         printf("bestmove %s\n", bestmove_str);
 }
 
-void SetMoveTime(int base, int inc, int movestogo) {
+void cEngine::SetMoveTime(int base, int inc, int movestogo) {
 
     if (base >= 0) {
         if (movestogo == 1) base -= Min(1000, base / 10);
@@ -228,7 +228,7 @@ void ParseGo(POS *p, const char *ptr) {
     char token[80], bestmove_str[6];
     int wtime, btime, winc, binc, movestogo; bool strict_time;
 
-    move_time = -1;
+    cEngine::move_time = -1;
     move_nodes = 0;
     Glob.pondering = false;
     wtime = -1;
@@ -252,12 +252,12 @@ void ParseGo(POS *p, const char *ptr) {
             strict_time = true;
         } else if (strcmp(token, "movetime") == 0)  {
             ptr = ParseToken(ptr, token);
-            move_time = atoi(token);
+            cEngine::move_time = atoi(token);
             strict_time = true;
         } else if (strcmp(token, "nodes") == 0)     {
             ptr = ParseToken(ptr, token);
             move_nodes = atoi(token);
-            move_time = 99999999;
+            cEngine::move_time = 99999999;
             strict_time = true;
         } else if (strcmp(token, "wtime") == 0)     {
             ptr = ParseToken(ptr, token);
@@ -282,7 +282,7 @@ void ParseGo(POS *p, const char *ptr) {
     if (!strict_time) {
         int base = p->mSide == WC ? wtime : btime;
         int inc = p->mSide == WC ? winc : binc;
-        SetMoveTime(base, inc, movestogo);
+        cEngine::SetMoveTime(base, inc, movestogo);
     }
 
     // set global variables
