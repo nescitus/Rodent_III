@@ -27,7 +27,7 @@ U64 POS::zob_piece[12][64];
 U64 POS::zob_castle[16];
 U64 POS::zob_ep[8];
 int cEngine::move_time;
-int move_nodes;
+int cEngine::move_nodes;
 int search_depth;
 int start_time;
 ENTRY *tt;

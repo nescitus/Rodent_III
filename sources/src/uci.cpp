@@ -229,7 +229,7 @@ void ParseGo(POS *p, const char *ptr) {
     int wtime, btime, winc, binc, movestogo; bool strict_time;
 
     cEngine::move_time = -1;
-    move_nodes = 0;
+    cEngine::move_nodes = 0;
     Glob.pondering = false;
     wtime = -1;
     btime = -1;
@@ -256,7 +256,7 @@ void ParseGo(POS *p, const char *ptr) {
             strict_time = true;
         } else if (strcmp(token, "nodes") == 0)     {
             ptr = ParseToken(ptr, token);
-            move_nodes = atoi(token);
+            cEngine::move_nodes = atoi(token);
             cEngine::move_time = 99999999;
             strict_time = true;
         } else if (strcmp(token, "wtime") == 0)     {
