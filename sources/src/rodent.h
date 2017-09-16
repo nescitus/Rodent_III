@@ -381,10 +381,9 @@ class POS {
     int DrawScore() const;
     bool Legal(int move) const;
 
-    void ParseMoves(const char *ptr);
+    NOINLINE void PrintBoard() const;
+    NOINLINE void ParseMoves(const char *ptr);
     void ParsePosition(const char *ptr);
-
-    void PrintBoard() const;
 
     int *GenerateCaptures(int *list) const;
     int *GenerateQuiet(int *list) const;

@@ -414,13 +414,14 @@ void cEngine::Bench(int depth) {
 
 void POS::PrintBoard() const {
 
-    const char *piece_name[] = { "P ", "p ", "N ", "n ", "B ", "b ", "R ", "r ", "Q ", "q ", "K ", "k ", ". " };
+    static const char piece_name[] = {'P', 'p', 'N', 'n', 'B', 'b', 'R', 'r', 'Q', 'q', 'K', 'k', '.' };
 
-    printf("--------------------------------------------\n");
+    printf("     --------------------------\n     |   ");
     for (int sq = 0; sq < 64; sq++) {
-        printf("%s", piece_name[mPc[sq ^ (BC * 56)]]);
-        if ((sq + 1) % 8 == 0) printf(" %d\n", 9 - ((sq + 1) / 8));
+        printf("%c ", piece_name[mPc[sq ^ (BC * 56)]]);
+        if ((sq + 1) % 8 == 0) printf(" %d   |\n     |   ", 9 - ((sq + 1) / 8));
     }
 
-    printf("\na b c d e f g h\n%s\n--------------------------------------------\n", mSide == WC ? "(w)" : "(b)");
+    printf("                     |\n     |   a b c d e f g h   (%c)|\n     --------------------------\n",
+                                                                                            mSide == WC ? 'w' : 'b');
 }
