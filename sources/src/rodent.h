@@ -711,16 +711,16 @@ class cEngine {
     int root_depth;
     bool fl_root_choice;
 
-    void InitCaptures(POS *p, MOVES *m);
+    static void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
     int NextMove(MOVES *m, int *flag);
     int NextSpecialMove(MOVES *m, int *flag);
-    int NextCapture(MOVES *m);
-    void ScoreCaptures(MOVES *m);
+    static int NextCapture(MOVES *m);
+    static void ScoreCaptures(MOVES *m);
     void ScoreQuiet(MOVES *m);
-    int SelectBest(MOVES *m);
-    int BadCapture(POS *p, int move);
-    int MvvLva(POS *p, int move);
+    static int SelectBest(MOVES *m);
+    static int BadCapture(POS *p, int move);
+    static int MvvLva(POS *p, int move);
     void ClearHist();
     void AgeHist();
     void ClearEvalHash();
@@ -741,38 +741,41 @@ class cEngine {
 
     int Evaluate(POS *p, eData *e);
 #ifdef USE_RISKY_PARAMETER
-    int EvalScaleByDepth(POS *p, int ply, int eval);
+    static int EvalScaleByDepth(POS *p, int ply, int eval);
 #endif
-    int EvaluateChains(POS *p, int sd);
-    void EvaluateMaterial(POS *p, eData *e, int sd);
-    void EvaluatePieces(POS *p, eData *e, int sd);
-    void EvaluateOutpost(POS *p, eData *e, int pc, int sd, int sq, int *outpost);
-    void EvaluatePawns(POS *p, eData *e, int sd);
-    void EvaluatePassers(POS *p, eData *e, int sd);
-    void EvaluateKing(POS *p, eData *e, int sd);
-    void EvaluateKingFile(POS *p, int sd, U64 bb_file, int *shield, int *storm);
-    int EvaluateFileShelter(U64 bb_own_pawns, int sd);
-    int EvaluateFileStorm(U64 bb_opp_pawns, int sd);
+    static int EvaluateChains(POS *p, int sd);
+    static void EvaluateMaterial(POS *p, eData *e, int sd);
+    static void EvaluatePieces(POS *p, eData *e, int sd);
+    static void EvaluateOutpost(POS *p, eData *e, int pc, int sd, int sq, int *outpost);
+    static void EvaluatePawns(POS *p, eData *e, int sd);
+    static void EvaluatePassers(POS *p, eData *e, int sd);
+    static void EvaluateKing(POS *p, eData *e, int sd);
+    static void EvaluateKingFile(POS *p, int sd, U64 bb_file, int *shield, int *storm);
+    static int EvaluateFileShelter(U64 bb_own_pawns, int sd);
+    static int EvaluateFileStorm(U64 bb_opp_pawns, int sd);
     void EvaluatePawnStruct(POS *p, eData *e);
-    void EvaluateUnstoppable(eData *e, POS *p);
-    void EvaluateThreats(POS *p, eData *e, int sd);
-    int ScalePawnsOnly(POS *p, int sd, int op);
-    int ScaleKBPK(POS *p, int sd, int op);
-    int ScaleKNPK(POS *p, int sd, int op);
-    int ScaleKRPKR(POS *p, int sd, int op);
-    int ScaleKQKRP(POS *p, int sd, int op);
-    void EvaluateBishopPatterns(POS *p, eData *e);
-    void EvaluateKnightPatterns(POS *p, eData *e);
-    void EvaluateCentralPatterns(POS *p, eData *e);
-    void EvaluateKingPatterns(POS *p, eData *e);
-    int Interpolate(POS *p, eData *e);
-    int GetDrawFactor(POS *p, int sd);
-    int CheckmateHelper(POS *p);
-    void Add(eData *e, int sd, int mg_val, int eg_val);
-    void Add(eData *e, int sd, int val);
-    void AddPawns(eData *e, int sd, int mg_val, int eg_val);
-    bool NotOnBishColor(POS *p, int bish_side, int sq);
-    bool DifferentBishops(POS *p);
+    static void EvaluateUnstoppable(eData *e, POS *p);
+    static void EvaluateThreats(POS *p, eData *e, int sd);
+    static int ScalePawnsOnly(POS *p, int sd, int op);
+    static int ScaleKBPK(POS *p, int sd, int op);
+    static int ScaleKNPK(POS *p, int sd, int op);
+    static int ScaleKRPKR(POS *p, int sd, int op);
+    static int ScaleKQKRP(POS *p, int sd, int op);
+    static void EvaluateBishopPatterns(POS *p, eData *e);
+    static void EvaluateKnightPatterns(POS *p, eData *e);
+    static void EvaluateCentralPatterns(POS *p, eData *e);
+    static void EvaluateKingPatterns(POS *p, eData *e);
+    static int Interpolate(POS *p, eData *e);
+    static int GetDrawFactor(POS *p, int sd);
+    static int CheckmateHelper(POS *p);
+    static void Add(eData *e, int sd, int mg_val, int eg_val);
+    static void Add(eData *e, int sd, int val);
+    static void AddPawns(eData *e, int sd, int mg_val, int eg_val);
+    static bool NotOnBishColor(POS *p, int bish_side, int sq);
+    static bool DifferentBishops(POS *p);
+    static void PvToStr(int * pv, char * pv_str);
+    static void BuildPv(int * dst, int * src, int move);
+    static void WasteTime(int milliseconds);
 
     static const int razor_margin[];
     static const int fut_margin[];
@@ -781,10 +784,6 @@ class cEngine {
     static const int razor_depth;    // max depth at which razoring is applied
     static const int fut_depth;      // max depth at which futility pruning is applied
     static int lmr_size[2][MAX_PLY][MAX_MOVES];
-
-    static void PvToStr(int * pv, char * pv_str);
-    static void BuildPv(int * dst, int * src, int move);
-    static void WasteTime(int milliseconds);
 
   public:
 
