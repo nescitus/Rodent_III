@@ -42,7 +42,7 @@ void sInternalBook::Init()
             n_of_records--; i--;
         }
 
-    qsort(internal_book, n_of_records, sizeof(sBookEntry), [](const void* a, const void* b) {
+    qsort(internal_book, n_of_records, sizeof(sBookEntry), [](const void *a, const void *b) {
         const U64 a64 = ((sBookEntry *)a)->hash;
         const U64 b64 = ((sBookEntry *)b)->hash;
         if (a64 > b64) return 1;

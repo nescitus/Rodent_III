@@ -773,8 +773,8 @@ class cEngine {
     static void AddPawns(eData *e, int sd, int mg_val, int eg_val);
     static bool NotOnBishColor(POS *p, int bish_side, int sq);
     static bool DifferentBishops(POS *p);
-    static void PvToStr(int * pv, char * pv_str);
-    static void BuildPv(int * dst, int * src, int move);
+    static void PvToStr(int *pv, char *pv_str);
+    static void BuildPv(int *dst, int *src, int move);
     static void WasteTime(int milliseconds);
     static int BulletCorrection(int time);
 
