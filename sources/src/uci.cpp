@@ -23,7 +23,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef USE_THREADS
     #include <thread>
-    using namespace std;
+    using namespace std::literals::chrono_literals;
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)

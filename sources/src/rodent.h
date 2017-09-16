@@ -22,8 +22,8 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#if !(__cplusplus >= 201103L || _MSVC_LANG >= 201402)
-    #error Rodent requires C++11 compatible compiler.
+#if !(__cplusplus >= 201402L || _MSVC_LANG >= 201402L)
+    #error Rodent requires C++14 compatible compiler.
 #endif
 
 #pragma warning( disable : 4577 )
