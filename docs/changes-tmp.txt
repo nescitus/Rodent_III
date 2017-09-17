@@ -1,6 +1,6 @@
 just to not forget user/builder visible changes
 
-0. RodentIII requires C++11 compatible compiler.
+0. RodentIII requires C++14 compatible compiler.
 
 1. polyglot books can be fully cached in memory, controlled by BOOK_IN_MEMORY_MB (default 16MB max), disabled by NO_BOOK_IN_MEMORY.
    if a book is loaded into memory RodentIII reports `success/m` otherwise `success/d`
