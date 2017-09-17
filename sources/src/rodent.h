@@ -147,6 +147,10 @@ template<typename T> constexpr T Abs(const T& x) { return x > 0 ? x : -x; }
 template<typename T> constexpr const T& Max(const T& x, const T& y) { return x > y ? x : y; }
 template<typename T> constexpr const T& Min(const T& x, const T& y) { return x < y ? x : y; }
 
+template<typename T> constexpr T Clip(const T& sc, const T& lim) { if (sc < -lim) return -lim;
+                                                                   if (sc > lim) return lim;
+                                                                   return sc; }
+
 #define SqBb(x)         (UINT64_C(1) << (x))
 
 #define Cl(x)           ((x) & 1)
@@ -838,7 +842,6 @@ class cEngine {
 
 void PrintVersion();
 
-int Clip(int sc, int lim);
 void DisplayCurrmove(int move, int tried);
 void ExtractMove(int *pv);
 int GetMS();

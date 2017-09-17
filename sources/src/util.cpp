@@ -65,13 +65,6 @@ bool InputAvailable() {
 #endif
 }
 
-int Clip(int sc, int lim) {
-
-    if (sc < -lim) return -lim;
-    if (sc > lim) return lim;
-    return sc;
-}
-
 int GetMS() {
 
 #if defined(_WIN32) || defined(_WIN64)
