@@ -124,7 +124,6 @@ void UciLoop() {
 void POS::ParseMoves(const char *ptr) {
 
     char token[180];
-    UNDO u[1];
 
     for (;;) {
 
@@ -138,7 +137,7 @@ void POS::ParseMoves(const char *ptr) {
 
         const int move = StrToMove(token);
         if (Legal(move)) {
-            DoMove(move, u);
+            DoMove(move);
             Glob.moves_from_start++;
         }
         else printf("info string illegal move\n");

@@ -83,7 +83,7 @@ void sInternalBook::Init()
 bool sInternalBook::LineToInternal(const char *ptr, int excludedColor) {
 
     char token[512];
-    POS p[1]; UNDO u[1];
+    POS p[1];
     int move, freq;
 
     p->SetPosition(START_POS);
@@ -107,7 +107,7 @@ bool sInternalBook::LineToInternal(const char *ptr, int excludedColor) {
             if (p->mSide != excludedColor)
                 MoveToInternal(p->mHashKey, move, freq);
 
-            p->DoMove(move, u);
+            p->DoMove(move);
         } else { return true; }
 
         if (p->mRevMoves == 0)

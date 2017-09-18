@@ -372,7 +372,7 @@ class POS {
     bool InCheck() const { return Attacked(KingSq(mSide), Opp(mSide)); }
     bool Illegal() const { return Attacked(KingSq(Opp(mSide)), mSide); }
 
-    void DoMove(int move, UNDO *u);
+    void DoMove(int move, UNDO *u = nullptr);
     void DoNull(UNDO *u);
     void UndoNull(UNDO *u);
     void UndoMove(int move, UNDO *u);
