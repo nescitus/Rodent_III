@@ -136,8 +136,8 @@ void cParam::DefaultWeights() {  // tuned automatically
     // Positional weights
 
     SetVal(W_THREATS, 109, 0, 500, true);
-    SetVal(W_TROPISM,  25, 0, 500, true);
-    SetVal(W_FWD,       0, 0, 500, false);
+    SetVal(W_TROPISM,  25, -500, 500, true);
+    SetVal(W_FWD,       0, -500, 500, false);
     SetVal(W_PASSERS, 102, 0, 500, true);
     SetVal(W_MASS,     98, 0, 500, true);
     SetVal(W_CHAINS,  100, 0, 500, true);

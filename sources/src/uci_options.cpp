@@ -31,6 +31,11 @@ struct {
     int count;
 } pers_aliases;
 
+void PrintSingleOption(int ind) {
+    printf("option name %s type spin default %d min %d max %d\n",
+            paramNames[ind], Par.values[ind], Par.min_val[ind], Par.max_val[ind]);
+}
+
 void PrintUciOptions() {
 
     printf("option name Hash type spin default 16 min 1 max 4096\n");
@@ -66,23 +71,24 @@ void PrintUciOptions() {
         printf("option name ExchangeImbalance type spin default %d min -200 max 200\n", Par.values[A_EXC]);
         printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", Par.values[N_CL]);
 
-        printf("option name Material type spin default %d min 0 max 500\n", Par.values[W_MATERIAL]);
+        PrintSingleOption(W_MATERIAL);
         printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
         printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.values[W_PST]);
-		printf("option name OwnAttack type spin default %d min 0 max 500\n", Par.values[W_OWN_ATT]);
-        printf("option name OppAttack type spin default %d min 0 max 500\n", Par.values[W_OPP_ATT]);
-        printf("option name OwnMobility type spin default %d min 0 max 500\n", Par.values[W_OWN_MOB]);
-        printf("option name OppMobility type spin default %d min 0 max 500\n", Par.values[W_OPP_MOB]);
-        printf("option name KingTropism type spin default %d min 0 max 500\n", Par.values[W_TROPISM]);
-        printf("option name Forwardness type spin default %d min -500 max 500\n", Par.values[W_FWD]);
-        printf("option name PiecePressure type spin default %d min 0 max 500\n", Par.values[W_THREATS]);
+        PrintSingleOption(W_OWN_ATT);
+        PrintSingleOption(W_OPP_ATT);
+        PrintSingleOption(W_OWN_MOB);
+        PrintSingleOption(W_OPP_MOB);
+        PrintSingleOption(W_TROPISM);
+        PrintSingleOption(W_FWD);
+        PrintSingleOption(W_THREATS);
 
-        printf("option name PassedPawns type spin default %d min 0 max 500\n", Par.values[W_PASSERS]);
-        printf("option name PawnStructure type spin default %d min 0 max 500\n", Par.values[W_STRUCT]);
-        printf("option name PawnShield type spin default %d min 0 max 500\n", Par.values[W_SHIELD]);
-        printf("option name PawnStorm type spin default %d min 0 max 500\n", Par.values[W_STORM]);
-        printf("option name Outposts type spin default %d min 0 max 500\n", Par.values[W_OUTPOSTS]);
-        printf("option name Lines type spin default %d min 0 max 500\n", Par.values[W_LINES]);
+        PrintSingleOption(W_PASSERS);
+        PrintSingleOption(W_STRUCT);
+        PrintSingleOption(W_SHIELD);
+        PrintSingleOption(W_STORM);
+        PrintSingleOption(W_OUTPOSTS);
+        PrintSingleOption(W_LINES);
+
         printf("option name Fianchetto type spin default %d min 0 max 100\n", Par.values[B_KING]);
 
         printf("option name Contempt type spin default %d min -500 max 500\n", Par.draw_score);
