@@ -29,12 +29,12 @@ void POS::DoMove(int move, UNDO *u) {
     // Save data for undoing a move
 
     if (u) {
-        u->ttp = ttp;
-        u->c_flags = mCFlags;
-        u->ep_sq = mEpSq;
-        u->rev_moves = mRevMoves;
-        u->hash_key = mHashKey;
-        u->pawn_key = mPawnKey;
+        u->mTtpUd      = ttp;
+        u->mCFlagsUd   = mCFlags;
+        u->mEpSqUd     = mEpSq;
+        u->mRevMovesUd = mRevMoves;
+        u->mHashKeyUd  = mHashKey;
+        u->mPawnKeyUd  = mPawnKey;
     }
 
     // Update reversible moves counter
@@ -168,8 +168,8 @@ void POS::DoMove(int move, UNDO *u) {
 
 void POS::DoNull(UNDO *u) {
 
-    u->ep_sq = mEpSq;
-    u->hash_key = mHashKey;
+    u->mEpSqUd    = mEpSq;
+    u->mHashKeyUd = mHashKey;
     mRepList[mHead++] = mHashKey;
     mRevMoves++;
     if (mEpSq != NO_SQ) {

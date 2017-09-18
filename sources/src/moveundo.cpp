@@ -24,13 +24,13 @@ void POS::UndoMove(int move, UNDO *u) {
     int fsq = Fsq(move);
     int tsq = Tsq(move);
     int ftp = Tp(mPc[tsq]); // moving piece
-    int ttp = u->ttp;
+    int ttp = u->mTtpUd;
 
-    mCFlags = u->c_flags;
-    mEpSq = u->ep_sq;
-    mRevMoves = u->rev_moves;
-    mHashKey = u->hash_key;
-    mPawnKey = u->pawn_key;
+    mCFlags   = u->mCFlagsUd;
+    mEpSq     = u->mEpSqUd;
+    mRevMoves = u->mRevMovesUd;
+    mHashKey  = u->mHashKeyUd;
+    mPawnKey  = u->mPawnKeyUd;
 
     mHead--;
 
@@ -112,8 +112,8 @@ void POS::UndoMove(int move, UNDO *u) {
 
 void POS::UndoNull(UNDO *u) {
 
-    mEpSq = u->ep_sq;
-    mHashKey = u->hash_key;
+    mEpSq    = u->mEpSqUd;
+    mHashKey = u->mHashKeyUd;
     mHead--;
     mRevMoves--;
     mSide ^= 1;

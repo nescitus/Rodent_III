@@ -305,12 +305,12 @@ class cBitBoard {
 extern cBitBoard BB;
 
 struct UNDO {
-    int ttp;
-    int c_flags;
-    int ep_sq;
-    int rev_moves;
-    U64 hash_key;
-    U64 pawn_key;
+    int mTtpUd;
+    int mCFlagsUd;
+    int mEpSqUd;
+    int mRevMovesUd;
+    U64 mHashKeyUd;
+    U64 mPawnKeyUd;
 };
 
 class POS {
