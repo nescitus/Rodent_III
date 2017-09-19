@@ -1,0 +1,340 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<style>
+
+.window {
+ float:right;
+ width:4em;
+}
+
+.tab {
+ min-width:12em; 
+ float:left; 
+ margin:1em; 
+ margin-right:3em;
+}
+
+.light {
+  background-color:#ffffcc;
+}
+
+.super {
+  background-color:#ffff99;
+}
+
+</style>
+
+<script>
+
+function setDefault() {
+  document.getElementById("PawnValueMg").value = 95;
+  document.getElementById("PawnValueEg").value = 110;
+  document.getElementById("KnightValueMg").value = 310;
+  document.getElementById("KnightValueEg").value = 305;
+  document.getElementById("BishopValueMg").value = 322;
+  document.getElementById("BishopValueEg").value = 320;
+  document.getElementById("RookValueMg").value = 514;
+  document.getElementById("RookValueEg").value = 529;
+  document.getElementById("QueenValueMg").value = 1000;
+  document.getElementById("QueenValueEg").value = 1013;
+  document.getElementById("BishopPair").value = 51;
+  document.getElementById("KnightPair").value = -9;
+  document.getElementById("RookPair").value = -9;
+  document.getElementById("KnightLikesClosed").value = 6;
+  document.getElementById("RookLikesOpen").value = 3;
+  document.getElementById("ExchangeImbalance").value = 30;
+  document.getElementById("MinorVsQueen").value = 4;
+  document.getElementById("KeepPawn").value = 0;
+  document.getElementById("KeepKnight").value = 0;
+  document.getElementById("KeepBishop").value = 0;
+  document.getElementById("KeepRook").value = 0;
+  document.getElementById("KeepQueen").value = 0;
+  document.getElementById("OwnAttack").value = 100;
+  document.getElementById("OppAttack").value = 100;
+  document.getElementById("KingTropism").value = 20;
+  document.getElementById("PawnShield").value = 119;
+  document.getElementById("PawnStorm").value = 99;
+  document.getElementById("Material").value = 100;
+  document.getElementById("OwnMobility").value = 100;
+  document.getElementById("OppMobility").value = 100;
+  document.getElementById("PiecePlacement").value = 75;
+  document.getElementById("Center").value = 50;
+  document.getElementById("PiecePressure").value = 109;
+  document.getElementById("Lines").value = 100;
+  document.getElementById("Outposts").value = 78;
+  document.getElementById("Forwardness").value = 0;
+  document.getElementById("PassedPawns").value = 100;
+  document.getElementById("PawnStructure").value = 100;
+  document.getElementById("PawnMass").value = 100;
+  document.getElementById("PawnChains").value = 100;
+  document.getElementById("DoubledPawnMg").value = -23;
+  document.getElementById("DoubledPawnEg").value = -12;
+  document.getElementById("IsolatedPawnMg").value = -10;
+  document.getElementById("IsolatedPawnEg").value = -8;
+  document.getElementById("IsolatedOnOpenMg").value = -10;
+  document.getElementById("BackwardPawnMg").value = -8;
+  document.getElementById("BackwardPawnEg").value = -10;
+  document.getElementById("BackwardOnOpenMg").value = -8;
+  document.getElementById("Fianchetto").value = 6;
+  document.getElementById("ReturningB").value = 10;
+  document.getElementById("pst").value = "quirky";
+  document.getElementById("mob").value = "linear";
+  document.getElementById("NpsLimit").value = 0;
+  document.getElementById("EvalBlur").value = 0;
+  document.getElementById("Contempt").value = 0;
+  document.getElementById("SlowMover").value = 100;
+  document.getElementById("Selectivity").value = 175;
+  document.getElementById("SearchSkill").value = 10;
+  document.getElementById("BookFilter").value = 20;
+
+}
+
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+function inputToOption(name) {
+  var el = document.getElementById(name);
+  var val = el.value;
+  return "setoption name "+name+ " value "+ val;
+}
+
+function savePersonality() {
+  var out = '; Personality for Rodent III chess engine, version 0.210 or later\r\n';
+  out += inputToOption("PawnValueMg") + '\r\n';
+  out += inputToOption("KnightValueMg")+ '\r\n';
+  out += inputToOption("BishopValueMg")+ '\r\n';
+  out += inputToOption("RookValueMg")+ '\r\n';
+  out += inputToOption("QueenValueMg")+ '\r\n';
+  
+  out += inputToOption("PawnValueEg") + '\r\n';
+  out += inputToOption("KnightValueEg")+ '\r\n';
+  out += inputToOption("BishopValueEg")+ '\r\n';
+  out += inputToOption("RookValueEg")+ '\r\n';
+  out += inputToOption("QueenValueEg")+ '\r\n';
+  
+  out += inputToOption("KeepPawn") + '\r\n';
+  out += inputToOption("KeepKnight") + '\r\n';
+  out += inputToOption("KeepBishop") + '\r\n';
+  out += inputToOption("KeepRook") + '\r\n';
+  out += inputToOption("KeepQueen") + '\r\n';
+  
+  out += inputToOption("BishopPair") + '\r\n';
+  out += inputToOption("KnightPair") + '\r\n';
+  out += inputToOption("RookPair") + '\r\n';
+  out += inputToOption("KnightLikesClosed") + '\r\n';
+  out += inputToOption("RookLikesOpen") + '\r\n';
+  
+  out += inputToOption("ExchangeImbalance") + '\r\n';
+  out += inputToOption("MinorVsQueen") + '\r\n';
+  
+  out += inputToOption("Material") + '\r\n';
+  out += inputToOption("OwnAttack") + '\r\n';
+  out += inputToOption("OppAttack") + '\r\n';
+  out += inputToOption("OwnMobility") + '\r\n';
+  out += inputToOption("OppMobility") + '\r\n';
+  
+  out += inputToOption("KingTropism") + '\r\n';
+  out += inputToOption("PiecePlacement") + '\r\n';
+  out += inputToOption("PiecePressure") + '\r\n';
+  out += inputToOption("PassedPawns") + '\r\n';
+  out += inputToOption("PawnStructure") + '\r\n';
+  
+  out += inputToOption("Lines") + '\r\n';
+  out += inputToOption("Outposts") + '\r\n';
+  out += inputToOption("PawnShield") + '\r\n';
+  out += inputToOption("PawnStorm") + '\r\n';
+  out += inputToOption("Forwardness") + '\r\n';
+  out += inputToOption("Center") + '\r\n';
+  
+  out += inputToOption("DoubledPawnMg") + '\r\n';
+  out += inputToOption("DoubledPawnEg") + '\r\n';
+  out += inputToOption("IsolatedPawnMg") + '\r\n';
+  out += inputToOption("IsolatedPawnEg") + '\r\n';
+  out += inputToOption("IsolatedOnOpenMg") + '\r\n';
+  out += inputToOption("BackwardPawnMg") + '\r\n';
+  out += inputToOption("BackwardPawnEg") + '\r\n';
+  out += inputToOption("BackwardOnOpenMg") + '\r\n';
+  
+  out += inputToOption("Fianchetto") + '\r\n';
+  out += inputToOption("ReturningB") + '\r\n';
+  out += inputToOption("PawnMass") + '\r\n';
+  out += inputToOption("PawnChains") + '\r\n';
+  
+  var pst_name = document.getElementById("pst").value;
+  if (pst_name == "quirky")
+    out += "setoption name PstStyle value 0\r\n"
+  if (pst_name == "classic")
+    out += "setoption name PstStyle value 1\r\n"
+  if (pst_name == "normal")
+    out += "setoption name PstStyle value 2\r\n"
+  if (pst_name == "blunt")
+    out += "setoption name PstStyle value 3\r\n"
+	
+  var mob_name = document.getElementById("mob").value;
+  if (mob_name == "linear")
+    out += "setoption name MobilityStyle value 0\r\n"
+  if (mob_name == "autotuned")
+    out += "setoption name MobilityStyle value 1\r\n"
+	
+  out += inputToOption("NpsLimit") + '\r\n';
+  out += inputToOption("EvalBlur") + '\r\n';
+  out += inputToOption("Contempt") + '\r\n';
+  out += inputToOption("SlowMover") + '\r\n';
+  out += inputToOption("Selectivity") + '\r\n';
+  out += inputToOption("SearchSkill") + '\r\n';
+  
+  out += inputToOption("BookFilter") + '\r\n';
+  
+  download("personality.txt",out);
+}
+
+</script>
+
+<body>
+
+<h3>Advanced Rodent III personality creator (for versions later than 0.210)  
+<button onclick="savePersonality()">Save personality</button>
+<button onclick="setDefault()">Reset to default</button>
+</h3>
+
+<div class="tab">
+<p><b>Material 1</b></p>
+<p class="mono"> <span class="light" title="Midgame pawn value">Pawn (midgame)</span> <input class="window" type="number" id="PawnValueMg" value="95" min="0" max="1200"> </p>
+<p class="mono"> <span class="light" title="Midgame knight value">Knight (midgame)</span><input class="window" type="number" id="KnightValueMg" value="310" min="0" max="1200"> </p>
+<p class="mono"> <span class="light" title="Midgame bishop value">Bishop (midgame)</span><input class="window" type="number" id="BishopValueMg" value="322" min="0" max="1200"> </p>
+<p class="mono"> <span class="light" title="Midgame rook value">Rook (midgame)</span><input class="window" type="number" id="RookValueMg" value="514" min="0" max="1200"> </p>
+<p class="mono"> <span class="light" title="Midgame queen value">Queen (midgame)</span><input class="window" type="number" id="QueenValueMg" value="1000" min="0" max="1200"> </p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p class="mono"> <span class="light" title="Bishop pair value, default 51">Bishop Pair</span><input class="window" type="number" id="BishopPair" value="51" min="-100" max="100"> </p>
+<p class="mono"> <span class="light" title="Penalty for having two knights, helps to differentiate between BN and NN mateiral configurations. Default -9">Knight Pair</span><input class="window" type="number" id="KnightPair" value="-9" min="-100" max="100"> </p>
+<p class="mono"> <span class="light" title="Penalty for having two rooks. It is meaningful for the side with exchange advantage, and makes it want to simplify by exchanging rooks. Default -9">Rook Pair</span><input class="window" type="number" id="RookPair" value="-9" min="-100" max="100"> </p>
+<p class="mono"> <span class="super" title="Bonus for each pawn when having a knight; increasing typically means that the engine will favour closed positions; default value is 6, personalities preferring closed position typically use 8">N likes closed</span><input class="window" type="number" id="KnightLikesClosed" value="6" min="0" max="10"> </p>
+<p class="mono"> <span class="light" title="Penalty for each pawn when having a rook">R likes open</span><input class="window" type="number" id="RookLikesOpen" value="3" min="0" max="10"> </p>
+<br>
+<p class="mono"> <span class="light" title="Bonus for exchange advantage; decreasing makes the engine more likely to play exchange sacrifices">Exchange Adv</span><input class="window" type="number" id="ExchangeImbalance" value="30" min="-100" max="100"> </p>
+<p class="mono"> <span class="light" title="Bonus each minor piece gets for confronting enemy queen; increasing will weaken the play, but engine will seek imbalances">Minor vs Queen</span><input class="window" type="number" id="MinorVsQueen" value="4" min="-100" max="100"> </p>
+
+</div>
+
+<div class="tab">
+<p><b>Material 2</b></p>
+<p class="mono"> <span class="light" title="Endgame pawn value">Pawn (endgame)</span><input class="window" type="number" id="PawnValueEg" value="110" min="0" max="1200"> </p>
+<p class="mono"> <span class="light" title="Endgame knight value">Knight (endgame)</span><input class="window" type="number" id="KnightValueEg" value="305" min="0" max="1200"> </p>
+<p class="mono"> <span class="light" title="Endgame bishop value">Bishop (endgame)</span><input class="window" type="number" id="BishopValueEg" value="320" min="0" max="1200"> </p>
+<p class="mono"> <span class="light" title="Endgame rook value">Rook (endgame)</span><input class="window" type="number" id="RookValueEg" value="529" min="0" max="1200"> </p>
+<p class="mono"> <span class="light" title="Endgame queen value">Queen (endgame)</span><input class="window" type="number" id="QueenValueEg" value="1013" min="0" max="1200"> </p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p class="mono"> <span class="light" title="Modification of own pawn value, positive numbers mean that the engine prefers to keep pawns, negative that it prefers to exchange them; non-zero values weaken the engine, but positive value may be good for positional personalities">Keep pawn</span><input class="window" type="number" id="KeepPawn" value="0" min="-200" max="200"> </p>
+<p class="mono"> <span class="light" title="Modification of own knight value, positive numbers mean that the engine prefers to keep knights, negative that it prefers to exchange them; non-zero values weaken the engine, but positive value may be good for some attacking personalities or for personalities following precepts of Nimzowitsch">Keep knight</span><input class="window" type="number" id="KeepKnight" value="0" min="-200" max="200"> </p>
+<p class="mono"> <span class="light" title="Modification of own bishop value, positive numbers mean that the engine prefers to keep bishops, negative that it prefers to exchange them; non-zero values weaken the engine">Keep bishop</span><input class="window" type="number" id="KeepBishop" value="0" min="-200" max="200"> </p>
+<p class="mono"> <span class="light" title="Modification of own rook value, positive numbers mean that the engine prefers to keep rooks, negative that it prefers to exchange them; non-zero values weaken the engine">Keep rook<input class="window" type="number" id="KeepRook" value="0" min="-200" max="200"> </p>
+<p class="mono"> <span class="light" title="Modification of own queen value, positive numbers mean that the engine prefers to keep queens, negative that it prefers to exchange them; non-zero values weaken the engine, but positive value may be good for attacking personalities">Keep queen<input class="window" type="number" id="KeepQueen" value="0" min="-200" max="200"> </p>
+
+
+</div>
+
+<div class="tab">
+<p><b>Core weights</b></p>
+<p class="mono"> <span class="super" title="Influence of material advantage on evaluation, expressed as a percentage. Default is 100. Values around 90 lead to frequent pawn sacrifices, smaller values results in weaker, riskier and more fun game.">Material</span><input class="window" type="number" id="Material" value="100" min="0" max="500"> </p>
+<p class="mono"> <span class="super" title="Program's threats against enemy king, expressed as percentage">Own attack</span><input class="window" type="number" id="OwnAttack" value="100" min="0" max="500"> </p>
+<p class="mono"> <span class="super" title="Opponent's threats against program's king, expressed as percentage">Opp attack</span><input class="window" type="number" id="OppAttack" value="100" min="0" max="500"> </p>
+<p class="mono"> <span class="super" title="Own mobility, expressed as percentage; after increasing it above opponent's mobility, the engine will pursue active play">Own mobility</span><input class="window" type="number" id="OwnMobility" value="100" min="0" max="500"> </p>
+<p class="mono"> <span class="super" title="Opponent's mobility, expressed as percentage; after increasing it above own mobility, the engine will try to restrict its opponent">Opp mobility</span><input class="window" type="number" id="OppMobility" value="100" min="0" max="500"> </p>
+
+<p>&nbsp;</p>
+<p><b>Weights</b></p>
+<p class="mono"> <span class="super" title="Weight of passed pawn evaluation, expressed as percentage">Passed pawns</span><input class="window" type="number" id="PassedPawns" value="100" min="0" max="500"> </p>
+<p class="mono"> <span class="super" title="Bonus for pieces near to enemy king, applied t both sides, expressed as percentage; small values increase playing strength, 100% decreases it slightly; default is 20">King tropism</span><input class="window" type="number" id="KingTropism" value="20" min="-50" max="500"> </p>
+<p class="mono"> <span class="light" title="Influence of piece/square tables on the final score, expressed as percentage">Piece placement</span><input class="window" type="number" id="PiecePlacement" value="75" min="0" max="500"> </p>
+<p class="mono"> <span class="light" title="Center control bonus, expressed as percentage; default is 50">Center control</span><input class="window" type="number" id="Center" value="50" min="0" max="500"> </p>
+<p class="mono"> <span class="light" title="Weight of attacking and defending pieces, expressed as percentage">Piece pressure</span><input class="window" type="number" id="PiecePressure" value="109" min="0" max="500"> </p>
+<p>&nbsp;</p>
+<p class="mono"> <span class="light" title="Weight of semi-open and open files, as well as 7th rank evaluation, expressed as percentage">Lines</span><input class="window" type="number" id="Lines" value="100" min="0" max="500"> </p>
+<p class="mono"> <span class="light" title="Weight of good squares for minor pieces, expressed as percentage">Outposts</span><input class="window" type="number" id="Outposts" value="78" min="0" max="500"> </p>
+<p class="mono"> <span class="light" title="Weight of placing pieces on the enemy half of the board; it generally weakens the engine; expressed as percentage">Forwardness</span><input class="window" type="number" id="Forwardness" value="0" min="-500" max="500"> </p>
+
+</div>
+
+<div class="tab">
+<p><b>Pawn structure</b></p>
+<p class="mono"> <span class="super" title="Weight of pawn structure evaluation, expressed as percentage" >Pawn structure</span><input class="window" type="number" id="PawnStructure" value="100" min="0" max="500"> </p>
+<p class="mono"> <span class="light" title="Weight of support given by pawns to each other, expressed as percentage">Pawn mass</span><input class="window" type="number" id="PawnMass" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> <span class="light" title="Weight of evaluation of pawn chains, expressed as percentage; it is only meaningful in a handful of positions, arising from King's Indian Defence, French Defence, King's Indian Attack etc."> Pawn chains</span><input class="window" type="number" id="PawnChains" value="100" min="0" max="500" style="float:right";> </p>
+<p class="mono"> <span class="light" title="Value of pawns in front of own king, expressed as percentage">Pawn shield</span><input class="window" type="number" id="PawnShield" value="119" min="0" max="500"> </p>
+<p class="mono"> <span class="light" title="Value of pawns approaching enemy king, expressed as percentage">Pawn storm</span><input class="window" type="number" id="PawnStorm" value="99" min="0" max="500"> </p>
+<p>&nbsp;</p>
+<p><b>Pawn weaknesses</b></p>
+<p class="mono"> Doubled midgame<input class="window" type="number" id="DoubledPawnMg" value="-12" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Doubled endgame<input class="window" type="number" id="DoubledPawnEg" value="-23" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Isolated midgame<input class="window" type="number" id="IsolatedPawnMg" value="-10" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Isolated endgame<input class="window" type="number" id="IsolatedPawnEg" value="-20" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Isolated on open<input class="window" type="number" id="IsolatedOnOpenMg" value="-10" min="-100" max="0" style="float:right";> </p>
+<br>
+<p class="mono"> Backward midgame<input class="window" type="number" id="BackwardPawnMg" value="-8" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Backward endgame<input class="window" type="number" id="BackwardPawnEg" value="-10" min="-100" max="0" style="float:right";> </p>
+<p class="mono"> Backward on open<input class="window" type="number" id="BackwardOnOpenMg" value="-8" min="-100" max="0" style="float:right";> </p>
+<br>
+
+</div>
+
+<div class="tab">
+
+<p><b>Patterns</b></p>
+<p class="mono"> Fianchetto<input class="window" type="number" id="Fianchetto" value="6" min="0" max="100" style="float:right";> </p>
+<p class="mono"> Returning Bish<input class="window" type="number" id="ReturningB" value="10" min="0" max="100" style="float:right";> </p>
+
+
+<p><b>Switches</b></p>
+
+<p class="mono"> Piece play style
+
+<select id="pst" style="float:right";>
+  <option value="quirky" selected="selected">quirky</option>
+  <option value="classic">classic</option>
+  <option value="normal">normal</option>
+  <option value="normal">blunt</option>
+</select>
+</p>
+<p class="mono"> Mobility style
+
+<select id="mob" style="float:right";>
+  <option value="linear" selected="selected">linear</option>
+  <option value="decreasing">decreasing</option>
+</select>
+</p>
+<br>
+<p><b>Others</b></p>
+<p class="mono"> NPS limit<input class="window" type="number" id="NpsLimit" value="0" min="0" max="5000000"> </p>
+<p class="mono"> Eval blur<input class="window" type="number" id="EvalBlur" value="0" min="0" max="5000000"> </p>
+<p class="mono"> Contempt<input class="window" type="number" id="Contempt" value="0" min="-250" max="250"> </p>
+<p class="mono"> SlowMover<input class="window" type="number" id="SlowMover" value="100" min="10" max="500"> </p>
+<p class="mono"> Selectivity<input class="window" type="number" id="Selectivity" value="175" min="0" max="200"> </p>
+<p class="mono"> SearchSkill<input class="window" type="number" id="SearchSkill" value="10" min="0" max="10"> </p>
+<br>
+<p><b>Opening book</b></p>
+<p class="mono"> Book filter<input class="window" type="number" id="BookFilter" value="20" min="0" max="100"> </p>
+
+</div>
+
+
+<p id="demo"></p>
+
+</body>
+</html>
