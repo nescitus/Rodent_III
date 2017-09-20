@@ -25,8 +25,8 @@ void cEngine::InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_
     m->trans_move = trans_move;
     m->ref_move = ref_move;
     m->ref_sq = ref_sq;
-    m->killer1 = killer[ply][0];
-    m->killer2 = killer[ply][1];
+    m->killer1 = mKiller[ply][0];
+    m->killer2 = mKiller[ply][1];
 }
 
 int cEngine::NextMove(MOVES *m, int *flag) {
@@ -243,7 +243,7 @@ void cEngine::ScoreQuiet(MOVES *m) {
 
     valuep = m->value;
     for (movep = m->move; movep < m->last; movep++) {
-        int mv_score = history[m->p->mPc[Fsq(*movep)]][Tsq(*movep)];// use history score
+        int mv_score = mHistory[m->p->mPc[Fsq(*movep)]][Tsq(*movep)];// use history score
         if (Fsq(*movep) == m->ref_sq) mv_score += 2048;             // but bump up refutation move
         *valuep++ = mv_score;
     }
@@ -299,25 +299,25 @@ void cEngine::AgeHist() {
 
     for (int tp = 0; tp < 12; tp++)
         for (int sq = 0; sq < 64; sq++)
-            history[tp][sq] /= 8;
+            mHistory[tp][sq] /= 8;
 
-    ZEROARRAY(killer);
+    ZEROARRAY(mKiller);
 }
 
 void cEngine::ClearHist() {
 
-    ZEROARRAY(history);
+    ZEROARRAY(mHistory);
 
-    ZEROARRAY(refutation);
+    ZEROARRAY(mRefutation);
 
-    ZEROARRAY(killer);
+    ZEROARRAY(mKiller);
 }
 
 void cEngine::TrimHist() {
 
     for (int tp = 0; tp < 12; tp++)
         for (int sq = 0; sq < 64; sq++)
-            history[tp][sq] /= 2;
+            mHistory[tp][sq] /= 2;
 }
 
 void cEngine::UpdateHistory(POS *p, int last_move, int move, int depth, int ply) {
@@ -329,8 +329,8 @@ void cEngine::UpdateHistory(POS *p, int last_move, int move, int depth, int ply)
 
     // Update history table, making sure that scores don't grow too high
 
-    history[p->mPc[Fsq(move)]][Tsq(move)] += 2 * depth * depth;
-    if (history[p->mPc[Fsq(move)]][Tsq(move)] > MAX_HIST) TrimHist();
+    mHistory[p->mPc[Fsq(move)]][Tsq(move)] += 2 * depth * depth;
+    if (mHistory[p->mPc[Fsq(move)]][Tsq(move)] > MAX_HIST) TrimHist();
 
     // Update refutation table, saving new move in the table indexed
     // by the coordinates of last move. last_move == 0 is a null move,
@@ -338,13 +338,13 @@ void cEngine::UpdateHistory(POS *p, int last_move, int move, int depth, int ply)
     // refutation table is switched off: at root or in QuiesceFlee()
 
     if (last_move >= 0)
-        refutation[Fsq(last_move)][Tsq(last_move)] = move;
+        mRefutation[Fsq(last_move)][Tsq(last_move)] = move;
 
     // Update killer moves
 
-    if (move != killer[ply][0]) {
-        killer[ply][1] = killer[ply][0];
-        killer[ply][0] = move;
+    if (move != mKiller[ply][0]) {
+        mKiller[ply][1] = mKiller[ply][0];
+        mKiller[ply][0] = move;
     }
 }
 
@@ -357,10 +357,10 @@ void cEngine::DecreaseHistory(POS *p, int move, int depth) {
 
     // Update history table, making sure that scores don't fall too low
 
-    history[p->mPc[Fsq(move)]][Tsq(move)] -= depth * depth;
-    if (history[p->mPc[Fsq(move)]][Tsq(move)] < -MAX_HIST) TrimHist();
+    mHistory[p->mPc[Fsq(move)]][Tsq(move)] -= depth * depth;
+    if (mHistory[p->mPc[Fsq(move)]][Tsq(move)] < -MAX_HIST) TrimHist();
 }
 
 int cEngine::Refutation(int move) {
-    return refutation[Fsq(move)][Tsq(move)];
+    return mRefutation[Fsq(move)][Tsq(move)];
 }

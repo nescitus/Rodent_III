@@ -35,7 +35,7 @@ void cEngine::ClearAll() {
 
 void cEngine::ClearEvalHash() {
 
-    ZEROARRAY(EvalTT);
+    ZEROARRAY(mEvalTT);
 }
 
 void cEngine::EvaluateMaterial(POS *p, eData *e, int sd) {
@@ -664,8 +664,8 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
     int addr = p->mHashKey % EVAL_HASH_SIZE;
 
-    if (EvalTT[addr].key == p->mHashKey) {
-        int sc = EvalTT[addr].score;
+    if (mEvalTT[addr].key == p->mHashKey) {
+        int sc = mEvalTT[addr].score;
         return p->mSide == WC ? sc : -sc;
     }
 
@@ -769,8 +769,8 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
     // Save eval score in the evaluation hash table
 
-    EvalTT[addr].key = p->mHashKey;
-    EvalTT[addr].score = score;
+    mEvalTT[addr].key = p->mHashKey;
+    mEvalTT[addr].score = score;
 
     // Return score relative to the side to move
 

@@ -314,10 +314,10 @@ struct UNDO {
 };
 
 class POS {
-    static int castle_mask[64];
-    static U64 zob_piece[12][64];
-    static U64 zob_castle[16];
-    static U64 zob_ep[8];
+    static int msCastleMask[64];
+    static U64 msZobPiece[12][64];
+    static U64 msZobCastle[16];
+    static U64 msZobEp[8];
 
     void ClearPosition();
     void InitHashKey();
@@ -704,15 +704,15 @@ constexpr int EVAL_HASH_SIZE = 512 * 512 / 4;
 constexpr int PAWN_HASH_SIZE = 512 * 512 / 4;
 
 class cEngine {
-    sEvalHashEntry EvalTT[EVAL_HASH_SIZE];
-    sPawnHashEntry PawnTT[PAWN_HASH_SIZE];
-    int history[12][64];
-    int killer[MAX_PLY][2];
-    int refutation[64][64];
+    sEvalHashEntry mEvalTT[EVAL_HASH_SIZE];
+    sPawnHashEntry mPawnTT[PAWN_HASH_SIZE];
+    int mHistory[12][64];
+    int mKiller[MAX_PLY][2];
+    int mRefutation[64][64];
     //int local_nodes;
-    const int thread_id;
-    int root_depth;
-    bool fl_root_choice;
+    const int mcThreadId;
+    int mRootDepth;
+    bool mFlRootChoice;
 
     static void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
@@ -781,39 +781,39 @@ class cEngine {
     static void WasteTime(int milliseconds);
     static int BulletCorrection(int time);
 
-    static const int razor_margin[];
-    static const int fut_margin[];
-    static const int selective_depth;
-    static const int snp_depth;      // max depth at which static null move pruning is applied
-    static const int razor_depth;    // max depth at which razoring is applied
-    static const int fut_depth;      // max depth at which futility pruning is applied
-    static int lmr_size[2][MAX_PLY][MAX_MOVES];
+    static const int mscRazorMargin[];
+    static const int mscFutMargin[];
+    static const int mscSelectiveDepth;
+    static const int mscSnpDepth;      // max depth at which static null move pruning is applied
+    static const int mscRazorDepth;    // max depth at which razoring is applied
+    static const int mscFutDepth;      // max depth at which futility pruning is applied
+    static int msLmrSize[2][MAX_PLY][MAX_MOVES];
 
   public:
 
-    static int move_time;
-    static int move_nodes;
-    static int search_depth;
-    static int start_time;
+    static int msMoveTime;
+    static int msMoveNodes;
+    static int msSearchDepth;
+    static int msStartTime;
 
     static void InitSearch();
 
-    int pv_eng[MAX_PLY];
-    int dp_completed;
+    int mPvEng[MAX_PLY];
+    int mDpCompleted;
 
     cEngine(const cEngine&) = delete;
     cEngine& operator=(const cEngine&) = delete;
-    cEngine(int th = 0): thread_id(th) { ClearAll(); };
+    cEngine(int th = 0): mcThreadId(th) { ClearAll(); };
 
 #ifdef USE_THREADS
-    std::thread worker;
+    std::thread mWorker;
     void StartThinkThread(POS *p) {
-        dp_completed = 0;
-        worker = std::thread([&] { Think(p); });
+        mDpCompleted = 0;
+        mWorker = std::thread([&] { Think(p); });
     }
 
     ~cEngine() { WaitThinkThread(); };  // should fix crash on windows on console closing
-    void WaitThinkThread() { if (worker.joinable()) worker.join(); }
+    void WaitThinkThread() { if (mWorker.joinable()) mWorker.join(); }
 #endif
 
     static void SetMoveTime(int base, int inc, int movestogo);

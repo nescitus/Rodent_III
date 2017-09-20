@@ -102,8 +102,8 @@ void UciLoop() {
 #ifndef USE_THREADS
             printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));
 #else
-           // printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().pv_eng));
-			Engines.front().TuneMe(p, Engines.front().pv_eng, 2000);
+           // printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().mPvEng));
+			Engines.front().TuneMe(p, Engines.front().mPvEng, 2000);
 
 #endif
             Glob.is_tuning = false;
@@ -195,30 +195,30 @@ void cEngine::SetMoveTime(int base, int inc, int movestogo) {
 
     if (base >= 0) {
         if (movestogo == 1) base -= Min(1000, base / 10);
-        move_time = (base + inc * (movestogo - 1)) / movestogo;
+        msMoveTime = (base + inc * (movestogo - 1)) / movestogo;
 
         // make a percentage correction to playing speed (unless too risky)
 
-        if (2 * move_time > base) {
-            move_time *= Par.time_percentage;
-            move_time /= 100;
+        if (2 * msMoveTime > base) {
+            msMoveTime *= Par.time_percentage;
+            msMoveTime /= 100;
         }
 
         // ensure that our limit does not exceed total time available
 
-        if (move_time > base) move_time = base;
+        if (msMoveTime > base) msMoveTime = base;
 
         // safeguard against a lag
 
-        move_time -= 10;
+        msMoveTime -= 10;
 
         // ensure that we have non-negative time
 
-        if (move_time < 0) move_time = 0;
+        if (msMoveTime < 0) msMoveTime = 0;
 
         // assign less time per move on extremely short time controls
 
-        move_time = BulletCorrection(move_time);
+        msMoveTime = BulletCorrection(msMoveTime);
     }
 }
 
@@ -233,9 +233,9 @@ void ParseGo(POS *p, const char *ptr) {
 
     Glob.pondering = false;
 
-    cEngine::move_time    = -1;
-    cEngine::move_nodes   =  0;
-    cEngine::search_depth = 64;
+    cEngine::msMoveTime    = -1;
+    cEngine::msMoveNodes   =  0;
+    cEngine::msSearchDepth = 64;
 
     Par.shut_up = false;
 
@@ -247,16 +247,16 @@ void ParseGo(POS *p, const char *ptr) {
             Glob.pondering = true;
         } else if (strcmp(token, "depth") == 0)     {
             ptr = ParseToken(ptr, token);
-            cEngine::search_depth = atoi(token);
+            cEngine::msSearchDepth = atoi(token);
             strict_time = true;
         } else if (strcmp(token, "movetime") == 0)  {
             ptr = ParseToken(ptr, token);
-            cEngine::move_time = atoi(token);
+            cEngine::msMoveTime = atoi(token);
             strict_time = true;
         } else if (strcmp(token, "nodes") == 0)     {
             ptr = ParseToken(ptr, token);
-            cEngine::move_nodes = atoi(token);
-            cEngine::move_time = 99999999;
+            cEngine::msMoveNodes = atoi(token);
+            cEngine::msMoveTime = 99999999;
             strict_time = true;
         } else if (strcmp(token, "wtime") == 0)     {
             ptr = ParseToken(ptr, token);
@@ -286,7 +286,7 @@ void ParseGo(POS *p, const char *ptr) {
 
     // set global variables
 
-    cEngine::start_time = GetMS();
+    cEngine::msStartTime = GetMS();
     chc.tt_date = (chc.tt_date + 1) & 255;
     Glob.nodes = 0;
     Glob.abort_search = false;
@@ -315,13 +315,13 @@ void ParseGo(POS *p, const char *ptr) {
     // Set engine-dependent variables and search using the designated number of threads
 
 #ifndef USE_THREADS
-    EngineSingle.dp_completed = 0;
+    EngineSingle.mDpCompleted = 0;
     EngineSingle.Think(p);
-    ExtractMove(EngineSingle.pv_eng);
+    ExtractMove(EngineSingle.mPvEng);
 #else
     Glob.goodbye = false;
 
-    for (auto& engine: Engines) // dp_completed cleared in StartThinkThread();
+    for (auto& engine: Engines) // mDpCompleted cleared in StartThinkThread();
         engine.StartThinkThread(p);
 
     std::thread timer([] {
@@ -346,9 +346,9 @@ void ParseGo(POS *p, const char *ptr) {
     int *best_pv, best_depth = -1;
 
     for (auto& engine: Engines)
-        if (best_depth < engine.dp_completed) {
-            best_depth = engine.dp_completed;
-            best_pv = engine.pv_eng;
+        if (best_depth < engine.mDpCompleted) {
+            best_depth = engine.mDpCompleted;
+            best_pv = engine.mPvEng;
         }
 
     ExtractMove(best_pv);
@@ -383,15 +383,15 @@ void cEngine::Bench(int depth) {
     if (depth == 0) depth = 8; // so that you can call bench without parameters
     chc.ClearTrans();
     ClearAll();
-    dp_completed = 0; // maybe move to ClearAll()?
+    mDpCompleted = 0; // maybe move to ClearAll()?
     Par.shut_up = true;
 
     printf("Bench test started (depth %d): \n", depth);
 
     Glob.nodes = 0;
     Glob.abort_search = false;
-    start_time = GetMS();
-    search_depth = depth;
+    msStartTime = GetMS();
+    msSearchDepth = depth;
 
     // search each position to desired depth
 
@@ -405,7 +405,7 @@ void cEngine::Bench(int depth) {
 
     // calculate and print statistics
 
-    int end_time = GetMS() - start_time;
+    int end_time = GetMS() - msStartTime;
     unsigned int nps = (unsigned int)((Glob.nodes * 1000) / (end_time + 1));
 
     printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);

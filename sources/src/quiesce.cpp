@@ -38,7 +38,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     Glob.nodes++;
     //local_nodes++; unused
     Slowdown();
-    if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && mRootDepth > 1) return 0;
     *pv = 0;
     if (p->IsDraw() && ply) return p->DrawScore();
     move = 0;
@@ -89,7 +89,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && root_depth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) return 0;
 
         // BETA CUTOFF
 
@@ -137,7 +137,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     Glob.nodes++;
     //local_nodes++; unused
     Slowdown();
-    if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && mRootDepth > 1) return 0;
     *pv = 0;
     if (p->IsDraw() && ply) return p->DrawScore();
     move = 0;
@@ -180,7 +180,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && root_depth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) return 0;
 
         // BETA CUTOFF
 
@@ -232,7 +232,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // EARLY EXIT
 
-    if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && mRootDepth > 1) return 0;
     *pv = 0;
     if (p->IsDraw()) return p->DrawScore();
 
@@ -302,7 +302,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
         if (p->Illegal()) { p->UndoMove(move, u); continue; }
         score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
         p->UndoMove(move, u);
-        if (Glob.abort_search && root_depth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) return 0;
 
         // BETA CUTOFF
 

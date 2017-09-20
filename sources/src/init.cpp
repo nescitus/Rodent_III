@@ -20,20 +20,20 @@ If not, see <http://www.gnu.org/licenses/>.
 void POS::Init() { // static init function
 
     for (int sq = 0; sq < 64; sq++)
-        castle_mask[sq] = 15;
+        msCastleMask[sq] = 15;
 
-    castle_mask[A1] = 13;
-    castle_mask[E1] = 12;
-    castle_mask[H1] = 14;
-    castle_mask[A8] = 7;
-    castle_mask[E8] = 3;
-    castle_mask[H8] = 11;
+    msCastleMask[A1] = 13;
+    msCastleMask[E1] = 12;
+    msCastleMask[H1] = 14;
+    msCastleMask[A8] = 7;
+    msCastleMask[E8] = 3;
+    msCastleMask[H8] = 11;
 
     for (int i = 0; i < 12; i++)
         for (int j = 0; j < 64; j++)
-            zob_piece[i][j] = Random64();
+            msZobPiece[i][j] = Random64();
     for (int i = 0; i < 16; i++)
-        zob_castle[i] = Random64();
+        msZobCastle[i] = Random64();
     for (int i = 0; i < 8; i++)
-        zob_ep[i] = Random64();
+        msZobEp[i] = Random64();
 }

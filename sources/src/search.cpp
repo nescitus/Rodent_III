@@ -21,16 +21,16 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstring>
 #include <cmath>
 
-const int cEngine::snp_depth = 3;       // max depth at which static null move pruning is applied
-const int cEngine::razor_depth = 4;     // max depth at which razoring is applied
-const int cEngine::fut_depth = 6;       // max depth at which futility pruning is applied
+const int cEngine::mscSnpDepth = 3;       // max depth at which static null move pruning is applied
+const int cEngine::mscRazorDepth = 4;     // max depth at which razoring is applied
+const int cEngine::mscFutDepth = 6;       // max depth at which futility pruning is applied
 
 // this variable controls when evaluation function needs to be called for the sake of pruning
-const int cEngine::selective_depth = Max(Max(snp_depth, razor_depth), fut_depth);
+const int cEngine::mscSelectiveDepth = Max(Max(mscSnpDepth, mscRazorDepth), mscFutDepth);
 
-const int cEngine::razor_margin[5] = { 0, 300, 360, 420, 480 };
-const int cEngine::fut_margin[7] = { 0, 100, 160, 220, 280, 340, 400 };
-int cEngine::lmr_size[2][MAX_PLY][MAX_MOVES];
+const int cEngine::mscRazorMargin[5] = { 0, 300, 360, 420, 480 };
+const int cEngine::mscFutMargin[7] = { 0, 100, 160, 220, 280, 340, 400 };
+int cEngine::msLmrSize[2][MAX_PLY][MAX_MOVES];
 
 void cParam::InitAsymmetric(POS *p) {
 
@@ -73,24 +73,24 @@ void cEngine::InitSearch() { // static init function
             if (dp != 0 && mv != 0) // +-inf to int is undefined
                 r = (int)(log((double)dp) * log((double)Min(mv, 63)) / 2.0);
 
-            lmr_size[0][dp][mv] = r;     // zero window node
-            lmr_size[1][dp][mv] = r - 1; // principal variation node (checking for pos. values is in `Search()`)
+            msLmrSize[0][dp][mv] = r;     // zero window node
+            msLmrSize[1][dp][mv] = r - 1; // principal variation node (checking for pos. values is in `Search()`)
 
             // reduction cannot exceed actual depth
-            if (lmr_size[0][dp][mv] > dp - 1) lmr_size[0][dp][mv] = dp - 1;
-            if (lmr_size[1][dp][mv] > dp - 1) lmr_size[1][dp][mv] = dp - 1;
+            if (msLmrSize[0][dp][mv] > dp - 1) msLmrSize[0][dp][mv] = dp - 1;
+            if (msLmrSize[1][dp][mv] > dp - 1) msLmrSize[1][dp][mv] = dp - 1;
         }
 }
 
 void cEngine::Think(POS *p) {
 
     POS curr[1];
-    pv_eng[0] = 0; // clear engine's move
-    pv_eng[1] = 0; // clear ponder move
-    fl_root_choice = false;
+    mPvEng[0] = 0; // clear engine's move
+    mPvEng[1] = 0; // clear ponder move
+    mFlRootChoice = false;
     *curr = *p;
     AgeHist();
-    Iterate(curr, pv_eng);
+    Iterate(curr, mPvEng);
 }
 
 void cEngine::Iterate(POS *p, int *pv) {
@@ -100,28 +100,28 @@ void cEngine::Iterate(POS *p, int *pv) {
     // Lazy SMP works best with some depth variance,
     // so every other thread will search to depth + 1
 
-    int offset = thread_id & 0x01;
+    int offset = mcThreadId & 0x01;
 
-    for (root_depth = 1 + offset; root_depth <= search_depth; root_depth++) {
+    for (mRootDepth = 1 + offset; mRootDepth <= msSearchDepth; mRootDepth++) {
 
         // If a thread is lagging behind too much, which makes it unlikely
         // to contribute to the final result, skip the iteration.
 
-        if (Glob.depth_reached > dp_completed + 1) {
-            dp_completed++;
+        if (Glob.depth_reached > mDpCompleted + 1) {
+            mDpCompleted++;
             continue;
         }
 
         // Perform actual search
 
-        printf("info depth %d\n", root_depth);
-        if (Par.search_skill > 6) cur_val = Widen(p, root_depth, pv, cur_val);
-        else                      cur_val = Search(p, 0, -INF, INF, root_depth, 0, -1, -1, pv);
+        printf("info depth %d\n", mRootDepth);
+        if (Par.search_skill > 6) cur_val = Widen(p, mRootDepth, pv, cur_val);
+        else                      cur_val = Search(p, 0, -INF, INF, mRootDepth, 0, -1, -1, pv);
         if (Glob.abort_search) break;
 
         // Shorten search if there is only one root move available
 
-        if (root_depth >= 8 && fl_root_choice == false) break;
+        if (mRootDepth >= 8 && mFlRootChoice == false) break;
 
         // Abort search on finding checkmate score
 
@@ -129,17 +129,17 @@ void cEngine::Iterate(POS *p, int *pv) {
             int max_mate_depth = (MATE - Abs(cur_val) + 1) + 1;
             max_mate_depth *= 4;
             max_mate_depth /= 3;
-            if (max_mate_depth <= root_depth) {
-                dp_completed = root_depth;
+            if (max_mate_depth <= mRootDepth) {
+                mDpCompleted = mRootDepth;
                 break;
             }
         }
 
         // Set information about depth
 
-        dp_completed = root_depth;
-        if (Glob.depth_reached < dp_completed)
-            Glob.depth_reached = dp_completed;
+        mDpCompleted = mRootDepth;
+        if (Glob.depth_reached < mDpCompleted)
+            Glob.depth_reached = mDpCompleted;
     }
 
     if (!Par.shut_up) Glob.abort_search = true; // for correct exit from fixed depth search
@@ -191,7 +191,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     Glob.nodes++;
     //local_nodes++; unused
     Slowdown();
-    if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && mRootDepth > 1) return 0;
     if (ply) *pv = 0;
     if (p->IsDraw() && ply) return p->DrawScore();
     move = 0;
@@ -244,7 +244,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     int eval = 0;
     if (fl_prunable_node
-    && (!was_null || depth <= selective_depth)) {
+    && (!was_null || depth <= mscSelectiveDepth)) {
         eval = Evaluate(p, &e);
 #ifdef USE_RISKY_PARAMETER
         eval = EvalScaleByDepth(p, ply, eval);
@@ -255,7 +255,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
     if (fl_prunable_node
     && Par.search_skill > 7
-    && depth <= snp_depth
+    && depth <= mscSnpDepth
     && !was_null) {
         int sc = eval - 120 * depth;
         if (sc > beta) return sc;
@@ -293,7 +293,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
         if (null_refutation > 0) ref_sq = Tsq(null_refutation);
 
         p->UndoNull(u);
-        if (Glob.abort_search && root_depth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) return 0;
 
         // do not return unproved mate scores, Stockfish-style
 
@@ -306,7 +306,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
             if (new_depth > 6 && Par.search_skill > 9)
                 score = Search(p, ply, alpha, beta, new_depth - 5, 1, last_move, last_capt_sq, pv);
 
-            if (Glob.abort_search && root_depth > 1) return 0;
+            if (Glob.abort_search && mRootDepth > 1) return 0;
             if (score >= beta) return score;
         }
     } // end of null move code
@@ -320,8 +320,8 @@ avoid_null:
     && !move
     && !was_null
     && !(p->Pawns(p->mSide) & bb_rel_rank[p->mSide][RANK_7]) // no pawns to promote in one move
-    && depth <= razor_depth) {
-        int threshold = beta - razor_margin[depth];
+    && depth <= mscRazorDepth) {
+        int threshold = beta - mscRazorMargin[depth];
 
         if (eval < threshold) {
             score = QuiesceChecks(p, ply, alpha, beta, pv);
@@ -357,13 +357,13 @@ avoid_null:
         && Par.search_skill > 4
         && quiet_tried == 0
         && fl_prunable_node
-        && depth <= fut_depth) {
-           if (eval + fut_margin[depth] < beta) fl_futility = 1;
+        && depth <= mscFutDepth) {
+           if (eval + mscFutMargin[depth] < beta) fl_futility = 1;
         }
 
         // MAKE MOVE
 
-        mv_hist_score = history[p->mPc[Fsq(move)]][Tsq(move)];
+        mv_hist_score = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
         victim = p->TpOnSq(Tsq(move));
         if (victim != NO_TP) last_capt = Tsq(move);
         else last_capt = -1;
@@ -374,7 +374,7 @@ avoid_null:
 
         mv_played[mv_tried] = move;
         mv_tried++;
-        if (!ply && mv_tried > 1) fl_root_choice = true;
+        if (!ply && mv_tried > 1) mFlRootChoice = true;
         if (mv_type == MV_NORMAL) quiet_tried++;
         if (ply == 0 && !Par.shut_up && depth > 16 && Glob.thread_no == 1)
             DisplayCurrmove(move, mv_tried);
@@ -431,11 +431,11 @@ avoid_null:
         && mv_tried > 3
         && !fl_check
         && !p->InCheck()
-        && lmr_size[is_pv][depth][mv_tried] > 0
+        && msLmrSize[is_pv][depth][mv_tried] > 0
         && mv_type == MV_NORMAL
         && mv_hist_score < Par.hist_limit
         && MoveType(move) != CASTLE) {
-            reduction = (int)lmr_size[is_pv][depth][mv_tried];
+            reduction = (int)msLmrSize[is_pv][depth][mv_tried];
 
             // increase reduction on bad history score
 
@@ -485,7 +485,7 @@ research:
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && root_depth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) return 0;
 
         // BETA CUTOFF
 
@@ -562,10 +562,10 @@ void cEngine::DisplayPv(int score, int *pv) {
 
     // don't display information from threads that are late
 
-    if (root_depth < Glob.depth_reached) return;
+    if (mRootDepth < Glob.depth_reached) return;
 
     const char *type; char pv_str[512];
-    int elapsed = GetMS() - start_time;
+    int elapsed = GetMS() - msStartTime;
     U64 nps = GetNps(elapsed);
 
     type = "mate";
@@ -579,7 +579,7 @@ void cEngine::DisplayPv(int score, int *pv) {
     PvToStr(pv, pv_str);
 
     printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
-           root_depth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
+           mRootDepth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
 }
 
 void CheckTimeout() {
@@ -602,7 +602,7 @@ void CheckTimeout() {
             Glob.pondering = false;
     }
 
-    if (!Glob.pondering && cEngine::move_time >= 0 && GetMS() - cEngine::start_time >= cEngine::move_time)
+    if (!Glob.pondering && cEngine::msMoveTime >= 0 && GetMS() - cEngine::msStartTime >= cEngine::msMoveTime)
         Glob.abort_search = true;
 }
 
@@ -610,21 +610,21 @@ void cEngine::Slowdown() {
 
     // Handling search limited by the number of nodes
 
-    if (move_nodes > 0) {
-        if (Glob.nodes >= (unsigned)move_nodes)
+    if (msMoveNodes > 0) {
+        if (Glob.nodes >= (unsigned)msMoveNodes)
             Glob.abort_search = true;
     }
 
     // Handling slowdown for weak levels
 
-    if (Par.nps_limit && root_depth > 1) {
-        int time = GetMS() - start_time + 1;
+    if (Par.nps_limit && mRootDepth > 1) {
+        int time = GetMS() - msStartTime + 1;
         int nps = (int)GetNps(time);
         while (nps > Par.nps_limit) {
             WasteTime(10);
-            time = GetMS() - start_time + 1;
+            time = GetMS() - msStartTime + 1;
             nps = (int)GetNps(time);
-            if ((!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)) {
+            if ((!Glob.pondering && msMoveTime >= 0 && GetMS() - msStartTime >= msMoveTime)) {
                 Glob.abort_search = true;
                 return;
             }
@@ -638,7 +638,7 @@ void cEngine::Slowdown() {
 #ifndef USE_THREADS
     if ( (!(Glob.nodes & 2047))
     &&   !Glob.is_testing
-    &&   root_depth > 1) CheckTimeout();
+    &&   mRootDepth > 1) CheckTimeout();
 #endif
 
 }

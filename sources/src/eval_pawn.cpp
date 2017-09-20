@@ -42,7 +42,7 @@ static const int empty_qs[64] = {
 
 void cEngine::ClearPawnHash() {
 
-    ZEROARRAY(PawnTT);
+    ZEROARRAY(mPawnTT);
 }
 
 void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
@@ -51,12 +51,12 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
 
     int addr = p->mPawnKey % PAWN_HASH_SIZE;
 
-    if (PawnTT[addr].key == p->mPawnKey) {
+    if (mPawnTT[addr].key == p->mPawnKey) {
 
         // pawn hashtable contains delta of white and black score
 
-        e->mg_pawns[WC] = PawnTT[addr].mg_pawns;
-        e->eg_pawns[WC] = PawnTT[addr].eg_pawns;
+        e->mg_pawns[WC] = mPawnTT[addr].mg_pawns;
+        e->eg_pawns[WC] = mPawnTT[addr].eg_pawns;
         e->mg_pawns[BC] = 0;
         e->eg_pawns[BC] = 0;
         return;
@@ -139,9 +139,9 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     // Note that we save delta between white and black scores.
     // It might become a problem if we decide to print detailed eval score.
 
-    PawnTT[addr].key = p->mPawnKey;
-    PawnTT[addr].mg_pawns = (Par.values[W_STRUCT] * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
-    PawnTT[addr].eg_pawns = (Par.values[W_STRUCT] * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
+    mPawnTT[addr].key = p->mPawnKey;
+    mPawnTT[addr].mg_pawns = (Par.values[W_STRUCT] * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
+    mPawnTT[addr].eg_pawns = (Par.values[W_STRUCT] * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
 }
 
 void cEngine::EvaluateKing(POS *p, eData *e, int sd) {

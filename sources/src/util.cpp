@@ -96,11 +96,11 @@ void POS::InitHashKey() {
 
     for (int i = 0; i < 64; i++)
         if (mPc[i] != NO_PC)
-            key ^= zob_piece[mPc[i]][i];
+            key ^= msZobPiece[mPc[i]][i];
 
-    key ^= zob_castle[mCFlags];
+    key ^= msZobCastle[mCFlags];
     if (mEpSq != NO_SQ)
-        key ^= zob_ep[File(mEpSq)];
+        key ^= msZobEp[File(mEpSq)];
 
     if (mSide == BC)
         key ^= SIDE_RANDOM;
@@ -114,7 +114,7 @@ void POS::InitPawnKey() {
 
     for (int i = 0; i < 64; i++) {
         if ((mTpBb[P] & SqBb(i)) || (mTpBb[K] & SqBb(i)))
-            key ^= zob_piece[mPc[i]][i];
+            key ^= msZobPiece[mPc[i]][i];
     }
 
     mPawnKey = key;
