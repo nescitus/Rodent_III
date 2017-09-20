@@ -141,7 +141,7 @@ int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
 
     printf("info string probing the internal book...\n");
 
-    int choice = 0; char mv_string[6];
+    int choice = 0;
 
     const int min_freq = 20; // the higher this value, the more uniform move distribution
 
@@ -163,8 +163,7 @@ int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
 
             // display info about book moves
             if (print_output) {
-                MoveToStr(internal_book[i].move, mv_string);
-                printf("info string %s %d\n", mv_string, freq_with_correction);
+                printf("info string %s %d\n", MoveToStr(internal_book[i].move), freq_with_correction);
             }
 
             // pick move with the best random value based on frequency

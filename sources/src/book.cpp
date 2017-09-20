@@ -374,7 +374,6 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
     int values[100], moves[100];
     polyglot_move entry[1];
     U64 key = GetPolyglotKey(p);
-    char move_string[6];
 
     printf("info string probing '%s'...\n", bookName);
 
@@ -398,8 +397,7 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
         // now we want to get a move with full data, not only from and to squares
 
         int internal_move = (tsq << 6) | fsq;
-        MoveToStr(internal_move, move_string);
-        internal_move = p->StrToMove(move_string);
+        internal_move = p->StrToMove(MoveToStr(internal_move));
 
         if (max_weight < score) max_weight = score;
         weight_sum += score;

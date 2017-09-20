@@ -127,6 +127,14 @@ void PrintMove(int move) {
     printf("%s", moveString);
 }
 
+// returns internal static string. not thread safe!!!
+char *MoveToStr(int move) {
+
+    static char internalstring[6];
+    MoveToStr(move, internalstring);
+    return internalstring;
+}
+
 void MoveToStr(int move, char *move_str) {
 
     static const char prom_char[5] = "nbrq";

@@ -224,7 +224,7 @@ void cEngine::SetMoveTime(int base, int inc, int movestogo) {
 
 void ParseGo(POS *p, const char *ptr) {
 
-    char token[80], bestmove_str[6];
+    char token[80];
 
     int wtime = -1, btime = -1;
     int winc  =  0, binc  =  0;
@@ -306,8 +306,7 @@ void ParseGo(POS *p, const char *ptr) {
         if (!pvb) pvb = InternalBook.MoveFromInternal(p, Par.verbose_book);
 
         if (pvb) {
-            MoveToStr(pvb, bestmove_str);
-            printf("bestmove %s\n", bestmove_str);
+            printf("bestmove %s\n", MoveToStr(pvb));
             return;
         }
     }
