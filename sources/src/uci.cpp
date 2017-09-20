@@ -225,18 +225,18 @@ void cEngine::SetMoveTime(int base, int inc, int movestogo) {
 void ParseGo(POS *p, const char *ptr) {
 
     char token[80], bestmove_str[6];
-    int wtime, btime, winc, binc, movestogo; bool strict_time;
 
-    cEngine::move_time = -1;
-    cEngine::move_nodes = 0;
+    int wtime = -1, btime = -1;
+    int winc  =  0, binc  =  0;
+    int movestogo = 40;
+    bool strict_time = false;
+
     Glob.pondering = false;
-    wtime = -1;
-    btime = -1;
-    winc = 0;
-    binc = 0;
-    movestogo = 40;
-    strict_time = false;
+
+    cEngine::move_time    = -1;
+    cEngine::move_nodes   =  0;
     cEngine::search_depth = 64;
+
     Par.shut_up = false;
 
     for (;;) {
@@ -280,7 +280,7 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (!strict_time) {
         int base = p->mSide == WC ? wtime : btime;
-        int inc = p->mSide == WC ? winc : binc;
+        int inc  = p->mSide == WC ? winc  : binc;
         cEngine::SetMoveTime(base, inc, movestogo);
     }
 
