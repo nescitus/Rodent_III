@@ -12,7 +12,7 @@ fi
 
 function buildexe {
 
-	$CC -Ofast $2 -s -march=$1 -std=c++14 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program $DBG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA -o ${EXENAME}_${MSYSTEM_CARCH}_${1}${3}.exe
+	$CC -Ofast $2 -s -march=$1 -std=c++14 -fno-rtti -fno-stack-protector -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-ident -fwhole-program $DBG -D_FORTIFY_SOURCE=0 $CFG -I . src/combined.cpp -static $LSA $NTS -o ${EXENAME}_${MSYSTEM_CARCH}_${1}${3}.exe
 }
 
 function buildprof {
@@ -40,6 +40,7 @@ archs=()
 PGO=false
 BGN=true
 DBG=-DNDEBUG
+NTS=-Wl,--insert-timestamp
 
 for iter in "$@"; do
 	if [[ "$iter" == "pgo" ]]; then
@@ -48,6 +49,8 @@ for iter in "$@"; do
 		BGN=false
 	elif [[ "$iter" == "debug" ]]; then
 		DBG=-DDEBUG
+	elif [[ "$iter" == "nts" ]]; then
+		NTS=-Wl,--no-insert-timestamp
 	else
 		archs+=($iter)
 	fi
@@ -62,7 +65,8 @@ fi
 echo Going to build for [${archs[*]}]...
 echo PGO = $PGO
 echo BGN = $BGN
-echo DBG = $DBG
+#echo DBG = $DBG
+#echo NTS = $NTS
 
 rm -f src/combined.cpp
 
