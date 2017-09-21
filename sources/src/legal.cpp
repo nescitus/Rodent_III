@@ -25,10 +25,10 @@ bool POS::Legal(int move) const {
     int ftp = TpOnSq(fsq);
     int ttp = TpOnSq(tsq);
 
-    if (ftp == NO_TP || Cl(mPc[fsq]) != sd)
+    if ((ftp == NO_TP || Cl(mPc[fsq]) != sd) ||
+        (ttp != NO_TP && Cl(mPc[tsq]) == sd))
         return false;
-    if (ttp != NO_TP && Cl(mPc[tsq]) == sd)
-        return false;
+
     switch (MoveType(move)) {
         case NORMAL:
             break;
@@ -37,11 +37,11 @@ bool POS::Legal(int move) const {
                 if (fsq != E1)
                     return false;
                 if (tsq > fsq) {
-                    if ((mCFlags & 1) && !(OccBb() & (U64)0x0000000000000060))
+                    if ((mCFlags & W_KS) && !(OccBb() & UINT64_C(0x0000000000000060)))
                         if (!Attacked(E1, BC) && !Attacked(F1, BC))
                             return true;
                 } else {
-                    if ((mCFlags & 2) && !(OccBb() & (U64)0x000000000000000E))
+                    if ((mCFlags & W_QS) && !(OccBb() & UINT64_C(0x000000000000000E)))
                         if (!Attacked(E1, BC) && !Attacked(D1, BC))
                             return true;
                 }
@@ -49,11 +49,11 @@ bool POS::Legal(int move) const {
                 if (fsq != E8)
                     return false;
                 if (tsq > fsq) {
-                    if ((mCFlags & 4) && !(OccBb() & (U64)0x6000000000000000))
+                    if ((mCFlags & B_KS) && !(OccBb() & UINT64_C(0x6000000000000000)))
                         if (!Attacked(E8, WC) && !Attacked(F8, WC))
                             return true;
                 } else {
-                    if ((mCFlags & 8) && !(OccBb() & (U64)0x0E00000000000000))
+                    if ((mCFlags & B_QS) && !(OccBb() & UINT64_C(0x0E00000000000000)))
                         if (!Attacked(E8, WC) && !Attacked(D8, WC))
                             return true;
                 }
@@ -66,7 +66,7 @@ bool POS::Legal(int move) const {
         case EP_SET:
             if (ftp == P && ttp == NO_TP && mPc[tsq ^ 8] == NO_PC)
                 if ((tsq > fsq && sd == WC) ||
-                        (tsq < fsq && sd == BC))
+                    (tsq < fsq && sd == BC))
                     return true;
             return false;
     }
@@ -79,7 +79,7 @@ bool POS::Legal(int move) const {
                 if (ttp == NO_TP)
                     return true;
             if ((tsq - fsq == 7 && File(fsq) != FILE_A) ||
-                    (tsq - fsq == 9 && File(fsq) != FILE_H))
+                (tsq - fsq == 9 && File(fsq) != FILE_H))
                 if (ttp != NO_TP)
                     return true;
         } else {
@@ -89,7 +89,7 @@ bool POS::Legal(int move) const {
                 if (ttp == NO_TP)
                     return true;
             if ((tsq - fsq == -9 && File(fsq) != FILE_A) ||
-                    (tsq - fsq == -7 && File(fsq) != FILE_H))
+                (tsq - fsq == -7 && File(fsq) != FILE_H))
                 if (ttp != NO_TP)
                     return true;
         }

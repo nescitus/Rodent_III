@@ -84,19 +84,19 @@ void POS::SetPosition(const char *epd) {
         epd++;
     else {
         if (*epd == 'K') {
-            mCFlags |= 1;
+            mCFlags |= W_KS;
             epd++;
         }
         if (*epd == 'Q') {
-            mCFlags |= 2;
+            mCFlags |= W_QS;
             epd++;
         }
         if (*epd == 'k') {
-            mCFlags |= 4;
+            mCFlags |= B_KS;
             epd++;
         }
         if (*epd == 'q') {
-            mCFlags |= 8;
+            mCFlags |= B_QS;
             epd++;
         }
     }
