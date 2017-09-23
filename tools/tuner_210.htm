@@ -47,8 +47,12 @@ function setDefault() {
   document.getElementById("RookPair").value = -9;
   document.getElementById("KnightLikesClosed").value = 6;
   document.getElementById("RookLikesOpen").value = 3;
+  document.getElementById("MajorUp").value = 60;
+  document.getElementById("MinorUp").value = 53;
+  document.getElementById("BothUp").value = 80;
   document.getElementById("ExchangeImbalance").value = 30;
   document.getElementById("MinorVsQueen").value = 4;
+  document.getElementById("TwoMinors").value = 44;
   document.getElementById("KeepPawn").value = 0;
   document.getElementById("KeepKnight").value = 0;
   document.getElementById("KeepBishop").value = 0;
@@ -139,8 +143,13 @@ function savePersonality() {
   out += inputToOption("KnightLikesClosed") + '\r\n';
   out += inputToOption("RookLikesOpen") + '\r\n';
   
+  out += inputToOption("MajorUp") + '\r\n';
+  out += inputToOption("MinorUp") + '\r\n';
+  out += inputToOption("BothUp") + '\r\n';
+  
   out += inputToOption("ExchangeImbalance") + '\r\n';
   out += inputToOption("MinorVsQueen") + '\r\n';
+  out += inputToOption("TwoMinors") + '\r\n';
   
   out += inputToOption("Material") + '\r\n';
   out += inputToOption("OwnAttack") + '\r\n';
@@ -227,9 +236,9 @@ function savePersonality() {
 <p class="mono"> <span class="super" title="Bonus for each pawn when having a knight; increasing typically means that the engine will favour closed positions; default value is 6, personalities preferring closed position typically use 8">N likes closed</span><input class="window" type="number" id="KnightLikesClosed" value="6" min="0" max="10"> </p>
 <p class="mono"> <span class="light" title="Penalty for each pawn when having a rook">R likes open</span><input class="window" type="number" id="RookLikesOpen" value="3" min="0" max="10"> </p>
 <br>
-<p class="mono"> <span class="light" title="Bonus for exchange advantage; decreasing makes the engine more likely to play exchange sacrifices">Exchange Adv</span><input class="window" type="number" id="ExchangeImbalance" value="30" min="-100" max="100"> </p>
-<p class="mono"> <span class="light" title="Bonus each minor piece gets for confronting enemy queen; increasing will weaken the play, but engine will seek imbalances">Minor vs Queen</span><input class="window" type="number" id="MinorVsQueen" value="4" min="-100" max="100"> </p>
-
+<p class="mono"> <span class="light" title="Bonus for a major piece advantage">Major up</span><input class="window" type="number" id="MajorUp" value="60" min="-100" max="100"> </p>
+<p class="mono"> <span class="light" title="Bonus for a minor piece advantage">Minor up</span><input class="window" type="number" id="MinorUp" value="53" min="-100" max="100"> </p>
+<p class="mono"> <span class="light" title="Bonus for advantage both in major and minor pieces">Both up</span><input class="window" type="number" id="BothUp" value="80" min="-100" max="100"> </p>
 </div>
 
 <div class="tab">
@@ -246,7 +255,10 @@ function savePersonality() {
 <p class="mono"> <span class="light" title="Modification of own bishop value, positive numbers mean that the engine prefers to keep bishops, negative that it prefers to exchange them; non-zero values weaken the engine">Keep bishop</span><input class="window" type="number" id="KeepBishop" value="0" min="-200" max="200"> </p>
 <p class="mono"> <span class="light" title="Modification of own rook value, positive numbers mean that the engine prefers to keep rooks, negative that it prefers to exchange them; non-zero values weaken the engine">Keep rook<input class="window" type="number" id="KeepRook" value="0" min="-200" max="200"> </p>
 <p class="mono"> <span class="light" title="Modification of own queen value, positive numbers mean that the engine prefers to keep queens, negative that it prefers to exchange them; non-zero values weaken the engine, but positive value may be good for attacking personalities">Keep queen<input class="window" type="number" id="KeepQueen" value="0" min="-200" max="200"> </p>
-
+<p>&nbsp;</p>
+<p class="mono"> <span class="super" title="Bonus for exchange advantage; decreasing makes the engine more likely to play exchange sacrifices">Exchange Adv</span><input class="window" type="number" id="ExchangeImbalance" value="30" min="-100" max="100"> </p>
+<p class="mono"> <span class="light" title="Bonus each minor piece gets for confronting enemy queen; increasing will weaken the play, but engine will seek imbalances">Minor vs Queen</span><input class="window" type="number" id="MinorVsQueen" value="4" min="-100" max="100"> </p>
+<p class="mono"> <span class="light" title="Bonus for two minors against the rook">Two minors</span><input class="window" type="number" id="TwoMinors" value="44" min="-100" max="100"> </p>
 
 </div>
 
@@ -316,7 +328,7 @@ function savePersonality() {
 
 <select id="mob" style="float:right";>
   <option value="linear" selected="selected">linear</option>
-  <option value="decreasing">decreasing</option>
+  <option value="autotuned">autotuned</option>
 </select>
 </p>
 <br>
