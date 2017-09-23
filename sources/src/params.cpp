@@ -238,8 +238,8 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(B_OVH, -7, -50, 0, true);     // bishop can move only to own half of the board
     SetVal(B_REACH, 2, 0, 50, true);     // bishop can reach an outpost square
     SetVal(B_TOUCH, 5, 0, 50, true);     // two bishops on adjacent squares
-    SetVal(B_OWN_P, -3, -50, 0, false);   // own pawn on the square of own bishop's color
-    SetVal(B_OPP_P, -1, -50, 0, false);   // enemy pawn on the square of own bishop's color
+    SetVal(B_OWN_P, -3, -50, 0, false);  // own pawn on the square of own bishop's color
+    SetVal(B_OPP_P, -1, -50, 0, false);  // enemy pawn on the square of own bishop's color
     SetVal(B_RETURN, 7, 0, 50, true);    // bishop returning to initial position after castling
 
     // Rook parameters
@@ -347,11 +347,11 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(REG1, -50, -50, 50, true);
     SetVal(REG2, -38, -50, 50, true);
     SetVal(REG3, -14, -50, 50, true);
-    SetVal(REG4, -9, -50, 50, true);
-    SetVal(REG5,  1, -50, 50, true);
-    SetVal(REG6,  2, -50, 50, true);
-    SetVal(REG7,  8, -50, 50, true);
-    SetVal(REG8,  9, -50, 50, true);
+    SetVal(REG4,  -9, -50, 50, true);
+    SetVal(REG5,   1, -50, 50, true);
+    SetVal(REG6,   2, -50, 50, true);
+    SetVal(REG7,   8, -50, 50, true);
+    SetVal(REG8,   9, -50, 50, true);
     SetVal(REG9,  15, -50, 50, true);
     SetVal(REG10, 18, -50, 50, true);
     SetVal(REG11, 22, -50, 50, true);
@@ -799,7 +799,7 @@ void cParam::SetSpeed(int elo_in) {
 
 int cParam::EloToSpeed(int elo_in) {
 
-    // this formula abuses Michael Byrne's code from CraftySkill.
+    // This formula abuses Michael Byrne's code from CraftySkill.
     // He used  it to calculate max nodes per elo. By  dividing,
     // I derive speed that yields similar result in standard blitz.
     // Formula has a little bit of built-in randomness.
@@ -810,7 +810,7 @@ int cParam::EloToSpeed(int elo_in) {
     int search_nodes = (int)(pow(1.0069555500567, (((use_rating) / 1200) - 1)
                              + (use_rating - 1200)) * 128);
 
-    return search_nodes / 7;
+    return (search_nodes / 7) + (elo / 60);
 }
 
 int cParam::EloToBlur(int elo_in) {
