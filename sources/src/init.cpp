@@ -17,6 +17,14 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
+U64 POS::Random64() {
+
+    static U64 next = 1;
+
+    next = next * 1103515245 + 12345;
+    return next;
+}
+
 void POS::Init() { // static init function
 
     for (int sq = 0; sq < 64; sq++)

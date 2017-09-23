@@ -319,6 +319,8 @@ class POS {
     static U64 msZobCastle[16];
     static U64 msZobEp[8];
 
+    NOINLINE static U64 Random64();
+
     void ClearPosition();
     void InitHashKey();
     void InitPawnKey();
@@ -855,7 +857,6 @@ const char *ParseToken(const char *, char *);
 void PrintMove(int move);
 void PrintSingleOption(int ind);
 void PrintUciOptions();
-U64 Random64();
 void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
 void SetPieceValue(int pc, int val, int slot);

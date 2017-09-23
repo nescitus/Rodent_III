@@ -82,14 +82,6 @@ int random30bit(int n) {
     return ((rand() << 15) ^ rand()) % n;
 }
 
-U64 Random64() {
-
-    static U64 next = 1;
-
-    next = next * 1103515245 + 12345;
-    return next;
-}
-
 void POS::InitHashKey() {
 
     U64 key = 0;
