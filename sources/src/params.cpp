@@ -44,17 +44,19 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Piece values
 
-    SetVal(P_MID, 91, 50, 150, true);
-    SetVal(N_MID, 305, 200, 400, true);
-    SetVal(B_MID, 334, 200, 400, true);
-    SetVal(R_MID, 501, 400, 600, true);
-    SetVal(Q_MID, 1001, 800, 1200, true);
+	static const bool tunePieceValues = true;
 
-    SetVal(P_END, 105, 50, 150, true);
-    SetVal(N_END, 301, 200, 400, true);
-    SetVal(B_END, 315, 200, 400, true);
-    SetVal(R_END, 543, 400, 600, true);
-    SetVal(Q_END, 1014, 800, 1200, true);
+    SetVal(P_MID,   91,  50, 150, tunePieceValues);
+    SetVal(N_MID,  305, 200, 400, tunePieceValues);
+    SetVal(B_MID,  334, 200, 400, tunePieceValues);
+    SetVal(R_MID,  501, 400, 600, tunePieceValues);
+    SetVal(Q_MID, 1001, 800, 1200, tunePieceValues);
+
+    SetVal(P_END,  105,  50, 150, tunePieceValues);
+    SetVal(N_END,  301, 200, 400, tunePieceValues);
+    SetVal(B_END,  315, 200, 400, tunePieceValues);
+    SetVal(R_END,  543, 400, 600, tunePieceValues);
+    SetVal(Q_END, 1014, 800, 1200, tunePieceValues);
 
     // Tendency to keep own pieces
 
@@ -68,17 +70,19 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Material adjustments
 
-    SetVal(B_PAIR, 51, 0, 100, true);
-    SetVal(N_PAIR, 0, -50, 50, true);
-    SetVal(R_PAIR, -22, -50, 50, true);
-    SetVal(ELEPH, 10, -50, 50, true);   // queen loses that much with each enemy minor on the board
-    SetVal(A_EXC, 31, -50, 50, true);   // exchange advantage additional bonus
-    SetVal(A_MIN, 58, 0, 100, true);    // additional bonus for a minor piece advantage
-    SetVal(A_MAJ, 55, 0, 100, true);    // additional bonus for a major piece advantage
-    SetVal(A_TWO, 29, 0, 100, true);    // additional bonus for two minors against a rook
-    SetVal(A_ALL, 65, 0, 100, true);    // additional bonus for advantage in both majors and minors
-    SetVal(N_CL, 6, -50, 50, true);     // knight gains this much with each own pawn present on the board
-    SetVal(R_OP, 0, -50, 50, true);     // rook loses that much with each own pawn present on the board  
+	static const bool tuneAdj = true;
+
+    SetVal(B_PAIR, 51, 0, 100, tuneAdj);
+    SetVal(N_PAIR, 0, -50, 50, tuneAdj);
+    SetVal(R_PAIR, -22, -50, 50, tuneAdj);
+    SetVal(ELEPH, 10, -50, 50, tuneAdj);   // queen loses that much with each enemy minor on the board
+    SetVal(A_EXC, 31, -50, 50, tuneAdj);   // exchange advantage additional bonus
+    SetVal(A_MIN, 58, 0, 100, tuneAdj);    // additional bonus for a minor piece advantage
+    SetVal(A_MAJ, 55, 0, 100, tuneAdj);    // additional bonus for a major piece advantage
+    SetVal(A_TWO, 29, 0, 100, tuneAdj);    // additional bonus for two minors against a rook
+    SetVal(A_ALL, 65, 0, 100, tuneAdj);    // additional bonus for advantage in both majors and minors
+    SetVal(N_CL, 6, -50, 50, tuneAdj);     // knight gains this much with each own pawn present on the board
+    SetVal(R_OP, 0, -50, 50, tuneAdj);     // rook loses that much with each own pawn present on the board  
 
     // King attack values
 
@@ -90,33 +94,37 @@ void cParam::DefaultWeights() {  // tuned automatically
     // All these values are NOT the actual bonuses; their sum is used as index
     // to a non-linear king safety table. Tune them with extreme caution.
 
-    SetVal(N_ATT1, 6,  0, 50, false);
-    SetVal(N_ATT2, 4,  0, 50, false);
-    SetVal(B_ATT1, 7,  0, 50, false);
-    SetVal(B_ATT2, 2,  0, 50, false);
-    SetVal(R_ATT1, 10, 0, 50, false);
-    SetVal(R_ATT2, 4,  0, 50, false);
-    SetVal(Q_ATT1, 16, 0, 50, false);
-    SetVal(Q_ATT2, 5,  0, 50, false);
+	static const bool tuneAttack = false;
 
-    SetVal(N_CHK,  11, 0, 50, false);
-    SetVal(B_CHK,  18, 0, 50, false);
-    SetVal(R_CHK,  16, 0, 50, false);
-    SetVal(Q_CHK,  12, 0, 50, false);
+    SetVal(N_ATT1, 6,  0, 50, tuneAttack);
+    SetVal(N_ATT2, 4,  0, 50, tuneAttack);
+    SetVal(B_ATT1, 7,  0, 50, tuneAttack);
+    SetVal(B_ATT2, 2,  0, 50, tuneAttack);
+    SetVal(R_ATT1, 10, 0, 50, tuneAttack);
+    SetVal(R_ATT2, 4,  0, 50, tuneAttack);
+    SetVal(Q_ATT1, 16, 0, 50, tuneAttack);
+    SetVal(Q_ATT2, 5,  0, 50, tuneAttack);
 
-    SetVal(R_CONTACT, 29, 0, 50, false);
-    SetVal(Q_CONTACT, 36, 0, 50, false);
+    SetVal(N_CHK,  11, 0, 50, tuneAttack);
+    SetVal(B_CHK,  18, 0, 50, tuneAttack);
+    SetVal(R_CHK,  16, 0, 50, tuneAttack);
+    SetVal(Q_CHK,  12, 0, 50, tuneAttack);
+
+    SetVal(R_CONTACT, 29, 0, 50, tuneAttack);
+    SetVal(Q_CONTACT, 36, 0, 50, tuneAttack);
 
     // King tropism
 
-    SetVal(NTR_MG,  13, -50, 50, true);
-    SetVal(NTR_EG, -11, -50, 50, true);
-    SetVal(BTR_MG,   2, -50, 50, true);
-    SetVal(BTR_EG,  -9, -50, 50, true);
-    SetVal(RTR_MG,  -1, -50, 50, true);
-    SetVal(RTR_EG,  -7, -50, 50, true);
-    SetVal(QTR_MG,   7, -50, 50, true);
-    SetVal(QTR_EG,  14, -50, 50, true);
+	static const bool tuneTropism = true;
+
+    SetVal(NTR_MG,  13, -50, 50, tuneTropism);
+    SetVal(NTR_EG, -11, -50, 50, tuneTropism);
+    SetVal(BTR_MG,   2, -50, 50, tuneTropism);
+    SetVal(BTR_EG,  -9, -50, 50, tuneTropism);
+    SetVal(RTR_MG,  -1, -50, 50, tuneTropism);
+    SetVal(RTR_EG,  -7, -50, 50, tuneTropism);
+    SetVal(QTR_MG,   7, -50, 50, tuneTropism);
+    SetVal(QTR_EG,  14, -50, 50, tuneTropism);
 
     // Varia
 
@@ -150,113 +158,127 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Pawn structure parameters
 
-    SetVal(DB_MID,  -8, -50, 0, true);  // doubled
-    SetVal(DB_END, -21, -50, 0, true);
+	static const bool tuneStruct = true;
 
-    SetVal(ISO_MG, -7,  -50, 0, true);  // isolated
-    SetVal(ISO_EG, -7,  -50, 0, true);
-    SetVal(ISO_OF, -13, -50, 0, true);  // additional midgame penalty for isolated pawn on an open file
+    SetVal(DB_MID,  -8, -50, 0, tuneStruct);  // doubled
+    SetVal(DB_END, -21, -50, 0, tuneStruct);
 
-    SetVal(BK_MID,  -2, -50, 0, true);  // backward
-    SetVal(BK_END,  -1, -50, 0, true); 
-    SetVal(BK_OPE, -10, -50, 0, true);  // additional midgame penalty for backward pawn on an open file
+    SetVal(ISO_MG,  -7, -50, 0, tuneStruct);  // isolated
+    SetVal(ISO_EG,  -7, -50, 0, tuneStruct);
+    SetVal(ISO_OF, -13, -50, 0, tuneStruct);  // additional midgame penalty for isolated pawn on an open file
 
-    SetVal(P_BIND, 2, 0, 50, true);     // two pawns control central square
-    SetVal(P_BADBIND, 13, 0, 50, true); // penalty for a "wing triangle" like a4-b3-c4
+    SetVal(BK_MID,  -2, -50, 0, tuneStruct);  // backward
+    SetVal(BK_END,  -1, -50, 0, tuneStruct); 
+    SetVal(BK_OPE, -10, -50, 0, tuneStruct);  // additional midgame penalty for backward pawn on an open file
 
-    SetVal(P_ISL, 5, 0, 50, true);      // penalty for each pawn island
-    SetVal(P_THR, 3, 0, 50, true);      // pawn move threatens to attack enemy minor
+    SetVal(P_BIND,   2, 0, 50, tuneStruct);   // two pawns control central square
+    SetVal(P_BADBIND, 13, 0, 50, tuneStruct); // penalty for a "wing triangle" like a4-b3-c4
+
+    SetVal(P_ISL, 5, 0, 50, tuneStruct);      // penalty for each pawn island
+    SetVal(P_THR, 3, 0, 50, tuneStruct);      // pawn move threatens to attack enemy minor
 
     // Pawn chain values
 
-    SetVal(P_BIGCHAIN, 38, 0, 50, true);   // general penalty for a compact pawn chain pointing at our king
-    SetVal(P_SMALLCHAIN, 27, 0, 50, true); // similar penalty for a chain that is not fully blocked by enemy pawns
-    SetVal(P_CS1, 12, 0, 50, true); // additional bonus for a pawn storm next to a fixed chain - like g5 in King's Indian
-    SetVal(P_CS2, 3, 0, 50, true); // as above, this time like g4 in King's Indian
-    SetVal(P_CSFAIL, 32, 0, 50, true); // penalty for misplaying pawn strom next to a chain
+	static const bool tuneChain = true;
+
+    SetVal(P_BIGCHAIN, 38, 0, 50, tuneChain);   // general penalty for a compact pawn chain pointing at our king
+    SetVal(P_SMALLCHAIN, 27, 0, 50, tuneChain); // similar penalty for a chain that is not fully blocked by enemy pawns
+    SetVal(P_CS1, 12, 0, 50, tuneChain); // additional bonus for a pawn storm next to a fixed chain - like g5 in King's Indian
+    SetVal(P_CS2, 3, 0, 50, tuneChain); // as above, this time like g4 in King's Indian
+    SetVal(P_CSFAIL, 32, 0, 50, tuneChain); // penalty for misplaying pawn strom next to a chain
 
     // Passed pawn bonuses per rank
 
-    SetVal(PMG2,   2, 0, 300, true);
-    SetVal(PMG3,   2, 0, 300, true);
-    SetVal(PMG4,  11, 0, 300, true);
-    SetVal(PMG5,  33, 0, 300, true);
-    SetVal(PMG6,  71, 0, 300, true);
-    SetVal(PMG7, 135, 0, 300, true);
+	static const bool tunePassers = true;
 
-    SetVal(PEG2,  12, 0, 300, true);
-    SetVal(PEG3,  21, 0, 300, true);
-    SetVal(PEG4,  48, 0, 300, true);
-    SetVal(PEG5,  93, 0, 300, true);
-    SetVal(PEG6, 161, 0, 300, true);
-    SetVal(PEG7, 266, 0, 300, true);
+    SetVal(PMG2,   2, 0, 300, tunePassers);
+    SetVal(PMG3,   2, 0, 300, tunePassers);
+    SetVal(PMG4,  11, 0, 300, tunePassers);
+    SetVal(PMG5,  33, 0, 300, tunePassers);
+    SetVal(PMG6,  71, 0, 300, tunePassers);
+    SetVal(PMG7, 135, 0, 300, tunePassers);
+
+    SetVal(PEG2,  12, 0, 300, tunePassers);
+    SetVal(PEG3,  21, 0, 300, tunePassers);
+    SetVal(PEG4,  48, 0, 300, tunePassers);
+    SetVal(PEG5,  93, 0, 300, tunePassers);
+    SetVal(PEG6, 161, 0, 300, tunePassers);
+    SetVal(PEG7, 266, 0, 300, tunePassers);
 
     // Passed pawn value percentage modifiers
 
-    SetVal(P_BL_MUL, 42, 0, 50, true);      // blocked passer
-    SetVal(P_OURSTOP_MUL, 27, 0, 50, true); // side with a passer controls its stop square
-    SetVal(P_OPPSTOP_MUL, 29, 0, 50, true); // side playing against a passer controls its stop square
-    SetVal(P_DEFMUL, 6, 0, 50, true);       // passer defended by own pawn
-    SetVal(P_STOPMUL, 6, 0, 50, true);      // passers' stop square defended by own pawn
+    SetVal(P_BL_MUL, 42, 0, 50, tunePassers);      // blocked passer
+    SetVal(P_OURSTOP_MUL, 27, 0, 50, tunePassers); // side with a passer controls its stop square
+    SetVal(P_OPPSTOP_MUL, 29, 0, 50, tunePassers); // side playing against a passer controls its stop square
+    SetVal(P_DEFMUL, 6, 0, 50, tunePassers);       // passer defended by own pawn
+    SetVal(P_STOPMUL, 6, 0, 50, tunePassers);      // passers' stop square defended by own pawn
 
     // King's pawn shield
 
-    SetVal(P_SH_NONE, -40, -50, 50, true);
-    SetVal(P_SH_2,   2, -50, 50, true);
-    SetVal(P_SH_3,  -6, -50, 50, true);
-    SetVal(P_SH_4, -15, -50, 50, true);
-    SetVal(P_SH_5, -23, -50, 50, true);
-    SetVal(P_SH_6, -24, -50, 50, true);
-    SetVal(P_SH_7, -35, -50, 50, true);
+	static const bool tuneShield = true;
+
+    SetVal(P_SH_NONE, -40, -50, 50, tuneShield);
+    SetVal(P_SH_2,   2, -50, 50, tuneShield);
+    SetVal(P_SH_3,  -6, -50, 50, tuneShield);
+    SetVal(P_SH_4, -15, -50, 50, tuneShield);
+    SetVal(P_SH_5, -23, -50, 50, tuneShield);
+    SetVal(P_SH_6, -24, -50, 50, tuneShield);
+    SetVal(P_SH_7, -35, -50, 50, tuneShield);
 
     // Pawn storm
 
-    SetVal(P_ST_OPEN, -6, -50, 50, true);
-    SetVal(P_ST_3, -16, -50, 50, true);
-    SetVal(P_ST_4, -16, -50, 50, true);
-    SetVal(P_ST_5, -3, -50, 50, true);
+    SetVal(P_ST_OPEN, -6, -50, 50, tuneShield);
+    SetVal(P_ST_3, -16, -50, 50, tuneShield);
+    SetVal(P_ST_4, -16, -50, 50, tuneShield);
+    SetVal(P_ST_5, -3, -50, 50, tuneShield);
 
     // Knight parameters
 
-    SetVal(N_TRAP, -168, -300, 0, true); // trapped knight
-    SetVal(N_BLOCK, -17, -50, 0, true);  // knight blocks c pawn in queen pawn openings
-    SetVal(N_OWH, -1, -50, 0, true);     // knight can move only to own half of the board
-    SetVal(N_REACH, 11, 0, 50, true);    // knight can reach an outpost square
-    SetVal(BN_SHIELD,  5,  0, 50, true); // pawn in front of a minor
+	static const bool tuneKnight = true;
+
+    SetVal(N_TRAP, -168, -300, 0, tuneKnight); // trapped knight
+    SetVal(N_BLOCK, -17, -50, 0, tuneKnight);  // knight blocks c pawn in queen pawn openings
+    SetVal(N_OWH, -1, -50, 0, tuneKnight);     // knight can move only to own half of the board
+    SetVal(N_REACH, 11, 0, 50, tuneKnight);    // knight can reach an outpost square
+    SetVal(BN_SHIELD,  5,  0, 50, tuneKnight); // pawn in front of a minor
 
     // Bishop parameters
 
-    SetVal(B_FIANCH, 13, 0, 50, true);   // general bonus for fianchettoed bishop
-    SetVal(B_KING, 20, 0, 50, true);     // fianchettoed bishop near own king
-    SetVal(B_BADF, -27, -50, 0, true);   // enemy pawns hamper fianchettoed bishop 
-    SetVal(B_TRAP_A2, -138, -300, 0, true);
-    SetVal(B_TRAP_A3, -45, -300, 0, true);
-    SetVal(B_BLOCK, -45, -100, 0, true); // blocked pawn at d2/e2 hampers bishop's development
-    SetVal(B_BF_MG, -12, -50, 0, true);  // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
-    SetVal(B_BF_EG, -20, -50, 0, true);
-    SetVal(B_WING, 3, 0, 50, true);      // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2) 
-    SetVal(B_OVH, -7, -50, 0, true);     // bishop can move only to own half of the board
-    SetVal(B_REACH, 2, 0, 50, true);     // bishop can reach an outpost square
-    SetVal(B_TOUCH, 5, 0, 50, true);     // two bishops on adjacent squares
+	static const bool tuneBishop = true;
+
+    SetVal(B_FIANCH, 13, 0, 50, tuneBishop);   // general bonus for fianchettoed bishop
+    SetVal(B_KING, 20, 0, 50, tuneBishop);     // fianchettoed bishop near own king
+    SetVal(B_BADF, -27, -50, 0, tuneBishop);   // enemy pawns hamper fianchettoed bishop 
+    SetVal(B_TRAP_A2, -138, -300, 0, tuneBishop);
+    SetVal(B_TRAP_A3, -45, -300, 0, tuneBishop);
+    SetVal(B_BLOCK, -45, -100, 0, tuneBishop); // blocked pawn at d2/e2 hampers bishop's development
+    SetVal(B_BF_MG, -12, -50, 0, tuneBishop);  // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
+    SetVal(B_BF_EG, -20, -50, 0, tuneBishop);
+    SetVal(B_WING, 3, 0, 50, tuneBishop);      // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2) 
+    SetVal(B_OVH, -7, -50, 0, tuneBishop);     // bishop can move only to own half of the board
+    SetVal(B_REACH, 2, 0, 50, tuneBishop);     // bishop can reach an outpost square
+    SetVal(B_TOUCH, 5, 0, 50, tuneBishop);     // two bishops on adjacent squares
     SetVal(B_OWN_P, -3, -50, 0, false);  // own pawn on the square of own bishop's color
     SetVal(B_OPP_P, -1, -50, 0, false);  // enemy pawn on the square of own bishop's color
-    SetVal(B_RETURN, 7, 0, 50, true);    // bishop returning to initial position after castling
+    SetVal(B_RETURN, 7, 0, 50, tuneBishop);    // bishop returning to initial position after castling
 
     // Rook parameters
 
-    SetVal(RSR_MG, 16, 0, 50, true); // rook on the 7th rank
-    SetVal(RSR_EG, 32, 0, 50, true);
-    SetVal(RS2_MG, 20, 0, 50, true); // additional bonus for two rooks on 7th rank
-    SetVal(RS2_EG, 31, 0, 50, true);
-    SetVal(ROF_MG, 30, 0, 50, true); // rook on open file
-    SetVal(ROF_EG,  2, 0, 50, true);
-    SetVal(RGH_MG, 15, 0, 50, true); // rook on half-open file with undefended enemy pawn
-    SetVal(RGH_EG, 20, 0, 50, true);
-    SetVal(RBH_MG,  0, 0, 50, true); // rook on half-open file with defended enemy pawn
-    SetVal(RBH_EG,  0, 0, 50, true);
-    SetVal(ROQ_MG,  9, 0, 50, true); // rook and queen on the same file, open or closed
-    SetVal(ROQ_EG, 18, 0, 50, true);
-    SetVal(R_BLOCK, -50, -100, 0, true);
+	static const bool tuneRook = true;
+
+    SetVal(RSR_MG, 16, 0, 50, tuneRook); // rook on the 7th rank
+    SetVal(RSR_EG, 32, 0, 50, tuneRook);
+    SetVal(RS2_MG, 20, 0, 50, tuneRook); // additional bonus for two rooks on 7th rank
+    SetVal(RS2_EG, 31, 0, 50, tuneRook);
+    SetVal(ROF_MG, 30, 0, 50, tuneRook); // rook on open file
+    SetVal(ROF_EG,  2, 0, 50, tuneRook);
+    SetVal(RGH_MG, 15, 0, 50, tuneRook); // rook on half-open file with undefended enemy pawn
+    SetVal(RGH_EG, 20, 0, 50, tuneRook);
+    SetVal(RBH_MG,  0, 0, 50, tuneRook); // rook on half-open file with defended enemy pawn
+    SetVal(RBH_EG,  0, 0, 50, tuneRook);
+    SetVal(ROQ_MG,  9, 0, 50, tuneRook); // rook and queen on the same file, open or closed
+    SetVal(ROQ_EG, 18, 0, 50, tuneRook);
+    SetVal(R_BLOCK, -50, -100, 0, tuneRook);
 
     // Queen parameters
 
@@ -277,87 +299,89 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Mobility
 
-    SetVal(NMG0, -32, -50, 50, true);
-    SetVal(NMG1, -14, -50, 50, true);
-    SetVal(NMG2,  -7, -50, 50, true);
-    SetVal(NMG3,  -7, -50, 50, true);
-    SetVal(NMG4,   2, -50, 50, true);
-    SetVal(NMG5,   7, -50, 50, true);
-    SetVal(NMG6,  13, -50, 50, true);
-    SetVal(NMG7,  13, -50, 50, true);
-    SetVal(NMG8,  25, -50, 50, true);
+	static const bool tuneMobility = false;
 
-    SetVal(NEG0, -41, -50, 50, true);
-    SetVal(NEG1, -20, -50, 50, true);
-    SetVal(NEG2,  -7, -50, 50, true);
-    SetVal(NEG3,   0, -50, 50, true);
-    SetVal(NEG4,   3, -50, 50, true);
-    SetVal(NEG5,  12, -50, 50, true);
-    SetVal(NEG6,   9, -50, 50, true);
-    SetVal(NEG7,  11, -50, 50, true);
-    SetVal(NEG8,   2, -50, 50, true);
+    SetVal(NMG0, -32, -50, 50, tuneMobility);
+    SetVal(NMG1, -14, -50, 50, tuneMobility);
+    SetVal(NMG2,  -7, -50, 50, tuneMobility);
+    SetVal(NMG3,  -7, -50, 50, tuneMobility);
+    SetVal(NMG4,   2, -50, 50, tuneMobility);
+    SetVal(NMG5,   7, -50, 50, tuneMobility);
+    SetVal(NMG6,  13, -50, 50, tuneMobility);
+    SetVal(NMG7,  13, -50, 50, tuneMobility);
+    SetVal(NMG8,  25, -50, 50, tuneMobility);
 
-    SetVal(BMG0, -41, -50, 50, true);
-    SetVal(BMG1, -24, -50, 50, true);
-    SetVal(BMG2, -16, -50, 50, true);
-    SetVal(BMG3,  -9, -50, 50, true);
-    SetVal(BMG4,  -7, -50, 50, true);
-    SetVal(BMG5,   0, -50, 50, true);
-    SetVal(BMG6,   4, -50, 50, true);
-    SetVal(BMG7,   6, -50, 50, true);
-    SetVal(BMG8,   8, -50, 50, true);
-    SetVal(BMG9,  10, -50, 50, true);
-    SetVal(BMG10, 16, -50, 50, true);
-    SetVal(BMG11, 24, -50, 50, true);
-    SetVal(BMG12, 17, -50, 50, true);
-    SetVal(BMG13, 22, -50, 50, true);
+    SetVal(NEG0, -41, -50, 50, tuneMobility);
+    SetVal(NEG1, -20, -50, 50, tuneMobility);
+    SetVal(NEG2,  -7, -50, 50, tuneMobility);
+    SetVal(NEG3,   0, -50, 50, tuneMobility);
+    SetVal(NEG4,   3, -50, 50, tuneMobility);
+    SetVal(NEG5,  12, -50, 50, tuneMobility);
+    SetVal(NEG6,   9, -50, 50, tuneMobility);
+    SetVal(NEG7,  11, -50, 50, tuneMobility);
+    SetVal(NEG8,   2, -50, 50, tuneMobility);
 
-    SetVal(BEG0, -43, -50, 50, true);
-    SetVal(BEG1, -40, -50, 50, true);
-    SetVal(BEG2, -19, -50, 50, true);
-    SetVal(BEG3,  -6, -50, 50, true);
-    SetVal(BEG4,   1, -50, 50, true);
-    SetVal(BEG5,   3, -50, 50, true);
-    SetVal(BEG6,   5, -50, 50, true);
-    SetVal(BEG7,   8, -50, 50, true);
-    SetVal(BEG8,  15, -50, 50, true);
-    SetVal(BEG9,  11, -50, 50, true);
-    SetVal(BEG10, 10, -50, 50, true);
-    SetVal(BEG11, 13, -50, 50, true);
-    SetVal(BEG12, 22, -50, 50, true);
-    SetVal(BEG13, 19, -50, 50, true);
+    SetVal(BMG0, -41, -50, 50, tuneMobility);
+    SetVal(BMG1, -24, -50, 50, tuneMobility);
+    SetVal(BMG2, -16, -50, 50, tuneMobility);
+    SetVal(BMG3,  -9, -50, 50, tuneMobility);
+    SetVal(BMG4,  -7, -50, 50, tuneMobility);
+    SetVal(BMG5,   0, -50, 50, tuneMobility);
+    SetVal(BMG6,   4, -50, 50, tuneMobility);
+    SetVal(BMG7,   6, -50, 50, tuneMobility);
+    SetVal(BMG8,   8, -50, 50, tuneMobility);
+    SetVal(BMG9,  10, -50, 50, tuneMobility);
+    SetVal(BMG10, 16, -50, 50, tuneMobility);
+    SetVal(BMG11, 24, -50, 50, tuneMobility);
+    SetVal(BMG12, 17, -50, 50, tuneMobility);
+    SetVal(BMG13, 22, -50, 50, tuneMobility);
 
-    SetVal(RMG0, -14, -50, 50, true);
-    SetVal(RMG1, -16, -50, 50, true);
-    SetVal(RMG2, -14, -50, 50, true);
-    SetVal(RMG3,  -9, -50, 50, true);
-    SetVal(RMG4,  -9, -50, 50, true);
-    SetVal(RMG5, -10, -50, 50, true);
-    SetVal(RMG6,  -5, -50, 50, true);
-    SetVal(RMG7,  -2, -50, 50, true);
-    SetVal(RMG8,  -3, -50, 50, true);
-    SetVal(RMG9,  -2, -50, 50, true);
-    SetVal(RMG10,  5, -50, 50, true);
-    SetVal(RMG11,  7, -50, 50, true);
-    SetVal(RMG12,  9, -50, 50, true);
-    SetVal(RMG13, 23, -50, 50, true);
-    SetVal(RMG14, 24, -50, 50, true);
+    SetVal(BEG0, -43, -50, 50, tuneMobility);
+    SetVal(BEG1, -40, -50, 50, tuneMobility);
+    SetVal(BEG2, -19, -50, 50, tuneMobility);
+    SetVal(BEG3,  -6, -50, 50, tuneMobility);
+    SetVal(BEG4,   1, -50, 50, tuneMobility);
+    SetVal(BEG5,   3, -50, 50, tuneMobility);
+    SetVal(BEG6,   5, -50, 50, tuneMobility);
+    SetVal(BEG7,   8, -50, 50, tuneMobility);
+    SetVal(BEG8,  15, -50, 50, tuneMobility);
+    SetVal(BEG9,  11, -50, 50, tuneMobility);
+    SetVal(BEG10, 10, -50, 50, tuneMobility);
+    SetVal(BEG11, 13, -50, 50, tuneMobility);
+    SetVal(BEG12, 22, -50, 50, tuneMobility);
+    SetVal(BEG13, 19, -50, 50, tuneMobility);
 
-    SetVal(REG0, -28, -50, 50, true);
-    SetVal(REG1, -50, -50, 50, true);
-    SetVal(REG2, -38, -50, 50, true);
-    SetVal(REG3, -14, -50, 50, true);
-    SetVal(REG4,  -9, -50, 50, true);
-    SetVal(REG5,   1, -50, 50, true);
-    SetVal(REG6,   2, -50, 50, true);
-    SetVal(REG7,   8, -50, 50, true);
-    SetVal(REG8,   9, -50, 50, true);
-    SetVal(REG9,  15, -50, 50, true);
-    SetVal(REG10, 18, -50, 50, true);
-    SetVal(REG11, 22, -50, 50, true);
-    SetVal(REG12, 22, -50, 50, true);
-    SetVal(REG13, 24, -50, 50, true);
-    SetVal(REG14, 29, -50, 50, true);
+    SetVal(RMG0, -14, -50, 50, tuneMobility);
+    SetVal(RMG1, -16, -50, 50, tuneMobility);
+    SetVal(RMG2, -14, -50, 50, tuneMobility);
+    SetVal(RMG3,  -9, -50, 50, tuneMobility);
+    SetVal(RMG4,  -9, -50, 50, tuneMobility);
+    SetVal(RMG5, -10, -50, 50, tuneMobility);
+    SetVal(RMG6,  -5, -50, 50, tuneMobility);
+    SetVal(RMG7,  -2, -50, 50, tuneMobility);
+    SetVal(RMG8,  -3, -50, 50, tuneMobility);
+    SetVal(RMG9,  -2, -50, 50, tuneMobility);
+    SetVal(RMG10,  5, -50, 50, tuneMobility);
+    SetVal(RMG11,  7, -50, 50, tuneMobility);
+    SetVal(RMG12,  9, -50, 50, tuneMobility);
+    SetVal(RMG13, 23, -50, 50, tuneMobility);
+    SetVal(RMG14, 24, -50, 50, tuneMobility);
+
+    SetVal(REG0, -28, -50, 50, tuneMobility);
+    SetVal(REG1, -50, -50, 50, tuneMobility);
+    SetVal(REG2, -38, -50, 50, tuneMobility);
+    SetVal(REG3, -14, -50, 50, tuneMobility);
+    SetVal(REG4,  -9, -50, 50, tuneMobility);
+    SetVal(REG5,   1, -50, 50, tuneMobility);
+    SetVal(REG6,   2, -50, 50, tuneMobility);
+    SetVal(REG7,   8, -50, 50, tuneMobility);
+    SetVal(REG8,   9, -50, 50, tuneMobility);
+    SetVal(REG9,  15, -50, 50, tuneMobility);
+    SetVal(REG10, 18, -50, 50, tuneMobility);
+    SetVal(REG11, 22, -50, 50, tuneMobility);
+    SetVal(REG12, 22, -50, 50, tuneMobility);
+    SetVal(REG13, 24, -50, 50, tuneMobility);
+    SetVal(REG14, 29, -50, 50, tuneMobility);
 
 
 #ifdef USE_RISKY_PARAMETER
@@ -440,14 +464,6 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[R_OP]  = 3;   // rook loses that much with each own pawn present on the board
 
     // King attack values
-
-    // "_ATT1" values are awarded for attacking squares not defended by enemy pawns
-    // "_ATT2" values are awarded for attacking squares defended by enemy pawns
-    // "_CHK"  values are awarded for threatening check to enemy king
-    // "_CONTACT" values are awarded for contact checks threats
-    //
-    // All these values are NOT the actual bonuses; their sum is used as index
-    // to a non-linear king safety table. Tune them with extreme caution.
 
     values[N_ATT1] = 6;
     values[N_ATT2] = 3;
