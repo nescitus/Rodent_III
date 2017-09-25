@@ -3,7 +3,6 @@
 ; created by Pawel Koziol
 ; based on attack and restraint, likes closed positions, slight contempt
 ; meant to simulate strong elderly player
-; give him classical openings if you can
 
 setoption name PawnValueMg value 95
 setoption name KnightValueMg value 310
@@ -64,3 +63,7 @@ setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name SearchSkill value 10
 setoption name BookFilter value 20
+setoption name RiskyDepth value 0
+setoption name BookFilter value 20
+setoption name GuideBookFile value books/guide/solid.bin
+setoption name MainBookFile value books/rodent.bin

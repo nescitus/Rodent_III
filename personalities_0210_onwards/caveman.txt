@@ -1,16 +1,15 @@
-; Brute
+; Caveman
 ; Personality for Rodent III chess engine, version 0.210 or later
-; Created by Pawel Koziol
-; materialist, stripped of some fancy eval staff and material tuning results, high king tropism
-;
+; stripped of most of knowledge, relies mostly on raw calculating power.
+
 setoption name PawnValueMg value 100
-setoption name KnightValueMg value 325
-setoption name BishopValueMg value 325
+setoption name KnightValueMg value 334
+setoption name BishopValueMg value 335
 setoption name RookValueMg value 500
 setoption name QueenValueMg value 975
 setoption name PawnValueEg value 100
-setoption name KnightValueEg value 325
-setoption name BishopValueEg value 325
+setoption name KnightValueEg value 334
+setoption name BishopValueEg value 335
 setoption name RookValueEg value 500
 setoption name QueenValueEg value 975
 setoption name KeepPawn value 0
@@ -18,30 +17,34 @@ setoption name KeepKnight value 0
 setoption name KeepBishop value 0
 setoption name KeepRook value 0
 setoption name KeepQueen value 0
-setoption name BishopPair value 51
-setoption name KnightPair value -9
-setoption name RookPair value -9
-setoption name KnightLikesClosed value 6
-setoption name RookLikesOpen value 3
-setoption name ExchangeImbalance value 30
-setoption name MinorVsQueen value 4
-setoption name Material value 120
-setoption name OwnAttack value 100
-setoption name OppAttack value 100
-setoption name OwnMobility value 100
-setoption name OppMobility value 100
+setoption name BishopPair value 50
+setoption name KnightPair value 0
+setoption name RookPair value 0
+setoption name KnightLikesClosed value 0
+setoption name RookLikesOpen value 0
+setoption name MajorUp value 0
+setoption name MinorUp value 0
+setoption name BothUp value 0
+setoption name ExchangeImbalance value 0
+setoption name MinorVsQueen value 0
+setoption name TwoMinors value 0
+setoption name Material value 100
+setoption name OwnAttack value 0
+setoption name OppAttack value 0
+setoption name OwnMobility value 0
+setoption name OppMobility value 0
 setoption name KingTropism value 100
-setoption name PiecePlacement value 75
-setoption name PiecePressure value 109
+setoption name PiecePlacement value 80
+setoption name PiecePressure value 0
 setoption name PassedPawns value 100
 setoption name PawnStructure value 100
 setoption name Lines value 100
 setoption name Outposts value 0
-setoption name PawnShield value 119
-setoption name PawnStorm value 99
+setoption name PawnShield value 120
+setoption name PawnStorm value 100
 setoption name Forwardness value 0
-setoption name Center value 50
-setoption name DoubledPawnMg value -23
+setoption name Center value 0
+setoption name DoubledPawnMg value -25
 setoption name DoubledPawnEg value -12
 setoption name IsolatedPawnMg value -10
 setoption name IsolatedPawnEg value -8
@@ -52,7 +55,7 @@ setoption name BackwardOnOpenMg value -8
 setoption name Fianchetto value 0
 setoption name ReturningB value 0
 setoption name PawnMass value 0
-setoption name PawnChains value 100
+setoption name PawnChains value 0
 setoption name PstStyle value 2
 setoption name MobilityStyle value 0
 setoption name NpsLimit value 0
@@ -64,6 +67,5 @@ setoption name SearchSkill value 10
 setoption name BookFilter value 20
 setoption name RiskyDepth value 0
 setoption name BookFilter value 20
-setoption name GuideBookFile value books/guide.bin
-setoption name MainBookFile value books/rodent.bin
-
+setoption name GuideBookFile value books/small.bin
+setoption name MainBookFile value books/small.bin
