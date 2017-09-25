@@ -242,14 +242,14 @@ template<typename T> constexpr T Clip(const T& sc, const T& lim) { if (sc < -lim
 constexpr U64 bbNotA = ~FILE_A_BB; // 0xfefefefefefefefe
 constexpr U64 bbNotH = ~FILE_H_BB; // 0x7f7f7f7f7f7f7f7f
 
-#define ShiftNorth(x)   ((x)<<8)
-#define ShiftSouth(x)   ((x)>>8)
-#define ShiftWest(x)    (((x) & bbNotA)>>1)
-#define ShiftEast(x)    (((x) & bbNotH)<<1)
-#define ShiftNW(x)      (((x) & bbNotA)<<7)
-#define ShiftNE(x)      (((x) & bbNotH)<<9)
-#define ShiftSW(x)      (((x) & bbNotA)>>9)
-#define ShiftSE(x)      (((x) & bbNotH)>>7)
+constexpr U64 ShiftNorth(const U64& x) { return x << 8; }
+constexpr U64 ShiftSouth(const U64& x) { return x >> 8; }
+constexpr U64 ShiftWest(const U64& x)  { return (x & bbNotA) >> 1; }
+constexpr U64 ShiftEast(const U64& x)  { return (x & bbNotH) << 1; }
+constexpr U64 ShiftNW(const U64& x)    { return (x & bbNotA) << 7; }
+constexpr U64 ShiftNE(const U64& x)    { return (x & bbNotH) << 9; }
+constexpr U64 ShiftSW(const U64& x)    { return (x & bbNotA) >> 9; }
+constexpr U64 ShiftSE(const U64& x)    { return (x & bbNotH) >> 7; }
 
 constexpr bool MoreThanOne(const U64& bb) { return bb & (bb - 1); }
 
