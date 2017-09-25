@@ -57,8 +57,12 @@ setoption name PstStyle value 0
 setoption name MobilityStyle value 0
 setoption name NpsLimit value 0
 setoption name EvalBlur value 0
-setoption name Contempt value 0
+setoption name Contempt value -25
 setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name SearchSkill value 10
 setoption name BookFilter value 20
+setoption name RiskyDepth value 0
+setoption name BookFilter value 20
+setoption name GuideBookFile value books/guide.bin
+setoption name MainBookFile value books/rodent.bin

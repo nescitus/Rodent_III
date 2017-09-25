@@ -3,7 +3,7 @@ Personality for Rodent III chess engine, version 0.210 or later
 Created by Pawel Koziol
 Balanced personality, slightly less materialistic than default.
 
-setoption name PawnValueMg value 95
+setoption name PawnValueMg value 90
 setoption name KnightValueMg value 310
 setoption name BishopValueMg value 322
 setoption name RookValueMg value 514
@@ -13,7 +13,7 @@ setoption name KnightValueEg value 305
 setoption name BishopValueEg value 320
 setoption name RookValueEg value 529
 setoption name QueenValueEg value 1013
-setoption name KeepPawn value 0
+setoption name KeepPawn value -1
 setoption name KeepKnight value 0
 setoption name KeepBishop value 0
 setoption name KeepRook value 0
@@ -61,4 +61,7 @@ setoption name Contempt value 0
 setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name SearchSkill value 10
+setoption name RiskyDepth value 0
 setoption name BookFilter value 20
+setoption name GuideBookFile value books/guide.bin
+setoption name MainBookFile value books/rodent.bin

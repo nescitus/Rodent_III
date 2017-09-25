@@ -1,42 +1,51 @@
-Personality for Rodent III chess engine, version 0.210 or later
+; Marshall
+; Personality for Rodent III chess engine, version 0.210 or later
+; by Pawel Koziol
+; hommage to Frank Marshall (1877-1944)
+; very high attack, very high mobility, sacrificial, likes knights
+
 setoption name PawnValueMg value 95
-setoption name KnightValueMg value 310
+setoption name KnightValueMg value 320
 setoption name BishopValueMg value 322
 setoption name RookValueMg value 514
-setoption name QueenValueMg value 1013
+setoption name QueenValueMg value 1000
 setoption name PawnValueEg value 110
-setoption name KnightValueEg value 305
+setoption name KnightValueEg value 325
 setoption name BishopValueEg value 320
 setoption name RookValueEg value 529
 setoption name QueenValueEg value 1013
 setoption name KeepPawn value 0
-setoption name KeepKnight value 5
+setoption name KeepKnight value 0
 setoption name KeepBishop value 0
-setoption name KeepRook value -5
+setoption name KeepRook value 0
 setoption name KeepQueen value 0
-setoption name BishopPair value 40
+setoption name BishopPair value 50
 setoption name KnightPair value -9
 setoption name RookPair value -9
-setoption name KnightLikesClosed value 8
+setoption name KnightLikesClosed value 6
 setoption name RookLikesOpen value 3
-setoption name ExchangeImbalance value -10
+setoption name MajorUp value 60
+setoption name MinorUp value 53
+setoption name BothUp value 80
+setoption name ExchangeImbalance value 25
 setoption name MinorVsQueen value 4
-setoption name Material value 100
-setoption name OwnAttack value 100
-setoption name OppAttack value 120
-setoption name OwnMobility value 100
-setoption name OppMobility value 120
-setoption name KingTropism value 20
+setoption name TwoMinors value 44
+setoption name Material value 90
+setoption name OwnAttack value 150
+setoption name OppAttack value 100
+setoption name OwnMobility value 150
+setoption name OppMobility value 100
+setoption name KingTropism value 25
 setoption name PiecePlacement value 75
-setoption name PiecePressure value 90
+setoption name PiecePressure value 109
 setoption name PassedPawns value 100
-setoption name PawnStructure value 150
+setoption name PawnStructure value 90
 setoption name Lines value 100
-setoption name Outposts value 150
-setoption name PawnShield value 119
-setoption name PawnStorm value 99
+setoption name Outposts value 75
+setoption name PawnShield value 120
+setoption name PawnStorm value 100
 setoption name Forwardness value 0
-setoption name Center value 100
+setoption name Center value 50
 setoption name DoubledPawnMg value -23
 setoption name DoubledPawnEg value -12
 setoption name IsolatedPawnMg value -10
@@ -45,15 +54,15 @@ setoption name IsolatedOnOpenMg value -10
 setoption name BackwardPawnMg value -8
 setoption name BackwardPawnEg value -10
 setoption name BackwardOnOpenMg value -8
-setoption name Fianchetto value 20
-setoption name ReturningB value 10
-setoption name PawnMass value 200
+setoption name Fianchetto value 0
+setoption name ReturningB value 0
+setoption name PawnMass value 100
 setoption name PawnChains value 100
-setoption name PstStyle value 0
+setoption name PstStyle value 1
 setoption name MobilityStyle value 0
 setoption name NpsLimit value 0
 setoption name EvalBlur value 0
-setoption name Contempt value -5
+setoption name Contempt value 0
 setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name SearchSkill value 10
