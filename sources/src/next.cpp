@@ -297,9 +297,8 @@ int cEngine::MvvLva(POS *p, int move) {
 
 void cEngine::AgeHist() {
 
-    for (int tp = 0; tp < 12; tp++)
-        for (int sq = 0; sq < 64; sq++)
-            mHistory[tp][sq] /= 8;
+    for (int i = 0; i < 12 * 64; i++)
+        ((int *)mHistory)[i] /= 8;
 
     ZEROARRAY(mKiller);
 }
@@ -315,9 +314,8 @@ void cEngine::ClearHist() {
 
 void cEngine::TrimHist() {
 
-    for (int tp = 0; tp < 12; tp++)
-        for (int sq = 0; sq < 64; sq++)
-            mHistory[tp][sq] /= 2;
+    for (int i = 0; i < 12 * 64; i++)
+        ((int *)mHistory)[i] /= 2;
 }
 
 void cEngine::UpdateHistory(POS *p, int last_move, int move, int depth, int ply) {
