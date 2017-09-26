@@ -617,18 +617,16 @@ void cEngine::Slowdown() {
 
     // Handling slowdown for weak levels
 
-    if (Par.nps_limit > 0) {
-        if (Par.nps_limit && root_depth > 1) {
-            int time = GetMS() - start_time + 1;
-            int nps = (int)GetNps(time);
-            while (nps > Par.nps_limit) {
-                WasteTime(10);
-                time = GetMS() - start_time + 1;
-                nps = (int)GetNps(time);
-                if ((!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)) {
-                    Glob.abort_search = true;
-                    return;
-                }
+    if (Par.nps_limit && root_depth > 1) {
+        int time = GetMS() - start_time + 1;
+        int nps = (int)GetNps(time);
+        while (nps > Par.nps_limit) {
+            WasteTime(10);
+            time = GetMS() - start_time + 1;
+            nps = (int)GetNps(time);
+            if ((!Glob.pondering && move_time >= 0 && GetMS() - start_time >= move_time)) {
+                Glob.abort_search = true;
+                return;
             }
         }
     }
