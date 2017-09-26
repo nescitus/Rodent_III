@@ -19,23 +19,21 @@ If not, see <http://www.gnu.org/licenses/>.
 
 int POS::Swap(int from, int to) {
 
-    int side, ply, type, score[32];
-    U64 attackers, occ, type_bb;
-
-    attackers = AttacksTo(to);
-    occ = OccBb();
+    int score[32];
     score[0] = tp_value[TpOnSq(to)];
-    type = TpOnSq(from);
-    occ ^= SqBb(from);
+
+    U64 occ = OccBb() ^ SqBb(from);
 
     // find all attackers
-
+    U64 attackers = AttacksTo(to);
     attackers |= (BB.BishAttacks(occ, to) & (mTpBb[B] | mTpBb[Q])) |
                  (BB.RookAttacks(occ, to) & (mTpBb[R] | mTpBb[Q]));
     attackers &= occ;
 
-    side = ((SqBb(from) & mClBb[BC]) == 0); // so that we can call Swap() out of turn
-    ply = 1;
+    int type = TpOnSq(from);
+    int side = (SqBb(from) & mClBb[BC]) == 0 ? BC : WC; // so that we can call Swap() out of turn
+    int ply = 1;
+    U64 type_bb;
 
     // iterate through attackers
 
