@@ -209,7 +209,7 @@ int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
 #define sdPawns p->Pawns(sd)
 #define OWN_PAWN(sq) (p->Pawns(sd) & RelSqBb(sq,sd))
 #define OPP_PAWN(sq) (p->Pawns(op) & RelSqBb(sq,sd))
-#define CONTAINS(bb, s1, s2) (bb & SQ(s1)) && (bb & SQ(s2))
+#define CONTAINS(bb, s1, s2) ((bb) & SQ(s1)) && ((bb) & SQ(s2))
 
 // @brief EvaluateChains() gives a penalty to side being at the receiving end of the pawn chain
 

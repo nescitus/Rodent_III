@@ -136,7 +136,7 @@ void cGlobals::Init() {
     // of threads for testing purposes
 
 #ifdef USE_THREADS
-    if (thread_no > 1) {
+    if (thread_no > 1) { //-V547 get rid of PVS Studio warning
         Engines.clear();
         for (int i = 0; i < thread_no; i++)
             Engines.emplace_back(i);
