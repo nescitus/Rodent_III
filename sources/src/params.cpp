@@ -751,9 +751,11 @@ void cParam::InitMobility() {
         r_mob_eg[i] = Par.mob_style == 0 ? 4 * (i - 7) : values[REG0+i];
     }
 
+    // one day queen mobility will be Texel-tuned too
+
     for (int i = 0; i < 28; i++) {
         q_mob_mg[i] = Par.mob_style == 0 ? 1 * (i - 14) : 1 * (i - 14);
-        q_mob_eg[i] = Par.mob_style == 0 ? 2 * (i - 14) : 2 * (i - 14);
+        q_mob_eg[i] = Par.mob_style == 0 ? 1 * (i - 14) : 2 * (i - 14);
     }
 
 }
