@@ -24,7 +24,7 @@ setoption name RookPair value -9
 setoption name KnightLikesClosed value 6
 setoption name RookLikesOpen value 3
 setoption name ExchangeImbalance value 30
-setoption name MinorVsQueen value 4
+setoption name MinorVsQueen value 0
 setoption name Material value 120
 setoption name OwnAttack value 100
 setoption name OppAttack value 100
@@ -40,7 +40,7 @@ setoption name Outposts value 0
 setoption name PawnShield value 119
 setoption name PawnStorm value 99
 setoption name Forwardness value 0
-setoption name Center value 50
+setoption name Center value 0
 setoption name DoubledPawnMg value -23
 setoption name DoubledPawnEg value -12
 setoption name IsolatedPawnMg value -10
