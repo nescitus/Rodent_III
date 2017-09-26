@@ -707,12 +707,3 @@ static const int imbalance_data[9][9] = {
 static const int fwd_bonus[16] = {
     0, 2, 5, 8, 12, 15, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
 };
-
-static const int n_mob_mg_decreasing[9] =  { -1,  6, 12, 16, 17, 16, 16, 15, 18 };
-static const int n_mob_eg_decreasing[9] =  { -30, 1, 4, 11, 16, 25, 23, 23, 19 };
-static const int b_mob_mg_decreasing[14] = { -12, -7, -2, 1, 6, 14, 17, 18, 19, 21, 23, 34, 34, 29 };
-static const int b_mob_eg_decreasing[14] = { -22, -32, -19, -6, 5, 20, 29, 33, 36, 36, 36, 38, 38, 38 };
-static const int r_mob_mg_decreasing[15] = { -15, -12, -5, -3, -4, -1, 0, 1, 3, 4, 4, 4, 7, 14, 20 };
-static const int r_mob_eg_decreasing[15] = { -12, -12, -8, -5, 7, 16, 20, 22, 31, 42, 43, 47, 47, 47, 47 };
-static const int q_mob_mg_decreasing[28] = { -10, -5, -8, -8, -6, -4, -6, -3, 1, -1, 5, 7, 6, 6, 8, 4, 2, 6, 4, 7, 17, 21, 30, 24, 41, 41, 41, 41 };
-static const int q_mob_eg_decreasing[28] = { -30, -25, -25, -23, -28, -29, -14, -12, -10, -3, -5, -1, 6, 14, 17, 22, 36, 34, 43, 37, 39, 33, 36, 22, 12, -4, 38, 26 };
