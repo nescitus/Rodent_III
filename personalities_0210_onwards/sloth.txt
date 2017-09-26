@@ -1,7 +1,8 @@
-; Paradox
+; Sloth
 ; Personality for Rodent III chess engine, version 0.210 or later
 ; created by Pawel Koziol
 ; likes bishops and closed positions
+;
 setoption name PawnValueMg value 95
 setoption name KnightValueMg value 310
 setoption name BishopValueMg value 332

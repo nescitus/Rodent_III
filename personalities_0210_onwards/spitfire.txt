@@ -1,4 +1,8 @@
+; Spitfire
 ; Personality for Rodent III chess engine, version 0.210 or later
+; created by Pawel Koziol
+; likes active positions, detests being under attack
+;
 setoption name PawnValueMg value 95
 setoption name KnightValueMg value 310
 setoption name BishopValueMg value 332
@@ -57,7 +61,6 @@ setoption name Contempt value 20
 setoption name SlowMover value 90
 setoption name Selectivity value 175
 setoption name SearchSkill value 10
-setoption name BookFilter value 20
 setoption name RiskyDepth value 0
 setoption name BookFilter value 20
 setoption name GuideBookFile value books/guide.bin
