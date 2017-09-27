@@ -1,7 +1,7 @@
-; Frederic
+; Frank
 ; Personality for Rodent III chess engine, version 0.210 or later
 ; created by Pawel Koziol
-; 1900 Elo player that likes thrusting his pieces forward
+; weak, rushes forward
 ;
 setoption name PawnValueMg value 95
 setoption name KnightValueMg value 310
@@ -34,15 +34,15 @@ setoption name OwnAttack value 100
 setoption name OppAttack value 100
 setoption name OwnMobility value 100
 setoption name OppMobility value 100
-setoption name KingTropism value 75
+setoption name KingTropism value 20
 setoption name PiecePlacement value 75
 setoption name PiecePressure value 109
 setoption name PassedPawns value 100
 setoption name PawnStructure value 100
 setoption name Lines value 100
 setoption name Outposts value 78
-setoption name PawnShield value 120
-setoption name PawnStorm value 120
+setoption name PawnShield value 119
+setoption name PawnStorm value 99
 setoption name Forwardness value 200
 setoption name Center value 50
 setoption name DoubledPawnMg value -23
@@ -57,15 +57,15 @@ setoption name Fianchetto value 6
 setoption name ReturningB value 10
 setoption name PawnMass value 100
 setoption name PawnChains value 100
-setoption name PstStyle value 2
+setoption name PstStyle value 0
 setoption name MobilityStyle value 0
-setoption name NpsLimit value 2200
-setoption name EvalBlur value 0
+setoption name NpsLimit value 88
+setoption name EvalBlur value 50
 setoption name Contempt value 0
 setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name SearchSkill value 10
 setoption name RiskyDepth value 0
 setoption name BookFilter value 20
-setoption name GuideBookFile value books/small.bin
-setoption name MainBookFile value books/small.bin
+setoption name GuideBookFile value books/micro.bin
+setoption name MainBookFile value books/micro.bin
