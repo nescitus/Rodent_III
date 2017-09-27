@@ -344,7 +344,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     Add(e, sd, (Par.sd_mob[sd] * mob_mg)  / 100, (Par.sd_mob[sd] * mob_eg)  / 100);
     Add(e, sd, (Par.values[W_TROPISM] * tropism_mg) / 100, (Par.values[W_TROPISM] * tropism_eg) / 100);
     Add(e, sd, (Par.values[W_LINES] * lines_mg)     / 100, (Par.values[W_LINES] * lines_eg)     / 100);
-    Add(e, sd, (Par.values[W_FWD] * fwd_bonus[fwd_cnt] * Par.values[W_FWD]) / 100, 0);
+    Add(e, sd, (Par.values[W_FWD] * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
     Add(e, sd, (Par.values[W_OUTPOSTS] * outpost) / 100);
     Add(e, sd, (Par.values[W_CENTER] * center_control) / 100, 0);
 
