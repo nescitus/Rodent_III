@@ -1,4 +1,8 @@
+; Frederick
 ; Personality for Rodent III chess engine, version 0.210 or later
+; 1900-ish player that likes thrusting his pieces forward
+; the funny thing is that he likes flank openings as well
+;
 setoption name PawnValueMg value 95
 setoption name KnightValueMg value 310
 setoption name BishopValueMg value 322
@@ -63,5 +67,5 @@ setoption name Selectivity value 175
 setoption name SearchSkill value 10
 setoption name RiskyDepth value 0
 setoption name BookFilter value 20
-setoption name GuideBookFile value books/flank.bin
-setoption name MainBookFile value books/small.bin
+setoption name GuideBookFile value guide/flank.bin
+setoption name MainBookFile value small.bin

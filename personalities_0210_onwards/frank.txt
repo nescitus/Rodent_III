@@ -67,5 +67,5 @@ setoption name Selectivity value 175
 setoption name SearchSkill value 10
 setoption name RiskyDepth value 0
 setoption name BookFilter value 20
-setoption name GuideBookFile value books/micro.bin
-setoption name MainBookFile value books/micro.bin
+setoption name GuideBookFile value micro.bin
+setoption name MainBookFile value micro.bin
