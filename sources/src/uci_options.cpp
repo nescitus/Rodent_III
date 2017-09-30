@@ -67,7 +67,7 @@ void PrintUciOptions() {
         printf("option name KeepRook type spin default %d min 0 max 500\n", Par.keep_pc[R]);
         printf("option name KeepQueen type spin default %d min 0 max 500\n", Par.keep_pc[Q]);
 
-        printf("option name BishopPair type spin default %d min -100 max 100\n", Par.values[B_PAIR]);
+        PrintSingleOption(B_PAIR);
         printf("option name ExchangeImbalance type spin default %d min -200 max 200\n", Par.values[A_EXC]);
         printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", Par.values[N_CL]);
 

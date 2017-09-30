@@ -28,9 +28,10 @@ constexpr U64 cMask::qs_castle[2];
 // Mask of squares with positive outpost score
 constexpr U64 cMask::outpost_map[2];
 
-// King side / queen side
+// King side / queen side / center
 constexpr U64 cMask::k_side;
 constexpr U64 cMask::q_side;
+constexpr U64 cMask::center;
 
 // Squares requiring bishop pat
 constexpr U64 cMask::wb_special;

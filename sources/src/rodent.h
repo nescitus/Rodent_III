@@ -480,7 +480,7 @@ enum Values {
 
 const char* const paramNames[N_OF_VAL] = {
     "P_MID", "P_END", "N_MID", "N_END", "B_MID", "B_END", "R_MID", "R_END", "Q_MID", "Q_END",  // piece values
-    "B_PAIR", "N_PAIR", "R_PAIR", "ELEPH", "A_EXC", "A_TWO", "A_MAJ", "A_MIN", "A_ALL",        // material adjustments
+    "BishopPair", "N_PAIR", "R_PAIR", "ELEPH", "A_EXC", "A_TWO", "A_MAJ", "A_MIN", "A_ALL",    // material adjustments
     "N_ATT1", "N_ATT2", "B_ATT1", "B_ATT2", "R_ATT1", "R_ATT2", "Q_ATT1", "Q_ATT2",            // attacks against enemy king zone
     "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
     "NTR_MG", "NTR_EG", "BTR_MG", "BTR_EG", "RTR_MG", "RTR_EG", "QTR_MG", "QTR_EG",            // king tropism
@@ -603,6 +603,10 @@ class cMask {
 
     static constexpr U64 k_side = FILE_F_BB | FILE_G_BB | FILE_H_BB;
     static constexpr U64 q_side = FILE_A_BB | FILE_B_BB | FILE_C_BB;
+    static constexpr U64 center = SqBb(C3) | SqBb(D3) | SqBb(E3) | SqBb(F3)
+                                | SqBb(C4) | SqBb(D4) | SqBb(E4) | SqBb(F4)
+                                | SqBb(C5) | SqBb(D5) | SqBb(E5) | SqBb(F5)
+                                | SqBb(C6) | SqBb(D6) | SqBb(E6) | SqBb(F6);
 
     static constexpr U64 wb_special = SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2);
     static constexpr U64 bb_special = SqBb(A2) | SqBb(A3) | SqBb(B1) | SqBb(H2) | SqBb(H3) | SqBb(G1) | SqBb(C8) | SqBb(F8) | SqBb(G7) | SqBb(B7);

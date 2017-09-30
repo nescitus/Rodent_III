@@ -81,7 +81,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     static const bool tuneAdj = true;
 
-    SetVal(B_PAIR, 51, 0, 100, tuneAdj);
+    SetVal(B_PAIR, 51, -100, 100, tuneAdj);
     SetVal(N_PAIR, 0, -50, 50, tuneAdj);
     SetVal(R_PAIR, -22, -50, 50, tuneAdj);
     SetVal(ELEPH, 10, -50, 50, tuneAdj);   // queen loses that much with each enemy minor on the board
