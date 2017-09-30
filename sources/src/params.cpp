@@ -44,7 +44,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Piece values
 
-	static const bool tunePieceValues = true;
+    static const bool tunePieceValues = true;
 
     SetVal(P_MID,   91,  50, 150, tunePieceValues);
     SetVal(N_MID,  305, 200, 400, tunePieceValues);
@@ -70,7 +70,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Material adjustments
 
-	static const bool tuneAdj = true;
+    static const bool tuneAdj = true;
 
     SetVal(B_PAIR, 51, 0, 100, tuneAdj);
     SetVal(N_PAIR, 0, -50, 50, tuneAdj);
@@ -94,7 +94,7 @@ void cParam::DefaultWeights() {  // tuned automatically
     // All these values are NOT the actual bonuses; their sum is used as index
     // to a non-linear king safety table. Tune them with extreme caution.
 
-	static const bool tuneAttack = false;
+    static const bool tuneAttack = false;
 
     SetVal(N_ATT1, 6,  0, 50, tuneAttack);
     SetVal(N_ATT2, 4,  0, 50, tuneAttack);
@@ -115,7 +115,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // King tropism
 
-	static const bool tuneTropism = true;
+    static const bool tuneTropism = true;
 
     SetVal(NTR_MG,  13, -50, 50, tuneTropism);
     SetVal(NTR_EG, -11, -50, 50, tuneTropism);
@@ -145,7 +145,6 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     SetVal(W_THREATS, 109, 0, 500, true);
     SetVal(W_TROPISM,  25, -500, 500, true);
-    SetVal(W_FWD,       0, -500, 500, false);
     SetVal(W_PASSERS, 102, 0, 500, true);
     SetVal(W_MASS,     98, 0, 500, true);
     SetVal(W_CHAINS,  100, 0, 500, true);
@@ -158,7 +157,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Pawn structure parameters
 
-	static const bool tuneStruct = true;
+    static const bool tuneStruct = true;
 
     SetVal(DB_MID,  -8, -50, 0, tuneStruct);  // doubled
     SetVal(DB_END, -21, -50, 0, tuneStruct);
@@ -179,7 +178,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Pawn chain values
 
-	static const bool tuneChain = true;
+    static const bool tuneChain = true;
 
     SetVal(P_BIGCHAIN, 38, 0, 50, tuneChain);   // general penalty for a compact pawn chain pointing at our king
     SetVal(P_SMALLCHAIN, 27, 0, 50, tuneChain); // similar penalty for a chain that is not fully blocked by enemy pawns
@@ -189,7 +188,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Passed pawn bonuses per rank
 
-	static const bool tunePassers = true;
+    static const bool tunePassers = true;
 
     SetVal(PMG2,   2, 0, 300, tunePassers);
     SetVal(PMG3,   2, 0, 300, tunePassers);
@@ -215,7 +214,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // King's pawn shield
 
-	static const bool tuneShield = true;
+    static const bool tuneShield = true;
 
     SetVal(P_SH_NONE, -40, -50, 50, tuneShield);
     SetVal(P_SH_2,   2, -50, 50, tuneShield);
@@ -234,7 +233,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Knight parameters
 
-	static const bool tuneKnight = true;
+    static const bool tuneKnight = true;
 
     SetVal(N_TRAP, -168, -300, 0, tuneKnight); // trapped knight
     SetVal(N_BLOCK, -17, -50, 0, tuneKnight);  // knight blocks c pawn in queen pawn openings
@@ -244,7 +243,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Bishop parameters
 
-	static const bool tuneBishop = true;
+    static const bool tuneBishop = true;
 
     SetVal(B_FIANCH, 13, 0, 50, tuneBishop);   // general bonus for fianchettoed bishop
     SetVal(B_KING, 20, 0, 50, tuneBishop);     // fianchettoed bishop near own king
@@ -264,7 +263,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Rook parameters
 
-	static const bool tuneRook = true;
+    static const bool tuneRook = true;
 
     SetVal(RSR_MG, 16, 0, 50, tuneRook); // rook on the 7th rank
     SetVal(RSR_EG, 32, 0, 50, tuneRook);
@@ -278,28 +277,36 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(RBH_EG,  0, 0, 50, tuneRook);
     SetVal(ROQ_MG,  9, 0, 50, tuneRook); // rook and queen on the same file, open or closed
     SetVal(ROQ_EG, 18, 0, 50, tuneRook);
-    SetVal(R_BLOCK, -50, -100, 0, tuneRook);
+    SetVal(R_BLOCK_MG, -50, -100, 0, tuneRook);
+    SetVal(R_BLOCK_EG, 0, -100, 0, tuneRook);
 
     // Queen parameters
 
-    SetVal(QSR_MG, 0, 0, 50, true);       // queen on the 7th rank
-    SetVal(QSR_EG, 2, 0, 50, true);
+    static const bool tuneQueen = true;
+
+    SetVal(QSR_MG, 0, 0, 50, tuneQueen);       // queen on the 7th rank
+    SetVal(QSR_EG, 2, 0, 50, tuneQueen);
 
     // King parameters
 
-    SetVal(K_NO_LUFT, -11, -50, 0, true); // queen on the 7th rank
-    SetVal(K_CASTLE, 32, 0, 50, true);
+    static const bool tuneKing = true;
+
+    SetVal(K_NO_LUFT, -11, -50, 0, tuneKing); // queen on the 7th rank
+    SetVal(K_CASTLE, 32, 0, 50, tuneKing);
 
     // Forwardness parameters
 
-    SetVal(N_FWD,   1, 0, 50, false);
-    SetVal(B_FWD,   1, 0, 50, false);
-    SetVal(R_FWD,   2, 0, 50, false);
-    SetVal(Q_FWD,   4, 0, 50, false);
+    static const bool tuneFwd = false;
+
+    SetVal(W_FWD, 0, -500, 500, tuneFwd);
+    SetVal(N_FWD,   1, 0, 50, tuneFwd);
+    SetVal(B_FWD,   1, 0, 50, tuneFwd);
+    SetVal(R_FWD,   2, 0, 50, tuneFwd);
+    SetVal(Q_FWD,   4, 0, 50, tuneFwd);
 
     // Mobility
 
-	static const bool tuneMobility = false;
+    static const bool tuneMobility = false;
 
     SetVal(NMG0, -32, -50, 50, tuneMobility);
     SetVal(NMG1, -14, -50, 50, tuneMobility);
@@ -634,7 +641,8 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[RBH_EG] = 5;
     values[ROQ_MG] = 5;  // rook and queen on the same file, open or closed
     values[ROQ_EG] = 5;
-    values[R_BLOCK] = -50;
+    values[R_BLOCK_MG] = -50;
+    values[R_BLOCK_EG] =   0;
 
     // Queen parameters
 

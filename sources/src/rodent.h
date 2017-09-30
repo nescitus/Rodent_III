@@ -452,7 +452,7 @@ enum Values {
     P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_THR, P_BIND, P_BADBIND, P_ISL, // pawn special terms
     P_BIGCHAIN, P_SMALLCHAIN, P_CS1, P_CS2, P_CSFAIL,
     ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,     // rook bonuses
-    RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK,                                            // queen and rook bonuses
+    RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK_MG, R_BLOCK_EG,                             // queen and rook bonuses
     W_MATERIAL, W_PST, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,           // weights part 1
     W_TROPISM, W_FWD, W_PASSERS, W_SHIELD, W_STORM, W_MASS, W_CHAINS, W_STRUCT,         // weights part 2
     W_LINES, W_OUTPOSTS, W_CENTER,
@@ -482,7 +482,7 @@ const char* const paramNames[N_OF_VAL] = {
     "P_OURSTOP_MUL", "P_OPPSTOP_MUL", "P_DEFMUL", "P_STOPMUL", "P_THR", "P_BIND", "P_BADBIND", "P_ISL", // pawn special terms
     "P_BIGCHAIN", "P_SMALLCHAIN", "P_CS1", "P_CS2", "P_CSFAIL",
     "ROF_MG", "ROF_EG", "RGH_MG", "RGH_EG", "RBH_MG", "RBH_EG", "RSR_MG", "RSR_EG", "ROQ_MG", "ROQ_EG",     // rook bonuses
-    "RS2_MG", "RS2_EG", "QSR_MG", "QSR_EG", "R_BLOCK",                                          // queen and rook bonuses
+    "RS2_MG", "RS2_EG", "QSR_MG", "QSR_EG", "R_BLOCK_MG",  "R_BLOCK_EG",                                    // queen and rook bonuses
     "Material", "W_PST", "OwnAttack", "OppAttack", "OwnMobility", "OppMobility", "PiecePressure", // weights part 1
     "KingTropism", "Forwardness", "PassedPawns", "PawnShield", "PawnStorm", "W_MASS", "W_CHAINS", "PawnStructure", // weights part 2
     "Lines", "Outposts", "W_CENTER",

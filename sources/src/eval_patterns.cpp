@@ -146,13 +146,13 @@ void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
         rook_mask = SqBb(G1) | SqBb(H1) | SqBb(H2);
 
         if ((p->Kings(WC) & king_mask)
-        && (p->Rooks(WC) & rook_mask)) Add(e, WC, Par.values[R_BLOCK], 0);
+        && (p->Rooks(WC) & rook_mask)) Add(e, WC, Par.values[R_BLOCK_MG], Par.values[R_BLOCK_EG]);
 
         king_mask = SqBb(B1) | SqBb(C1);
         rook_mask = SqBb(A1) | SqBb(B1) | SqBb(A2);
 
         if ((p->Kings(WC) & king_mask)
-        && (p->Rooks(WC) & rook_mask)) Add(e, WC, Par.values[R_BLOCK], 0);
+        && (p->Rooks(WC) & rook_mask)) Add(e, WC, Par.values[R_BLOCK_MG], Par.values[R_BLOCK_EG]);
 
         // White castling rights
 
@@ -183,13 +183,13 @@ void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
         rook_mask = SqBb(G8) | SqBb(H8) | SqBb(H7);
 
         if ((p->Kings(BC) & king_mask)
-        && (p->Rooks(BC) & rook_mask)) Add(e, BC, Par.values[R_BLOCK], 0);
+        && (p->Rooks(BC) & rook_mask)) Add(e, BC, Par.values[R_BLOCK_MG], Par.values[R_BLOCK_EG]);
 
         king_mask = SqBb(B8) | SqBb(C8);
         rook_mask = SqBb(B8) | SqBb(A8) | SqBb(A7);
 
         if ((p->Kings(BC) & king_mask)
-        && (p->Rooks(BC) & rook_mask)) Add(e, BC, Par.values[R_BLOCK], 0);
+        && (p->Rooks(BC) & rook_mask)) Add(e, BC, Par.values[R_BLOCK_MG], Par.values[R_BLOCK_EG]);
 
         // Black castling rights
 

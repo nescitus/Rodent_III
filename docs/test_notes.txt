@@ -1,3 +1,7 @@
+2017-09-29
+
+- failed attempt at tuning forwardness. This will remain purely stylistic option.
+
 2017-09-24
 
 - failed attempt at adding and tuning piece combination values. Will be revisited.
