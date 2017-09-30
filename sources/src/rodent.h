@@ -454,7 +454,7 @@ enum Values {
     N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
     N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
     NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
-    N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OVH, N_REACH, BN_SHIELD,
+    N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OWH, N_REACH, BN_SHIELD,
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
     B_OPP_P, B_OWN_P, B_REACH, B_TOUCH, B_RETURN,
@@ -484,7 +484,7 @@ const char* const paramNames[N_OF_VAL] = {
     "N_ATT1", "N_ATT2", "B_ATT1", "B_ATT2", "R_ATT1", "R_ATT2", "Q_ATT1", "Q_ATT2",            // attacks against enemy king zone
     "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
     "NTR_MG", "NTR_EG", "BTR_MG", "BTR_EG", "RTR_MG", "RTR_EG", "QTR_MG", "QTR_EG",            // king tropism
-    "N_FWD", "B_FWD", "R_FWD", "Q_FWD", "N_OWH", "B_OVH", "N_REACH", "BN_SHIELD",
+    "N_FWD", "B_FWD", "R_FWD", "Q_FWD", "N_OWH", "B_OWH", "N_REACH", "BN_SHIELD",
     "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT", "K_CASTLE",
     "B_TRAP_A2", "B_TRAP_A3", "B_BLOCK", "B_FIANCH", "B_BADF", "B_KING", "B_BF_MG", "B_BF_EG", "B_WING",  // bishop parameters
     "B_OPP_P", "B_OWN_P", "B_REACH", "B_TOUCH", "B_RETURN",
@@ -565,6 +565,7 @@ class cParam {
 	NOINLINE void InitialPersonalityWeights();
     NOINLINE void InitAsymmetric(POS *p);
 	NOINLINE void PrintValues();
+    void Recalculate();
     void SetSpeed(int elo_in);
     int EloToSpeed(int elo_in);
     int EloToBlur(int elo_in);

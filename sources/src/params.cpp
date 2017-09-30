@@ -21,6 +21,15 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cmath>
 
+void cParam::Recalculate() {
+
+    InitPst();
+    InitMobility();
+    InitMaterialTweaks();
+    InitBackward();
+    InitPassers();
+}
+
 void cParam::DefaultWeights() {  // tuned automatically
 
     // Switch off weakening parameters
@@ -94,7 +103,7 @@ void cParam::DefaultWeights() {  // tuned automatically
     // All these values are NOT the actual bonuses; their sum is used as index
     // to a non-linear king safety table. Tune them with extreme caution.
 
-    static const bool tuneAttack = false;
+    static const bool tuneAttack = true;
 
     SetVal(N_ATT1, 6,  0, 50, tuneAttack);
     SetVal(N_ATT2, 4,  0, 50, tuneAttack);
@@ -115,7 +124,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // King tropism
 
-    static const bool tuneTropism = true;
+    static const bool tuneTropism = false;
 
     SetVal(NTR_MG,  13, -50, 50, tuneTropism);
     SetVal(NTR_EG, -11, -50, 50, tuneTropism);
@@ -128,8 +137,8 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Varia
 
-    SetVal(W_MATERIAL, 98,  0, 200, true);
-    SetVal(W_PST, 73, 0, 200, true);
+    SetVal(W_MATERIAL, 98,  0, 200, false);
+    SetVal(W_PST, 73, 0, 200, false);
     pst_style = 0;
     mob_style = 1;
 
@@ -182,9 +191,9 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     SetVal(P_BIGCHAIN, 38, 0, 50, tuneChain);   // general penalty for a compact pawn chain pointing at our king
     SetVal(P_SMALLCHAIN, 27, 0, 50, tuneChain); // similar penalty for a chain that is not fully blocked by enemy pawns
-    SetVal(P_CS1, 12, 0, 50, tuneChain); // additional bonus for a pawn storm next to a fixed chain - like g5 in King's Indian
-    SetVal(P_CS2, 3, 0, 50, tuneChain); // as above, this time like g4 in King's Indian
-    SetVal(P_CSFAIL, 32, 0, 50, tuneChain); // penalty for misplaying pawn strom next to a chain
+    SetVal(P_CS1, 12, 0, 50, tuneChain);        // bonus for a pawn storm next to a fixed chain - like g5 in King's Indian
+    SetVal(P_CS2, 3, 0, 50, tuneChain);         // as above, this time like g4 in King's Indian
+    SetVal(P_CSFAIL, 32, 0, 50, tuneChain);     // penalty for misplaying pawn strom next to a chain
 
     // Passed pawn bonuses per rank
 
@@ -254,7 +263,7 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(B_BF_MG, -12, -50, 0, tuneBishop);  // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
     SetVal(B_BF_EG, -20, -50, 0, tuneBishop);
     SetVal(B_WING, 3, 0, 50, tuneBishop);      // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2) 
-    SetVal(B_OVH, -7, -50, 0, tuneBishop);     // bishop can move only to own half of the board
+    SetVal(B_OWH, -7, -50, 0, tuneBishop);     // bishop can move only to own half of the board
     SetVal(B_REACH, 2, 0, 50, tuneBishop);     // bishop can reach an outpost square
     SetVal(B_TOUCH, 5, 0, 50, tuneBishop);     // two bishops on adjacent squares
     SetVal(B_OWN_P, -3, -50, 0, false);  // own pawn on the square of own bishop's color
@@ -282,7 +291,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Queen parameters
 
-    static const bool tuneQueen = true;
+	static const bool tuneQueen = true;
 
     SetVal(QSR_MG, 0, 0, 50, tuneQueen);       // queen on the 7th rank
     SetVal(QSR_EG, 2, 0, 50, tuneQueen);
@@ -296,7 +305,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Forwardness parameters
 
-    static const bool tuneFwd = false;
+    static const bool tuneFwd = true;
 
     SetVal(W_FWD, 0, -500, 500, tuneFwd);
     SetVal(N_FWD,   1, 0, 50, tuneFwd);
@@ -397,13 +406,7 @@ void cParam::DefaultWeights() {  // tuned automatically
     draw_score = 0;
     shut_up = false;       // true suppresses displaying info currmove etc.
 
-    // Specialized functions
-
-    InitPst();
-    InitMobility();
-    InitMaterialTweaks();
-    InitBackward();
-    InitPassers();
+    Recalculate();         // some values need to be calculated anew after the parameter change
 
     // History limit to prunings and reductions
 
@@ -620,7 +623,7 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[B_BF_MG] = -10; // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
     values[B_BF_EG] = -20;
     values[B_WING] = 10;   // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2)
-    values[B_OVH] = -5;    // bishop can move only to own half of the board
+    values[B_OWH] = -5;    // bishop can move only to own half of the board
     values[B_REACH] = 2;   // bishop can reach an outpost square
     values[B_TOUCH] = 4;   // two bishops on adjacent squares
     values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
@@ -661,13 +664,7 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[R_FWD] = 2;
     values[Q_FWD] = 4;
 
-    // Specialized functions
-
-    InitPst();
-    InitMobility();
-    InitMaterialTweaks();
-    InitBackward();
-    InitPassers();
+    Recalculate();         // some values need to be calculated anew after the parameter change
 
     // History limit to prunings and reductions
 
