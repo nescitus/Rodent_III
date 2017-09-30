@@ -231,7 +231,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
         return eval;
     }
 
-    fl_check = p->InCheck();
+    fl_check = InCheck(p);
 
     // CAN WE PRUNE THIS NODE?
 
@@ -267,7 +267,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
     && Par.search_skill > 1
     && !was_null
     && fl_prunable_node
-    && p->MayNull()
+    && MayNull(p)
     && eval >= beta) {
 
         // null move depth reduction - modified Stockfish formula
@@ -364,11 +364,11 @@ avoid_null:
         // MAKE MOVE
 
         mv_hist_score = history[p->pc[Fsq(move)]][Tsq(move)];
-        victim = p->TpOnSq(Tsq(move));
+        victim = TpOnSq(p, Tsq(move));
         if (victim != NO_TP) last_capt = Tsq(move);
         else last_capt = -1;
         p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
+        if (Illegal(p)) { p->UndoMove(move, u); continue; }
 
         // GATHER INFO ABOUT THE MOVE
 
@@ -387,7 +387,7 @@ avoid_null:
 
         // 1. check extension, applied in pv nodes or at low depth
 
-        if (is_pv || depth < 8) new_depth += p->InCheck();
+        if (is_pv || depth < 8) new_depth += InCheck(p);
 
         // 2. recapture extension in pv-nodes
 
@@ -397,13 +397,13 @@ avoid_null:
 
         if (is_pv
         && depth < 6
-        && p->TpOnSq(Tsq(move)) == P
+        && TpOnSq(p, Tsq(move)) == P
         && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) new_depth += 1;
 
         // FUTILITY PRUNING
 
         if (fl_futility
-        && !p->InCheck()
+        && !InCheck(p)
         && mv_hist_score < Par.hist_limit
         && (mv_type == MV_NORMAL)
         &&  mv_tried > 1) {
@@ -416,7 +416,7 @@ avoid_null:
         && Par.search_skill > 5
         && depth <= 3
         && quiet_tried > 3 * depth
-        && !p->InCheck()
+        && !InCheck(p)
         && mv_hist_score < Par.hist_limit
         && mv_type == MV_NORMAL) {
             p->UndoMove(move, u); continue;
@@ -430,7 +430,7 @@ avoid_null:
         && Par.search_skill > 2
         && mv_tried > 3
         && !fl_check
-        && !p->InCheck()
+        && !InCheck(p)
         && lmr_size[is_pv][depth][mv_tried] > 0
         && mv_type == MV_NORMAL
         && mv_hist_score < Par.hist_limit
@@ -455,7 +455,7 @@ avoid_null:
         && mv_tried > 6
         && alpha > -MAX_EVAL && beta < MAX_EVAL
         && !fl_check
-        && !p->InCheck()
+        && !InCheck(p)
         && (mv_type == MV_BADCAPT)
         && !is_pv) {
             reduction = 1;
@@ -524,7 +524,7 @@ research:
     // RETURN CORRECT CHECKMATE/STALEMATE SCORE
 
     if (best == -INF)
-        return p->InCheck() ? -MATE + ply : DrawScore(p);
+        return InCheck(p) ? -MATE + ply : DrawScore(p);
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 

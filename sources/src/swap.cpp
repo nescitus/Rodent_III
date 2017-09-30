@@ -22,10 +22,10 @@ int Swap(POS *p, int from, int to) {
     int side, ply, type, score[32];
     U64 attackers, occ, type_bb;
 
-    attackers = p->AttacksTo(to);
-    occ = p->OccBb();
-    score[0] = tp_value[p->TpOnSq(to)];
-    type = p->TpOnSq(from);
+    attackers = AttacksTo(p, to);
+    occ = OccBb(p);
+    score[0] = tp_value[TpOnSq(p, to)];
+    type = TpOnSq(p, from);
     occ ^= SqBb(from);
 
     // find all attackers
@@ -53,7 +53,7 @@ int Swap(POS *p, int from, int to) {
         // find next weakest attacker
 
         for (type = P; type <= K; type++)
-            if ((type_bb = p->PcBb(side, type) & attackers))
+            if ((type_bb = PcBb(p, side, type) & attackers))
                 break;
 
         // eliminate it from consideration

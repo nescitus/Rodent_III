@@ -275,7 +275,7 @@ int cEngine::BadCapture(POS *p, int move) {
 
     // using tp_value[] instead of pc_value[] means that both BxN and NxB aren't bad
 
-    if (tp_value[p->TpOnSq(tsq)] >= tp_value[p->TpOnSq(fsq)])
+    if (tp_value[TpOnSq(p, tsq)] >= tp_value[TpOnSq(p, fsq)])
         return 0;
 
     if (MoveType(move) == EP_CAP)
@@ -287,7 +287,7 @@ int cEngine::BadCapture(POS *p, int move) {
 int cEngine::MvvLva(POS *p, int move) {
 
     if (p->pc[Tsq(move)] != NO_PC)
-        return p->TpOnSq(Tsq(move)) * 6 + 5 - p->TpOnSq(Fsq(move));
+        return TpOnSq(p, Tsq(move)) * 6 + 5 - TpOnSq(p, Fsq(move));
 
     if (IsProm(move))
         return PromType(move) - 5;

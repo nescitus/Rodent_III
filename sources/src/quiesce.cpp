@@ -31,7 +31,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     UNDO u[1];
     eData e;
 
-    if (p->InCheck()) return QuiesceFlee(p, ply, alpha, beta, pv);
+    if (InCheck(p)) return QuiesceFlee(p, ply, alpha, beta, pv);
 
     // EARLY EXIT AND NODE INITIALIZATION
 
@@ -82,7 +82,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         // MAKE MOVE
 
         p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
+        if (Illegal(p)) { p->UndoMove(move, u); continue; }
 
         score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
 
@@ -113,7 +113,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     // RETURN CORRECT CHECKMATE/STALEMATE SCORE
 
     if (best == -INF)
-        return p->InCheck() ? -MATE + ply : 0;
+        return InCheck(p) ? -MATE + ply : 0;
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
@@ -173,7 +173,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         // MAKE MOVE
 
         p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
+        if (Illegal(p)) { p->UndoMove(move, u); continue; }
 
         score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
 
@@ -204,7 +204,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     // RETURN CORRECT CHECKMATE/STALEMATE SCORE
 
     if (best == -INF)
-        return p->InCheck() ? -MATE + ply : DrawScore(p);
+        return InCheck(p) ? -MATE + ply : DrawScore(p);
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
@@ -224,7 +224,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // USE DEDICATED EVASION SEARCH WHEN IN CHECK
 
-    if (p->InCheck()) return QuiesceFlee(p, ply, alpha, beta, pv);
+    if (InCheck(p)) return QuiesceFlee(p, ply, alpha, beta, pv);
 
     Glob.nodes++;
     //local_nodes++; unused
@@ -291,7 +291,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
             // 1. Prune captures that are unlikely to raise alpha even if opponent does not recapture
 
-            if (floor + tp_value[p->TpOnSq(Tsq(move))] + 150 < alpha_floor) continue;
+            if (floor + tp_value[TpOnSq(p, Tsq(move))] + 150 < alpha_floor) continue;
 
             // 2. Prune captures that probably lose material
 
@@ -299,7 +299,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
         }
 
         p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
+        if (Illegal(p)) { p->UndoMove(move, u); continue; }
         score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
         p->UndoMove(move, u);
         if (Glob.abort_search && root_depth > 1) return 0;

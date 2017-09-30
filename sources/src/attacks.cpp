@@ -17,40 +17,40 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-U64 POS::AttacksFrom(int sq) const {
+U64 AttacksFrom(POS *p, int sq) {
 
-    switch (TpOnSq(sq)) {
+    switch (TpOnSq(p, sq)) {
         case P:
-            return BB.PawnAttacks(Cl(pc[sq]), sq);
+            return BB.PawnAttacks(Cl(p->pc[sq]), sq);
         case N:
             return BB.KnightAttacks(sq);
         case B:
-            return BB.BishAttacks(OccBb(), sq);
+            return BB.BishAttacks(OccBb(p), sq);
         case R:
-            return BB.RookAttacks(OccBb(), sq);
+            return BB.RookAttacks(OccBb(p), sq);
         case Q:
-            return BB.QueenAttacks(OccBb(), sq);
+            return BB.QueenAttacks(OccBb(p), sq);
         case K:
             return BB.KingAttacks(sq);
     }
     return 0;
 }
 
-U64 POS::AttacksTo(int sq) const {
+U64 AttacksTo(POS *p, int sq) {
 
-    return (Pawns(WC) & BB.PawnAttacks(BC, sq)) |
-           (Pawns(BC) & BB.PawnAttacks(WC, sq)) |
-           (tp_bb[N] & BB.KnightAttacks(sq)) |
-           ((tp_bb[B] | tp_bb[Q]) & BB.BishAttacks(OccBb(), sq)) |
-           ((tp_bb[R] | tp_bb[Q]) & BB.RookAttacks(OccBb(), sq)) |
-           (tp_bb[K] & BB.KingAttacks(sq));
+    return (p->Pawns(WC) & BB.PawnAttacks(BC, sq)) |
+           (p->Pawns(BC) & BB.PawnAttacks(WC, sq)) |
+           (p->tp_bb[N] & BB.KnightAttacks(sq)) |
+           ((p->tp_bb[B] | p->tp_bb[Q]) & BB.BishAttacks(OccBb(p), sq)) |
+           ((p->tp_bb[R] | p->tp_bb[Q]) & BB.RookAttacks(OccBb(p), sq)) |
+           (p->tp_bb[K] & BB.KingAttacks(sq));
 }
 
-bool POS::Attacked(int sq, int sd) const {
+bool Attacked(POS *p, int sq, int sd) {
 
-    return (Pawns(sd) & BB.PawnAttacks(Opp(sd), sq))
-        || (Knights(sd) & BB.KnightAttacks(sq))
-        || (DiagMovers(sd) & BB.BishAttacks(OccBb(), sq))
-        || (StraightMovers(sd)) & BB.RookAttacks(OccBb(), sq)
-        || (Kings(sd) & BB.KingAttacks(sq));
+    return (p->Pawns(sd) & BB.PawnAttacks(Opp(sd), sq)) ||
+           (p->Knights(sd) & BB.KnightAttacks(sq)) ||
+           (p->DiagMovers(sd) & BB.BishAttacks(OccBb(p), sq)) ||
+           (p->StraightMovers(sd)) & BB.RookAttacks(OccBb(p), sq) ||
+           (p->Kings(sd) & BB.KingAttacks(sq));
 }
