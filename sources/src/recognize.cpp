@@ -34,7 +34,7 @@ bool cEngine::IsDraw(POS *p) {
 
         // Draw by insufficient material (bare kings or Km vs K)
 
-        if (!Illegal(p)) {
+        if (!p->Illegal()) {
             if (p->cnt[WC][P] + p->cnt[BC][P] == 0) {
                 if (p->cnt[WC][N] + p->cnt[BC][N] + p->cnt[WC][B] + p->cnt[BC][B] <= 1) return true; // KK, KmK
             }
@@ -74,7 +74,7 @@ bool cEngine::KPKdraw(POS *p, int sd) {
     if (p->side == op
     && (BB.KingAttacks(p->king_sq[op]) & BB.ShiftFwd(bbPawn, sd))
     && (bbStrongKing & BB.ShiftFwd(bbPawn, op))
-       ) if (!Illegal(p)) return true;
+       ) if (!p->Illegal()) return true;
 
     // opposition next to a pawn
 

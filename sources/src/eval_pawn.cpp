@@ -89,8 +89,8 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     if (e->two_pawns_take[WC] & SqBb(D6)) tmp += Par.values[P_BIND];
     if (e->two_pawns_take[WC] & SqBb(E6)) tmp += Par.values[P_BIND];
 
-    if (IsOnSq(p, WC, P, B3) && (e->two_pawns_take[WC] & SqBb(B5))) tmp -= Par.values[P_BADBIND];
-    if (IsOnSq(p, WC, P, G3) && (e->two_pawns_take[WC] & SqBb(G5))) tmp -= Par.values[P_BADBIND];
+    if (p->IsOnSq(WC, P, B3) && (e->two_pawns_take[WC] & SqBb(B5))) tmp -= Par.values[P_BADBIND];
+    if (p->IsOnSq(WC, P, G3) && (e->two_pawns_take[WC] & SqBb(G5))) tmp -= Par.values[P_BADBIND];
 
     Add(e, WC, tmp, 0);
 
@@ -100,8 +100,8 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     if (e->two_pawns_take[BC] & SqBb(D3)) tmp += Par.values[P_BIND];
     if (e->two_pawns_take[BC] & SqBb(E3)) tmp += Par.values[P_BIND];
 
-    if (IsOnSq(p, BC, P, B6) && (e->two_pawns_take[BC] & SqBb(B4))) tmp -= Par.values[P_BADBIND];
-    if (IsOnSq(p, BC, P, G6) && (e->two_pawns_take[BC] & SqBb(G4))) tmp -= Par.values[P_BADBIND];
+    if (p->IsOnSq(BC, P, B6) && (e->two_pawns_take[BC] & SqBb(B4))) tmp -= Par.values[P_BADBIND];
+    if (p->IsOnSq(BC, P, G6) && (e->two_pawns_take[BC] & SqBb(G4))) tmp -= Par.values[P_BADBIND];
 
     Add(e, BC, tmp, 0);
 
@@ -151,7 +151,7 @@ void cEngine::EvaluateKing(POS *p, eData *e, int sd) {
     U64 bb_king_file, bb_next_file;
     int shield = 0;
     int storm = 0;
-    int sq = KingSq(p, sd);
+    int sq = p->KingSq(sd);
 
     // Normalize king square for pawn shield evaluation,
     // to discourage shuffling the king between g1 and h1.

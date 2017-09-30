@@ -78,15 +78,15 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
     // Init king attack zone
 
     int op = Opp(sd);
-    int king_sq = KingSq(p, op);
+    int king_sq = p->KingSq(op);
     bb_zone = BB.KingAttacks(king_sq);
     bb_zone |= BB.ShiftFwd(bb_zone, op);
 
     // Init helper bitboards
 
     U64 n_checks = BB.KnightAttacks(king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
-    U64 b_checks = BB.BishAttacks(OccBb(p), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
-    U64 r_checks = BB.RookAttacks(OccBb(p), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
+    U64 b_checks = BB.BishAttacks(p->OccBb(), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
+    U64 r_checks = BB.RookAttacks(p->OccBb(), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
     U64 q_checks = r_checks & b_checks;
     U64 bb_excluded = p->Pawns(sd);
 
@@ -149,7 +149,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.BishAttacks(OccBb(p), sq);          // get control bitboard
+        bb_control = BB.BishAttacks(p->OccBb(), sq);          // get control bitboard
         center_control += BB.PopCnt(bb_control & bb_center);
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd]  |= bb_control;
@@ -157,7 +157,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
              Add(e, sd, Par.values[B_OVH]);                 // we do not attack enemy half of the board
         if (bb_control & b_checks) att += Par.values[B_CHK];// check threats
 
-        bb_attack = BB.BishAttacks(OccBb(p) ^ p->Queens(sd), sq);  // get king attack bitboard
+        bb_attack = BB.BishAttacks(p->OccBb() ^ p->Queens(sd), sq);  // get king attack bitboard
 
         if (bb_attack & bb_zone) {                          // evaluate king attacks
             wood++;
@@ -213,7 +213,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.RookAttacks(OccBb(p), sq);          // get control bitboard
+        bb_control = BB.RookAttacks(p->OccBb(), sq);          // get control bitboard
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd] |= bb_control;
 
@@ -231,7 +231,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             }
         }
 
-        bb_attack = BB.RookAttacks(OccBb(p) ^ p->StraightMovers(sd), sq);  // get king attack bitboard
+        bb_attack = BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);  // get king attack bitboard
 
         if (bb_attack & bb_zone) {                                         // evaluate king attacks
             wood++;
@@ -295,7 +295,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.QueenAttacks(OccBb(p), sq);         // get control bitboard
+        bb_control = BB.QueenAttacks(p->OccBb(), sq);         // get control bitboard
         e->all_att[sd] |= bb_control;                       // update attack map
         if (bb_control & q_checks) {                        // check threat bonus
             att += Par.values[Q_CHK];
@@ -310,8 +310,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             }
         }
 
-        bb_attack  = BB.BishAttacks(OccBb(p) ^ p->DiagMovers(sd), sq);
-        bb_attack |= BB.RookAttacks(OccBb(p) ^ p->StraightMovers(sd), sq);
+        bb_attack  = BB.BishAttacks(p->OccBb() ^ p->DiagMovers(sd), sq);
+        bb_attack |= BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);
 
         if (bb_attack & bb_zone) {                          // evaluate king attacks
             wood++;
@@ -446,13 +446,13 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
 
         // pawn can attack enemy piece
 
-        if (!(bb_stop & OccBb(p))) {
+        if (!(bb_stop & p->OccBb())) {
            if (!(bb_stop & e->p_can_take[op])) {
               if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
                   Add(e, sd, Par.values[P_THR]);
               if (bb_pawn & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
                    U64 next = BB.ShiftFwd(bb_stop, sd);
-                   if (!(next & OccBb(p))) {
+                   if (!(next & p->OccBb())) {
                        if (!(next & e->p_can_take[op])) {
                            if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
                                Add(e, sd, Par.values[P_THR]);
@@ -470,7 +470,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
             if (bb_pawn & e->p_takes[sd]) mul += Par.values[P_DEFMUL];
             if (bb_stop & e->p_takes[sd]) mul += Par.values[P_STOPMUL];
 
-            if (bb_stop & OccBb(p)) mul -= Par.values[P_BL_MUL];   // blocked passers score less
+            if (bb_stop & p->OccBb()) mul -= Par.values[P_BL_MUL];   // blocked passers score less
 
             else if ((bb_stop & e->all_att[sd])  // our control of stop square
                  && (bb_stop & ~e->all_att[op])) mul += Par.values[P_OURSTOP_MUL];
@@ -504,7 +504,7 @@ void cEngine::EvaluateUnstoppable(eData *e, POS *p) {
     // White unstoppable passers
 
     if (p->cnt[BC][N] + p->cnt[BC][B] + p->cnt[BC][R] + p->cnt[BC][Q] == 0) {
-        king_sq = KingSq(p, BC);
+        king_sq = p->KingSq(BC);
         if (p->side == BC) tempo = 1; else tempo = 0;
         bb_pieces = p->Pawns(WC);
         while (bb_pieces) {
@@ -525,7 +525,7 @@ void cEngine::EvaluateUnstoppable(eData *e, POS *p) {
     // Black unstoppable passers
 
     if (p->cnt[WC][N] + p->cnt[WC][B] + p->cnt[WC][R] + p->cnt[WC][Q] == 0) {
-        king_sq = KingSq(p, WC);
+        king_sq = p->KingSq(WC);
         if (p->side == WC) tempo = 1; else tempo = 0;
         bb_pieces = p->Pawns(BC);
         while (bb_pieces) {
@@ -604,7 +604,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
 
     while (bb_hanging) {
         sq = BB.PopFirstBit(&bb_hanging);
-        pc = TpOnSq(p, sq);
+        pc = p->TpOnSq(sq);
         sc = tp_value[pc] / 64;
         mg += 10 + sc;
         eg += 18 + sc;
@@ -614,7 +614,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
 
     while (bb_defended) {
         sq = BB.PopFirstBit(&bb_defended);
-        pc = TpOnSq(p, sq);
+        pc = p->TpOnSq(sq);
         sc = tp_value[pc] / 96;
         mg += 5 + sc;
         eg += 9 + sc;
@@ -687,8 +687,8 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
     // Init or clear attack maps
 
-    e->all_att[WC] = e->p_takes[WC] | BB.KingAttacks(KingSq(p, WC));
-    e->all_att[BC] = e->p_takes[BC] | BB.KingAttacks(KingSq(p, BC));
+    e->all_att[WC] = e->p_takes[WC] | BB.KingAttacks(p->KingSq(WC));
+    e->all_att[BC] = e->p_takes[BC] | BB.KingAttacks(p->KingSq(BC));
     e->ev_att[WC] = 0ULL;
     e->ev_att[BC] = 0ULL;
 

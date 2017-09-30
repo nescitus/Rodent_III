@@ -165,9 +165,9 @@ int StrToMove(POS *p, char *move_str) {
 
     // change move type if necessary
 
-    if (TpOnSq(p, from) == K && Abs(to - from) == 2)
+    if (p->TpOnSq(from) == K && Abs(to - from) == 2)
         type = CASTLE;
-    else if (TpOnSq(p, from) == P) {
+    else if (p->TpOnSq(from) == P) {
         if (to == p->ep_sq)
             type = EP_CAP;
         else if (Abs(to - from) == 16)

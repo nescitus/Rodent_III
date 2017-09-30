@@ -165,17 +165,6 @@ template<typename T> constexpr const T& Min(const T& x, const T& y) { return x <
 
 #define Opp(x)          ((x) ^ 1)
 
-#define InCheck(p)      Attacked(p, KingSq(p, p->side), Opp(p->side))
-#define Illegal(p)      Attacked(p, KingSq(p, Opp(p->side)), p->side)
-#define MayNull(p)      (((p)->cl_bb[(p)->side] & ~((p)->tp_bb[P] | (p)->tp_bb[K])) != 0)
-
-#define PcBb(p, x, y)   ((p)->cl_bb[x] & (p)->tp_bb[y])
-#define OccBb(p)        ((p)->cl_bb[WC] | (p)->cl_bb[BC])
-#define UnoccBb(p)      (~OccBb(p))
-#define TpOnSq(p, x)    (Tp((p)->pc[x]))
-#define KingSq(p, x)    ((p)->king_sq[x])
-#define IsOnSq(p, sd, pc, sq) ( PcBb(p, sd, pc) & SqBb(sq) )
-
 #ifndef FORCEINLINE
     #if defined(_MSC_VER)
         #define FORCEINLINE __forceinline
@@ -345,37 +334,29 @@ class POS {
 
     static void Init();
 
-    U64 Pawns(int sd) const {
-        return (cl_bb[sd] & tp_bb[P]);
-    }
+    U64 PcBb(int sd, int tp) const { return cl_bb[sd] & tp_bb[tp]; }
+    bool IsOnSq(int sd, int pc, int sq) const { return PcBb(sd, pc) & SqBb(sq); }
+    U64 OccBb()   const { return cl_bb[WC] | cl_bb[BC]; }
+    U64 UnoccBb() const { return ~OccBb(); }
+    int KingSq(int sd) const { return king_sq[sd]; }
+    int TpOnSq(int sq) const { return Tp(pc[sq]); }
 
-    U64 Knights(int sd) const {
-        return (cl_bb[sd] & tp_bb[N]);
-    }
+    U64 Pawns(int sd)   const { return cl_bb[sd] & tp_bb[P]; }
+    U64 Knights(int sd) const { return cl_bb[sd] & tp_bb[N]; }
+    U64 Bishops(int sd) const { return cl_bb[sd] & tp_bb[B]; }
+    U64 Rooks(int sd)   const { return cl_bb[sd] & tp_bb[R]; }
+    U64 Queens(int sd)  const { return cl_bb[sd] & tp_bb[Q]; }
+    U64 Kings(int sd)   const { return cl_bb[sd] & tp_bb[K]; }
 
-    U64 Bishops(int sd) const {
-        return (cl_bb[sd] & tp_bb[B]);
-    }
+    U64 StraightMovers(int sd) const { return cl_bb[sd] & (tp_bb[R] | tp_bb[Q]); }
+    U64 DiagMovers(int sd)     const { return cl_bb[sd] & (tp_bb[B] | tp_bb[Q]); }
 
-    U64 Rooks(int sd) const {
-        return (cl_bb[sd] & tp_bb[R]);
-    }
-
-    U64 Queens(int sd) const {
-        return (cl_bb[sd] & tp_bb[Q]);
-    }
-
-    U64 Kings(int sd) const {
-        return (cl_bb[sd] & tp_bb[K]);
-    }
-
-    U64 StraightMovers(int sd) const {
-        return (cl_bb[sd] & (tp_bb[R] | tp_bb[Q]));
-    }
-
-    U64 DiagMovers(int sd) const {
-        return (cl_bb[sd] & (tp_bb[B] | tp_bb[Q]));
-    }
+    U64 AttacksFrom(int sq) const;
+    U64 AttacksTo(int sq) const;
+    bool Attacked(int sq, int sd) const;
+    bool InCheck() const { return Attacked(KingSq(side), Opp(side)); }
+    bool Illegal() const { return Attacked(KingSq(Opp(side)), side); }
+	bool MayNull() const { return (cl_bb[side] & ~(tp_bb[P] | tp_bb[K])) != 0; }
 
     void DoMove(int move, UNDO *u);
     void DoNull(UNDO *u);
@@ -456,10 +437,10 @@ enum Values {
     W_MATERIAL, W_PST, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,           // weights part 1
     W_TROPISM, W_FWD, W_PASSERS, W_SHIELD, W_STORM, W_MASS, W_CHAINS, W_STRUCT,         // weights part 2
     W_LINES, W_OUTPOSTS, W_CENTER,
-	NMG0, NMG1, NMG2, NMG3, NMG4, NMG5, NMG6, NMG7, NMG8,
-	NEG0, NEG1, NEG2, NEG3, NEG4, NEG5, NEG6, NEG7, NEG8,
-	BMG0, BMG1, BMG2, BMG3, BMG4, BMG5, BMG6, BMG7, BMG8, BMG9, BMG10, BMG11, BMG12, BMG13,
-	BEG0, BEG1, BEG2, BEG3, BEG4, BEG5, BEG6, BEG7, BEG8, BEG9, BEG10, BEG11, BEG12, BEG13,
+    NMG0, NMG1, NMG2, NMG3, NMG4, NMG5, NMG6, NMG7, NMG8,
+    NEG0, NEG1, NEG2, NEG3, NEG4, NEG5, NEG6, NEG7, NEG8,
+    BMG0, BMG1, BMG2, BMG3, BMG4, BMG5, BMG6, BMG7, BMG8, BMG9, BMG10, BMG11, BMG12, BMG13,
+    BEG0, BEG1, BEG2, BEG3, BEG4, BEG5, BEG6, BEG7, BEG8, BEG9, BEG10, BEG11, BEG12, BEG13,
     RMG0, RMG1, RMG2, RMG3, RMG4, RMG5, RMG6, RMG7, RMG8, RMG9, RMG10, RMG11, RMG12, RMG13, RMG14,
     REG0, REG1, REG2, REG3, REG4, REG5, REG6, REG7, REG8, REG9, REG10, REG11, REG12, REG13, REG14,
     N_OF_VAL
@@ -486,10 +467,10 @@ const char* const paramNames[N_OF_VAL] = {
     "Material", "W_PST", "OwnAttack", "OppAttack", "OwnMobility", "OppMobility", "PiecePressure", // weights part 1
     "KingTropism", "Forwardness", "PassedPawns", "PawnShield", "PawnStorm", "W_MASS", "W_CHAINS", "PawnStructure", // weights part 2
     "Lines", "Outposts", "W_CENTER",
-	"NMG0", "NMG1", "NMG2", "NMG3", "NMG4", "NMG5", "NMG6", "NMG7", "NMG8",
-	"NEG0", "NEG1", "NEG2", "NEG3", "NEG4", "NEG5", "NEG6", "NEG7", "NEG8",
-	"BMG0", "BMG1", "BMG2", "BMG3", "BMG4", "BMG5", "BMG6", "BMG7", "BMG8", "BMG9", "BMG10", "BMG11", "BMG12", "BMG13",
-	"BEG0", "BEG1", "BEG2", "BEG3", "BEG4", "BEG5", "BEG6", "BEG7", "BEG8", "BEG9", "BEG10", "BEG11", "BEG12", "BEG13",
+    "NMG0", "NMG1", "NMG2", "NMG3", "NMG4", "NMG5", "NMG6", "NMG7", "NMG8",
+    "NEG0", "NEG1", "NEG2", "NEG3", "NEG4", "NEG5", "NEG6", "NEG7", "NEG8",
+    "BMG0", "BMG1", "BMG2", "BMG3", "BMG4", "BMG5", "BMG6", "BMG7", "BMG8", "BMG9", "BMG10", "BMG11", "BMG12", "BMG13",
+    "BEG0", "BEG1", "BEG2", "BEG3", "BEG4", "BEG5", "BEG6", "BEG7", "BEG8", "BEG9", "BEG10", "BEG11", "BEG12", "BEG13",
     "RMG0", "RMG1", "RMG2", "RMG3", "RMG4", "RMG5", "RMG6", "RMG7", "RMG8", "RMG9", "RMG10", "RMG11", "RMG12", "RMG13", "RMG14",
     "REG0", "REG1", "REG2", "REG3", "REG4", "REG5", "REG6", "REG7", "REG8", "REG9", "REG10", "REG11", "REG12", "REG13", "REG14"
 };
@@ -498,9 +479,9 @@ const char* const paramNames[N_OF_VAL] = {
 class cParam {
   public:
     int values[N_OF_VAL]; // evaluation parameters
-	int max_val[N_OF_VAL];
-	int min_val[N_OF_VAL];
-	bool tunable[N_OF_VAL];
+    int max_val[N_OF_VAL];
+    int min_val[N_OF_VAL];
+    bool tunable[N_OF_VAL];
     bool use_book;
     bool verbose_book;
     int book_filter;
@@ -549,9 +530,9 @@ class cParam {
     NOINLINE void InitMaterialTweaks();
     NOINLINE void InitTables();
     NOINLINE void DefaultWeights();
-	NOINLINE void InitialPersonalityWeights();
+    NOINLINE void InitialPersonalityWeights();
     NOINLINE void InitAsymmetric(POS *p);
-	NOINLINE void PrintValues();
+    NOINLINE void PrintValues();
     void SetSpeed(int elo_in);
     int EloToSpeed(int elo_in);
     int EloToBlur(int elo_in);
@@ -804,10 +785,10 @@ class cEngine {
 
 #ifdef USE_TUNING
 
-	double best_tune;
-	double TexelFit(POS *p, int *pv);
-	bool TuneOne(POS *p, int *pv, int par);
-	void TuneMe(POS *p, int *pv, int iterations);
+    double best_tune;
+    double TexelFit(POS *p, int *pv);
+    bool TuneOne(POS *p, int *pv, int par);
+    void TuneMe(POS *p, int *pv, int iterations);
 
 #endif
 
@@ -825,9 +806,6 @@ void PrintVersion();
 int BulletCorrection(int time);
 int Clip(int sc, int lim);
 void AllocTrans(unsigned int mbsize);
-bool Attacked(POS *p, int sq, int sd);
-U64 AttacksFrom(POS *p, int sq);
-U64 AttacksTo(POS *p, int sq);
 void BuildPv(int *dst, int *src, int move);
 void ClearTrans();
 void ClearPosition(POS *p);

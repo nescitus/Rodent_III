@@ -22,8 +22,8 @@ bool Legal(POS *p, int move) {
     int sd = p->side;
     int fsq = Fsq(move);
     int tsq = Tsq(move);
-    int ftp = TpOnSq(p, fsq);
-    int ttp = TpOnSq(p, tsq);
+    int ftp = p->TpOnSq(fsq);
+    int ttp = p->TpOnSq(tsq);
 
     if (ftp == NO_TP || Cl(p->pc[fsq]) != sd)
         return false;
@@ -37,24 +37,24 @@ bool Legal(POS *p, int move) {
                 if (fsq != E1)
                     return false;
                 if (tsq > fsq) {
-                    if ((p->c_flags & 1) && !(OccBb(p) & (U64)0x0000000000000060))
-                        if (!Attacked(p, E1, BC) && !Attacked(p, F1, BC))
+                    if ((p->c_flags & 1) && !(p->OccBb() & (U64)0x0000000000000060))
+                        if (!p->Attacked(E1, BC) && !p->Attacked(F1, BC))
                             return true;
                 } else {
-                    if ((p->c_flags & 2) && !(OccBb(p) & (U64)0x000000000000000E))
-                        if (!Attacked(p, E1, BC) && !Attacked(p, D1, BC))
+                    if ((p->c_flags & 2) && !(p->OccBb() & (U64)0x000000000000000E))
+                        if (!p->Attacked(E1, BC) && !p->Attacked(D1, BC))
                             return true;
                 }
             } else {
                 if (fsq != E8)
                     return false;
                 if (tsq > fsq) {
-                    if ((p->c_flags & 4) && !(OccBb(p) & (U64)0x6000000000000000))
-                        if (!Attacked(p, E8, WC) && !Attacked(p, F8, WC))
+                    if ((p->c_flags & 4) && !(p->OccBb() & (U64)0x6000000000000000))
+                        if (!p->Attacked(E8, WC) && !p->Attacked(F8, WC))
                             return true;
                 } else {
-                    if ((p->c_flags & 8) && !(OccBb(p) & (U64)0x0E00000000000000))
-                        if (!Attacked(p, E8, WC) && !Attacked(p, D8, WC))
+                    if ((p->c_flags & 8) && !(p->OccBb() & (U64)0x0E00000000000000))
+                        if (!p->Attacked(E8, WC) && !p->Attacked(D8, WC))
                             return true;
                 }
             }
@@ -99,5 +99,5 @@ bool Legal(POS *p, int move) {
     if (IsProm(move))
         return false;
 
-    return (AttacksFrom(p, fsq) & SqBb(tsq)) != 0;
+    return (p->AttacksFrom(fsq) & SqBb(tsq)) != 0;
 }
