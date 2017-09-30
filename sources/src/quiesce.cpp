@@ -38,9 +38,9 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     Glob.nodes++;
     //local_nodes++; unused
     Slowdown();
-    if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && mRootDepth > 1) return 0;
     *pv = 0;
-    if (IsDraw(p) && ply) return DrawScore(p);
+    if (p->IsDraw() && ply) return p->DrawScore();
     move = 0;
 
     // DETERMINE FLOOR VALUE
@@ -54,7 +54,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (TransRetrieve(p->hash_key, &move, &score, alpha, beta, 0, ply)) {
+    if (chc.TransRetrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
         if (!is_pv) return score;
     }
@@ -69,7 +69,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         return eval;
     }
 
-    //fl_check = InCheck(p); unused, get rid of warning
+    //fl_check = p->InCheck(); unused, get rid of warning
 
     // PREPARE FOR SEARCH
 
@@ -89,12 +89,12 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && root_depth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) return 0;
 
         // BETA CUTOFF
 
         if (score >= beta) {
-            TransStore(p->hash_key, move, score, LOWER, 0, ply);
+            chc.TransStore(p->mHashKey, move, score, LOWER, 0, ply);
             return score;
         }
 
@@ -117,8 +117,8 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
-    if (*pv) TransStore(p->hash_key, *pv, best, EXACT, 0, ply);
-    else     TransStore(p->hash_key,   0, best, UPPER, 0, ply);
+    if (*pv) chc.TransStore(p->mHashKey, *pv, best, EXACT, 0, ply);
+    else     chc.TransStore(p->mHashKey,   0, best, UPPER, 0, ply);
 
     return best;
 }
@@ -137,14 +137,14 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     Glob.nodes++;
     //local_nodes++; unused
     Slowdown();
-    if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && mRootDepth > 1) return 0;
     *pv = 0;
-    if (IsDraw(p) && ply) return DrawScore(p);
+    if (p->IsDraw() && ply) return p->DrawScore();
     move = 0;
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (TransRetrieve(p->hash_key, &move, &score, alpha, beta, 0, ply)) {
+    if (chc.TransRetrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
         if (!is_pv) return score;
     }
@@ -159,7 +159,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         return eval;
     }
 
-    //fl_check = InCheck(p); unused, get rid of warning
+    //fl_check = p->InCheck(); unused, get rid of warning
 
     // PREPARE FOR MAIN SEARCH
 
@@ -180,12 +180,12 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && root_depth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) return 0;
 
         // BETA CUTOFF
 
         if (score >= beta) {
-            TransStore(p->hash_key, move, score, LOWER, 0, ply);
+            chc.TransStore(p->mHashKey, move, score, LOWER, 0, ply);
             return score;
         }
 
@@ -204,12 +204,12 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     // RETURN CORRECT CHECKMATE/STALEMATE SCORE
 
     if (best == -INF)
-        return p->InCheck() ? -MATE + ply : DrawScore(p);
+        return p->InCheck() ? -MATE + ply : p->DrawScore();
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
-    if (*pv) TransStore(p->hash_key, *pv, best, EXACT, 0, ply);
-    else     TransStore(p->hash_key,   0, best, UPPER, 0, ply);
+    if (*pv) chc.TransStore(p->mHashKey, *pv, best, EXACT, 0, ply);
+    else     chc.TransStore(p->mHashKey,   0, best, UPPER, 0, ply);
 
     return best;
 }
@@ -217,7 +217,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
     int best, score, move, new_pv[MAX_PLY];
-    int op = Opp(p->side);
+    int op = Opp(p->mSide);
     MOVES m[1];
     UNDO u[1];
     eData e;
@@ -232,9 +232,9 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // EARLY EXIT
 
-    if (Glob.abort_search && root_depth > 1) return 0;
+    if (Glob.abort_search && mRootDepth > 1) return 0;
     *pv = 0;
-    if (IsDraw(p)) return DrawScore(p);
+    if (p->IsDraw()) return p->DrawScore();
 
     // SAFEGUARD AGAINST HITTIMG MAX PLY LIMIT
 
@@ -257,7 +257,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 #ifdef USE_RISKY_PARAMETER
     if ((Par.riskydepth > 0)
     && (ply >= Par.riskydepth)
-    && (p->side == Par.prog_side)
+    && (p->mSide == Par.prog_side)
     && (Abs(best) > 100) && (Abs(best) < 1000)) {
 
         int eval_adj = (int)round(
@@ -287,7 +287,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
         // DELTA PRUNING
         // Prune insufficient captures (unless opponent has just one piece left). This is done in two stages:
 
-        if (p->cnt[op][N] + p->cnt[op][B] + p->cnt[op][R] + p->cnt[op][Q] > 1) {
+        if (p->mCnt[op][N] + p->mCnt[op][B] + p->mCnt[op][R] + p->mCnt[op][Q] > 1) {
 
             // 1. Prune captures that are unlikely to raise alpha even if opponent does not recapture
 
@@ -302,7 +302,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
         if (p->Illegal()) { p->UndoMove(move, u); continue; }
         score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
         p->UndoMove(move, u);
-        if (Glob.abort_search && root_depth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) return 0;
 
         // BETA CUTOFF
 

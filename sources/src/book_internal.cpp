@@ -42,7 +42,7 @@ void sInternalBook::Init()
             n_of_records--; i--;
         }
 
-    qsort(internal_book, n_of_records, sizeof(sBookEntry), [](const void* a, const void* b) {
+    qsort(internal_book, n_of_records, sizeof(sBookEntry), [](const void *a, const void *b) {
         const U64 a64 = ((sBookEntry *)a)->hash;
         const U64 b64 = ((sBookEntry *)b)->hash;
         if (a64 > b64) return 1;
@@ -83,19 +83,19 @@ void sInternalBook::Init()
 bool sInternalBook::LineToInternal(const char *ptr, int excludedColor) {
 
     char token[512];
-    POS p[1]; UNDO u[1];
+    POS p[1];
     int move, freq;
 
-    SetPosition(p, START_POS);
+    p->SetPosition(START_POS);
 
     for (;;) {
         ptr = ParseToken(ptr, token);
 
         if (*token == '\0') break;
 
-        move = StrToMove(p, token);
+        move = p->StrToMove(token);
 
-        if (Legal(p, move)) {
+        if (p->Legal(move)) {
             // apply move frequency modifiers
             freq = 1;
             if (strchr(token, '?'))  freq = -100;
@@ -104,14 +104,14 @@ bool sInternalBook::LineToInternal(const char *ptr, int excludedColor) {
             if (strstr(token, "!!")) freq = +900;
 
             // add move to book if we accept moves of a given color
-            if (p->side != excludedColor)
-                MoveToInternal(p->hash_key, move, freq);
+            if (p->mSide != excludedColor)
+                MoveToInternal(p->mHashKey, move, freq);
 
-            p->DoMove(move, u);
+            p->DoMove(move);
         } else { return true; }
 
-        if (p->rev_moves == 0)
-            p->head = 0;
+        if (p->mRevMoves == 0)
+            p->mHead = 0;
     }
     return false;
 }
@@ -141,7 +141,7 @@ int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
 
     printf("info string probing the internal book...\n");
 
-    int choice = 0; char mv_string[6];
+    int choice = 0;
 
     const int min_freq = 20; // the higher this value, the more uniform move distribution
 
@@ -150,21 +150,20 @@ int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
     while (left < right) { // binary search for the leftmost value
         int mid = (left + right) / 2;
 
-        if (p->hash_key <= internal_book[mid].hash) right = mid;
+        if (p->mHashKey <= internal_book[mid].hash) right = mid;
         else                                        left = mid + 1;
     }
 
     int vals_acc = 0;
 
-    for (int i = left; i < n_of_records && internal_book[i].hash == p->hash_key; i++) {
-        if (Legal(p, internal_book[i].move)) {
+    for (int i = left; i < n_of_records && internal_book[i].hash == p->mHashKey; i++) {
+        if (p->Legal(internal_book[i].move)) {
 
             const int freq_with_correction = internal_book[i].freq + min_freq;
 
             // display info about book moves
             if (print_output) {
-                MoveToStr(internal_book[i].move, mv_string);
-                printf("info string %s %d\n", mv_string, freq_with_correction);
+                printf("info string %s %d\n", MoveToStr(internal_book[i].move), freq_with_correction);
             }
 
             // pick move with the best random value based on frequency

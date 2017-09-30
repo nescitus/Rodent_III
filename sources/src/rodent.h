@@ -143,6 +143,14 @@ constexpr U64 SIDE_RANDOM = ~UINT64_C(0);
 
 constexpr char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
+template<typename T> constexpr T Abs(const T& x) { return x > 0 ? x : -x; }
+template<typename T> constexpr const T& Max(const T& x, const T& y) { return x > y ? x : y; }
+template<typename T> constexpr const T& Min(const T& x, const T& y) { return x < y ? x : y; }
+
+template<typename T> constexpr T Clip(const T& sc, const T& lim) { if (sc < -lim) return -lim;
+                                                                   if (sc > lim) return lim;
+                                                                   return sc; }
+
 #define SqBb(x)         (UINT64_C(1) << (x))
 
 #define Cl(x)           ((x) & 1)
@@ -152,10 +160,6 @@ constexpr char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq
 #define File(x)         ((x) & 7)
 #define Rank(x)         ((x) >> 3)
 #define Sq(x, y)        (((y) << 3) | (x))
-
-template<typename T> constexpr T Abs(const T& x) { return x > 0 ? x : -x; }
-template<typename T> constexpr const T& Max(const T& x, const T& y) { return x > y ? x : y; }
-template<typename T> constexpr const T& Min(const T& x, const T& y) { return x < y ? x : y; }
 
 #define Fsq(x)          ((x) & 63)
 #define Tsq(x)          (((x) >> 6) & 63)
@@ -238,14 +242,14 @@ template<typename T> constexpr const T& Min(const T& x, const T& y) { return x <
 constexpr U64 bbNotA = ~FILE_A_BB; // 0xfefefefefefefefe
 constexpr U64 bbNotH = ~FILE_H_BB; // 0x7f7f7f7f7f7f7f7f
 
-#define ShiftNorth(x)   ((x)<<8)
-#define ShiftSouth(x)   ((x)>>8)
-#define ShiftWest(x)    (((x) & bbNotA)>>1)
-#define ShiftEast(x)    (((x) & bbNotH)<<1)
-#define ShiftNW(x)      (((x) & bbNotA)<<7)
-#define ShiftNE(x)      (((x) & bbNotH)<<9)
-#define ShiftSW(x)      (((x) & bbNotA)>>9)
-#define ShiftSE(x)      (((x) & bbNotH)>>7)
+constexpr U64 ShiftNorth(const U64& x) { return x << 8; }
+constexpr U64 ShiftSouth(const U64& x) { return x >> 8; }
+constexpr U64 ShiftWest(const U64& x)  { return (x & bbNotA) >> 1; }
+constexpr U64 ShiftEast(const U64& x)  { return (x & bbNotH) << 1; }
+constexpr U64 ShiftNW(const U64& x)    { return (x & bbNotA) << 7; }
+constexpr U64 ShiftNE(const U64& x)    { return (x & bbNotH) << 9; }
+constexpr U64 ShiftSW(const U64& x)    { return (x & bbNotA) >> 9; }
+constexpr U64 ShiftSE(const U64& x)    { return (x & bbNotH) >> 7; }
 
 constexpr bool MoreThanOne(const U64& bb) { return bb & (bb - 1); }
 
@@ -301,71 +305,99 @@ class cBitBoard {
 extern cBitBoard BB;
 
 struct UNDO {
-    int ttp;
-    int c_flags;
-    int ep_sq;
-    int rev_moves;
-    U64 hash_key;
-    U64 pawn_key;
+    int mTtpUd;
+    int mCFlagsUd;
+    int mEpSqUd;
+    int mRevMovesUd;
+    U64 mHashKeyUd;
+    U64 mPawnKeyUd;
 };
 
 class POS {
-    static int castle_mask[64];
-    static U64 zob_piece[12][64];
-    static U64 zob_castle[16];
-    static U64 zob_ep[8];
-  public:
-    U64 cl_bb[2];
-    U64 tp_bb[6];
-    int pc[64];
-    int king_sq[2];
-    int phase;
-    int cnt[2][6];
-    int mg_sc[2];
-    int eg_sc[2];
-    int side;
-    int c_flags;
-    int ep_sq;
-    int rev_moves;
-    int head;
-    U64 hash_key;
-    U64 pawn_key;
-    U64 rep_list[256];
+    static int msCastleMask[64];
+    static U64 msZobPiece[12][64];
+    static U64 msZobCastle[16];
+    static U64 msZobEp[8];
 
-    static void Init();
+    NOINLINE static U64 Random64();
 
-    U64 PcBb(int sd, int tp) const { return cl_bb[sd] & tp_bb[tp]; }
-    bool IsOnSq(int sd, int pc, int sq) const { return PcBb(sd, pc) & SqBb(sq); }
-    U64 OccBb()   const { return cl_bb[WC] | cl_bb[BC]; }
-    U64 UnoccBb() const { return ~OccBb(); }
-    int KingSq(int sd) const { return king_sq[sd]; }
-    int TpOnSq(int sq) const { return Tp(pc[sq]); }
-
-    U64 Pawns(int sd)   const { return cl_bb[sd] & tp_bb[P]; }
-    U64 Knights(int sd) const { return cl_bb[sd] & tp_bb[N]; }
-    U64 Bishops(int sd) const { return cl_bb[sd] & tp_bb[B]; }
-    U64 Rooks(int sd)   const { return cl_bb[sd] & tp_bb[R]; }
-    U64 Queens(int sd)  const { return cl_bb[sd] & tp_bb[Q]; }
-    U64 Kings(int sd)   const { return cl_bb[sd] & tp_bb[K]; }
-
-    U64 StraightMovers(int sd) const { return cl_bb[sd] & (tp_bb[R] | tp_bb[Q]); }
-    U64 DiagMovers(int sd)     const { return cl_bb[sd] & (tp_bb[B] | tp_bb[Q]); }
+    void ClearPosition();
+    void InitHashKey();
+    void InitPawnKey();
 
     U64 AttacksFrom(int sq) const;
     U64 AttacksTo(int sq) const;
     bool Attacked(int sq, int sd) const;
-    bool InCheck() const { return Attacked(KingSq(side), Opp(side)); }
-    bool Illegal() const { return Attacked(KingSq(Opp(side)), side); }
-	bool MayNull() const { return (cl_bb[side] & ~(tp_bb[P] | tp_bb[K])) != 0; }
 
-    void DoMove(int move, UNDO *u);
+    bool CanDiscoverCheck(U64 bb_checkers, int op, int from) const; // for GenerateSpecial()
+
+  public:
+    U64 mClBb[2];
+    U64 mTpBb[6];
+    int mPc[64];
+    int mKingSq[2];
+    int mPhase;
+    int mCnt[2][6];
+    int mMgSc[2];
+    int mEgSc[2];
+    int mSide;
+    int mCFlags;
+    int mEpSq;
+    int mRevMoves;
+    int mHead;
+    U64 mHashKey;
+    U64 mPawnKey;
+    U64 mRepList[256];
+
+    static void Init();
+
+    U64 Pawns(int sd)   const { return mClBb[sd] & mTpBb[P]; }
+    U64 Knights(int sd) const { return mClBb[sd] & mTpBb[N]; }
+    U64 Bishops(int sd) const { return mClBb[sd] & mTpBb[B]; }
+    U64 Rooks(int sd)   const { return mClBb[sd] & mTpBb[R]; }
+    U64 Queens(int sd)  const { return mClBb[sd] & mTpBb[Q]; }
+    U64 Kings(int sd)   const { return mClBb[sd] & mTpBb[K]; }
+
+    U64 StraightMovers(int sd) const { return mClBb[sd] & (mTpBb[R] | mTpBb[Q]); }
+    U64 DiagMovers(int sd)     const { return mClBb[sd] & (mTpBb[B] | mTpBb[Q]); }
+
+    U64 PcBb(int sd, int tp) const { return mClBb[sd] & mTpBb[tp]; }
+    U64 OccBb()   const { return mClBb[WC] | mClBb[BC]; }
+    U64 UnoccBb() const { return ~OccBb(); }
+
+    int KingSq(int sd) const { return mKingSq[sd]; }
+    int TpOnSq(int sq) const { return Tp(mPc[sq]); }
+
+    bool MayNull() const { return (mClBb[mSide] & ~(mTpBb[P] | mTpBb[K])) != 0; }
+    bool IsOnSq(int sd, int tp, int sq) const { return PcBb(sd, tp) & SqBb(sq); }
+
+    bool InCheck() const { return Attacked(KingSq(mSide), Opp(mSide)); }
+    bool Illegal() const { return Attacked(KingSq(Opp(mSide)), mSide); }
+
+    void DoMove(int move, UNDO *u = nullptr);
     void DoNull(UNDO *u);
     void UndoNull(UNDO *u);
     void UndoMove(int move, UNDO *u);
 
-    void InitHashKey();
-    void InitPawnKey();
+    void SetPosition(const char *epd);
 
+    bool IsDraw() const;
+    bool KPKdraw(int sd) const;
+
+    int DrawScore() const;
+    bool Legal(int move) const;
+
+    NOINLINE void PrintBoard() const;
+    NOINLINE void ParseMoves(const char *ptr);
+    void ParsePosition(const char *ptr);
+
+    int *GenerateCaptures(int *list) const;
+    int *GenerateQuiet(int *list) const;
+    int *GenerateSpecial(int *list) const;
+
+    int Swap(int from, int to);
+
+    int StrToMove(char *move_str) const;
 };
 
 struct MOVES {
@@ -386,11 +418,11 @@ struct MOVES {
 
 struct ENTRY {
     U64 key;
-    short date;
-    short move;
-    short score;
-    unsigned char flags;
-    unsigned char depth;
+    int16_t date;
+    int16_t move;
+    int16_t score;
+    uint8_t flags;
+    uint8_t depth;
 };
 
 struct eData {
@@ -437,10 +469,10 @@ enum Values {
     W_MATERIAL, W_PST, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,           // weights part 1
     W_TROPISM, W_FWD, W_PASSERS, W_SHIELD, W_STORM, W_MASS, W_CHAINS, W_STRUCT,         // weights part 2
     W_LINES, W_OUTPOSTS, W_CENTER,
-    NMG0, NMG1, NMG2, NMG3, NMG4, NMG5, NMG6, NMG7, NMG8,
-    NEG0, NEG1, NEG2, NEG3, NEG4, NEG5, NEG6, NEG7, NEG8,
-    BMG0, BMG1, BMG2, BMG3, BMG4, BMG5, BMG6, BMG7, BMG8, BMG9, BMG10, BMG11, BMG12, BMG13,
-    BEG0, BEG1, BEG2, BEG3, BEG4, BEG5, BEG6, BEG7, BEG8, BEG9, BEG10, BEG11, BEG12, BEG13,
+	NMG0, NMG1, NMG2, NMG3, NMG4, NMG5, NMG6, NMG7, NMG8,
+	NEG0, NEG1, NEG2, NEG3, NEG4, NEG5, NEG6, NEG7, NEG8,
+	BMG0, BMG1, BMG2, BMG3, BMG4, BMG5, BMG6, BMG7, BMG8, BMG9, BMG10, BMG11, BMG12, BMG13,
+	BEG0, BEG1, BEG2, BEG3, BEG4, BEG5, BEG6, BEG7, BEG8, BEG9, BEG10, BEG11, BEG12, BEG13,
     RMG0, RMG1, RMG2, RMG3, RMG4, RMG5, RMG6, RMG7, RMG8, RMG9, RMG10, RMG11, RMG12, RMG13, RMG14,
     REG0, REG1, REG2, REG3, REG4, REG5, REG6, REG7, REG8, REG9, REG10, REG11, REG12, REG13, REG14,
     N_OF_VAL
@@ -467,10 +499,10 @@ const char* const paramNames[N_OF_VAL] = {
     "Material", "W_PST", "OwnAttack", "OppAttack", "OwnMobility", "OppMobility", "PiecePressure", // weights part 1
     "KingTropism", "Forwardness", "PassedPawns", "PawnShield", "PawnStorm", "W_MASS", "W_CHAINS", "PawnStructure", // weights part 2
     "Lines", "Outposts", "W_CENTER",
-    "NMG0", "NMG1", "NMG2", "NMG3", "NMG4", "NMG5", "NMG6", "NMG7", "NMG8",
-    "NEG0", "NEG1", "NEG2", "NEG3", "NEG4", "NEG5", "NEG6", "NEG7", "NEG8",
-    "BMG0", "BMG1", "BMG2", "BMG3", "BMG4", "BMG5", "BMG6", "BMG7", "BMG8", "BMG9", "BMG10", "BMG11", "BMG12", "BMG13",
-    "BEG0", "BEG1", "BEG2", "BEG3", "BEG4", "BEG5", "BEG6", "BEG7", "BEG8", "BEG9", "BEG10", "BEG11", "BEG12", "BEG13",
+	"NMG0", "NMG1", "NMG2", "NMG3", "NMG4", "NMG5", "NMG6", "NMG7", "NMG8",
+	"NEG0", "NEG1", "NEG2", "NEG3", "NEG4", "NEG5", "NEG6", "NEG7", "NEG8",
+	"BMG0", "BMG1", "BMG2", "BMG3", "BMG4", "BMG5", "BMG6", "BMG7", "BMG8", "BMG9", "BMG10", "BMG11", "BMG12", "BMG13",
+	"BEG0", "BEG1", "BEG2", "BEG3", "BEG4", "BEG5", "BEG6", "BEG7", "BEG8", "BEG9", "BEG10", "BEG11", "BEG12", "BEG13",
     "RMG0", "RMG1", "RMG2", "RMG3", "RMG4", "RMG5", "RMG6", "RMG7", "RMG8", "RMG9", "RMG10", "RMG11", "RMG12", "RMG13", "RMG14",
     "REG0", "REG1", "REG2", "REG3", "REG4", "REG5", "REG6", "REG7", "REG8", "REG9", "REG10", "REG11", "REG12", "REG13", "REG14"
 };
@@ -479,9 +511,9 @@ const char* const paramNames[N_OF_VAL] = {
 class cParam {
   public:
     int values[N_OF_VAL]; // evaluation parameters
-    int max_val[N_OF_VAL];
-    int min_val[N_OF_VAL];
-    bool tunable[N_OF_VAL];
+	int max_val[N_OF_VAL];
+	int min_val[N_OF_VAL];
+	bool tunable[N_OF_VAL];
     bool use_book;
     bool verbose_book;
     int book_filter;
@@ -530,9 +562,9 @@ class cParam {
     NOINLINE void InitMaterialTweaks();
     NOINLINE void InitTables();
     NOINLINE void DefaultWeights();
-    NOINLINE void InitialPersonalityWeights();
+	NOINLINE void InitialPersonalityWeights();
     NOINLINE void InitAsymmetric(POS *p);
-    NOINLINE void PrintValues();
+	NOINLINE void PrintValues();
     void SetSpeed(int elo_in);
     int EloToSpeed(int elo_in);
     int EloToBlur(int elo_in);
@@ -660,7 +692,7 @@ struct sInternalBook {
     int MoveFromInternal(POS *p, bool print_output) const;
 };
 
-#define ZEROARRAY(x) memset(x, 0, sizeof(x));
+#define ZEROARRAY(x) memset(x, 0, sizeof(x))
 
 extern
 #ifdef USEGEN
@@ -674,26 +706,26 @@ constexpr int EVAL_HASH_SIZE = 512 * 512 / 4;
 constexpr int PAWN_HASH_SIZE = 512 * 512 / 4;
 
 class cEngine {
-    sEvalHashEntry EvalTT[EVAL_HASH_SIZE];
-    sPawnHashEntry PawnTT[PAWN_HASH_SIZE];
-    int history[12][64];
-    int killer[MAX_PLY][2];
-    int refutation[64][64];
+    sEvalHashEntry mEvalTT[EVAL_HASH_SIZE];
+    sPawnHashEntry mPawnTT[PAWN_HASH_SIZE];
+    int mHistory[12][64];
+    int mKiller[MAX_PLY][2];
+    int mRefutation[64][64];
     //int local_nodes;
-    const int thread_id;
-    int root_depth;
-    bool fl_root_choice;
+    const int mcThreadId;
+    int mRootDepth;
+    bool mFlRootChoice;
 
-    void InitCaptures(POS *p, MOVES *m);
+    static void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
     int NextMove(MOVES *m, int *flag);
     int NextSpecialMove(MOVES *m, int *flag);
-    int NextCapture(MOVES *m);
-    void ScoreCaptures(MOVES *m);
+    static int NextCapture(MOVES *m);
+    static void ScoreCaptures(MOVES *m);
     void ScoreQuiet(MOVES *m);
-    int SelectBest(MOVES *m);
-    int BadCapture(POS *p, int move);
-    int MvvLva(POS *p, int move);
+    static int SelectBest(MOVES *m);
+    static int BadCapture(POS *p, int move);
+    static int MvvLva(POS *p, int move);
     void ClearHist();
     void AgeHist();
     void ClearEvalHash();
@@ -709,75 +741,84 @@ class cEngine {
     int QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv);
     int QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv);
     int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
-    bool IsDraw(POS *p);
-    bool KPKdraw(POS *p, int sd);
     void DisplayPv(int score, int *pv);
     void Slowdown();
 
     int Evaluate(POS *p, eData *e);
 #ifdef USE_RISKY_PARAMETER
-    int EvalScaleByDepth(POS *p, int ply, int eval);
+    static int EvalScaleByDepth(POS *p, int ply, int eval);
 #endif
-    int EvaluateChains(POS *p, int sd);
-    void EvaluateMaterial(POS *p, eData *e, int sd);
-    void EvaluatePieces(POS *p, eData *e, int sd);
-    void EvaluateOutpost(POS *p, eData *e, int pc, int sd, int sq, int *outpost);
-    void EvaluatePawns(POS *p, eData *e, int sd);
-    void EvaluatePassers(POS *p, eData *e, int sd);
-    void EvaluateKing(POS *p, eData *e, int sd);
-    void EvaluateKingFile(POS *p, int sd, U64 bb_file, int *shield, int *storm);
-    int EvaluateFileShelter(U64 bb_own_pawns, int sd);
-    int EvaluateFileStorm(U64 bb_opp_pawns, int sd);
+    static int EvaluateChains(POS *p, int sd);
+    static void EvaluateMaterial(POS *p, eData *e, int sd);
+    static void EvaluatePieces(POS *p, eData *e, int sd);
+    static void EvaluateOutpost(POS *p, eData *e, int pc, int sd, int sq, int *outpost);
+    static void EvaluatePawns(POS *p, eData *e, int sd);
+    static void EvaluatePassers(POS *p, eData *e, int sd);
+    static void EvaluateKing(POS *p, eData *e, int sd);
+    static void EvaluateKingFile(POS *p, int sd, U64 bb_file, int *shield, int *storm);
+    static int EvaluateFileShelter(U64 bb_own_pawns, int sd);
+    static int EvaluateFileStorm(U64 bb_opp_pawns, int sd);
     void EvaluatePawnStruct(POS *p, eData *e);
-    void EvaluateUnstoppable(eData *e, POS *p);
-    void EvaluateThreats(POS *p, eData *e, int sd);
-    int ScalePawnsOnly(POS *p, int sd, int op);
-    int ScaleKBPK(POS *p, int sd, int op);
-    int ScaleKNPK(POS *p, int sd, int op);
-    int ScaleKRPKR(POS *p, int sd, int op);
-    int ScaleKQKRP(POS *p, int sd, int op);
-    void EvaluateBishopPatterns(POS *p, eData *e);
-    void EvaluateKnightPatterns(POS *p, eData *e);
-    void EvaluateCentralPatterns(POS *p, eData *e);
-    void EvaluateKingPatterns(POS *p, eData *e);
-    int Interpolate(POS *p, eData *e);
-    int GetDrawFactor(POS *p, int sd);
-    int CheckmateHelper(POS *p);
-    void Add(eData *e, int sd, int mg_val, int eg_val);
-    void Add(eData *e, int sd, int val);
-    void AddPawns(eData *e, int sd, int mg_val, int eg_val);
-    bool NotOnBishColor(POS *p, int bish_side, int sq);
-    bool DifferentBishops(POS *p);
+    static void EvaluateUnstoppable(eData *e, POS *p);
+    static void EvaluateThreats(POS *p, eData *e, int sd);
+    static int ScalePawnsOnly(POS *p, int sd, int op);
+    static int ScaleKBPK(POS *p, int sd, int op);
+    static int ScaleKNPK(POS *p, int sd, int op);
+    static int ScaleKRPKR(POS *p, int sd, int op);
+    static int ScaleKQKRP(POS *p, int sd, int op);
+    static void EvaluateBishopPatterns(POS *p, eData *e);
+    static void EvaluateKnightPatterns(POS *p, eData *e);
+    static void EvaluateCentralPatterns(POS *p, eData *e);
+    static void EvaluateKingPatterns(POS *p, eData *e);
+    static int Interpolate(POS *p, eData *e);
+    static int GetDrawFactor(POS *p, int sd);
+    static int CheckmateHelper(POS *p);
+    static void Add(eData *e, int sd, int mg_val, int eg_val);
+    static void Add(eData *e, int sd, int val);
+    static void AddPawns(eData *e, int sd, int mg_val, int eg_val);
+    static bool NotOnBishColor(POS *p, int bish_side, int sq);
+    static bool DifferentBishops(POS *p);
+    static void PvToStr(int *pv, char *pv_str);
+    static void BuildPv(int *dst, int *src, int move);
+    static void WasteTime(int milliseconds);
+    static int BulletCorrection(int time);
 
-    static const int razor_margin[];
-    static const int fut_margin[];
-    static const int selective_depth;
-    static const int snp_depth;      // max depth at which static null move pruning is applied
-    static const int razor_depth;    // max depth at which razoring is applied
-    static const int fut_depth;      // max depth at which futility pruning is applied
-    static int lmr_size[2][MAX_PLY][MAX_MOVES];
+    static const int mscRazorMargin[];
+    static const int mscFutMargin[];
+    static const int mscSelectiveDepth;
+    static const int mscSnpDepth;      // max depth at which static null move pruning is applied
+    static const int mscRazorDepth;    // max depth at which razoring is applied
+    static const int mscFutDepth;      // max depth at which futility pruning is applied
+    static int msLmrSize[2][MAX_PLY][MAX_MOVES];
 
   public:
 
+    static int msMoveTime;
+    static int msMoveNodes;
+    static int msSearchDepth;
+    static int msStartTime;
+
     static void InitSearch();
 
-    int pv_eng[MAX_PLY];
-    int dp_completed;
+    int mPvEng[MAX_PLY];
+    int mDpCompleted;
 
     cEngine(const cEngine&) = delete;
     cEngine& operator=(const cEngine&) = delete;
-    cEngine(int th = 0): thread_id(th) { ClearAll(); };
+    cEngine(int th = 0): mcThreadId(th) { ClearAll(); };
 
 #ifdef USE_THREADS
-    std::thread worker;
+    std::thread mWorker;
     void StartThinkThread(POS *p) {
-        dp_completed = 0;
-        worker = std::thread([&] { Think(p); });
+        mDpCompleted = 0;
+        mWorker = std::thread([&] { Think(p); });
     }
 
     ~cEngine() { WaitThinkThread(); };  // should fix crash on windows on console closing
-    void WaitThinkThread() { if (worker.joinable()) worker.join(); }
+    void WaitThinkThread() { if (mWorker.joinable()) mWorker.join(); }
 #endif
+
+    static void SetMoveTime(int base, int inc, int movestogo);
 
     void Bench(int depth);
     void ClearAll();
@@ -785,10 +826,10 @@ class cEngine {
 
 #ifdef USE_TUNING
 
-    double best_tune;
-    double TexelFit(POS *p, int *pv);
-    bool TuneOne(POS *p, int *pv, int par);
-    void TuneMe(POS *p, int *pv, int iterations);
+	double best_tune;
+	double TexelFit(POS *p, int *pv);
+	bool TuneOne(POS *p, int *pv, int par);
+	void TuneMe(POS *p, int *pv, int iterations);
 
 #endif
 
@@ -803,60 +844,28 @@ class cEngine {
 
 void PrintVersion();
 
-int BulletCorrection(int time);
-int Clip(int sc, int lim);
-void AllocTrans(unsigned int mbsize);
-void BuildPv(int *dst, int *src, int move);
-void ClearTrans();
-void ClearPosition(POS *p);
 void DisplayCurrmove(int move, int tried);
-int DrawScore(POS *p);
 void ExtractMove(int *pv);
-int *GenerateCaptures(POS *p, int *list);
-int *GenerateQuiet(POS *p, int *list);
-int *GenerateSpecial(POS *p, int *list);
-bool CanDiscoverCheck(POS *p, U64 bb_checkers, int op, int from); // for GenerateSpecial()
 int GetMS();
 U64 GetNps(int elapsed);
 bool InputAvailable();
-bool Legal(POS *p, int move);
+char *MoveToStr(int move); // returns internal static string. not thread safe!!!
 void MoveToStr(int move, char *move_str);
 void ParseGo(POS *p, const char *ptr);
-void ParseMoves(POS *p, const char *ptr);
-void ParsePosition(POS *p, const char *ptr);
 void ParseSetoption(const char *);
 const char *ParseToken(const char *, char *);
-void PrintBoard(POS *p);
 void PrintMove(int move);
 void PrintSingleOption(int ind);
 void PrintUciOptions();
-void PvToStr(int *, char *);
-U64 Random64();
 void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
-void SetPosition(POS *p, const char *epd);
-void SetMoveTime(int base, int inc, int movestogo);
 void SetPieceValue(int pc, int val, int slot);
-int StrToMove(POS *p, char *move_str);
-int Swap(POS *p, int from, int to);
-bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
-void TransRetrieveMove(U64 key, int *move);
-void TransStore(U64 key, int move, int score, int flags, int depth, int ply);
 void UciLoop();
-void WasteTime(int miliseconds);
 void PrintBb(U64 bbTest);
 int random30bit(int n);
 
 extern const int tp_value[7];
 extern const int ph_value[7];
-extern int move_time;
-extern int move_nodes;
-extern int search_depth;
-extern int start_time;
-
-extern unsigned int tt_size;
-extern unsigned int tt_mask;
-extern int tt_date;
 
 #define MAKESTRHLP(x) #x
 #define MAKESTR(x) MAKESTRHLP(x)
@@ -905,6 +914,9 @@ extern int tt_date;
 #else
     #define printf_debug(...) {}
 #endif
+
+#include "chessheapclass.h"
+extern ChessHeapClass chc;
 
 // TODO: move from thread by depth, or if equal, by localnodes at the time of pv change
 // TODO: perhaps don't search moves that has been searched by another thread to greater depth

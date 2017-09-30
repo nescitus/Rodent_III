@@ -17,23 +17,31 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
+U64 POS::Random64() {
+
+    static U64 next = 1;
+
+    next = next * 1103515245 + 12345;
+    return next;
+}
+
 void POS::Init() { // static init function
 
     for (int sq = 0; sq < 64; sq++)
-        castle_mask[sq] = 15;
+        msCastleMask[sq] = W_KS | W_QS | B_KS | B_QS;
 
-    castle_mask[A1] = 13;
-    castle_mask[E1] = 12;
-    castle_mask[H1] = 14;
-    castle_mask[A8] = 7;
-    castle_mask[E8] = 3;
-    castle_mask[H8] = 11;
+    msCastleMask[A1] = W_KS |        B_KS | B_QS;
+    msCastleMask[E1] =               B_KS | B_QS;
+    msCastleMask[H1] =        W_QS | B_KS | B_QS;
+    msCastleMask[A8] = W_KS | W_QS | B_KS       ;
+    msCastleMask[E8] = W_KS | W_QS              ;
+    msCastleMask[H8] = W_KS | W_QS        | B_QS;
 
     for (int i = 0; i < 12; i++)
         for (int j = 0; j < 64; j++)
-            zob_piece[i][j] = Random64();
+            msZobPiece[i][j] = Random64();
     for (int i = 0; i < 16; i++)
-        zob_castle[i] = Random64();
+        msZobCastle[i] = Random64();
     for (int i = 0; i < 8; i++)
-        zob_ep[i] = Random64();
+        msZobEp[i] = Random64();
 }

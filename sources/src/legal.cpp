@@ -17,18 +17,18 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-bool Legal(POS *p, int move) {
+bool POS::Legal(int move) const {
 
-    int sd = p->side;
+    int sd = mSide;
     int fsq = Fsq(move);
     int tsq = Tsq(move);
-    int ftp = p->TpOnSq(fsq);
-    int ttp = p->TpOnSq(tsq);
+    int ftp = TpOnSq(fsq);
+    int ttp = TpOnSq(tsq);
 
-    if (ftp == NO_TP || Cl(p->pc[fsq]) != sd)
+    if ((ftp == NO_TP || Cl(mPc[fsq]) != sd) ||
+        (ttp != NO_TP && Cl(mPc[tsq]) == sd))
         return false;
-    if (ttp != NO_TP && Cl(p->pc[tsq]) == sd)
-        return false;
+
     switch (MoveType(move)) {
         case NORMAL:
             break;
@@ -37,36 +37,36 @@ bool Legal(POS *p, int move) {
                 if (fsq != E1)
                     return false;
                 if (tsq > fsq) {
-                    if ((p->c_flags & 1) && !(p->OccBb() & (U64)0x0000000000000060))
-                        if (!p->Attacked(E1, BC) && !p->Attacked(F1, BC))
+                    if ((mCFlags & W_KS) && !(OccBb() & UINT64_C(0x0000000000000060)))
+                        if (!Attacked(E1, BC) && !Attacked(F1, BC))
                             return true;
                 } else {
-                    if ((p->c_flags & 2) && !(p->OccBb() & (U64)0x000000000000000E))
-                        if (!p->Attacked(E1, BC) && !p->Attacked(D1, BC))
+                    if ((mCFlags & W_QS) && !(OccBb() & UINT64_C(0x000000000000000E)))
+                        if (!Attacked(E1, BC) && !Attacked(D1, BC))
                             return true;
                 }
             } else {
                 if (fsq != E8)
                     return false;
                 if (tsq > fsq) {
-                    if ((p->c_flags & 4) && !(p->OccBb() & (U64)0x6000000000000000))
-                        if (!p->Attacked(E8, WC) && !p->Attacked(F8, WC))
+                    if ((mCFlags & B_KS) && !(OccBb() & UINT64_C(0x6000000000000000)))
+                        if (!Attacked(E8, WC) && !Attacked(F8, WC))
                             return true;
                 } else {
-                    if ((p->c_flags & 8) && !(p->OccBb() & (U64)0x0E00000000000000))
-                        if (!p->Attacked(E8, WC) && !p->Attacked(D8, WC))
+                    if ((mCFlags & B_QS) && !(OccBb() & UINT64_C(0x0E00000000000000)))
+                        if (!Attacked(E8, WC) && !Attacked(D8, WC))
                             return true;
                 }
             }
             return false;
         case EP_CAP:
-            if (ftp == P && tsq == p->ep_sq)
+            if (ftp == P && tsq == mEpSq)
                 return true;
             return false;
         case EP_SET:
-            if (ftp == P && ttp == NO_TP && p->pc[tsq ^ 8] == NO_PC)
+            if (ftp == P && ttp == NO_TP && mPc[tsq ^ 8] == NO_PC)
                 if ((tsq > fsq && sd == WC) ||
-                        (tsq < fsq && sd == BC))
+                    (tsq < fsq && sd == BC))
                     return true;
             return false;
     }
@@ -79,7 +79,7 @@ bool Legal(POS *p, int move) {
                 if (ttp == NO_TP)
                     return true;
             if ((tsq - fsq == 7 && File(fsq) != FILE_A) ||
-                    (tsq - fsq == 9 && File(fsq) != FILE_H))
+                (tsq - fsq == 9 && File(fsq) != FILE_H))
                 if (ttp != NO_TP)
                     return true;
         } else {
@@ -89,7 +89,7 @@ bool Legal(POS *p, int move) {
                 if (ttp == NO_TP)
                     return true;
             if ((tsq - fsq == -9 && File(fsq) != FILE_A) ||
-                    (tsq - fsq == -7 && File(fsq) != FILE_H))
+                (tsq - fsq == -7 && File(fsq) != FILE_H))
                 if (ttp != NO_TP)
                     return true;
         }
@@ -99,5 +99,5 @@ bool Legal(POS *p, int move) {
     if (IsProm(move))
         return false;
 
-    return (p->AttacksFrom(fsq) & SqBb(tsq)) != 0;
+    return (AttacksFrom(fsq) & SqBb(tsq)) != 0;
 }

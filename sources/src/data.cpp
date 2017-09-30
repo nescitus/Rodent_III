@@ -17,20 +17,17 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-int max_depth_completed;
-int POS::castle_mask[64];
+//int max_depth_completed;
+int POS::msCastleMask[64];
 
 const int tp_value[7] = { 100, 325, 325, 500, 1000,  0,   0 };
 const int ph_value[7] = {   0,   1,   1,   2,    4,  0,   0 };
 
-U64 POS::zob_piece[12][64];
-U64 POS::zob_castle[16];
-U64 POS::zob_ep[8];
-int move_time;
-int move_nodes;
-int search_depth;
-int start_time;
-ENTRY *tt;
-unsigned int tt_size;
-unsigned int tt_mask;
-int tt_date;
+U64 POS::msZobPiece[12][64];
+U64 POS::msZobCastle[16];
+U64 POS::msZobEp[8];
+int cEngine::msMoveTime;
+int cEngine::msMoveNodes;
+int cEngine::msSearchDepth;
+int cEngine::msStartTime;
+//ENTRY *tt;

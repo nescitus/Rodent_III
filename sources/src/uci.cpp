@@ -59,8 +59,8 @@ void UciLoop() {
 
     setbuf(stdin, NULL);
     setbuf(stdout, NULL);
-    SetPosition(p, START_POS);
-    AllocTrans(16);
+    p->SetPosition(START_POS);
+    chc.AllocTrans(16);
     for (;;) {
         ReadLine(command, sizeof(command));
         ptr = ParseToken(command, token);
@@ -75,9 +75,9 @@ void UciLoop() {
             PrintUciOptions();
             printf("uciok\n");
         } else if (strcmp(token, "ucinewgame") == 0) {
-            ClearTrans();
+            chc.ClearTrans();
             Glob.ClearData();
-            SetPosition(p, START_POS);
+            p->SetPosition(START_POS);
             srand(GetMS());
         } else if (strcmp(token, "isready") == 0)    {
             printf("readyok\n");
@@ -86,24 +86,24 @@ void UciLoop() {
         } else if (strcmp(token, "so") == 0)         {
             ParseSetoption(ptr);
         } else if (strcmp(token, "position") == 0)   {
-            ParsePosition(p, ptr);
+            p->ParsePosition(ptr);
         } else if (strcmp(token, "go") == 0)         {
             ParseGo(p, ptr);
         } else if (strcmp(token, "print") == 0)      {
-            PrintBoard(p);
+            p->PrintBoard();
         } else if (strcmp(token, "step") == 0)       {
-            ParseMoves(p, ptr);
+            p->ParseMoves(ptr);
         } else if (strcmp(token, "stepp") == 0)      {
-            ParseMoves(p, ptr);
-            PrintBoard(p);
+            p->ParseMoves(ptr);
+            p->PrintBoard();
 #ifdef USE_TUNING
         } else if (strcmp(token, "tune") == 0)       {
             Glob.is_tuning = true;
 #ifndef USE_THREADS
             printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));
 #else
-           // printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().pv_eng));
-			Engines.front().TuneMe(p, Engines.front().pv_eng, 2000);
+           // printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().mPvEng));
+			Engines.front().TuneMe(p, Engines.front().mPvEng, 2000);
 
 #endif
             Glob.is_tuning = false;
@@ -121,10 +121,9 @@ void UciLoop() {
     }
 }
 
-void ParseMoves(POS *p, const char *ptr) {
+void POS::ParseMoves(const char *ptr) {
 
     char token[180];
-    UNDO u[1];
 
     for (;;) {
 
@@ -136,20 +135,20 @@ void ParseMoves(POS *p, const char *ptr) {
 
         if (*token == '\0') break;
 
-        const int move = StrToMove(p, token);
-        if (Legal(p, move)) {
-            p->DoMove(move, u);
+        const int move = StrToMove(token);
+        if (Legal(move)) {
+            DoMove(move);
             Glob.moves_from_start++;
         }
         else printf("info string illegal move\n");
 
         // We won't be taking back moves beyond this point:
 
-        if (p->rev_moves == 0) p->head = 0;
+        if (mRevMoves == 0) mHead = 0;
     }
 }
 
-void ParsePosition(POS *p, const char *ptr) {
+void POS::ParsePosition(const char *ptr) {
 
     char token[80], fen[80];
 
@@ -163,16 +162,16 @@ void ParsePosition(POS *p, const char *ptr) {
             strcat(fen, token);
             strcat(fen, " ");
         }
-        SetPosition(p, fen);
+        SetPosition(fen);
     } else {
         ptr = ParseToken(ptr, token);
-        SetPosition(p, START_POS);
+        SetPosition(START_POS);
     }
     if (strcmp(token, "moves") == 0)
-        ParseMoves(p, ptr);
+        ParseMoves(ptr);
 }
 
-int BulletCorrection(int time) {
+int cEngine::BulletCorrection(int time) {
 
     if (time < 200)       return (time * 23) / 32;
     else if (time <  400) return (time * 26) / 32;
@@ -192,52 +191,52 @@ void ExtractMove(int *pv) {
         printf("bestmove %s\n", bestmove_str);
 }
 
-void SetMoveTime(int base, int inc, int movestogo) {
+void cEngine::SetMoveTime(int base, int inc, int movestogo) {
 
     if (base >= 0) {
         if (movestogo == 1) base -= Min(1000, base / 10);
-        move_time = (base + inc * (movestogo - 1)) / movestogo;
+        msMoveTime = (base + inc * (movestogo - 1)) / movestogo;
 
         // make a percentage correction to playing speed (unless too risky)
 
-        if (2 * move_time > base) {
-            move_time *= Par.time_percentage;
-            move_time /= 100;
+        if (2 * msMoveTime > base) {
+            msMoveTime *= Par.time_percentage;
+            msMoveTime /= 100;
         }
 
         // ensure that our limit does not exceed total time available
 
-        if (move_time > base) move_time = base;
+        if (msMoveTime > base) msMoveTime = base;
 
         // safeguard against a lag
 
-        move_time -= 10;
+        msMoveTime -= 10;
 
         // ensure that we have non-negative time
 
-        if (move_time < 0) move_time = 0;
+        if (msMoveTime < 0) msMoveTime = 0;
 
         // assign less time per move on extremely short time controls
 
-        move_time = BulletCorrection(move_time);
+        msMoveTime = BulletCorrection(msMoveTime);
     }
 }
 
 void ParseGo(POS *p, const char *ptr) {
 
-    char token[80], bestmove_str[6];
-    int wtime, btime, winc, binc, movestogo; bool strict_time;
+    char token[80];
 
-    move_time = -1;
-    move_nodes = 0;
+    int wtime = -1, btime = -1;
+    int winc  =  0, binc  =  0;
+    int movestogo = 40;
+    bool strict_time = false;
+
     Glob.pondering = false;
-    wtime = -1;
-    btime = -1;
-    winc = 0;
-    binc = 0;
-    movestogo = 40;
-    strict_time = false;
-    search_depth = 64;
+
+    cEngine::msMoveTime    = -1;
+    cEngine::msMoveNodes   =  0;
+    cEngine::msSearchDepth = 64;
+
     Par.shut_up = false;
 
     for (;;) {
@@ -248,16 +247,16 @@ void ParseGo(POS *p, const char *ptr) {
             Glob.pondering = true;
         } else if (strcmp(token, "depth") == 0)     {
             ptr = ParseToken(ptr, token);
-            search_depth = atoi(token);
+            cEngine::msSearchDepth = atoi(token);
             strict_time = true;
         } else if (strcmp(token, "movetime") == 0)  {
             ptr = ParseToken(ptr, token);
-            move_time = atoi(token);
+            cEngine::msMoveTime = atoi(token);
             strict_time = true;
         } else if (strcmp(token, "nodes") == 0)     {
             ptr = ParseToken(ptr, token);
-            move_nodes = atoi(token);
-            move_time = 99999999;
+            cEngine::msMoveNodes = atoi(token);
+            cEngine::msMoveTime = 99999999;
             strict_time = true;
         } else if (strcmp(token, "wtime") == 0)     {
             ptr = ParseToken(ptr, token);
@@ -280,15 +279,15 @@ void ParseGo(POS *p, const char *ptr) {
     // set move time
 
     if (!strict_time) {
-        int base = p->side == WC ? wtime : btime;
-        int inc = p->side == WC ? winc : binc;
-        SetMoveTime(base, inc, movestogo);
+        int base = p->mSide == WC ? wtime : btime;
+        int inc  = p->mSide == WC ? winc  : binc;
+        cEngine::SetMoveTime(base, inc, movestogo);
     }
 
     // set global variables
 
-    start_time = GetMS();
-    tt_date = (tt_date + 1) & 255;
+    cEngine::msStartTime = GetMS();
+    chc.tt_date = (chc.tt_date + 1) & 255;
     Glob.nodes = 0;
     Glob.abort_search = false;
     Glob.depth_reached = 0;
@@ -307,8 +306,7 @@ void ParseGo(POS *p, const char *ptr) {
         if (!pvb) pvb = InternalBook.MoveFromInternal(p, Par.verbose_book);
 
         if (pvb) {
-            MoveToStr(pvb, bestmove_str);
-            printf("bestmove %s\n", bestmove_str);
+            printf("bestmove %s\n", MoveToStr(pvb));
             return;
         }
     }
@@ -316,13 +314,13 @@ void ParseGo(POS *p, const char *ptr) {
     // Set engine-dependent variables and search using the designated number of threads
 
 #ifndef USE_THREADS
-    EngineSingle.dp_completed = 0;
+    EngineSingle.mDpCompleted = 0;
     EngineSingle.Think(p);
-    ExtractMove(EngineSingle.pv_eng);
+    ExtractMove(EngineSingle.mPvEng);
 #else
     Glob.goodbye = false;
 
-    for (auto& engine: Engines) // dp_completed cleared in StartThinkThread();
+    for (auto& engine: Engines) // mDpCompleted cleared in StartThinkThread();
         engine.StartThinkThread(p);
 
     std::thread timer([] {
@@ -347,9 +345,9 @@ void ParseGo(POS *p, const char *ptr) {
     int *best_pv, best_depth = -1;
 
     for (auto& engine: Engines)
-        if (best_depth < engine.dp_completed) {
-            best_depth = engine.dp_completed;
-            best_pv = engine.pv_eng;
+        if (best_depth < engine.mDpCompleted) {
+            best_depth = engine.mDpCompleted;
+            best_pv = engine.mPvEng;
         }
 
     ExtractMove(best_pv);
@@ -382,23 +380,23 @@ void cEngine::Bench(int depth) {
     }; // test positions taken from DiscoCheck by Lucas Braesch
 
     if (depth == 0) depth = 8; // so that you can call bench without parameters
-    ClearTrans();
+    chc.ClearTrans();
     ClearAll();
-    dp_completed = 0; // maybe move to ClearAll()?
+    mDpCompleted = 0; // maybe move to ClearAll()?
     Par.shut_up = true;
 
     printf("Bench test started (depth %d): \n", depth);
 
     Glob.nodes = 0;
     Glob.abort_search = false;
-    start_time = GetMS();
-    search_depth = depth;
+    msStartTime = GetMS();
+    msSearchDepth = depth;
 
     // search each position to desired depth
 
     for (int i = 0; test[i]; ++i) {
         printf("%s\n", test[i]);
-        SetPosition(p, test[i]);
+        p->SetPosition(test[i]);
         Par.InitAsymmetric(p);
         Glob.depth_reached = 0;
         Iterate(p, pv);
@@ -406,21 +404,22 @@ void cEngine::Bench(int depth) {
 
     // calculate and print statistics
 
-    int end_time = GetMS() - start_time;
+    int end_time = GetMS() - msStartTime;
     unsigned int nps = (unsigned int)((Glob.nodes * 1000) / (end_time + 1));
 
     printf("%" PRIu64 " nodes searched in %d, speed %u nps (Score: %.3f)\n", (U64)Glob.nodes, end_time, nps, (float)nps / 430914.0);
 }
 
-void PrintBoard(POS *p) {
+void POS::PrintBoard() const {
 
-    const char *piece_name[] = { "P ", "p ", "N ", "n ", "B ", "b ", "R ", "r ", "Q ", "q ", "K ", "k ", ". " };
+    static const char piece_name[] = {'P', 'p', 'N', 'n', 'B', 'b', 'R', 'r', 'Q', 'q', 'K', 'k', '.' };
 
-    printf("--------------------------------------------\n");
+    printf("     --------------------------\n     |   ");
     for (int sq = 0; sq < 64; sq++) {
-        printf("%s", piece_name[p->pc[sq ^ (BC * 56)]]);
-        if ((sq + 1) % 8 == 0) printf(" %d\n", 9 - ((sq + 1) / 8));
+        printf("%c ", piece_name[mPc[sq ^ (BC * 56)]]);
+        if ((sq + 1) % 8 == 0) printf(" %d   |\n     |   ", 9 - ((sq + 1) / 8));
     }
 
-    printf("\na b c d e f g h\n%s\n--------------------------------------------\n", p->side == WC ? "(w)" : "(b)");
+    printf("                     |\n     |   a b c d e f g h   (%c)|\n     --------------------------\n",
+                                                                                            mSide == WC ? 'w' : 'b');
 }

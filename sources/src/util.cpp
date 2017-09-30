@@ -65,13 +65,6 @@ bool InputAvailable() {
 #endif
 }
 
-int Clip(int sc, int lim) {
-
-    if (sc < -lim) return -lim;
-    if (sc > lim) return lim;
-    return sc;
-}
-
 int GetMS() {
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -89,30 +82,22 @@ int random30bit(int n) {
     return ((rand() << 15) ^ rand()) % n;
 }
 
-U64 Random64() {
-
-    static U64 next = 1;
-
-    next = next * 1103515245 + 12345;
-    return next;
-}
-
 void POS::InitHashKey() {
 
     U64 key = 0;
 
     for (int i = 0; i < 64; i++)
-        if (pc[i] != NO_PC)
-            key ^= zob_piece[pc[i]][i];
+        if (mPc[i] != NO_PC)
+            key ^= msZobPiece[mPc[i]][i];
 
-    key ^= zob_castle[c_flags];
-    if (ep_sq != NO_SQ)
-        key ^= zob_ep[File(ep_sq)];
+    key ^= msZobCastle[mCFlags];
+    if (mEpSq != NO_SQ)
+        key ^= msZobEp[File(mEpSq)];
 
-    if (side == BC)
+    if (mSide == BC)
         key ^= SIDE_RANDOM;
 
-    hash_key = key;
+    mHashKey = key;
 }
 
 void POS::InitPawnKey() {
@@ -120,11 +105,11 @@ void POS::InitPawnKey() {
     U64 key = 0;
 
     for (int i = 0; i < 64; i++) {
-        if ((tp_bb[P] & SqBb(i)) || (tp_bb[K] & SqBb(i)))
-            key ^= zob_piece[pc[i]][i];
+        if ((mTpBb[P] & SqBb(i)) || (mTpBb[K] & SqBb(i)))
+            key ^= msZobPiece[mPc[i]][i];
     }
 
-    pawn_key = key;
+    mPawnKey = key;
 }
 
 void PrintMove(int move) {
@@ -132,6 +117,14 @@ void PrintMove(int move) {
     char moveString[6];
     MoveToStr(move, moveString);
     printf("%s", moveString);
+}
+
+// returns internal static string. not thread safe!!!
+char *MoveToStr(int move) {
+
+    static char internalstring[6];
+    MoveToStr(move, internalstring);
+    return internalstring;
 }
 
 void MoveToStr(int move, char *move_str) {
@@ -157,7 +150,7 @@ void MoveToStr(int move, char *move_str) {
     }
 }
 
-int StrToMove(POS *p, char *move_str) {
+int POS::StrToMove(char *move_str) const {
 
     int from = Sq(move_str[0] - 'a', move_str[1] - '1');
     int to   = Sq(move_str[2] - 'a', move_str[3] - '1');
@@ -165,10 +158,10 @@ int StrToMove(POS *p, char *move_str) {
 
     // change move type if necessary
 
-    if (p->TpOnSq(from) == K && Abs(to - from) == 2)
+    if (TpOnSq(from) == K && Abs(to - from) == 2)
         type = CASTLE;
-    else if (p->TpOnSq(from) == P) {
-        if (to == p->ep_sq)
+    else if (TpOnSq(from) == P) {
+        if (to == mEpSq)
             type = EP_CAP;
         else if (Abs(to - from) == 16)
             type = EP_SET;
@@ -197,7 +190,7 @@ int StrToMove(POS *p, char *move_str) {
     return (type << 12) | (to << 6) | from;
 }
 
-void PvToStr(int *pv, char *pv_str) {
+void cEngine::PvToStr(int *pv, char *pv_str) {
 
     int *movep;
     char move_str[6];
@@ -210,19 +203,19 @@ void PvToStr(int *pv, char *pv_str) {
     }
 }
 
-void BuildPv(int *dst, int *src, int move) {
+void cEngine::BuildPv(int *dst, int *src, int move) {
 
     *dst++ = move;
     while ((*dst++ = *src++))
         ;
 }
 
-void WasteTime(int miliseconds) {
+void cEngine::WasteTime(int milliseconds) {
 
 #if defined(_WIN32) || defined(_WIN64)
-    Sleep(miliseconds);
+    Sleep(milliseconds);
 #else
-    usleep(miliseconds * 1000);
+    usleep(milliseconds * 1000);
 #endif
 }
 

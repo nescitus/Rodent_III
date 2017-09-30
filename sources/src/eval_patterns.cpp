@@ -23,25 +23,25 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
 
         // white bishop trapped
 
-        if (p->IsOnSq( WC, B, A6) && p->IsOnSq( BC, P, B5)) Add(e, WC, Par.values[B_TRAP_A3]);
-        if (p->IsOnSq( WC, B, A7) && p->IsOnSq( BC, P, B6)) Add(e, WC, Par.values[B_TRAP_A2]);
-        if (p->IsOnSq( WC, B, B8) && p->IsOnSq( BC, P, C7)) Add(e, WC, Par.values[B_TRAP_A2]);
-        if (p->IsOnSq( WC, B, H6) && p->IsOnSq( BC, P, G5)) Add(e, WC, Par.values[B_TRAP_A3]);
-        if (p->IsOnSq( WC, B, H7) && p->IsOnSq( BC, P, G6)) Add(e, WC, Par.values[B_TRAP_A2]);
-        if (p->IsOnSq( WC, B, G8) && p->IsOnSq( BC, P, F7)) Add(e, WC, Par.values[B_TRAP_A2]);
+        if (p->IsOnSq(WC, B, A6) && p->IsOnSq(BC, P, B5)) Add(e, WC, Par.values[B_TRAP_A3]);
+        if (p->IsOnSq(WC, B, A7) && p->IsOnSq(BC, P, B6)) Add(e, WC, Par.values[B_TRAP_A2]);
+        if (p->IsOnSq(WC, B, B8) && p->IsOnSq(BC, P, C7)) Add(e, WC, Par.values[B_TRAP_A2]);
+        if (p->IsOnSq(WC, B, H6) && p->IsOnSq(BC, P, G5)) Add(e, WC, Par.values[B_TRAP_A3]);
+        if (p->IsOnSq(WC, B, H7) && p->IsOnSq(BC, P, G6)) Add(e, WC, Par.values[B_TRAP_A2]);
+        if (p->IsOnSq(WC, B, G8) && p->IsOnSq(BC, P, F7)) Add(e, WC, Par.values[B_TRAP_A2]);
 
         // white bishop blocked on its initial square by own pawn
         // or returning to protect castled king
 
-        if (p->IsOnSq( WC, B, C1)) {
-            if (p->IsOnSq( WC, P, D2) && (SqBb(D3) & p->OccBb()))
+        if (p->IsOnSq(WC, B, C1)) {
+            if (p->IsOnSq(WC, P, D2) && (SqBb(D3) & p->OccBb()))
                 Add(e, WC, Par.values[B_BLOCK], 0);
-            if (p->Kings(WC) & (SqBb(B1) | SqBb(A1) | SqBb(A2) ))
+            if (p->Kings(WC) & (SqBb(B1) | SqBb(A1) | SqBb(A2)))
                 Add(e, WC, Par.values[B_RETURN], 0);
         }
 
-        if (p->IsOnSq( WC, B, F1)) {
-            if ( p->IsOnSq( WC, P, E2) && (SqBb(E3) & p->OccBb()))
+        if (p->IsOnSq(WC, B, F1)) {
+            if (p->IsOnSq(WC, P, E2) && (SqBb(E3) & p->OccBb()))
             Add(e, WC, Par.values[B_BLOCK], 0);
             if (p->Kings(WC) & (SqBb(G1) | SqBb(H1) | SqBb(H2)))
                 Add(e, WC, Par.values[B_RETURN], 0);
@@ -49,17 +49,17 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
 
         // white bishop fianchettoed
 
-        if (p->IsOnSq( WC, B, B2)) {
-            if (p->IsOnSq( WC, P, C3)) Add(e, WC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
-            if (p->IsOnSq( WC, P, B3) && (p->IsOnSq( WC, P, A2) || p->IsOnSq( WC, P, C2))) Add(e, WC, Par.values[B_FIANCH]);
-            if (p->IsOnSq( BC, P, D4) && (p->IsOnSq( BC, P, E5) || p->IsOnSq( BC, P, C5))) Add(e, WC, Par.values[B_BADF]);
+        if (p->IsOnSq(WC, B, B2)) {
+            if (p->IsOnSq(WC, P, C3)) Add(e, WC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
+            if (p->IsOnSq(WC, P, B3) && (p->IsOnSq(WC, P, A2) || p->IsOnSq(WC, P, C2))) Add(e, WC, Par.values[B_FIANCH]);
+            if (p->IsOnSq(BC, P, D4) && (p->IsOnSq(BC, P, E5) || p->IsOnSq(BC, P, C5))) Add(e, WC, Par.values[B_BADF]);
             if (p->Kings(WC) & Mask.qs_castle[WC]) Add(e, WC, Par.values[B_KING], 0);
         }
 
-        if (p->IsOnSq( WC, B, G2)) {
-            if (p->IsOnSq( WC, P, F3)) Add(e, WC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
-            if (p->IsOnSq( WC, P, G3) && (p->IsOnSq( WC, P, H2) || p->IsOnSq( WC, P, F2))) Add(e, WC, Par.values[B_FIANCH]);
-            if (p->IsOnSq( BC, P, E4) && (p->IsOnSq( BC, P, D5) || p->IsOnSq( BC, P, F5))) Add(e, WC, Par.values[B_BADF]);
+        if (p->IsOnSq(WC, B, G2)) {
+            if (p->IsOnSq(WC, P, F3)) Add(e, WC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
+            if (p->IsOnSq(WC, P, G3) && (p->IsOnSq(WC, P, H2) || p->IsOnSq(WC, P, F2))) Add(e, WC, Par.values[B_FIANCH]);
+            if (p->IsOnSq(BC, P, E4) && (p->IsOnSq(BC, P, D5) || p->IsOnSq(BC, P, F5))) Add(e, WC, Par.values[B_BADF]);
             if (p->Kings(WC) & Mask.ks_castle[WC]) Add(e, WC, Par.values[B_KING], 0);
         }
     }
@@ -68,25 +68,25 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
 
         // black bishop trapped
 
-        if (p->IsOnSq( BC, B, A3) && p->IsOnSq( WC, P, B4)) Add(e, BC, Par.values[B_TRAP_A3]);
-        if (p->IsOnSq( BC, B, A2) && p->IsOnSq( WC, P, B3)) Add(e, BC, Par.values[B_TRAP_A2]);
-        if (p->IsOnSq( BC, B, B1) && p->IsOnSq( WC, P, C2)) Add(e, BC, Par.values[B_TRAP_A2]);
-        if (p->IsOnSq( BC, B, H3) && p->IsOnSq( WC, P, G4)) Add(e, BC, Par.values[B_TRAP_A3]);
-        if (p->IsOnSq( BC, B, H2) && p->IsOnSq( WC, P, G3)) Add(e, BC, Par.values[B_TRAP_A2]);
-        if (p->IsOnSq( BC, B, G1) && p->IsOnSq( WC, P, F2)) Add(e, BC, Par.values[B_TRAP_A2]);
+        if (p->IsOnSq(BC, B, A3) && p->IsOnSq(WC, P, B4)) Add(e, BC, Par.values[B_TRAP_A3]);
+        if (p->IsOnSq(BC, B, A2) && p->IsOnSq(WC, P, B3)) Add(e, BC, Par.values[B_TRAP_A2]);
+        if (p->IsOnSq(BC, B, B1) && p->IsOnSq(WC, P, C2)) Add(e, BC, Par.values[B_TRAP_A2]);
+        if (p->IsOnSq(BC, B, H3) && p->IsOnSq(WC, P, G4)) Add(e, BC, Par.values[B_TRAP_A3]);
+        if (p->IsOnSq(BC, B, H2) && p->IsOnSq(WC, P, G3)) Add(e, BC, Par.values[B_TRAP_A2]);
+        if (p->IsOnSq(BC, B, G1) && p->IsOnSq(WC, P, F2)) Add(e, BC, Par.values[B_TRAP_A2]);
 
         // black bishop blocked on its initial square by own pawn
         // or returning to protect castled king
 
-        if (p->IsOnSq( BC, B, C8)) {
-            if (p->IsOnSq( BC, P, D7) && (SqBb(D6) & p->OccBb()))
+        if (p->IsOnSq(BC, B, C8)) {
+            if (p->IsOnSq(BC, P, D7) && (SqBb(D6) & p->OccBb()))
                 Add(e, BC, Par.values[B_BLOCK], 0);
             if (p->Kings(BC) & (SqBb(B8) | SqBb(A8) | SqBb(A7)))
                 Add(e, BC, Par.values[B_RETURN], 0);
         }
 
-        if (p->IsOnSq( BC, B, F8)) {
-            if (p->IsOnSq( BC, P, E7) && (SqBb(E6) & p->OccBb()))
+        if (p->IsOnSq(BC, B, F8)) {
+            if (p->IsOnSq(BC, P, E7) && (SqBb(E6) & p->OccBb()))
                 Add(e, BC, Par.values[B_BLOCK], 0);
             if (p->Kings(BC) & (SqBb(G8) | SqBb(H8) | SqBb(H7)))
                 Add(e, BC, Par.values[B_RETURN], 0);
@@ -94,16 +94,16 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
 
         // black bishop fianchettoed
 
-        if (p->IsOnSq( BC, B, B7)) {
-            if (p->IsOnSq( BC, P, C6)) Add(e, BC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
-            if (p->IsOnSq( BC, P, B6) && (p->IsOnSq( BC, P, A7) || p->IsOnSq( BC, P, C7))) Add(e, BC, Par.values[B_FIANCH]);
-            if (p->IsOnSq( WC, P, D5) && (p->IsOnSq( WC, P, E4) || p->IsOnSq( WC, P, C4))) Add(e, BC, Par.values[B_BADF]);
+        if (p->IsOnSq(BC, B, B7)) {
+            if (p->IsOnSq(BC, P, C6)) Add(e, BC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
+            if (p->IsOnSq(BC, P, B6) && (p->IsOnSq(BC, P, A7) || p->IsOnSq(BC, P, C7))) Add(e, BC, Par.values[B_FIANCH]);
+            if (p->IsOnSq(WC, P, D5) && (p->IsOnSq(WC, P, E4) || p->IsOnSq(WC, P, C4))) Add(e, BC, Par.values[B_BADF]);
             if (p->Kings(BC) & Mask.qs_castle[BC]) Add(e, BC, Par.values[B_KING], 0);
         }
-        if (p->IsOnSq( BC, B, G7)) {
-            if (p->IsOnSq( BC, P, F6)) Add(e, BC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
-            if (p->IsOnSq( BC, P, G6) && (p->IsOnSq( BC, P, H7) || p->IsOnSq( BC, P, G6))) Add(e, BC, Par.values[B_FIANCH]);
-            if (p->IsOnSq( WC, P, E5) && (p->IsOnSq( WC, P, D4) || p->IsOnSq( WC, P, F4))) Add(e, BC, Par.values[B_BADF]);
+        if (p->IsOnSq(BC, B, G7)) {
+            if (p->IsOnSq(BC, P, F6)) Add(e, BC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
+            if (p->IsOnSq(BC, P, G6) && (p->IsOnSq(BC, P, H7) || p->IsOnSq(BC, P, G6))) Add(e, BC, Par.values[B_FIANCH]);
+            if (p->IsOnSq(WC, P, E5) && (p->IsOnSq(WC, P, D4) || p->IsOnSq(WC, P, F4))) Add(e, BC, Par.values[B_BADF]);
             if (p->Kings(BC) & Mask.ks_castle[BC]) Add(e, BC, Par.values[B_KING], 0);
         }
     }
@@ -114,10 +114,10 @@ void cEngine::EvaluateKnightPatterns(POS *p, eData *e) {
 
     // trapped knight
 
-    if (p->IsOnSq( WC, N, A7) && p->IsOnSq( BC, P, A6) && p->IsOnSq( BC, P, B7)) Add(e, WC, Par.values[N_TRAP]);
-    if (p->IsOnSq( WC, N, H7) && p->IsOnSq( BC, P, H6) && p->IsOnSq( BC, P, G7)) Add(e, WC, Par.values[N_TRAP]);
-    if (p->IsOnSq( BC, N, A2) && p->IsOnSq( WC, P, A3) && p->IsOnSq( WC, P, B2)) Add(e, BC, Par.values[N_TRAP]);
-    if (p->IsOnSq( BC, N, H2) && p->IsOnSq( WC, P, H3) && p->IsOnSq( WC, P, G2)) Add(e, BC, Par.values[N_TRAP]);
+    if (p->IsOnSq(WC, N, A7) && p->IsOnSq(BC, P, A6) && p->IsOnSq(BC, P, B7)) Add(e, WC, Par.values[N_TRAP]);
+    if (p->IsOnSq(WC, N, H7) && p->IsOnSq(BC, P, H6) && p->IsOnSq(BC, P, G7)) Add(e, WC, Par.values[N_TRAP]);
+    if (p->IsOnSq(BC, N, A2) && p->IsOnSq(WC, P, A3) && p->IsOnSq(WC, P, B2)) Add(e, BC, Par.values[N_TRAP]);
+    if (p->IsOnSq(BC, N, H2) && p->IsOnSq(WC, P, H3) && p->IsOnSq(WC, P, G2)) Add(e, BC, Par.values[N_TRAP]);
 }
 
 void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
@@ -157,7 +157,7 @@ void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
         // White castling rights
 
         if (p->IsOnSq(WC, K, E1)) {
-            if ((p->c_flags & W_KS) || (p->c_flags & W_QS)) Add(e, WC, Par.values[K_CASTLE], 0);
+            if ((p->mCFlags & W_KS) || (p->mCFlags & W_QS)) Add(e, WC, Par.values[K_CASTLE], 0);
         }
     }
 
@@ -194,7 +194,7 @@ void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
         // Black castling rights
 
         if (p->IsOnSq(BC, K, E8)) {
-            if ((p->c_flags & B_KS) || (p->c_flags & B_QS)) Add(e, BC, Par.values[K_CASTLE], 0);
+            if ((p->mCFlags & B_KS) || (p->mCFlags & B_QS)) Add(e, BC, Par.values[K_CASTLE], 0);
         }
     }
 }

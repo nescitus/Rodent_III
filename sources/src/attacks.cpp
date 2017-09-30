@@ -21,7 +21,7 @@ U64 POS::AttacksFrom(int sq) const {
 
     switch (TpOnSq(sq)) {
         case P:
-            return BB.PawnAttacks(Cl(pc[sq]), sq);
+            return BB.PawnAttacks(Cl(mPc[sq]), sq);
         case N:
             return BB.KnightAttacks(sq);
         case B:
@@ -40,17 +40,17 @@ U64 POS::AttacksTo(int sq) const {
 
     return (Pawns(WC) & BB.PawnAttacks(BC, sq)) |
            (Pawns(BC) & BB.PawnAttacks(WC, sq)) |
-           (tp_bb[N] & BB.KnightAttacks(sq)) |
-           ((tp_bb[B] | tp_bb[Q]) & BB.BishAttacks(OccBb(), sq)) |
-           ((tp_bb[R] | tp_bb[Q]) & BB.RookAttacks(OccBb(), sq)) |
-           (tp_bb[K] & BB.KingAttacks(sq));
+           (mTpBb[N] & BB.KnightAttacks(sq)) |
+           ((mTpBb[B] | mTpBb[Q]) & BB.BishAttacks(OccBb(), sq)) |
+           ((mTpBb[R] | mTpBb[Q]) & BB.RookAttacks(OccBb(), sq)) |
+           (mTpBb[K] & BB.KingAttacks(sq));
 }
 
 bool POS::Attacked(int sq, int sd) const {
 
-    return (Pawns(sd) & BB.PawnAttacks(Opp(sd), sq))
-        || (Knights(sd) & BB.KnightAttacks(sq))
-        || (DiagMovers(sd) & BB.BishAttacks(OccBb(), sq))
-        || (StraightMovers(sd)) & BB.RookAttacks(OccBb(), sq)
-        || (Kings(sd) & BB.KingAttacks(sq));
+    return (Pawns(sd) & BB.PawnAttacks(Opp(sd), sq)) ||
+           (Knights(sd) & BB.KnightAttacks(sq)) ||
+           (DiagMovers(sd) & BB.BishAttacks(OccBb(), sq)) ||
+           (StraightMovers(sd)) & BB.RookAttacks(OccBb(), sq) ||
+           (Kings(sd) & BB.KingAttacks(sq));
 }

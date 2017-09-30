@@ -16,7 +16,6 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
-#include "chessheapclass.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -50,7 +49,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 ChessHeapClass chc;
 
-void AllocTrans(unsigned int mbsize) {
+void ChessHeapClass::AllocTrans(unsigned int mbsize) {
 
     static unsigned int prev_size;
 
@@ -61,7 +60,7 @@ void AllocTrans(unsigned int mbsize) {
 
     if (prev_size != tt_size) { // don't waste time if the size is the same
 
-        if (!chc.Alloc(tt_size)) {
+        if (!Alloc(tt_size)) {
             printf("info string memory allocation error\n");
             prev_size = 0; // will realloc next time
             return;
@@ -90,18 +89,18 @@ void AllocTrans(unsigned int mbsize) {
     printf("info string %uMB of memory allocated\n", prev_size);
 }
 
-void ClearTrans() {
+void ChessHeapClass::ClearTrans() {
 
     tt_date = 0;
 
-    chc.ZeroMem();
+    ZeroMem();
 }
 
-bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
+bool ChessHeapClass::TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
 
-    if (!chc.success) return false;
+    if (!success) return false;
 
-    ENTRY *entry = chc[key & tt_mask];
+    ENTRY *entry = MakeAddr(key & tt_mask);
 
     LOCK_ME_PLEASE0;
 
@@ -132,11 +131,11 @@ bool TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int dept
     return false;
 }
 
-void TransRetrieveMove(U64 key, int *move) {
+void ChessHeapClass::TransRetrieveMove(U64 key, int *move) {
 
-    if (!chc.success) return;
+    if (!success) return;
 
-    ENTRY *entry = chc[key & tt_mask];
+    ENTRY *entry = MakeAddr(key & tt_mask);
 
     LOCK_ME_PLEASE1;
 
@@ -152,9 +151,9 @@ void TransRetrieveMove(U64 key, int *move) {
     UNLOCK_ME_PLEASE1;
 }
 
-void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
+void ChessHeapClass::TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
 
-    if (!chc.success) return;
+    if (!success) return;
 
     int oldest = -1, age;
 
@@ -163,7 +162,7 @@ void TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
     else if (score > MAX_EVAL)
         score += ply;
 
-    ENTRY *entry = chc[key & tt_mask], *replace = NULL;
+    ENTRY *entry = MakeAddr(key & tt_mask), *replace = NULL;
 
     for (int i = 0; i < 4; i++) {
         if (entry->key == key) {

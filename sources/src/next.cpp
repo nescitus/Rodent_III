@@ -25,8 +25,8 @@ void cEngine::InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_
     m->trans_move = trans_move;
     m->ref_move = ref_move;
     m->ref_sq = ref_sq;
-    m->killer1 = killer[ply][0];
-    m->killer2 = killer[ply][1];
+    m->killer1 = mKiller[ply][0];
+    m->killer2 = mKiller[ply][1];
 }
 
 int cEngine::NextMove(MOVES *m, int *flag) {
@@ -36,7 +36,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
     switch (m->phase) {
         case 0: // return transposition table move, if legal
             move = m->trans_move;
-            if (move && Legal(m->p, move)) {
+            if (move && m->p->Legal(move)) {
                 m->phase = 1;
                 *flag = MV_HASH;
                 return move;
@@ -44,7 +44,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         // fallthrough
 
         case 1: // helper phase: generate captures
-            m->last = GenerateCaptures(m->p, m->move);
+            m->last = m->p->GenerateCaptures(m->move);
             ScoreCaptures(m);
             m->next = m->move;
             m->badp = m->bad;
@@ -68,8 +68,8 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         case 3: // first killer move
             move = m->killer1;
             if (move && move != m->trans_move
-            && m->p->pc[Tsq(move)] == NO_PC
-            && Legal(m->p, move)) {
+            && m->p->mPc[Tsq(move)] == NO_PC
+            && m->p->Legal(move)) {
                 m->phase = 4;
                 *flag = MV_KILLER;
                 return move;
@@ -79,8 +79,8 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         case 4: // second killer move
             move = m->killer2;
             if (move && move != m->trans_move
-            && m->p->pc[Tsq(move)] == NO_PC
-            && Legal(m->p, move)) {
+            && m->p->mPc[Tsq(move)] == NO_PC
+            && m->p->Legal(move)) {
                 m->phase = 5;
                 *flag = MV_KILLER;
                 return move;
@@ -90,10 +90,10 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         case 5: // refutation move
             move = m->ref_move;
             if (move && move != m->trans_move
-            &&  m->p->pc[Tsq(move)] == NO_PC
+            &&  m->p->mPc[Tsq(move)] == NO_PC
             &&  move != m->killer1
             &&  move != m->killer2
-            && Legal(m->p, move)) {
+            && m->p->Legal(move)) {
                 m->phase = 6;
                 *flag = MV_NORMAL;
                 return move;
@@ -101,7 +101,7 @@ int cEngine::NextMove(MOVES *m, int *flag) {
         // fallthrough
 
         case 6: // helper phase: generate quiet moves
-            m->last = GenerateQuiet(m->p, m->move);
+            m->last = m->p->GenerateQuiet(m->move);
             ScoreQuiet(m);
             m->next = m->move;
             m->phase = 7;
@@ -139,7 +139,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
     switch (m->phase) {
         case 0: // return transposition table move, if legal
             move = m->trans_move;
-            if (move && Legal(m->p, move)) {
+            if (move && m->p->Legal(move)) {
                 m->phase = 1;
                 *flag = MV_HASH;
                 return move;
@@ -147,7 +147,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         // fallthrough
 
         case 1: // helper phase: generate captures
-            m->last = GenerateCaptures(m->p, m->move);
+            m->last = m->p->GenerateCaptures(m->move);
             ScoreCaptures(m);
             m->next = m->move;
             m->badp = m->bad;
@@ -170,8 +170,8 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         case 3: // first killer move
             move = m->killer1;
             if (move && move != m->trans_move
-            && m->p->pc[Tsq(move)] == NO_PC
-            && Legal(m->p, move)) {
+            && m->p->mPc[Tsq(move)] == NO_PC
+            && m->p->Legal(move)) {
                 m->phase = 4;
                 *flag = MV_KILLER;
                 return move;
@@ -181,7 +181,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         case 4: // second killer move
             move = m->killer2;
             if (move && move != m->trans_move
-            && m->p->pc[Tsq(move)] == NO_PC && Legal(m->p, move)) {
+            && m->p->mPc[Tsq(move)] == NO_PC && m->p->Legal(move)) {
                 m->phase = 5;
                 *flag = MV_KILLER;
                 return move;
@@ -189,7 +189,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
         // fallthrough
 
         case 5: // helper phase: generate checking moves
-            m->last = GenerateSpecial(m->p, m->move);
+            m->last = m->p->GenerateSpecial(m->move);
             ScoreQuiet(m);
             m->next = m->move;
             m->phase = 6;
@@ -212,7 +212,7 @@ int cEngine::NextSpecialMove(MOVES *m, int *flag) {
 void cEngine::InitCaptures(POS *p, MOVES *m) {
 
     m->p = p;
-    m->last = GenerateCaptures(m->p, m->move);
+    m->last = m->p->GenerateCaptures(m->move);
     ScoreCaptures(m);
     m->next = m->move;
 }
@@ -243,7 +243,7 @@ void cEngine::ScoreQuiet(MOVES *m) {
 
     valuep = m->value;
     for (movep = m->move; movep < m->last; movep++) {
-        int mv_score = history[m->p->pc[Fsq(*movep)]][Tsq(*movep)]; // use history score
+        int mv_score = mHistory[m->p->mPc[Fsq(*movep)]][Tsq(*movep)];// use history score
         if (Fsq(*movep) == m->ref_sq) mv_score += 2048;             // but bump up refutation move
         *valuep++ = mv_score;
     }
@@ -281,12 +281,12 @@ int cEngine::BadCapture(POS *p, int move) {
     if (MoveType(move) == EP_CAP)
         return 0;
 
-    return Swap(p, fsq, tsq) < 0;
+    return p->Swap(fsq, tsq) < 0;
 }
 
 int cEngine::MvvLva(POS *p, int move) {
 
-    if (p->pc[Tsq(move)] != NO_PC)
+    if (p->mPc[Tsq(move)] != NO_PC)
         return p->TpOnSq(Tsq(move)) * 6 + 5 - p->TpOnSq(Fsq(move));
 
     if (IsProm(move))
@@ -297,40 +297,38 @@ int cEngine::MvvLva(POS *p, int move) {
 
 void cEngine::AgeHist() {
 
-    for (int tp = 0; tp < 12; tp++)
-        for (int sq = 0; sq < 64; sq++)
-            history[tp][sq] /= 8;
+    for (int i = 0; i < 12 * 64; i++)
+        ((int *)mHistory)[i] /= 8;
 
-    ZEROARRAY(killer);
+    ZEROARRAY(mKiller);
 }
 
 void cEngine::ClearHist() {
 
-    ZEROARRAY(history);
+    ZEROARRAY(mHistory);
 
-    ZEROARRAY(refutation);
+    ZEROARRAY(mRefutation);
 
-    ZEROARRAY(killer);
+    ZEROARRAY(mKiller);
 }
 
 void cEngine::TrimHist() {
 
-    for (int tp = 0; tp < 12; tp++)
-        for (int sq = 0; sq < 64; sq++)
-            history[tp][sq] /= 2;
+    for (int i = 0; i < 12 * 64; i++)
+        ((int *)mHistory)[i] /= 2;
 }
 
 void cEngine::UpdateHistory(POS *p, int last_move, int move, int depth, int ply) {
 
     // No update on a move that changes material balance
 
-    if (p->pc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
+    if (p->mPc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
         return;
 
     // Update history table, making sure that scores don't grow too high
 
-    history[p->pc[Fsq(move)]][Tsq(move)] += 2 * depth * depth;
-    if (history[p->pc[Fsq(move)]][Tsq(move)] > MAX_HIST) TrimHist();
+    mHistory[p->mPc[Fsq(move)]][Tsq(move)] += 2 * depth * depth;
+    if (mHistory[p->mPc[Fsq(move)]][Tsq(move)] > MAX_HIST) TrimHist();
 
     // Update refutation table, saving new move in the table indexed
     // by the coordinates of last move. last_move == 0 is a null move,
@@ -338,13 +336,13 @@ void cEngine::UpdateHistory(POS *p, int last_move, int move, int depth, int ply)
     // refutation table is switched off: at root or in QuiesceFlee()
 
     if (last_move >= 0)
-        refutation[Fsq(last_move)][Tsq(last_move)] = move;
+        mRefutation[Fsq(last_move)][Tsq(last_move)] = move;
 
     // Update killer moves
 
-    if (move != killer[ply][0]) {
-        killer[ply][1] = killer[ply][0];
-        killer[ply][0] = move;
+    if (move != mKiller[ply][0]) {
+        mKiller[ply][1] = mKiller[ply][0];
+        mKiller[ply][0] = move;
     }
 }
 
@@ -352,15 +350,15 @@ void cEngine::DecreaseHistory(POS *p, int move, int depth) {
 
     // No update on a move that changes material balance
 
-    if (p->pc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
+    if (p->mPc[Tsq(move)] != NO_PC || IsProm(move) || MoveType(move) == EP_CAP)
         return;
 
     // Update history table, making sure that scores don't fall too low
 
-    history[p->pc[Fsq(move)]][Tsq(move)] -= depth * depth;
-    if (history[p->pc[Fsq(move)]][Tsq(move)] < -MAX_HIST) TrimHist();
+    mHistory[p->mPc[Fsq(move)]][Tsq(move)] -= depth * depth;
+    if (mHistory[p->mPc[Fsq(move)]][Tsq(move)] < -MAX_HIST) TrimHist();
 }
 
 int cEngine::Refutation(int move) {
-    return refutation[Fsq(move)][Tsq(move)];
+    return mRefutation[Fsq(move)][Tsq(move)];
 }

@@ -42,21 +42,21 @@ static const int empty_qs[64] = {
 
 void cEngine::ClearPawnHash() {
 
-    ZEROARRAY(PawnTT);
+    ZEROARRAY(mPawnTT);
 }
 
 void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
 
     // Try to retrieve score from pawn hashtable
 
-    int addr = p->pawn_key % PAWN_HASH_SIZE;
+    int addr = p->mPawnKey % PAWN_HASH_SIZE;
 
-    if (PawnTT[addr].key == p->pawn_key) {
+    if (mPawnTT[addr].key == p->mPawnKey) {
 
         // pawn hashtable contains delta of white and black score
 
-        e->mg_pawns[WC] = PawnTT[addr].mg_pawns;
-        e->eg_pawns[WC] = PawnTT[addr].eg_pawns;
+        e->mg_pawns[WC] = mPawnTT[addr].mg_pawns;
+        e->eg_pawns[WC] = mPawnTT[addr].eg_pawns;
         e->mg_pawns[BC] = 0;
         e->eg_pawns[BC] = 0;
         return;
@@ -112,13 +112,13 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
 
     if (bb_all_pawns) {
         if (!(bb_all_pawns & Mask.k_side)) {
-            AddPawns(e, WC, empty_ks[p->king_sq[WC]], empty_ks[p->king_sq[WC]]);
-            AddPawns(e, BC, empty_ks[p->king_sq[BC]], empty_ks[p->king_sq[BC]]);
+            AddPawns(e, WC, empty_ks[p->mKingSq[WC]], empty_ks[p->mKingSq[WC]]);
+            AddPawns(e, BC, empty_ks[p->mKingSq[BC]], empty_ks[p->mKingSq[BC]]);
         }
 
         if (!(bb_all_pawns & Mask.q_side)) {
-            AddPawns(e, WC, empty_qs[p->king_sq[WC]], empty_qs[p->king_sq[WC]]);
-            AddPawns(e, BC, empty_qs[p->king_sq[BC]], empty_qs[p->king_sq[BC]]);
+            AddPawns(e, WC, empty_qs[p->mKingSq[WC]], empty_qs[p->mKingSq[WC]]);
+            AddPawns(e, BC, empty_qs[p->mKingSq[BC]], empty_qs[p->mKingSq[BC]]);
         }
     }
 
@@ -139,9 +139,9 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     // Note that we save delta between white and black scores.
     // It might become a problem if we decide to print detailed eval score.
 
-    PawnTT[addr].key = p->pawn_key;
-    PawnTT[addr].mg_pawns = (Par.values[W_STRUCT] * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
-    PawnTT[addr].eg_pawns = (Par.values[W_STRUCT] * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
+    mPawnTT[addr].key = p->mPawnKey;
+    mPawnTT[addr].mg_pawns = (Par.values[W_STRUCT] * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
+    mPawnTT[addr].eg_pawns = (Par.values[W_STRUCT] * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
 }
 
 void cEngine::EvaluateKing(POS *p, eData *e, int sd) {
@@ -209,14 +209,14 @@ int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
 #define sdPawns p->Pawns(sd)
 #define OWN_PAWN(sq) (p->Pawns(sd) & RelSqBb(sq,sd))
 #define OPP_PAWN(sq) (p->Pawns(op) & RelSqBb(sq,sd))
-#define CONTAINS(bb, s1, s2) (bb & SQ(s1)) && (bb & SQ(s2))
+#define CONTAINS(bb, s1, s2) ((bb) & SQ(s1)) && ((bb) & SQ(s2))
 
 // @brief EvaluateChains() gives a penalty to side being at the receiving end of the pawn chain
 
 int cEngine::EvaluateChains(POS *p, int sd) {
 
     int mg_result = 0;
-    int sq = p->king_sq[sd];
+    int sq = p->mKingSq[sd];
     int op = Opp(sd);
 
     // basic pointy chain

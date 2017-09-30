@@ -293,39 +293,39 @@ U64 sBook::GetPolyglotKey(POS *p) {
 
     for (int sq = 0; sq < 64; sq++) {
 
-        const bool cl_bb_sq = p->cl_bb[WC] & SqBb(sq);
+        const bool cl_bb_sq = p->mClBb[WC] & SqBb(sq);
         const int Ranksq = Rank(sq) * 8, Filesq = File(sq);
 
-        if (p->tp_bb[P] & SqBb(sq)) {
+        if (p->mTpBb[P] & SqBb(sq)) {
             if (cl_bb_sq)               key ^= PG[64 *  1 + Ranksq + Filesq];
             else                        key ^= PG[64 *  0 + Ranksq + Filesq];
-        } else if (p->tp_bb[N] & SqBb(sq)) {
+        } else if (p->mTpBb[N] & SqBb(sq)) {
             if (cl_bb_sq)               key ^= PG[64 *  3 + Ranksq + Filesq];
             else                        key ^= PG[64 *  2 + Ranksq + Filesq];
-        } else if (p->tp_bb[B] & SqBb(sq)) {
+        } else if (p->mTpBb[B] & SqBb(sq)) {
             if (cl_bb_sq)               key ^= PG[64 *  5 + Ranksq + Filesq];
             else                        key ^= PG[64 *  4 + Ranksq + Filesq];
-        } else if (p->tp_bb[R] & SqBb(sq)) {
+        } else if (p->mTpBb[R] & SqBb(sq)) {
             if (cl_bb_sq)               key ^= PG[64 *  7 + Ranksq + Filesq];
             else                        key ^= PG[64 *  6 + Ranksq + Filesq];
-        } else if (p->tp_bb[Q] & SqBb(sq)) {
+        } else if (p->mTpBb[Q] & SqBb(sq)) {
             if (cl_bb_sq)               key ^= PG[64 *  9 + Ranksq + Filesq];
             else                        key ^= PG[64 *  8 + Ranksq + Filesq];
-        } else if (p->tp_bb[K] & SqBb(sq)) {
+        } else if (p->mTpBb[K] & SqBb(sq)) {
             if (cl_bb_sq)               key ^= PG[64 * 11 + Ranksq + Filesq];
             else                        key ^= PG[64 * 10 + Ranksq + Filesq];
         }
     }
 
-    if (p->side == WC) key ^= PG[780];
+    if (p->mSide == WC) key ^= PG[780];
 
-    if (p->c_flags & W_KS) key ^= PG[768];
-    if (p->c_flags & W_QS) key ^= PG[768 + 1];
-    if (p->c_flags & B_KS) key ^= PG[768 + 2];
-    if (p->c_flags & B_QS) key ^= PG[768 + 3];
+    if (p->mCFlags & W_KS) key ^= PG[768];
+    if (p->mCFlags & W_QS) key ^= PG[768 + 1];
+    if (p->mCFlags & B_KS) key ^= PG[768 + 2];
+    if (p->mCFlags & B_QS) key ^= PG[768 + 3];
 
-    if (p->ep_sq != NO_SQ)
-        key ^= PG[772 + File(p->ep_sq)];
+    if (p->mEpSq != NO_SQ)
+        key ^= PG[772 + File(p->mEpSq)];
 
     return key;
 }
@@ -374,7 +374,6 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
     int values[100], moves[100];
     polyglot_move entry[1];
     U64 key = GetPolyglotKey(p);
-    char move_string[6];
 
     printf("info string probing '%s'...\n", bookName);
 
@@ -390,16 +389,15 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
 
         // correction for castling moves
 
-        if (fsq == E1 && tsq == H1 && p->king_sq[WC] == E1) tsq = G1;
-        if (fsq == E8 && tsq == H8 && p->king_sq[BC] == E8) tsq = G8;
-        if (fsq == E1 && tsq == A1 && p->king_sq[WC] == E1) tsq = C1;
-        if (fsq == E8 && tsq == A8 && p->king_sq[BC] == E8) tsq = C8;
+        if (fsq == E1 && tsq == H1 && p->mKingSq[WC] == E1) tsq = G1;
+        if (fsq == E8 && tsq == H8 && p->mKingSq[BC] == E8) tsq = G8;
+        if (fsq == E1 && tsq == A1 && p->mKingSq[WC] == E1) tsq = C1;
+        if (fsq == E8 && tsq == A8 && p->mKingSq[BC] == E8) tsq = C8;
 
         // now we want to get a move with full data, not only from and to squares
 
         int internal_move = (tsq << 6) | fsq;
-        MoveToStr(internal_move, move_string);
-        internal_move = StrToMove(p, move_string);
+        internal_move = p->StrToMove(MoveToStr(internal_move));
 
         if (max_weight < score) max_weight = score;
         weight_sum += score;

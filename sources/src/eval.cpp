@@ -35,24 +35,24 @@ void cEngine::ClearAll() {
 
 void cEngine::ClearEvalHash() {
 
-    ZEROARRAY(EvalTT);
+    ZEROARRAY(mEvalTT);
 }
 
 void cEngine::EvaluateMaterial(POS *p, eData *e, int sd) {
 
     int op = Opp(sd);
 
-    int tmp = Par.np_table[p->cnt[sd][P]] * p->cnt[sd][N]    // knights lose value as pawns disappear
-            - Par.rp_table[p->cnt[sd][P]] * p->cnt[sd][R];   // rooks gain value as pawns disappear
+    int tmp = Par.np_table[p->mCnt[sd][P]] * p->mCnt[sd][N]    // knights lose value as pawns disappear
+            - Par.rp_table[p->mCnt[sd][P]] * p->mCnt[sd][R];   // rooks gain value as pawns disappear
 
-    if (p->cnt[sd][N] > 1) tmp += Par.values[N_PAIR];        // knight pair
-    if (p->cnt[sd][R] > 1) tmp += Par.values[R_PAIR];        // rook pair
-    if (p->cnt[sd][B] > 1) tmp += Par.values[B_PAIR];        // bishop pair
+    if (p->mCnt[sd][N] > 1) tmp += Par.values[N_PAIR];        // knight pair
+    if (p->mCnt[sd][R] > 1) tmp += Par.values[R_PAIR];        // rook pair
+    if (p->mCnt[sd][B] > 1) tmp += Par.values[B_PAIR];        // bishop pair
 
     // "elephantiasis correction" for queen, idea by H.G.Mueller (nb. rookVsQueen doesn't help)
 
-    if (p->cnt[sd][Q])
-        tmp -= Par.values[ELEPH] * (p->cnt[op][N] + p->cnt[op][B]);
+    if (p->mCnt[sd][Q])
+        tmp -= Par.values[ELEPH] * (p->mCnt[op][N] + p->mCnt[op][B]);
 
     Add(e, sd, tmp);
 }
@@ -84,9 +84,9 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
     // Init helper bitboards
 
-    U64 n_checks = BB.KnightAttacks(king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
-    U64 b_checks = BB.BishAttacks(p->OccBb(), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
-    U64 r_checks = BB.RookAttacks(p->OccBb(), king_sq) & ~p->cl_bb[sd] & ~e->p_takes[op];
+    U64 n_checks = BB.KnightAttacks(king_sq) & ~p->mClBb[sd] & ~e->p_takes[op];
+    U64 b_checks = BB.BishAttacks(p->OccBb(), king_sq) & ~p->mClBb[sd] & ~e->p_takes[op];
+    U64 r_checks = BB.RookAttacks(p->OccBb(), king_sq) & ~p->mClBb[sd] & ~e->p_takes[op];
     U64 q_checks = r_checks & b_checks;
     U64 bb_excluded = p->Pawns(sd);
 
@@ -106,7 +106,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.KnightAttacks(sq) & ~p->cl_bb[sd];  // get control bitboard
+        bb_control = BB.KnightAttacks(sq) & ~p->mClBb[sd];  // get control bitboard
         center_control += BB.PopCnt(bb_control & bb_center);
         if (!(bb_control  & ~e->p_takes[op] & Mask.away[sd])) // we do not attack enemy half of the board
             Add(e, sd, Par.values[N_OWH]);
@@ -149,7 +149,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.BishAttacks(p->OccBb(), sq);          // get control bitboard
+        bb_control = BB.BishAttacks(p->OccBb(), sq);        // get control bitboard
         center_control += BB.PopCnt(bb_control & bb_center);
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd]  |= bb_control;
@@ -213,25 +213,25 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.RookAttacks(p->OccBb(), sq);          // get control bitboard
+        bb_control = BB.RookAttacks(p->OccBb(), sq);        // get control bitboard
         e->all_att[sd] |= bb_control;                       // update attack map
         e->ev_att[sd] |= bb_control;
 
-        if ((bb_control & ~p->cl_bb[sd] & r_checks)
+        if ((bb_control & ~p->mClBb[sd] & r_checks)
         && p->Queens(sd)) {
             att += Par.values[R_CHK];                       // check threat bonus
             bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
 
             while (bb_contact) {
                 int contactSq = BB.PopFirstBit(&bb_contact);    // find a potential contact check
-                if (Swap(p, sq, contactSq) >= 0) {              // rook exchanges are also accepted
+                if (p->Swap(sq, contactSq) >= 0) {              // rook exchanges are also accepted
                     att += Par.values[R_CONTACT];
                     break;
                 }
             }
         }
 
-        bb_attack = BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);  // get king attack bitboard
+        bb_attack = BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);// get king attack bitboard
 
         if (bb_attack & bb_zone) {                                         // evaluate king attacks
             wood++;
@@ -295,15 +295,15 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
             fwd_cnt += 1;
         }
 
-        bb_control = BB.QueenAttacks(p->OccBb(), sq);         // get control bitboard
+        bb_control = BB.QueenAttacks(p->OccBb(), sq);       // get control bitboard
         e->all_att[sd] |= bb_control;                       // update attack map
         if (bb_control & q_checks) {                        // check threat bonus
             att += Par.values[Q_CHK];
 
-            bb_contact = bb_control & BB.KingAttacks(king_sq);// queen contact checks
+            bb_contact = bb_control & BB.KingAttacks(king_sq);  // queen contact checks
             while (bb_contact) {
                 int contactSq = BB.PopFirstBit(&bb_contact);    // find potential contact check square
-                if (Swap(p, sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate
+                if (p->Swap(sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate
                     att += Par.values[Q_CONTACT];
                     break;
                 }
@@ -352,7 +352,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
     if (wood > 1) {
         if (att > 399) att = 399;
-        if (p->cnt[sd][Q] == 0) att = 0;
+        if (p->mCnt[sd][Q] == 0) att = 0;
         Add(e, sd, (Par.danger[att] * Par.sd_att[sd]) / 100);
     }
 
@@ -447,19 +447,19 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
         // pawn can attack enemy piece
 
         if (!(bb_stop & p->OccBb())) {
-           if (!(bb_stop & e->p_can_take[op])) {
-              if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
-                  Add(e, sd, Par.values[P_THR]);
-              if (bb_pawn & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
-                   U64 next = BB.ShiftFwd(bb_stop, sd);
-                   if (!(next & p->OccBb())) {
-                       if (!(next & e->p_can_take[op])) {
-                           if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
-                               Add(e, sd, Par.values[P_THR]);
-                       }
-                   }
-               }
-           }
+            if (!(bb_stop & e->p_can_take[op])) {
+                if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
+                    Add(e, sd, Par.values[P_THR]);
+                if (bb_pawn & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
+                    U64 next = BB.ShiftFwd(bb_stop, sd);
+                    if (!(next & p->OccBb())) {
+                        if (!(next & e->p_can_take[op])) {
+                            if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
+                                Add(e, sd, Par.values[P_THR]);
+                        }
+                    }
+                }
+            }
         }
 
         // passed pawns
@@ -483,8 +483,8 @@ void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
 
             mg_tmp = Par.passed_bonus_mg[sd][Rank(sq)];
             eg_tmp = Par.passed_bonus_eg[sd][Rank(sq)]
-                     - ((Par.passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[op]]) / 30)
-                     + ((Par.passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->king_sq[sd]]) / 90);
+                     - ((Par.passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->mKingSq[op]]) / 30)
+                     + ((Par.passed_bonus_eg[sd][Rank(sq)] * Dist.bonus[sq][p->mKingSq[sd]]) / 90);
 
             mg_tot += (mg_tmp * mul) / 100;
             eg_tot += (eg_tmp * mul) / 100;
@@ -503,9 +503,9 @@ void cEngine::EvaluateUnstoppable(eData *e, POS *p) {
 
     // White unstoppable passers
 
-    if (p->cnt[BC][N] + p->cnt[BC][B] + p->cnt[BC][R] + p->cnt[BC][Q] == 0) {
+    if (p->mCnt[BC][N] + p->mCnt[BC][B] + p->mCnt[BC][R] + p->mCnt[BC][Q] == 0) {
         king_sq = p->KingSq(BC);
-        if (p->side == BC) tempo = 1; else tempo = 0;
+        if (p->mSide == BC) tempo = 1; else tempo = 0;
         bb_pieces = p->Pawns(WC);
         while (bb_pieces) {
             sq = BB.PopFirstBit(&bb_pieces);
@@ -524,9 +524,9 @@ void cEngine::EvaluateUnstoppable(eData *e, POS *p) {
 
     // Black unstoppable passers
 
-    if (p->cnt[WC][N] + p->cnt[WC][B] + p->cnt[WC][R] + p->cnt[WC][Q] == 0) {
+    if (p->mCnt[WC][N] + p->mCnt[WC][B] + p->mCnt[WC][R] + p->mCnt[WC][Q] == 0) {
         king_sq = p->KingSq(WC);
-        if (p->side == WC) tempo = 1; else tempo = 0;
+        if (p->mSide == WC) tempo = 1; else tempo = 0;
         bb_pieces = p->Pawns(BC);
         while (bb_pieces) {
             sq = BB.PopFirstBit(&bb_pieces);
@@ -570,7 +570,7 @@ int cEngine::Interpolate(POS *p, eData *e) {
 
     int mg_tot = e->mg[WC] - e->mg[BC];
     int eg_tot = e->eg[WC] - e->eg[BC];
-    int mg_phase = Min(p->phase, 24);
+    int mg_phase = Min(p->mPhase, 24);
     int eg_phase = 24 - mg_phase;
 
     return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
@@ -583,7 +583,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
     int eg = 0;
     int op = Opp(sd);
 
-    U64 bb_undefended = p->cl_bb[op];
+    U64 bb_undefended = p->mClBb[op];
     U64 bb_threatened = bb_undefended & e->p_takes[sd];
     U64 bb_defended = bb_undefended & e->all_att[op];
     U64 bb_hanging = bb_undefended & ~e->p_takes[op];
@@ -647,8 +647,8 @@ int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
     && (Abs(eval) < 1000)) {
 
         eval_adj = (int)round(
-                (eval < 0) == (p->side == Par.prog_side) ? (double)eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply :
-                                                           (double)eval * (Glob.nodes > 100 ?   2 : 1) * ply / Par.riskydepth
+                (eval < 0) == (p->mSide == Par.prog_side) ? (double)eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply :
+                                                            (double)eval * (Glob.nodes > 100 ?   2 : 1) * ply / Par.riskydepth
                              );
 
         if (eval_adj > 1000) eval_adj = 1000;
@@ -662,19 +662,19 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
     // Try retrieving score from per-thread eval hashtable
 
-    int addr = p->hash_key % EVAL_HASH_SIZE;
+    int addr = p->mHashKey % EVAL_HASH_SIZE;
 
-    if (EvalTT[addr].key == p->hash_key) {
-        int sc = EvalTT[addr].score;
-        return p->side == WC ? sc : -sc;
+    if (mEvalTT[addr].key == p->mHashKey) {
+        int sc = mEvalTT[addr].score;
+        return p->mSide == WC ? sc : -sc;
     }
 
     // Clear eval data
 
-    e->mg[WC] = p->mg_sc[WC];
-    e->mg[BC] = p->mg_sc[BC];
-    e->eg[WC] = p->eg_sc[WC];
-    e->eg[BC] = p->eg_sc[BC];
+    e->mg[WC] = p->mMgSc[WC];
+    e->mg[BC] = p->mMgSc[BC];
+    e->eg[WC] = p->mEgSc[WC];
+    e->eg[BC] = p->mEgSc[BC];
 
     // Init helper bitboards (pawn info)
 
@@ -704,7 +704,7 @@ int cEngine::Evaluate(POS *p, eData *e) {
     EvaluateUnstoppable(e, p);
     EvaluateThreats(p, e, WC);
     EvaluateThreats(p, e, BC);
-    Add(e, p->side, 14, 7); // tempo bonus
+    Add(e, p->mSide, 14, 7); // tempo bonus
 
     // Evaluate patterns
 
@@ -722,11 +722,11 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
     // Add asymmetric bonus for keeping certain type of pieces
 
-    e->mg[Par.prog_side] += Par.keep_pc[Q] * p->cnt[Par.prog_side][Q];
-    e->mg[Par.prog_side] += Par.keep_pc[R] * p->cnt[Par.prog_side][R];
-    e->mg[Par.prog_side] += Par.keep_pc[B] * p->cnt[Par.prog_side][B];
-    e->mg[Par.prog_side] += Par.keep_pc[N] * p->cnt[Par.prog_side][N];
-    e->mg[Par.prog_side] += Par.keep_pc[P] * p->cnt[Par.prog_side][P];
+    e->mg[Par.prog_side] += Par.keep_pc[Q] * p->mCnt[Par.prog_side][Q];
+    e->mg[Par.prog_side] += Par.keep_pc[R] * p->mCnt[Par.prog_side][R];
+    e->mg[Par.prog_side] += Par.keep_pc[B] * p->mCnt[Par.prog_side][B];
+    e->mg[Par.prog_side] += Par.keep_pc[N] * p->mCnt[Par.prog_side][N];
+    e->mg[Par.prog_side] += Par.keep_pc[P] * p->mCnt[Par.prog_side][P];
 
     // Interpolate between midgame and endgame scores
 
@@ -734,8 +734,8 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
     // Material imbalance evaluation (based on Crafty)
 
-    int minor_balance = p->cnt[WC][N] - p->cnt[BC][N] + p->cnt[WC][B] - p->cnt[BC][B];
-    int major_balance = p->cnt[WC][R] - p->cnt[BC][R] + 2 * p->cnt[WC][Q] - 2 * p->cnt[BC][Q];
+    int minor_balance = p->mCnt[WC][N] - p->mCnt[BC][N] + p->mCnt[WC][B] - p->mCnt[BC][B];
+    int major_balance = p->mCnt[WC][R] - p->mCnt[BC][R] + 2 * p->mCnt[WC][Q] - 2 * p->mCnt[BC][Q];
 
     int x = Max(major_balance + 4, 0);
     if (x > 8) x = 8;
@@ -748,7 +748,7 @@ int cEngine::Evaluate(POS *p, eData *e) {
     // Weakening: add pseudo-random value to eval score
 
     if (Par.eval_blur) {
-        int rand_mod = (Par.eval_blur / 2) - (p->hash_key % Par.eval_blur);
+        int rand_mod = (Par.eval_blur / 2) - (p->mHashKey % Par.eval_blur);
         score += rand_mod;
     }
 
@@ -769,10 +769,10 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
     // Save eval score in the evaluation hash table
 
-    EvalTT[addr].key = p->hash_key;
-    EvalTT[addr].score = score;
+    mEvalTT[addr].key = p->mHashKey;
+    mEvalTT[addr].score = score;
 
     // Return score relative to the side to move
 
-    return p->side == WC ? score : -score;
+    return p->mSide == WC ? score : -score;
 }
