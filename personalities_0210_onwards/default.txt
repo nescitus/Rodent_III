@@ -1,0 +1,6 @@
+; Default
+; Personality for Rodent III chess engine, version 0.217 or later
+; reintroduces default parameter values, obtained by Texel tuning method,
+; by using a secret code word, which is...
+;
+AUTOTUNED

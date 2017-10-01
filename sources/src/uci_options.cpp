@@ -641,6 +641,14 @@ void ReadPersonality(const char *fileName) {
 
         if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false; // DEFAULT == true
 
+        // Normally initializing a personality begins with loading a *human* default.
+        // In order to use a set of parameters, obtained by Texel tuning method,
+        // you need a secret code word. Since it affects parameters not exposed
+        // for manual tuning, this word must be placed at the very beginning
+        // of a personality file:
+
+        if (strstr(line, "AUTOTUNED")) Par.DefaultWeights();
+
         // Aliases for personalities
 
         pos = strchr(line, '=');
