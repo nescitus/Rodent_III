@@ -266,7 +266,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {                // rook on 7th rank
             if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]           // attacking enemy pawns
-            || p->Kings(op) & bb_rel_rank[sd][RANK_8]) {         // or cutting off enemy king
+            ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) {        // or cutting off enemy king
                 lines_mg += Par.values[RSR_MG];
                 lines_eg += Par.values[RSR_EG];
                 r_on_7th++;

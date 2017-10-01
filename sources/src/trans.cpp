@@ -20,7 +20,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cstdlib>
 #include <cstring>
 
-#if defined(USE_THREADS) && defined(NEW_THREADS)
+#if defined(USE_THREADS)
     #include <atomic>
     #include <memory>
 
@@ -71,7 +71,7 @@ void ChessHeapClass::AllocTrans(unsigned int mbsize) {
         tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements of type ENTRY
         tt_mask = tt_size - 4;
 
-#if defined(USE_THREADS) && defined(NEW_THREADS)
+#if defined(USE_THREADS)
         unsigned int number_of_aflags = tt_size / 4;
 
         aflags0 = std::make_unique<std::atomic_flag[]> (number_of_aflags);

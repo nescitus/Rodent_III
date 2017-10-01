@@ -63,9 +63,6 @@ using U64 = uint64_t;
     #ifndef USE_THREADS
        #define USE_THREADS
     #endif
-    #ifndef NEW_THREADS
-        #define NEW_THREADS
-    #endif
     #define MAX_THREADS 8
 #else
     #undef USE_THREADS
@@ -625,7 +622,7 @@ class cMask {
 
 extern cMask Mask;
 
-#if defined(USE_THREADS) && defined(NEW_THREADS)
+#if defined(USE_THREADS)
     #include <atomic>
 
     using glob_bool = std::atomic<bool>;
