@@ -59,7 +59,7 @@ setoption name PawnMass value 100
 setoption name PawnChains value 100
 setoption name PstStyle value 2
 setoption name MobilityStyle value 0
-setoption name NpsLimit value 4200
+setoption name NpsLimit value 4500
 setoption name EvalBlur value 0
 setoption name Contempt value 0
 setoption name SlowMover value 120
@@ -67,5 +67,5 @@ setoption name Selectivity value 175
 setoption name SearchSkill value 10
 setoption name RiskyDepth value 0
 setoption name BookFilter value 20
-setoption name GuideBookFile value guide/flank.bin
+setoption name GuideBookFile value guide/grandpa.bin
 setoption name MainBookFile value small.bin
