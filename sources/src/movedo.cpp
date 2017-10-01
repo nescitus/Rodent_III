@@ -19,8 +19,8 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void POS::DoMove(int move, UNDO *u) {
 
-    int sd = mSide;         // moving side
-    int op = Opp(sd);       // side not to move
+    eColor sd = mSide;      // moving side
+    eColor op = ~sd;        // side not to move
     int fsq = Fsq(move);    // start square
     int tsq = Tsq(move);    // target square
     int ftp = Tp(mPc[fsq]); // moving piece
@@ -162,7 +162,7 @@ void POS::DoMove(int move, UNDO *u) {
 
     // Change side to move
 
-    mSide ^= 1;
+	mSide = ~mSide;
     mHashKey ^= SIDE_RANDOM;
 }
 
@@ -176,6 +176,6 @@ void POS::DoNull(UNDO *u) {
         mHashKey ^= msZobEp[File(mEpSq)];
         mEpSq = NO_SQ;
     }
-    mSide ^= 1;
+	mSide = ~mSide;
     mHashKey ^= SIDE_RANDOM;
 }

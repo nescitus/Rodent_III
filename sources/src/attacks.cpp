@@ -21,7 +21,7 @@ U64 POS::AttacksFrom(int sq) const {
 
     switch (TpOnSq(sq)) {
         case P:
-            return BB.PawnAttacks(Cl(mPc[sq]), sq);
+            return BB.PawnAttacks((eColor)Cl(mPc[sq]), sq);
         case N:
             return BB.KnightAttacks(sq);
         case B:
@@ -46,9 +46,9 @@ U64 POS::AttacksTo(int sq) const {
            (mTpBb[K] & BB.KingAttacks(sq));
 }
 
-bool POS::Attacked(int sq, int sd) const {
+bool POS::Attacked(int sq, eColor sd) const {
 
-    return (Pawns(sd) & BB.PawnAttacks(Opp(sd), sq)) ||
+    return (Pawns(sd) & BB.PawnAttacks(~sd, sq)) ||
            (Knights(sd) & BB.KnightAttacks(sq)) ||
            (DiagMovers(sd) & BB.BishAttacks(OccBb(), sq)) ||
            (StraightMovers(sd)) & BB.RookAttacks(OccBb(), sq) ||

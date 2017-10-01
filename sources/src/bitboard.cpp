@@ -182,7 +182,7 @@ U64 cBitBoard::GetBPControl(U64 bb) {
     return (ShiftSE(bb) | ShiftSW(bb));
 }
 
-U64 cBitBoard::GetPawnControl(U64 bb, int sd) {
+U64 cBitBoard::GetPawnControl(U64 bb, eColor sd) {
     if (sd == WC) return GetWPControl(bb);
     else          return GetBPControl(bb);
 }
@@ -195,13 +195,13 @@ U64 cBitBoard::GetDoubleBPControl(U64 bb) {
     return (ShiftSE(bb) & ShiftSW(bb));
 }
 
-U64 cBitBoard::GetFrontSpan(U64 bb, int sd) {
+U64 cBitBoard::GetFrontSpan(U64 bb, eColor sd) {
 
     if (sd == WC) return BB.FillNorthExcl(bb);
     else          return BB.FillSouthExcl(bb);
 }
 
-U64 cBitBoard::ShiftFwd(U64 bb, int sd) {
+U64 cBitBoard::ShiftFwd(U64 bb, eColor sd) {
 
     if (sd == WC) return ShiftNorth(bb);
     else          return ShiftSouth(bb);
@@ -211,7 +211,7 @@ U64 cBitBoard::ShiftSideways(U64 bb) {
     return (ShiftWest(bb) | ShiftEast(bb));
 }
 
-U64 cBitBoard::PawnAttacks(int sd, int sq) {
+U64 cBitBoard::PawnAttacks(eColor sd, int sq) {
     return p_attacks[sd][sq];
 }
 

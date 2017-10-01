@@ -22,8 +22,8 @@ int *POS::GenerateCaptures(int *list) const {
     U64 bb_pieces, bb_moves;
     int from, to;
 
-    int sd = mSide;
-    int op = Opp(sd);
+    eColor sd = mSide;
+    eColor op = ~sd;
 
     if (sd == WC) {
         bb_moves = ((Pawns(WC) & ~FILE_A_BB & RANK_7_BB) << 7) & mClBb[BC];
@@ -124,7 +124,7 @@ int *POS::GenerateCaptures(int *list) const {
     bb_pieces = Knights(sd);
     while (bb_pieces) {
         from = BB.PopFirstBit(&bb_pieces);
-        bb_moves = BB.KnightAttacks(from) & mClBb[Opp(sd)];
+        bb_moves = BB.KnightAttacks(from) & mClBb[~sd];
         while (bb_moves) {
             to = BB.PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
@@ -180,7 +180,8 @@ int *POS::GenerateCaptures(int *list) const {
 int *POS::GenerateQuiet(int *list) const {
 
     U64 bb_pieces, bb_moves;
-    int sd, from, to;
+	eColor sd;
+    int from, to;
 
     sd = mSide;
     if (sd == WC) {
@@ -285,8 +286,8 @@ int *POS::GenerateSpecial(int *list) const {
 
     U64 bb_pieces, bb_moves;
     int from, to;
-    int sd = mSide;
-    int op = Opp(sd);
+    eColor sd = mSide;
+    eColor op = ~sd;
 
     // squares from which normal (non-discovered) checks are possible
 
@@ -410,7 +411,7 @@ int *POS::GenerateSpecial(int *list) const {
     return list;
 }
 
-bool POS::CanDiscoverCheck(U64 bb_checkers, int op, int from) const {
+bool POS::CanDiscoverCheck(U64 bb_checkers, eColor op, int from) const {
 
     while (bb_checkers) {
         int checker = BB.PopFirstBit(&bb_checkers);

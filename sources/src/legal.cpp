@@ -19,7 +19,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 bool POS::Legal(int move) const {
 
-    int sd = mSide;
+    eColor sd = mSide;
     int fsq = Fsq(move);
     int tsq = Tsq(move);
     int ftp = TpOnSq(fsq);

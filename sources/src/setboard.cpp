@@ -105,7 +105,7 @@ void POS::SetPosition(const char *epd) {
         mEpSq = NO_SQ;
     else {
         mEpSq = Sq(*epd - 'a', *(epd + 1) - '1');
-        if (!(BB.PawnAttacks(Opp(mSide), mEpSq) & Pawns(mSide)))
+        if (!(BB.PawnAttacks(~mSide, mEpSq) & Pawns(mSide)))
             mEpSq = NO_SQ;
     }
     InitHashKey();

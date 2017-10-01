@@ -60,9 +60,9 @@ static const int BN_bb[64] = {
     0,   0,   15,  30,  45,  60,  85, 100
 };
 
-int cEngine::GetDrawFactor(POS *p, int sd) {  // refactoring may be needed
+int cEngine::GetDrawFactor(POS *p, eColor sd) {  // refactoring may be needed
 
-    int op = Opp(sd); // weaker side
+    eColor op = ~sd; // weaker side
 
     if (p->mPhase < 2) {
         if (p->Pawns(sd) == 0) return 0;                                                                   // KK, KmK, KmKp, KmKpp
@@ -135,7 +135,7 @@ int cEngine::GetDrawFactor(POS *p, int sd) {  // refactoring may be needed
     return 64;
 }
 
-int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
+int cEngine::ScalePawnsOnly(POS *p, eColor sd, eColor op) {
 
     if (p->mCnt[op][P] == 0) {  // TODO: accept pawns for a weaker side
 
@@ -149,7 +149,7 @@ int cEngine::ScalePawnsOnly(POS *p, int sd, int op) {
     return 64; // default
 }
 
-int cEngine::ScaleKNPK(POS *p, int sd, int op) {
+int cEngine::ScaleKNPK(POS *p, eColor sd, eColor op) {
 
     // rare KNPK draw rule: king blocking an edge pawn on 7th rank draws
 
@@ -167,7 +167,7 @@ int cEngine::ScaleKNPK(POS *p, int sd, int op) {
     return 64; // default
 }
 
-int cEngine::ScaleKBPK(POS *p, int sd, int op) {
+int cEngine::ScaleKBPK(POS *p, eColor sd, eColor op) {
 
     if ((p->Pawns(sd) == (p->Pawns(sd) & FILE_H_BB))
     && NotOnBishColor(p, sd, REL_SQ(H8, sd))
@@ -180,7 +180,7 @@ int cEngine::ScaleKBPK(POS *p, int sd, int op) {
     return 64; // default
 }
 
-int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
+int cEngine::ScaleKRPKR(POS *p, eColor sd, eColor op) {
 
     if ((RelSqBb(A7, sd) & p->Pawns(sd))
     && (RelSqBb(A8, sd) & p->Rooks(sd))
@@ -241,7 +241,7 @@ int cEngine::ScaleKRPKR(POS *p, int sd, int op) {
     return 64;   // default: no scaling
 }
 
-int cEngine::ScaleKQKRP(POS *p, int sd, int op) {
+int cEngine::ScaleKQKRP(POS *p, eColor sd, eColor op) {
 
     U64 bb_defended = p->Pawns(op) & bb_rel_rank[sd][RANK_7];
     bb_defended &= BB.KingAttacks(p->mKingSq[op]);
@@ -254,7 +254,7 @@ int cEngine::ScaleKQKRP(POS *p, int sd, int op) {
     return 64;   // default: no scaling
 }
 
-bool cEngine::NotOnBishColor(POS *p, int bish_side, int sq) {
+bool cEngine::NotOnBishColor(POS *p, eColor bish_side, int sq) {
 
     if (((bbWhiteSq & p->Bishops(bish_side)) == 0)
     && (SqBb(sq) & bbWhiteSq)) return true;

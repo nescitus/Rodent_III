@@ -19,8 +19,8 @@ If not, see <http://www.gnu.org/licenses/>.
 
 void POS::UndoMove(int move, UNDO *u) {
 
-    int sd = Opp(mSide);
-    int op = Opp(sd);
+    eColor sd = ~mSide;
+    eColor op = ~sd;
     int fsq = Fsq(move);
     int tsq = Tsq(move);
     int ftp = Tp(mPc[tsq]); // moving piece
@@ -107,7 +107,7 @@ void POS::UndoMove(int move, UNDO *u) {
             break;
     }
 
-    mSide ^= 1;
+    mSide = ~mSide;
 }
 
 void POS::UndoNull(UNDO *u) {
@@ -116,5 +116,5 @@ void POS::UndoNull(UNDO *u) {
     mHashKey = u->mHashKeyUd;
     mHead--;
     mRevMoves--;
-    mSide ^= 1;
+    mSide = ~mSide;
 }

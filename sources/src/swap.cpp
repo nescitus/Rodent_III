@@ -31,7 +31,7 @@ int POS::Swap(int from, int to) {
     attackers &= occ;
 
     int type = TpOnSq(from);
-    int side = (SqBb(from) & mClBb[BC]) == 0 ? BC : WC; // so that we can call Swap() out of turn
+    eColor side = (SqBb(from) & mClBb[BC]) == 0 ? BC : WC; // so that we can call Swap() out of turn
     int ply = 1;
     U64 type_bb;
 
@@ -65,7 +65,7 @@ int POS::Swap(int from, int to) {
                      (BB.RookAttacks(occ, to) & (mTpBb[R] | mTpBb[Q]));
         attackers &= occ;
 
-        side ^= 1;
+        side = ~side;
         ply++;
     }
 

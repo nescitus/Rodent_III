@@ -217,7 +217,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
     int best, score, move, new_pv[MAX_PLY];
-    int op = Opp(p->mSide);
+    eColor op = ~p->mSide;
     MOVES m[1];
     UNDO u[1];
     eData e;

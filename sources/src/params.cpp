@@ -714,7 +714,7 @@ void cParam::InitBackward() {
 void cParam::InitPst() {
 
     for (int sq = 0; sq < 64; sq++) {
-        for (int sd = 0; sd < 2; sd++) {
+        for (eColor sd = WC; sd < 2; ++sd) {
 
             mg_pst[sd][P][REL_SQ(sq, sd)] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + (pstPawnMg  [pst_style][sq] * Par.values[W_PST]) / 100;
             eg_pst[sd][P][REL_SQ(sq, sd)] = ((values[P_END] * Par.values[W_MATERIAL]) / 100) + (pstPawnEg  [pst_style][sq] * Par.values[W_PST]) / 100;

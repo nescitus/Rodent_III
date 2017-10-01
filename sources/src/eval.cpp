@@ -33,9 +33,9 @@ void cEngine::ClearEvalHash() {
     ZEROARRAY(mEvalTT);
 }
 
-void cEngine::EvaluateMaterial(POS *p, eData *e, int sd) {
+void cEngine::EvaluateMaterial(POS *p, eData *e, eColor sd) {
 
-    int op = Opp(sd);
+    eColor op = ~sd;
 
     int tmp = Par.np_table[p->mCnt[sd][P]] * p->mCnt[sd][N]    // knights lose value as pawns disappear
             - Par.rp_table[p->mCnt[sd][P]] * p->mCnt[sd][R];   // rooks gain value as pawns disappear
@@ -52,7 +52,7 @@ void cEngine::EvaluateMaterial(POS *p, eData *e, int sd) {
     Add(e, sd, tmp);
 }
 
-void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
+void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     U64 bb_pieces, bb_attack, bb_control, bb_possible, bb_contact, bb_zone, bb_file;
     int sq, cnt, own_p_cnt, opp_p_cnt;
@@ -72,7 +72,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
     // Init king attack zone
 
-    int op = Opp(sd);
+    eColor op = ~sd;
     int king_sq = p->KingSq(op);
     bb_zone = BB.KingAttacks(king_sq);
     bb_zone |= BB.ShiftFwd(bb_zone, op);
@@ -353,7 +353,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, int sd) {
 
 }
 
-void cEngine::EvaluateOutpost(POS *p, eData *e, int sd, int pc, int sq, int *outpost) {
+void cEngine::EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost) {
 
     if (SqBb(sq) & Mask.home[sd]) {
         U64 stop = BB.ShiftFwd(SqBb(sq), sd);             // get square in front of a minor
@@ -364,18 +364,18 @@ void cEngine::EvaluateOutpost(POS *p, eData *e, int sd, int pc, int sq, int *out
     int tmp = Par.sp_pst[sd][pc][sq];                     // get base outpost bonus
     if (tmp) {
         int mul = 0;                                      // reset outpost multiplier
-        if (SqBb(sq) & ~e->p_can_take[Opp(sd)]) mul += 2; // is piece in hole of enemy pawn structure?
+        if (SqBb(sq) & ~e->p_can_take[~sd]) mul += 2; // is piece in hole of enemy pawn structure?
         if (SqBb(sq) & e->p_takes[sd]) mul += 1;          // is piece defended by own pawn?
         if (SqBb(sq) & e->two_pawns_take[sd]) mul += 1;   // is piece defended by two pawns?
         *outpost += (tmp * mul) / 2;                      // add outpost bonus
     }
 }
 
-void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
+void cEngine::EvaluatePawns(POS *p, eData *e, eColor sd) {
 
     U64 bb_pieces, front_span, fl_phalanx;
     int sq, fl_unopposed;
-    int op = Opp(sd);
+    eColor op = ~sd;
     int mass_mg = 0;
     int mass_eg = 0;
 
@@ -425,11 +425,11 @@ void cEngine::EvaluatePawns(POS *p, eData *e, int sd) {
     AddPawns(e, sd, (mass_mg * Par.values[W_MASS]) / 100, (mass_eg * Par.values[W_MASS]) / 100);
 }
 
-void cEngine::EvaluatePassers(POS *p, eData *e, int sd) {
+void cEngine::EvaluatePassers(POS *p, eData *e, eColor sd) {
 
     U64 bb_pieces, bb_pawn, bb_stop;
     int sq, mg_tmp, eg_tmp, mul;
-    int op = Opp(sd);
+    eColor op = ~sd;
     int mg_tot = 0;
     int eg_tot = 0;
 
@@ -543,19 +543,19 @@ void cEngine::EvaluateUnstoppable(eData *e, POS *p) {
 }
 
 
-void cEngine::Add(eData *e, int sd, int mg_val, int eg_val) {
+void cEngine::Add(eData *e, eColor sd, int mg_val, int eg_val) {
 
     e->mg[sd] += mg_val;
     e->eg[sd] += eg_val;
 }
 
-void cEngine::Add(eData *e, int sd, int val) {
+void cEngine::Add(eData *e, eColor sd, int val) {
 
     e->mg[sd] += val;
     e->eg[sd] += val;
 }
 
-void cEngine::AddPawns(eData *e, int sd, int mg_val, int eg_val) {
+void cEngine::AddPawns(eData *e, eColor sd, int mg_val, int eg_val) {
 
     e->mg_pawns[sd] += mg_val;
     e->eg_pawns[sd] += eg_val;
@@ -571,12 +571,12 @@ int cEngine::Interpolate(POS *p, eData *e) {
     return (mg_tot * mg_phase + eg_tot * eg_phase) / 24;
 }
 
-void cEngine::EvaluateThreats(POS *p, eData *e, int sd) {
+void cEngine::EvaluateThreats(POS *p, eData *e, eColor sd) {
 
     int pc, sq, sc;
     int mg = 0;
     int eg = 0;
-    int op = Opp(sd);
+    eColor op = ~sd;
 
     U64 bb_undefended = p->mClBb[op];
     U64 bb_threatened = bb_undefended & e->p_takes[sd];

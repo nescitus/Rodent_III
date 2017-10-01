@@ -55,9 +55,9 @@ bool POS::IsDraw() const {
     return false;
 }
 
-bool POS::KPKdraw(int sd) const {
+bool POS::KPKdraw(eColor sd) const {
 
-    int op = Opp(sd);
+    eColor op = ~sd;
     U64 bbPawn = Pawns(sd);
     U64 bbStrongKing = Kings(sd);
     U64 bbWeakKing = Kings(op);

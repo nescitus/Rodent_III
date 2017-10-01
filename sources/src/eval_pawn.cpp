@@ -144,7 +144,7 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     mPawnTT[addr].eg_pawns = (Par.values[W_STRUCT] * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
 }
 
-void cEngine::EvaluateKing(POS *p, eData *e, int sd) {
+void cEngine::EvaluateKing(POS *p, eData *e, eColor sd) {
 
     const int qCastle[2] = { B1, B8 };
     const int kCastle[2] = { G1, G8 };
@@ -174,16 +174,16 @@ void cEngine::EvaluateKing(POS *p, eData *e, int sd) {
     AddPawns(e, sd, EvaluateChains(p, sd), 0);
 }
 
-void cEngine::EvaluateKingFile(POS *p, int sd, U64 bb_file, int *shield, int *storm) {
+void cEngine::EvaluateKingFile(POS *p, eColor sd, U64 bb_file, int *shield, int *storm) {
 
     int shelter = EvaluateFileShelter(bb_file &  p->Pawns(sd), sd);
     if (p->Kings(sd) & bb_file) shelter = ((shelter * 120) / 100);
     if (bb_file & bb_central_file) shelter /= 2;
     *shield += shelter;
-    *storm += EvaluateFileStorm(bb_file & p->Pawns(Opp(sd)), sd);
+    *storm += EvaluateFileStorm(bb_file & p->Pawns(~sd), sd);
 }
 
-int cEngine::EvaluateFileShelter(U64 bb_own_pawns, int sd) {
+int cEngine::EvaluateFileShelter(U64 bb_own_pawns, eColor sd) {
 
     if (!bb_own_pawns) return Par.values[P_SH_NONE];
     if (bb_own_pawns & bb_rel_rank[sd][RANK_2]) return Par.values[P_SH_2];
@@ -195,7 +195,7 @@ int cEngine::EvaluateFileShelter(U64 bb_own_pawns, int sd) {
     return 0;
 }
 
-int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
+int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, eColor sd) {
 
     if (!bb_opp_pawns) return Par.values[P_ST_OPEN];
     if (bb_opp_pawns & bb_rel_rank[sd][RANK_3]) return Par.values[P_ST_3];
@@ -213,11 +213,11 @@ int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, int sd) {
 
 // @brief EvaluateChains() gives a penalty to side being at the receiving end of the pawn chain
 
-int cEngine::EvaluateChains(POS *p, int sd) {
+int cEngine::EvaluateChains(POS *p, eColor sd) {
 
     int mg_result = 0;
     int sq = p->mKingSq[sd];
-    int op = Opp(sd);
+    eColor op = ~sd;
 
     // basic pointy chain
 

@@ -92,6 +92,13 @@ enum eSquare {
     NO_SQ
 };
 
+// Operators for eColor type:
+// ~ switches color
+// ++ (placed before variable) iterates
+
+inline eColor operator~(eColor c) { return eColor(c ^ BC); }
+inline eColor operator++(eColor& c) { return c = eColor(int(c) + 1); }
+
 constexpr int PHA_MG = Q;
 constexpr int DEF_MG = K;
 constexpr int PHA_EG = P;
@@ -166,8 +173,6 @@ template<typename T> constexpr T Clip(const T& sc, const T& lim) { if (sc < -lim
 #define MoveType(x)     ((x) >> 12)
 #define IsProm(x)       ((x) & 0x4000)
 #define PromType(x)     (((x) >> 12) - 3)
-
-#define Opp(x)          ((x) ^ 1)
 
 #ifndef FORCEINLINE
     #if defined(_MSC_VER)
@@ -276,14 +281,14 @@ class cBitBoard {
     U64 bbBetween[64][64];
     void Init();
     void Print(U64 bb);
-    U64 ShiftFwd(U64 bb, int sd);
+    U64 ShiftFwd(U64 bb, eColor sd);
     U64 ShiftSideways(U64 bb);
     U64 GetWPControl(U64 bb);
     U64 GetBPControl(U64 bb);
-    U64 GetPawnControl(U64 bb, int sd);
+    U64 GetPawnControl(U64 bb, eColor sd);
     U64 GetDoubleWPControl(U64 bb);
     U64 GetDoubleBPControl(U64 bb);
-    U64 GetFrontSpan(U64 bb, int sd);
+    U64 GetFrontSpan(U64 bb, eColor sd);
     U64 FillNorth(U64 bb);
     U64 FillSouth(U64 bb);
     U64 FillNorthSq(int sq);
@@ -294,7 +299,7 @@ class cBitBoard {
     int PopCnt(U64);
     int PopFirstBit(U64 *bb);
 
-    U64 PawnAttacks(int sd, int sq);
+    U64 PawnAttacks(eColor sd, int sq);
     U64 KingAttacks(int sq);
     U64 KnightAttacks(int sq);
     U64 RookAttacks(U64 occ, int sq);
@@ -327,9 +332,9 @@ class POS {
 
     U64 AttacksFrom(int sq) const;
     U64 AttacksTo(int sq) const;
-    bool Attacked(int sq, int sd) const;
+    bool Attacked(int sq, eColor sd) const;
 
-    bool CanDiscoverCheck(U64 bb_checkers, int op, int from) const; // for GenerateSpecial()
+    bool CanDiscoverCheck(U64 bb_checkers, eColor op, int from) const; // for GenerateSpecial()
 
   public:
     U64 mClBb[2];
@@ -340,7 +345,7 @@ class POS {
     int mCnt[2][6];
     int mMgSc[2];
     int mEgSc[2];
-    int mSide;
+    eColor mSide;
     int mCFlags;
     int mEpSq;
     int mRevMoves;
@@ -351,28 +356,28 @@ class POS {
 
     static void Init();
 
-    U64 Pawns(int sd)   const { return mClBb[sd] & mTpBb[P]; }
-    U64 Knights(int sd) const { return mClBb[sd] & mTpBb[N]; }
-    U64 Bishops(int sd) const { return mClBb[sd] & mTpBb[B]; }
-    U64 Rooks(int sd)   const { return mClBb[sd] & mTpBb[R]; }
-    U64 Queens(int sd)  const { return mClBb[sd] & mTpBb[Q]; }
-    U64 Kings(int sd)   const { return mClBb[sd] & mTpBb[K]; }
+    U64 Pawns(eColor sd)   const { return mClBb[sd] & mTpBb[P]; }
+    U64 Knights(eColor sd) const { return mClBb[sd] & mTpBb[N]; }
+    U64 Bishops(eColor sd) const { return mClBb[sd] & mTpBb[B]; }
+    U64 Rooks(eColor sd)   const { return mClBb[sd] & mTpBb[R]; }
+    U64 Queens(eColor sd)  const { return mClBb[sd] & mTpBb[Q]; }
+    U64 Kings(eColor sd)   const { return mClBb[sd] & mTpBb[K]; }
 
-    U64 StraightMovers(int sd) const { return mClBb[sd] & (mTpBb[R] | mTpBb[Q]); }
-    U64 DiagMovers(int sd)     const { return mClBb[sd] & (mTpBb[B] | mTpBb[Q]); }
+    U64 StraightMovers(eColor sd) const { return mClBb[sd] & (mTpBb[R] | mTpBb[Q]); }
+    U64 DiagMovers(eColor sd)     const { return mClBb[sd] & (mTpBb[B] | mTpBb[Q]); }
 
-    U64 PcBb(int sd, int tp) const { return mClBb[sd] & mTpBb[tp]; }
+    U64 PcBb(eColor sd, int tp) const { return mClBb[sd] & mTpBb[tp]; }
     U64 OccBb()   const { return mClBb[WC] | mClBb[BC]; }
     U64 UnoccBb() const { return ~OccBb(); }
 
-    int KingSq(int sd) const { return mKingSq[sd]; }
+    int KingSq(eColor sd) const { return mKingSq[sd]; }
     int TpOnSq(int sq) const { return Tp(mPc[sq]); }
 
     bool MayNull() const { return (mClBb[mSide] & ~(mTpBb[P] | mTpBb[K])) != 0; }
-    bool IsOnSq(int sd, int tp, int sq) const { return PcBb(sd, tp) & SqBb(sq); }
+    bool IsOnSq(eColor sd, int tp, int sq) const { return PcBb(sd, tp) & SqBb(sq); }
 
-    bool InCheck() const { return Attacked(KingSq(mSide), Opp(mSide)); }
-    bool Illegal() const { return Attacked(KingSq(Opp(mSide)), mSide); }
+    bool InCheck() const { return Attacked(KingSq(mSide), ~mSide); }
+    bool Illegal() const { return Attacked(KingSq(~mSide), mSide); }
 
     void DoMove(int move, UNDO *u = nullptr);
     void DoNull(UNDO *u);
@@ -382,7 +387,7 @@ class POS {
     void SetPosition(const char *epd);
 
     bool IsDraw() const;
-    bool KPKdraw(int sd) const;
+    bool KPKdraw(eColor sd) const;
 
     int DrawScore() const;
     bool Legal(int move) const;
@@ -523,7 +528,7 @@ class cParam {
     bool shut_up;
     int time_percentage;
     int draw_score;
-    int prog_side;
+    eColor prog_side;
     int search_skill;
     int nps_limit;
     int eval_blur;
@@ -753,35 +758,35 @@ class cEngine {
 #ifdef USE_RISKY_PARAMETER
     static int EvalScaleByDepth(POS *p, int ply, int eval);
 #endif
-    static int EvaluateChains(POS *p, int sd);
-    static void EvaluateMaterial(POS *p, eData *e, int sd);
-    static void EvaluatePieces(POS *p, eData *e, int sd);
-    static void EvaluateOutpost(POS *p, eData *e, int pc, int sd, int sq, int *outpost);
-    static void EvaluatePawns(POS *p, eData *e, int sd);
-    static void EvaluatePassers(POS *p, eData *e, int sd);
-    static void EvaluateKing(POS *p, eData *e, int sd);
-    static void EvaluateKingFile(POS *p, int sd, U64 bb_file, int *shield, int *storm);
-    static int EvaluateFileShelter(U64 bb_own_pawns, int sd);
-    static int EvaluateFileStorm(U64 bb_opp_pawns, int sd);
+    static int EvaluateChains(POS *p, eColor sd);
+    static void EvaluateMaterial(POS *p, eData *e, eColor sd);
+    static void EvaluatePieces(POS *p, eData *e, eColor sd);
+    static void EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost);
+    static void EvaluatePawns(POS *p, eData *e, eColor sd);
+    static void EvaluatePassers(POS *p, eData *e, eColor sd);
+    static void EvaluateKing(POS *p, eData *e, eColor sd);
+    static void EvaluateKingFile(POS *p, eColor sd, U64 bb_file, int *shield, int *storm);
+    static int EvaluateFileShelter(U64 bb_own_pawns, eColor sd);
+    static int EvaluateFileStorm(U64 bb_opp_pawns, eColor sd);
     void EvaluatePawnStruct(POS *p, eData *e);
     static void EvaluateUnstoppable(eData *e, POS *p);
-    static void EvaluateThreats(POS *p, eData *e, int sd);
-    static int ScalePawnsOnly(POS *p, int sd, int op);
-    static int ScaleKBPK(POS *p, int sd, int op);
-    static int ScaleKNPK(POS *p, int sd, int op);
-    static int ScaleKRPKR(POS *p, int sd, int op);
-    static int ScaleKQKRP(POS *p, int sd, int op);
+    static void EvaluateThreats(POS *p, eData *e, eColor sd);
+    static int ScalePawnsOnly(POS *p, eColor sd, eColor op);
+    static int ScaleKBPK(POS *p, eColor sd, eColor op);
+    static int ScaleKNPK(POS *p, eColor sd, eColor op);
+    static int ScaleKRPKR(POS *p, eColor sd, eColor op);
+    static int ScaleKQKRP(POS *p, eColor sd, eColor op);
     static void EvaluateBishopPatterns(POS *p, eData *e);
     static void EvaluateKnightPatterns(POS *p, eData *e);
     static void EvaluateCentralPatterns(POS *p, eData *e);
     static void EvaluateKingPatterns(POS *p, eData *e);
     static int Interpolate(POS *p, eData *e);
-    static int GetDrawFactor(POS *p, int sd);
+    static int GetDrawFactor(POS *p, eColor sd);
     static int CheckmateHelper(POS *p);
-    static void Add(eData *e, int sd, int mg_val, int eg_val);
-    static void Add(eData *e, int sd, int val);
-    static void AddPawns(eData *e, int sd, int mg_val, int eg_val);
-    static bool NotOnBishColor(POS *p, int bish_side, int sq);
+    static void Add(eData *e, eColor sd, int mg_val, int eg_val);
+    static void Add(eData *e, eColor sd, int val);
+    static void AddPawns(eData *e, eColor sd, int mg_val, int eg_val);
+    static bool NotOnBishColor(POS *p, eColor bish_side, int sq);
     static bool DifferentBishops(POS *p);
     static void PvToStr(int *pv, char *pv_str);
     static void BuildPv(int *dst, int *src, int move);
