@@ -116,7 +116,7 @@ void cEngine::Iterate(POS *p, int *pv) {
 
         printf("info depth %d\n", mRootDepth);
         if (Par.search_skill > 6) cur_val = Widen(p, mRootDepth, pv, cur_val);
-        else                      cur_val = Search(p, 0, -INF, INF, mRootDepth, 0, -1, -1, pv);
+        else                      cur_val = Search(p, 0, -INF, INF, mRootDepth, false, -1, -1, pv);
         if (Glob.abort_search) break;
 
         // Shorten search if there is only one root move available
@@ -155,7 +155,7 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
         for (int margin = 10; margin < 500; margin *= 2) {
             alpha = lastScore - margin;
             beta  = lastScore + margin;
-            cur_val = Search(p, 0, alpha, beta, depth, 0, -1, -1, pv);
+            cur_val = Search(p, 0, alpha, beta, depth, false, -1, -1, pv);
             if (Glob.abort_search) break;
             if (cur_val > alpha && cur_val < beta)
                 return cur_val;              // we have finished within the window
@@ -163,24 +163,26 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
         }
     }
 
-    cur_val = Search(p, 0, -INF, INF, depth, 0, -1, -1, pv); // full window search
+    cur_val = Search(p, 0, -INF, INF, depth, false, -1, -1, pv); // full window search
     return cur_val;
 }
 
-int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_null, int last_move, int last_capt_sq, int *pv) {
+int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_null, int last_move, int last_capt_sq, int *pv) {
 
     int best, score, null_score, move, new_depth, new_pv[MAX_PLY];
-    int mv_type, fl_check, reduction, victim, last_capt;
-    int is_pv = (alpha != beta - 1);
+    int mv_type, reduction, victim, last_capt;
     int null_refutation = -1, ref_sq = -1;
     int mv_tried = 0;
     int mv_played[MAX_MOVES];
     int quiet_tried = 0;
-    int fl_futility = 0;
     int mv_hist_score = 0;
     MOVES m[1];
     UNDO u[1];
     eData e;
+
+	bool fl_check;
+	bool fl_futility = false;
+	bool is_pv = (alpha != beta - 1);
 
     // QUIESCENCE SEARCH ENTRY POINT
 
@@ -284,7 +286,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
 
         p->DoNull(u);
         if (new_depth <= 0) score = -QuiesceChecks(p, ply + 1, -beta, -beta + 1, new_pv);
-        else                score = -Search(p, ply + 1, -beta, -beta + 1, new_depth, 1, 0, -1, new_pv);
+        else                score = -Search(p, ply + 1, -beta, -beta + 1, new_depth, true, 0, -1, new_pv);
 
         // get location of a piece whose capture refuted null move
         // its escape will be prioritised in the move ordering
@@ -304,7 +306,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, int was_nul
             // verification search
 
             if (new_depth > 6 && Par.search_skill > 9)
-                score = Search(p, ply, alpha, beta, new_depth - 5, 1, last_move, last_capt_sq, pv);
+                score = Search(p, ply, alpha, beta, new_depth - 5, true, last_move, last_capt_sq, pv);
 
             if (Glob.abort_search && mRootDepth > 1) return 0;
             if (score >= beta) return score;
@@ -335,7 +337,7 @@ avoid_null:
     && !fl_check
     && !move
     && depth > 6) {
-        Search(p, ply, alpha, beta, depth - 2, 0, -1, last_capt_sq, pv);
+        Search(p, ply, alpha, beta, depth - 2, false, -1, last_capt_sq, pv);
         chc.TransRetrieveMove(p->mHashKey, &move);
     }
 
@@ -358,7 +360,7 @@ avoid_null:
         && quiet_tried == 0
         && fl_prunable_node
         && depth <= mscFutDepth) {
-           if (eval + mscFutMargin[depth] < beta) fl_futility = 1;
+           if (eval + mscFutMargin[depth] < beta) fl_futility = true;
         }
 
         // MAKE MOVE
@@ -467,11 +469,11 @@ research:
         // PRINCIPAL VARIATION SEARCH
 
         if (best == -INF)
-            score = -Search(p, ply + 1, -beta, -alpha, new_depth, 0, move, last_capt, new_pv);
+            score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
         else {
-            score = -Search(p, ply + 1, -alpha - 1, -alpha, new_depth, 0, move, last_capt, new_pv);
+            score = -Search(p, ply + 1, -alpha - 1, -alpha, new_depth, false, move, last_capt, new_pv);
             if (!Glob.abort_search && score > alpha && score < beta)
-                score = -Search(p, ply + 1, -beta, -alpha, new_depth, 0, move, last_capt, new_pv);
+                score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
         }
 
         // DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
