@@ -1,4 +1,7 @@
-Personality for Rodent III chess engine, version 0.210 or later
+; StoneGolem
+; Personality for Rodent III chess engine, version 0.210 or later
+; pessimistic and solid with pawns
+;
 setoption name PawnValueMg value 95
 setoption name KnightValueMg value 310
 setoption name BishopValueMg value 322

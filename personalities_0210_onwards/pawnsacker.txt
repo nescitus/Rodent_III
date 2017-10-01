@@ -1,8 +1,8 @@
-Pawnsacker
-Personality for Rodent III chess engine, version 0.210 or later
-Created by Pawel Koziol
-Balanced personality, slightly less materialistic than default.
-
+;Pawnsacker
+;Personality for Rodent III chess engine, version 0.210 or later
+;Created by Pawel Koziol
+;Balanced personality, slightly less materialistic than default.
+;
 setoption name PawnValueMg value 90
 setoption name KnightValueMg value 310
 setoption name BishopValueMg value 322
