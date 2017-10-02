@@ -652,6 +652,7 @@ class cGlobals {
     glob_int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels
     int thread_no;
+	int time_buffer;
 
     void ClearData();
     void Init();

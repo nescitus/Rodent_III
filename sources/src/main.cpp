@@ -17,12 +17,16 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 #include "book.h"
+#include <cstdlib>
 
 cGlobals Glob;
-cEngine Engine1;
-cEngine Engine2;
-cEngine Engine3;
-cEngine Engine4;
+
+#ifdef USE_THREADS
+    #include <list>
+    std::list<cEngine> Engines(1);
+#else
+    cEngine EngineSingle(0);
+#endif
 cBitBoard BB;
 cParam Par;
 cMask Mask;
@@ -30,79 +34,117 @@ cDistance Dist;
 sBook GuideBook;
 sBook MainBook;
 
+#ifndef USEGEN
+    sInternalBook InternalBook;
+#else
+    #include "book_gen.h"
+#endif
+
+void PrintVersion()
+{
+    printf("id name Rodent III 0.218"
+
+#if !(defined(_WIN64) || defined(__x86_64__))
+            " 32-bit"
+#else
+            " 64-bit"
+#endif
+
+#if   defined(__clang__)
+            "/CLANG " __clang_version__
+#elif defined(__MINGW32__)
+            "/MINGW " __VERSION__
+#elif defined(__GNUC__)
+            "/GCC " __VERSION__
+#elif defined(_MSC_VER)
+            "/MSVS"
+    #if   _MSC_VER == 1900
+                "2015"
+    #elif _MSC_VER >= 1910
+                "2017"
+    #endif
+#endif
+
+#if (defined(_MSC_VER) && defined(USE_MM_POPCNT)) || (defined(__GNUC__) && defined(__POPCNT__))
+            "/POPCNT"
+#elif defined(__GNUC__) && defined(__SSSE3__) // we are using custom SSSE3 popcount implementation
+            "/SSSE3"
+#endif
+
+                        "\n");
+}
+
 int main() {
 
-  BB.Init();
-  InitSearch();
-  Init();
-  Glob.Init();
-  Par.DefaultWeights();
-  Par.InitTables();
-  Mask.Init();
-  Dist.Init();
-  Engine1.Init(0);
-  Engine2.Init(1);
-  Engine3.Init(2);
-  Engine4.Init(3);
+    // catching memory leaks using MS Visual Studio
+#if defined(_MSC_VER) && !defined(NDEBUG)
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+    srand(GetMS());
+
+    BB.Init();
+    cEngine::InitSearch();
+    POS::Init();
+    Glob.Init();
+    Par.DefaultWeights();
+    Par.InitTables();
+    Mask.Init();
+    Dist.Init();
+
+    PrintVersion();
 
 #if defined(_WIN32) || defined(_WIN64)
-  // if we are on Windows search for books and settings in same directory as rodentII.exe
-  MainBook.bookName = "books/rodent.bin";
-  GuideBook.bookName = "books/guide.bin";
-  ReadPersonality("basic.ini");
-#elif __linux || __unix
-  // if we are on Linux
-  // first check, if compiler got told where books and settings are stored
-#ifdef BOOKPATH
-  char path[255]; // space for complete path and filename
-  char nameMainbook[20] = "/rodent.bin";
-  char nameGuidebook[20]= "/guide.bin";
-  char namePersonality[20]= "/basic.ini";
-  // process Mainbook
-  strcpy(path, ""); // first clear
-  strcpy(path, STR(BOOKPATH)); // copy path from c preprocessor here
-  strcat(path, nameMainbook); // append bookname
-  MainBook.bookName = path; // store it
-  // process Guidebook
-  strcpy(path, "");
-  strcpy(path, STR(BOOKPATH));
-  strcat(path, nameGuidebook);
-  GuideBook.bookName = nameGuidebook;
-  // process Personality file
-  strcpy(path, "");
-  strcpy(path, STR(BOOKPATH));
-  strcat(path, namePersonality);
-  ReadPersonality(path);
-#else // if no path was given than we assume that files are stored at /usr/share/rodentII
-  MainBook.bookName = "/usr/share/rodentII/rodent.bin";
-  GuideBook.bookName = "/usr/share/rodentII/guide.bin";
-  ReadPersonality("/usr/share/rodentII/basic.ini");
-#endif
-
+    printf("info string opening books path is '%ls' (%s)\n", _BOOKSPATH, ChDir(_BOOKSPATH) ? "exists" : "doesn't exist");
+    printf("info string personalities path is '%ls' (%s)\n", _PERSONALITIESPATH, ChDir(_PERSONALITIESPATH) ? "exists" : "doesn't exist");
 #else
-  // a platform we have not tested yet. We assume that opening books and 
-  // settings are stored within the same directory. Similiar to Windows.
-  printf("Platform unknown. We assume that opening books and settings are stored within RodentII path");
-  MainBook.bookName = "books/rodent.bin";
-  GuideBook.bookName = "books/guide.bin";
-  ReadPersonality("basic.ini");
+    printf("info string opening books path is '%s' (%s)\n", _BOOKSPATH, ChDir(_BOOKSPATH) ? "exists" : "doesn't exist");
+    printf("info string personalities path is '%s' (%s)\n", _PERSONALITIESPATH, ChDir(_PERSONALITIESPATH) ? "exists" : "doesn't exist");
 #endif
 
-  GuideBook.OpenPolyglot();
-  MainBook.OpenPolyglot();
-  UciLoop();
-  GuideBook.ClosePolyglot();
-  MainBook.ClosePolyglot();
-  return 0;
+    PrintOverrides(); // print books and pers paths overrides (26/08/17: linux only)
+
+#ifndef BOOKGEN
+    GuideBook.SetBookName("guide.bin");
+    MainBook.SetBookName("rodent.bin");
+    ReadPersonality("basic.ini");
+
+    // reading default personality
+    if (Glob.use_personality_files)
+        ReadPersonality("default.txt");
+#endif
+
+    InternalBook.Init();
+
+#ifndef BOOKGEN
+    UciLoop();
+#endif
 }
 
 void cGlobals::Init() {
 
-  reading_personality = 0;
-  use_personality_files = 0;
-  separate_books = 0;
-  thread_no = 1;
-  should_clear = 0;
-  is_console = 1;
-  elo_slider = 1;
+    is_testing = false;
+    is_tuning = false;
+    reading_personality = false;
+    use_personality_files = false;
+    use_books_from_pers = true;
+    show_pers_file = true;
+    thread_no = 1;
+	time_buffer = 10; // blitz under Arena would require something like 200, but it's user's job
+
+    // Clearing  and  setting threads  may  be  necessary
+    // if we need a compile using a bigger default number
+    // of threads for testing purposes
+
+#ifdef USE_THREADS
+    if (thread_no > 1) { //-V547 get rid of PVS Studio warning
+        Engines.clear();
+        for (int i = 0; i < thread_no; i++)
+            Engines.emplace_back(i);
+    }
+#endif
+
+    should_clear = false;
+    is_console = true;
+    elo_slider = true;
 }

@@ -194,6 +194,7 @@ void ExtractMove(int *pv) {
 void cEngine::SetMoveTime(int base, int inc, int movestogo) {
 
     if (base >= 0) {
+
         if (movestogo == 1) base -= Min(1000, base / 10);
         msMoveTime = (base + inc * (movestogo - 1)) / movestogo;
 
@@ -210,7 +211,7 @@ void cEngine::SetMoveTime(int base, int inc, int movestogo) {
 
         // safeguard against a lag
 
-        msMoveTime -= 10;
+        msMoveTime -= Glob.time_buffer;
 
         // ensure that we have non-negative time
 
@@ -219,6 +220,7 @@ void cEngine::SetMoveTime(int base, int inc, int movestogo) {
         // assign less time per move on extremely short time controls
 
         msMoveTime = BulletCorrection(msMoveTime);
+		printf("info string base %d, Inc %d, ToGo %d, assigned %d miliseconds\n", base, inc, movestogo, msMoveTime);
     }
 }
 
