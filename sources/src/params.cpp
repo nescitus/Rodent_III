@@ -103,7 +103,7 @@ void cParam::DefaultWeights() {  // tuned automatically
     // All these values are NOT the actual bonuses; their sum is used as index
     // to a non-linear king safety table. Tune them with extreme caution.
 
-    static const bool tuneAttack = true;
+    static const bool tuneAttack = false;
 
     SetVal(N_ATT1, 6,  0, 50, tuneAttack);
     SetVal(N_ATT2, 4,  0, 50, tuneAttack);
@@ -816,7 +816,7 @@ void cParam::SetSpeed(int elo_in) {
     if (fl_weakening) {
         nps_limit = EloToSpeed(elo_in);
         eval_blur = EloToBlur(elo_in);
-        book_depth = EloToBookDepth(elo_in);
+        book_depth = SpeedToBookDepth(nps_limit);
     }
 }
 
@@ -844,9 +844,11 @@ int cParam::EloToBlur(int elo_in) {
     return 0;
 }
 
-int cParam::EloToBookDepth(int elo_in) {
-    if (elo_in < 2000) return (elo_in - 700) / 100;
-    return 256;
+int cParam::SpeedToBookDepth(int nps) {
+
+	if (nps == 0 || nps > 100000) return 256;
+
+	return (int) (nps * 256) / 100000;
 }
 
 void cDistance::Init() {

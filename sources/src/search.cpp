@@ -634,7 +634,7 @@ void cEngine::Slowdown() {
     }
 
     // If Rodent is compiled as a single-threaded engine, Slowdown()
-    // function assumes additional role and it enforces time control
+    // function assumes additional role and enforces time control
     // handling.
 
 #ifndef USE_THREADS

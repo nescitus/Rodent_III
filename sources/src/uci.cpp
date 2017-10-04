@@ -299,13 +299,16 @@ void ParseGo(POS *p, const char *ptr) {
 
     // get book move
 
-    if (Par.use_book && Par.book_depth >= Glob.moves_from_start) {
+    if (Par.use_book) {
 
         printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
 
         int pvb = GuideBook.GetPolyglotMove(p, Par.verbose_book);
-        if (!pvb) pvb = MainBook.GetPolyglotMove(p, Par.verbose_book);
-        if (!pvb) pvb = InternalBook.MoveFromInternal(p, Par.verbose_book);
+
+        if (Par.book_depth >= Glob.moves_from_start) {
+            if (!pvb) pvb = MainBook.GetPolyglotMove(p, Par.verbose_book);
+            if (!pvb) pvb = InternalBook.MoveFromInternal(p, Par.verbose_book);
+        }
 
         if (pvb) {
             printf("bestmove %s\n", MoveToStr(pvb));

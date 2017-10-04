@@ -571,7 +571,7 @@ class cParam {
     void SetSpeed(int elo_in);
     int EloToSpeed(int elo_in);
     int EloToBlur(int elo_in);
-    int EloToBookDepth(int elo_in);
+    int SpeedToBookDepth(int nps);
     void SetVal(int slot, int val, int min, int max, bool tune);
 };
 
