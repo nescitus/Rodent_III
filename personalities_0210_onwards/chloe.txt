@@ -1,16 +1,16 @@
-; Matthew
+; Chloe
 ; Personality for Rodent III chess engine, version 0.210 or later
-; Materialist, slightly above 1800 mark
+; Chloe is chaotic, but a bit more tactically aware than the oter kids
 ;
 setoption name PawnValueMg value 95
 setoption name KnightValueMg value 310
 setoption name BishopValueMg value 322
-setoption name RookValueMg value 524
+setoption name RookValueMg value 514
 setoption name QueenValueMg value 1000
 setoption name PawnValueEg value 110
 setoption name KnightValueEg value 305
 setoption name BishopValueEg value 320
-setoption name RookValueEg value 539
+setoption name RookValueEg value 529
 setoption name QueenValueEg value 1013
 setoption name KeepPawn value 0
 setoption name KeepKnight value 0
@@ -28,7 +28,7 @@ setoption name BothUp value 80
 setoption name ExchangeImbalance value 30
 setoption name MinorVsQueen value 4
 setoption name TwoMinors value 44
-setoption name Material value 120
+setoption name Material value 100
 setoption name OwnAttack value 100
 setoption name OppAttack value 100
 setoption name OwnMobility value 100
@@ -56,15 +56,15 @@ setoption name Fianchetto value 6
 setoption name ReturningB value 10
 setoption name PawnMass value 100
 setoption name PawnChains value 100
-setoption name PstStyle value 2
+setoption name PstStyle value 0
 setoption name MobilityStyle value 0
-setoption name NpsLimit value 3500
-setoption name EvalBlur value 0
+setoption name NpsLimit value 500
+setoption name EvalBlur value 50
 setoption name Contempt value 0
 setoption name SlowMover value 100
 setoption name Selectivity value 175
 setoption name SearchSkill value 10
 setoption name RiskyDepth value 0
 setoption name BookFilter value 20
-setoption name GuideBookFile value guide/solid.bin
-setoption name MainBookFile value small.bin
+setoption name GuideBookFile value micro.bin
+setoption name MainBookFile value micro.bin
