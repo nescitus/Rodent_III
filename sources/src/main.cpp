@@ -92,6 +92,9 @@ int main() {
     Mask.Init();
     Dist.Init();
 
+	Par.use_book = true;
+	Par.verbose_book = true; // TODO: change to false in release
+
     PrintVersion();
 
 #if defined(_WIN32) || defined(_WIN64)

@@ -43,8 +43,6 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Opening book
 
-    use_book = true;
-    verbose_book = true; // TODO: change to false in release
     book_filter = 20;
 
     // Timing
@@ -427,8 +425,6 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
 
     // Opening book
 
-    use_book = true;
-    verbose_book = true; // TODO: change to false in release
     book_filter = 20;
 
     // Timing
