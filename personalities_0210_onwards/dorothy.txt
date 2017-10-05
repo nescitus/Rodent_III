@@ -45,8 +45,8 @@ setoption name PawnShield value 119
 setoption name PawnStorm value 99
 setoption name Forwardness value 0
 setoption name Center value 50
-setoption name DoubledPawnMg value -30
-setoption name DoubledPawnEg value -15
+setoption name DoubledPawnMg value -15
+setoption name DoubledPawnEg value -30
 setoption name IsolatedPawnMg value -10
 setoption name IsolatedPawnEg value -8
 setoption name IsolatedOnOpenMg value -10
