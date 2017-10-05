@@ -220,7 +220,7 @@ void cEngine::SetMoveTime(int base, int inc, int movestogo) {
         // assign less time per move on extremely short time controls
 
         msMoveTime = BulletCorrection(msMoveTime);
-		printf("info string base %d, Inc %d, ToGo %d, assigned %d miliseconds\n", base, inc, movestogo, msMoveTime);
+        printf("info string base %d, Inc %d, ToGo %d, assigned %d milliseconds\n", base, inc, movestogo, msMoveTime);
     }
 }
 
