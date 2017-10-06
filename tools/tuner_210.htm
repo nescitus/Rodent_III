@@ -77,7 +77,7 @@ function setDefault() {
   document.getElementById("PawnMass").value = 100;
   document.getElementById("PawnChains").value = 100;
   document.getElementById("DoubledPawnMg").value = -12;
-  document.getElementById("DoubledPawnEg").value = -32;
+  document.getElementById("DoubledPawnEg").value = -23;
   document.getElementById("IsolatedPawnMg").value = -10;
   document.getElementById("IsolatedPawnEg").value = -8;
   document.getElementById("IsolatedOnOpenMg").value = -10;
@@ -207,7 +207,11 @@ function savePersonality() {
   out += inputToOption("Selectivity") + '\r\n';
   out += inputToOption("SearchSkill") + '\r\n';
   
+  out += 'setoption name RiskyDepth value 0\r\n';
   out += inputToOption("BookFilter") + '\r\n';
+  out += 'setoption name GuideBookFile value guide/guide.bin\r\n';
+  out += 'setoption name MainBookFile value rodent.bin\r\n';
+  
   
   download("personality.txt",out);
 }
