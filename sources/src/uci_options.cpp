@@ -124,6 +124,23 @@ static void valuebool(bool& param, char *val) {
     if (strcmp(val, "false") == 0) param = false;
 }
 
+// @brief set a value that requires reinitialising piece/square tables
+
+static void tablevalue(int ind, int val) {
+
+    Par.values[ind] = val;
+    Par.InitPst();
+    Glob.should_clear = true;
+}
+
+// @brief set a value that is a part of Par.values[]
+
+static void setvalue(int ind, int val) {
+
+    Par.values[ind] = val;
+    Glob.should_clear = true;
+}
+
 static char *pseudotrimstring(char *in_str) {
 
     for (int last = (int)strlen(in_str)-1; last >= 0 && in_str[last] == ' '; last--)
@@ -174,53 +191,33 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "timebuffer") == 0)                              {
 		Glob.time_buffer = atoi(value);
     } else if (strcmp(name, "pawnvaluemg") == 0)                             {
-        Par.values[P_MID] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(P_MID, atoi(value));
     } else if (strcmp(name, "pawnvalueeg") == 0)                             {
-        Par.values[P_END] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(P_END, atoi(value));
     } else if (strcmp(name, "pawnvalue") == 0)                               {
         SetPieceValue(P, atoi(value), P_MID);
     } else if (strcmp(name, "knightvaluemg") == 0)                           {
-        Par.values[N_MID] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(N_MID, atoi(value));
     } else if (strcmp(name, "knightvalueeg") == 0)                           {
-        Par.values[N_END] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(N_END, atoi(value));
     } else if (strcmp(name, "knightvalue") == 0)                             {
         SetPieceValue(N, atoi(value), N_MID);
     } else if (strcmp(name, "bishopvaluemg") == 0)                           {
-        Par.values[B_MID] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(B_MID, atoi(value));
     } else if (strcmp(name, "bishopvalueeg") == 0)                           {
-        Par.values[B_END] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(B_END, atoi(value));
     } else if (strcmp(name, "bishopvalue") == 0)                             {
         SetPieceValue(B, atoi(value), B_MID);
     } else if (strcmp(name, "rookvaluemg") == 0)                             {
-        Par.values[R_MID] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(R_MID, atoi(value));
     } else if (strcmp(name, "rookvalueeg") == 0)                             {
-        Par.values[R_END] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(R_END, atoi(value));
     } else if (strcmp(name, "rookvalue") == 0)                               {
         SetPieceValue(R, atoi(value), R_MID);
     } else if (strcmp(name, "queenvaluemg") == 0)                            {
-        Par.values[Q_MID] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(Q_MID, atoi(value));
     } else if (strcmp(name, "queenvalueeg") == 0)                            {
-        Par.values[Q_END] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(Q_END, atoi(value));
     } else if (strcmp(name, "queenvalue") == 0)                              {
         SetPieceValue(Q, atoi(value), Q_MID);
     } else if (strcmp(name, "keeppawn") == 0)                                {
@@ -239,8 +236,7 @@ void ParseSetoption(const char *ptr) {
         Par.keep_pc[Q] = atoi(value);
         Glob.should_clear = true;
     } else if (strcmp(name, "bishoppair") == 0)                              {
-        Par.values[B_PAIR] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(B_PAIR, atoi(value));
     } else if (strcmp(name, "exchangeimbalance") == 0)                       {
         Par.values[A_EXC] = atoi(value);
         Par.InitMaterialTweaks();
@@ -257,92 +253,65 @@ void ParseSetoption(const char *ptr) {
         Par.InitMaterialTweaks();
         Glob.should_clear = true;
     } else if (strcmp(name, "material") == 0)                                {
-        Par.values[W_MATERIAL] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(W_MATERIAL, atoi(value));
     } else if (strcmp(name, "pieceplacement") == 0)                          {
-        Par.values[W_PST] = atoi(value);
-        Par.InitPst();
-        Glob.should_clear = true;
+        tablevalue(W_MATERIAL, atoi(value));
     } else if (strcmp(name, "ownattack") == 0)                               {
-        Par.values[W_OWN_ATT] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_OWN_ATT, atoi(value));
     } else if (strcmp(name, "oppattack") == 0)                               {
-        Par.values[W_OPP_ATT] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_OPP_ATT, atoi(value));
     } else if (strcmp(name, "ownmobility") == 0)                             {
-        Par.values[W_OWN_MOB] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_OWN_MOB, atoi(value));
     } else if (strcmp(name, "oppmobility") == 0)                             {
-        Par.values[W_OPP_MOB] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_OPP_MOB, atoi(value));
     } else if (strcmp(name, "kingtropism") == 0)                             {
-        Par.values[W_TROPISM] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_TROPISM, atoi(value));
     } else if (strcmp(name, "forwardness") == 0)                             {
-        Par.values[W_FWD] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_FWD, atoi(value));
     } else if (strcmp(name, "piecepressure") == 0)                           {
-        Par.values[W_THREATS] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_THREATS, atoi(value));
     } else if (strcmp(name, "passedpawns") == 0)                             {
-        Par.values[W_PASSERS] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_PASSERS, atoi(value));
     } else if (strcmp(name, "pawnstructure") == 0)                           {
-        Par.values[W_STRUCT] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_STRUCT, atoi(value));
     } else if (strcmp(name, "pawnmass") == 0)                                {
-        Par.values[W_MASS] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_MASS, atoi(value));
     } else if (strcmp(name, "pawnchains") == 0)                              {
-        Par.values[W_CHAINS] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_CHAINS, atoi(value));
     } else if (strcmp(name, "pawnshield") == 0)                              {
-        Par.values[W_SHIELD] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_SHIELD, atoi(value));
     } else if (strcmp(name, "pawnstorm") == 0)                               {
-        Par.values[W_STORM] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_STORM, atoi(value));
     } else if (strcmp(name, "outposts") == 0)                                {
-        Par.values[W_OUTPOSTS] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_OUTPOSTS, atoi(value));
     } else if (strcmp(name, "lines") == 0)                                   {
-        Par.values[W_LINES] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_LINES, atoi(value));
     } else if (strcmp(name, "center") == 0)                                  {
-        Par.values[W_CENTER] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(W_CENTER, atoi(value));
+    } else if (strcmp(name, "fianchbase") == 0)                              {
+        setvalue(B_FIANCH, atoi(value));
     } else if (strcmp(name, "fianchetto") == 0)                              {
-        Par.values[B_KING] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(B_KING, atoi(value));
     } else if (strcmp(name, "returningb") == 0)                              {
-        Par.values[B_RETURN] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(B_RETURN, atoi(value));
     } else if (strcmp(name, "doubledpawnmg") == 0)                           {
-        Par.values[DB_MID] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(DB_MID, atoi(value));
     } else if (strcmp(name, "doubledpawneg") == 0)                           {
-        Par.values[DB_END] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(DB_END, atoi(value));
     } else if (strcmp(name, "isolatedpawnmg") == 0)                          {
-        Par.values[ISO_MG] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(ISO_MG, atoi(value));
     } else if (strcmp(name, "isolatedpawneg") == 0)                          {
-        Par.values[ISO_EG] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(ISO_EG, atoi(value));
     } else if (strcmp(name, "isolatedopenmg") == 0)                          {
-        Par.values[ISO_OF] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(ISO_OF, atoi(value));
     } else if (strcmp(name, "backwardpawnmg") == 0)                          {
         Par.values[BK_MID] = atoi(value);
         Par.InitBackward();
         Glob.should_clear = true;
     } else if (strcmp(name, "backwardpawneg") == 0)                          {
-        Par.values[BK_END] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(BK_END, atoi(value));
     } else if (strcmp(name, "backwardopenmg") == 0)                          {
-        Par.values[BK_OPE] = atoi(value);
-        Glob.should_clear = true;
+        setvalue(BK_OPE, atoi(value));
     } else if (strcmp(name, "pststyle") == 0)                                {
         Par.pst_style = atoi(value);
         Par.InitPst();

@@ -51,7 +51,8 @@ setoption name IsolatedOnOpenMg value -10
 setoption name BackwardPawnMg value -8
 setoption name BackwardPawnEg value -10
 setoption name BackwardOnOpenMg value -8
-setoption name Fianchetto value 30
+setoption name FianchBase value 10
+setoption name Fianchetto value 25
 setoption name ReturningB value 20
 setoption name PawnMass value 100
 setoption name PawnChains value 100

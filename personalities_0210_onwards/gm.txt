@@ -1,4 +1,7 @@
+; GM
 ; Personality for Rodent III chess engine, version 0.210 or later
+; human default
+;
 setoption name PawnValueMg value 95
 setoption name KnightValueMg value 310
 setoption name BishopValueMg value 322
@@ -49,6 +52,7 @@ setoption name IsolatedOnOpenMg value -10
 setoption name BackwardPawnMg value -8
 setoption name BackwardPawnEg value -10
 setoption name BackwardOnOpenMg value -8
+setoption name FianchBase value 4
 setoption name Fianchetto value 6
 setoption name ReturningB value 10
 setoption name PawnMass value 100

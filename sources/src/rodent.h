@@ -481,7 +481,8 @@ enum Values {
 };
 
 const char* const paramNames[N_OF_VAL] = {
-    "P_MID", "P_END", "N_MID", "N_END", "B_MID", "B_END", "R_MID", "R_END", "Q_MID", "Q_END",  // piece values
+    "PawnValueMg", "PawnValueEg", "KnightValueMg", "KnightValueEg", "BishopValueMg", 
+	"BishopValueEg", "RookValueMg", "RookValueEg", "QueenValueMg", "QueenValueEg",             // piece values
     "BishopPair", "N_PAIR", "R_PAIR", "ELEPH", "A_EXC", "A_TWO", "A_MAJ", "A_MIN", "A_ALL",    // material adjustments
     "N_ATT1", "N_ATT2", "B_ATT1", "B_ATT2", "R_ATT1", "R_ATT2", "Q_ATT1", "Q_ATT2",            // attacks against enemy king zone
     "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
