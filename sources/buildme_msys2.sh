@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CFG="-DUSEGEN -DUSE_THREADS -DNEW_THREADS"
+CFG="-DUSEGEN -DUSE_THREADS"
 CC=g++
 EXENAME=rodentiii
 

@@ -556,7 +556,7 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[P_SMALLCHAIN] = 13; // similar penalty for a chain that is not fully blocked by enemy pawns
     values[P_CS1] = 4;         // additional evaluation of a pawn storm next to a fixed chain - like g5 in King's Indian
     values[P_CS2] = 12;        // as above, this time like g4 in King's Indian
-    values[P_CSFAIL] = 10;     // penalty for a badly performed pawn strom next to a chain
+    values[P_CSFAIL] = 10;     // penalty for a badly performed pawn storm next to a chain
 
 
     // Passed pawn bonuses per rank
