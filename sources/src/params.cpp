@@ -397,7 +397,6 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(REG13, 24, -50, 50, tuneMobility);
     SetVal(REG14, 29, -50, 50, tuneMobility);
 
-
 #ifdef USE_RISKY_PARAMETER
     riskydepth = 0;
 #endif

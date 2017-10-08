@@ -336,7 +336,10 @@ void ParseSetoption(const char *ptr) {
         Par.values[A_TWO] = atoi(value);
         Par.InitMaterialTweaks();
         Glob.should_clear = true;
-
+    } else if (strcmp(name, "minorbehindpawn") == 0 )                        {
+        setvalue(BN_SHIELD, atoi(value));
+    } else if (strcmp(name, "pawnthreat") == 0 )                             {
+        setvalue(P_THR, atoi(value));
     // Here starts a block of non-eval options
 
     } else if (strcmp(name, "guidebookfile") == 0)                           {

@@ -88,9 +88,11 @@ function setDefault() {
   document.getElementById("BackwardPawnMg").value = -8;
   document.getElementById("BackwardPawnEg").value = -10;
   document.getElementById("BackwardOnOpenMg").value = -8;
-
+  document.getElementById("FianchBase").value = 4;
   document.getElementById("Fianchetto").value = 6;
   document.getElementById("ReturningB").value = 10;
+  document.getElementById("MinorBehindPawn").value = 5;
+  document.getElementById("PawnThreat").value = 4;
   document.getElementById("pst").value = "quirky";
   document.getElementById("mob").value = "linear";
   document.getElementById("NpsLimit").value = 0;
@@ -187,6 +189,9 @@ function savePersonality() {
   out += inputToOption("FianchBase") + '\r\n';
   out += inputToOption("Fianchetto") + '\r\n';
   out += inputToOption("ReturningB") + '\r\n';
+  out += inputToOption("MinorBehindPawn") + '\r\n';
+  out += inputToOption("PawnThreat") + '\r\n';
+  
   out += inputToOption("PawnMass") + '\r\n';
   out += inputToOption("PawnChains") + '\r\n';
   
@@ -322,7 +327,9 @@ function savePersonality() {
 <p class="mono"> FianchBase<input class="window" type="number" id="FianchBase" value="4" min="0" max="100" style="float:right";> </p>
 <p class="mono"> Fianchetto<input class="window" type="number" id="Fianchetto" value="6" min="0" max="100" style="float:right";> </p>
 <p class="mono"> Returning Bish<input class="window" type="number" id="ReturningB" value="10" min="0" max="100" style="float:right";> </p>
-<p>&nbsp;</p>
+<p class="mono"> Minor behind pawn<input class="window" type="number" id="MinorBehindPawn" value="5" min="0" max="100" style="float:right";> </p>
+<p class="mono"> Pawn Threat<input class="window" type="number" id="PawnThreat" value="4" min="0" max="100" style="float:right";> </p>
+
 <p>&nbsp;</p>
 
 

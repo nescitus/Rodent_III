@@ -55,6 +55,8 @@ setoption name BackwardOnOpenMg value -8
 setoption name FianchBase value 0
 setoption name Fianchetto value 0
 setoption name ReturningB value 0
+setoption name MinorBehindPawn value 0
+setoption name PawnThreat value 0
 setoption name PawnMass value 0
 setoption name PawnChains value 0
 setoption name PstStyle value 2

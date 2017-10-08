@@ -5,6 +5,9 @@ and are meant to guide the game stylistically.
 active.bin - seeks dynamic positions, based on Kasparov's games without
 QGD but with Benoni thrown in to stir things up.
 
+cs.bin - d4, occasionally c4 as White, Caro-Kann and Slav as Black, occasionally 
+tries Nimzo-Indian. Requires strong main book, as it choses sharp lines.
+
 empty.bin - empty book. Can be declared as a main book for weak personalities
 if we want limited opening knowledge.
 
