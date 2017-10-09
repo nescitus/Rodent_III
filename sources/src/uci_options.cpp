@@ -110,8 +110,13 @@ void PrintUciOptions() {
     }
     printf("option name UseBook type check default %s\n", Par.use_book ? "true" : "false");
     printf("option name VerboseBook type check default %s\n", Par.verbose_book ? "true" : "false");
-    printf("option name GuideBookFile type string default %s\n", GuideBook.bookName);
-    printf("option name MainBookFile type string default %s\n", MainBook.bookName);
+
+	if (!Glob.use_books_from_pers || !Glob.use_personality_files) {
+        printf("option name GuideBookFile type string default %s\n", GuideBook.bookName);
+        printf("option name MainBookFile type string default %s\n", MainBook.bookName);
+    }
+
+	printf("option name TimeBuffer type spin default %d min 0 max 1000\n", Glob.time_buffer);
 
 }
 
