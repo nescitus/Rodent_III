@@ -776,20 +776,21 @@ void cParam::InitMaterialTweaks() {
         for (int j = 0; j < 9; j++) {
 
             // insert original values
+
             imbalance[i][j] = imbalance_data[i][j];
 
             // insert value defined in Par.values
 
             if (imbalance_data[i][j] == A_EXC) imbalance[i][j] = values[A_EXC];
-            if (imbalance_data[i][j] == -A_EXC) imbalance[i][j] = -values[A_EXC];
-            if (imbalance_data[i][j] == A_MIN) imbalance[i][j] = values[A_MIN];
-            if (imbalance_data[i][j] == -A_MIN) imbalance[i][j] = -values[A_MIN];
-            if (imbalance_data[i][j] == A_MAJ) imbalance[i][j] = values[A_MAJ];
-            if (imbalance_data[i][j] == -A_MAJ) imbalance[i][j] = -values[A_MAJ];
-            if (imbalance_data[i][j] == A_TWO) imbalance[i][j] = values[A_TWO];
-            if (imbalance_data[i][j] == -A_TWO) imbalance[i][j] = -values[A_TWO];
-            if (imbalance_data[i][j] == A_ALL) imbalance[i][j] = values[A_ALL];
-            if (imbalance_data[i][j] == -A_ALL) imbalance[i][j] = -values[A_ALL];
+            else if (imbalance_data[i][j] == -A_EXC) imbalance[i][j] = -values[A_EXC];
+            else if (imbalance_data[i][j] == A_MIN) imbalance[i][j] = values[A_MIN];
+            else if (imbalance_data[i][j] == -A_MIN) imbalance[i][j] = -values[A_MIN];
+            else if (imbalance_data[i][j] == A_MAJ) imbalance[i][j] = values[A_MAJ];
+            else if (imbalance_data[i][j] == -A_MAJ) imbalance[i][j] = -values[A_MAJ];
+            else if (imbalance_data[i][j] == A_TWO) imbalance[i][j] = values[A_TWO];
+            else if (imbalance_data[i][j] == -A_TWO) imbalance[i][j] = -values[A_TWO];
+            else if (imbalance_data[i][j] == A_ALL) imbalance[i][j] = values[A_ALL];
+            else if (imbalance_data[i][j] == -A_ALL) imbalance[i][j] = -values[A_ALL];
         }
     }
 }
