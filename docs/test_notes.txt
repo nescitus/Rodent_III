@@ -1,3 +1,7 @@
+2017-10-11
+
+- inconclusive test of decreasing minimal depth for internal iterative deepening
+
 2017-09-29
 
 - failed attempt at tuning forwardness. This will remain purely stylistic option.

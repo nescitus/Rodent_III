@@ -5,6 +5,9 @@ and are meant to guide the game stylistically.
 active.bin - seeks dynamic positions, based on Kasparov's games without
 QGD but with Benoni thrown in to stir things up.
 
+cat.bin - Catalan, classical Queen's Indian, g3 KID as White, Grunfeld and accelerated Dragon
+as Black. Needs a real book in reserve.
+
 cs.bin - d4, occasionally c4 as White, Caro-Kann and Slav as Black, occasionally 
 tries Nimzo-Indian. Requires strong main book, as it choses sharp lines.
 

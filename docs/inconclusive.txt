@@ -1,0 +1,14 @@
+Stockfish gained some improvement from combiningg changes from inconclusive tests.
+Here I list them, just in case it can be done with Rodent too:
+
+1)
+
+    // INTERNAL ITERATIVE DEEPENING
+
+    if (is_pv
+    && !fl_check
+    && !move
+    && depth > 5) { // default is 6
+        Search(p, ply, alpha, beta, depth - 2, false, -1, last_capt_sq, pv);
+        chc.TransRetrieveMove(p->mHashKey, &move);
+    }
