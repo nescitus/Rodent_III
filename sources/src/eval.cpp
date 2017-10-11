@@ -743,7 +743,7 @@ int cEngine::Evaluate(POS *p, eData *e) {
     // Weakening: add pseudo-random value to eval score
 
     if (Par.eval_blur) {
-        int rand_mod = (Par.eval_blur / 2) - (p->mHashKey % Par.eval_blur);
+        int rand_mod = (Par.eval_blur / 2) - ( (p->mHashKey ^ Glob.game_key) % Par.eval_blur);
         score += rand_mod;
     }
 

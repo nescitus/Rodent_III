@@ -79,6 +79,7 @@ void UciLoop() {
             Glob.ClearData();
             p->SetPosition(START_POS);
             srand(GetMS());
+            Glob.game_key = p->Random64() ^ (U64) GetMS(); // so that the weakest personalities do not repeat the same game
         } else if (strcmp(token, "isready") == 0)    {
             printf("readyok\n");
         } else if (strcmp(token, "setoption") == 0)  {

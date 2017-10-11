@@ -1,6 +1,6 @@
-; Lea
+; Helpless
 ; Personality for Rodent III chess engine, version 0.210 or later
-; Lea just learned how the pieces move
+; Severely restricted speed, no regard for material values
 ;
 setoption name PawnValueMg value 95
 setoption name KnightValueMg value 310
@@ -28,7 +28,7 @@ setoption name BothUp value 80
 setoption name ExchangeImbalance value 30
 setoption name MinorVsQueen value 4
 setoption name TwoMinors value 44
-setoption name Material value 50
+setoption name Material value 0
 setoption name OwnAttack value 100
 setoption name OppAttack value 100
 setoption name OwnMobility value 100
@@ -62,7 +62,7 @@ setoption name PawnChains value 100
 setoption name PstStyle value 0
 setoption name MobilityStyle value 0
 setoption name NpsLimit value 50
-setoption name EvalBlur value 500
+setoption name EvalBlur value 1000
 setoption name Contempt value 0
 setoption name SlowMover value 100
 setoption name Selectivity value 175

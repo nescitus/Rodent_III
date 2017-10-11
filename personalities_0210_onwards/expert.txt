@@ -60,7 +60,7 @@ setoption name PawnMass value 100
 setoption name PawnChains value 100
 setoption name PstStyle value 1
 setoption name MobilityStyle value 0
-setoption name NpsLimit value 5000
+setoption name NpsLimit value 8000
 setoption name EvalBlur value 0
 setoption name Contempt value 0
 setoption name SlowMover value 100

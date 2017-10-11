@@ -321,8 +321,6 @@ class POS {
     static U64 msZobCastle[16];
     static U64 msZobEp[8];
 
-    NOINLINE static U64 Random64();
-
     void ClearPosition();
     void InitHashKey();
     void InitPawnKey();
@@ -350,6 +348,8 @@ class POS {
     U64 mHashKey;
     U64 mPawnKey;
     U64 mRepList[256];
+
+    NOINLINE static U64 Random64();
 
     static void Init();
 
@@ -654,6 +654,7 @@ class cGlobals {
     int moves_from_start; // to restrict book depth for weaker levels
     int thread_no;
 	int time_buffer;
+	U64 game_key;         // random key initialized on ucinewgame to ensure non-repeating random eval modification for weak personalities
 
     void ClearData();
     void Init();

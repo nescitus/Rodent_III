@@ -42,7 +42,7 @@ sBook MainBook;
 
 void PrintVersion()
 {
-    printf("id name Rodent III 0.222"
+    printf("id name Rodent III 0.223"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
             " 32-bit"
@@ -134,6 +134,7 @@ void cGlobals::Init() {
     show_pers_file = true;
     thread_no = 1;
 	time_buffer = 10; // blitz under Arena would require something like 200, but it's user's job
+	game_key = 0;
 
     // Clearing  and  setting threads  may  be  necessary
     // if we need a compile using a bigger default number
