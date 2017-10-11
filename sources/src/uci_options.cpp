@@ -508,5 +508,6 @@ void ReadPersonality(const char *fileName) {
     }
     if (cnt != 0) pers_aliases.count = cnt;
     fclose(personalityFile);
+	Par.SpeedToBookDepth(Par.nps_limit);
     Glob.reading_personality = false;
 }
