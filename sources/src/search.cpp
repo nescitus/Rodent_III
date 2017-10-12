@@ -152,7 +152,7 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
     int cur_val = lastScore, alpha, beta;
 
     if (depth > 6 && lastScore < MAX_EVAL) {
-        for (int margin = 10; margin < 500; margin *= 2) {
+        for (int margin = 8; margin < 500; margin *= 2) {
             alpha = lastScore - margin;
             beta  = lastScore + margin;
             cur_val = Search(p, 0, alpha, beta, depth, false, -1, -1, pv);

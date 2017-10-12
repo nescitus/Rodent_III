@@ -273,7 +273,7 @@ int cEngine::BadCapture(POS *p, int move) {
     int fsq = Fsq(move);
     int tsq = Tsq(move);
 
-    // using tp_value[] instead of pc_value[] means that both BxN and NxB aren't bad
+    // all minor piece exchanges are tried, because tp_value[B] == tp_value[N]
 
     if (tp_value[p->TpOnSq(tsq)] >= tp_value[p->TpOnSq(fsq)])
         return 0;
@@ -306,9 +306,7 @@ void cEngine::AgeHist() {
 void cEngine::ClearHist() {
 
     ZEROARRAY(mHistory);
-
     ZEROARRAY(mRefutation);
-
     ZEROARRAY(mKiller);
 }
 
