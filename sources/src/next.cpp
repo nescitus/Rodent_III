@@ -219,12 +219,8 @@ void cEngine::InitCaptures(POS *p, MOVES *m) {
 
 int cEngine::NextCapture(MOVES *m) {
 
-    int move;
-
-    while (m->next < m->last) {
-        move = SelectBest(m);
-        return move;
-    }
+    if (m->next < m->last)
+        return SelectBest(m);
     return 0;
 }
 
