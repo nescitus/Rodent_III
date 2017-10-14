@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 37.731.046
+// b15: 32.653.002
 
 #pragma once
 
@@ -517,6 +517,7 @@ class cParam {
 	int max_val[N_OF_VAL];
 	int min_val[N_OF_VAL];
 	bool tunable[N_OF_VAL];
+	bool use_ponder; // this option does nothing
     bool use_book;
     bool verbose_book;
     int book_filter;

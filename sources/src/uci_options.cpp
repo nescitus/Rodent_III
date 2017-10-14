@@ -43,6 +43,8 @@ void PrintUciOptions() {
     printf("option name Threads type spin default %d min 1 max %d\n", Glob.thread_no, MAX_THREADS);
 #endif
     printf("option name Clear Hash type button\n");
+    printf("option name Ponder type check default %s\n", Par.use_ponder ? "true" : "false");
+
 
     if (Glob.use_personality_files) {
         if (pers_aliases.count == 0 || Glob.show_pers_file)
@@ -366,6 +368,8 @@ void ParseSetoption(const char *ptr) {
         Par.SetSpeed(Par.elo);
     } else if (strcmp(name, "uci_limitstrength") == 0)                       {
         valuebool(Par.fl_weakening, value);
+    } else if (strcmp(name, "ponder") == 0)                                  {
+        valuebool(Par.use_ponder, value);
     } else if (strcmp(name, "usebook") == 0)                                 {
         valuebool(Par.use_book, value);
     } else if (strcmp(name, "verbosebook") == 0)                             {

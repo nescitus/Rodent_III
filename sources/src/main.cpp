@@ -42,7 +42,7 @@ sBook MainBook;
 
 void PrintVersion()
 {
-    printf("id name Rodent III 0.224"
+    printf("id name Rodent III 0.225"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
             " 32-bit"
@@ -89,6 +89,7 @@ int main() {
     Glob.Init();
     Par.DefaultWeights();
     Par.InitTables();
+	Par.use_ponder = false;
     Mask.Init();
     Dist.Init();
 
