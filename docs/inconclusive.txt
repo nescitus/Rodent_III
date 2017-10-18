@@ -1,7 +1,7 @@
-Stockfish gained some improvement from combiningg changes from inconclusive tests.
+Stockfish gained some improvement from combining changes from inconclusive tests.
 Here I list them, just in case it can be done with Rodent too:
 
-1)
+1) decreasing min depth of internal iterative deepening
 
     // INTERNAL ITERATIVE DEEPENING
 
@@ -12,3 +12,6 @@ Here I list them, just in case it can be done with Rodent too:
         Search(p, ply, alpha, beta, depth - 2, false, -1, last_capt_sq, pv);
         chc.TransRetrieveMove(p->mHashKey, &move);
     }
+
+2) Deleting queen on 7th rank eval
+

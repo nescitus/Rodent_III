@@ -43,8 +43,6 @@ void PrintUciOptions() {
     printf("option name Threads type spin default %d min 1 max %d\n", Glob.thread_no, MAX_THREADS);
 #endif
     printf("option name Clear Hash type button\n");
-    printf("option name Ponder type check default %s\n", Par.use_ponder ? "true" : "false");
-
 
     if (Glob.use_personality_files) {
         if (pers_aliases.count == 0 || Glob.show_pers_file)
@@ -110,15 +108,16 @@ void PrintUciOptions() {
         printf("option name RiskyDepth type spin default %d min 0 max 10\n", Par.riskydepth);
 #endif
     }
+    printf("option name Ponder type check default %s\n", Par.use_ponder ? "true" : "false");
     printf("option name UseBook type check default %s\n", Par.use_book ? "true" : "false");
     printf("option name VerboseBook type check default %s\n", Par.verbose_book ? "true" : "false");
 
-	if (!Glob.use_books_from_pers || !Glob.use_personality_files) {
+    if (!Glob.use_books_from_pers || !Glob.use_personality_files) {
         printf("option name GuideBookFile type string default %s\n", GuideBook.bookName);
         printf("option name MainBookFile type string default %s\n", MainBook.bookName);
     }
 
-	printf("option name TimeBuffer type spin default %d min 0 max 1000\n", Glob.time_buffer);
+    printf("option name TimeBuffer type spin default %d min 0 max 1000\n", Glob.time_buffer);
 
 }
 
@@ -196,7 +195,7 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "clear hash") == 0)                              {
         chc.ClearTrans();
     } else if (strcmp(name, "timebuffer") == 0)                              {
-		Glob.time_buffer = atoi(value);
+        Glob.time_buffer = atoi(value);
     } else if (strcmp(name, "pawnvaluemg") == 0)                             {
         tablevalue(P_MID, atoi(value));
     } else if (strcmp(name, "pawnvalueeg") == 0)                             {
@@ -443,12 +442,12 @@ void ReadPersonality(const char *fileName) {
     // and there will be no way of telling whether previous personality used their default
     // value or not. For that reason now that we found a personality file, we reset params
     // to the values that are best for setting a new personality.
-	//
-	// Please note that we use Par.InitialPersonalityWeights() and not Par.DefaultWeights().
-	// This is because since version 0.214 Par.DefaultWeights() contains automatically tuned
-	// values,  which are at times counterintuitive. In particular, king tropism values used
-	// there  are negative, and that would break the king tropism functionality intended for
-	// Rodent personalities.
+    //
+    // Please note that we use Par.InitialPersonalityWeights() and not Par.DefaultWeights().
+    // This is because since version 0.214 Par.DefaultWeights() contains automatically tuned
+    // values,  which are at times counterintuitive. In particular, king tropism values used
+    // there  are negative, and that would break the king tropism functionality intended for
+    // Rodent personalities.
 
     Par.InitialPersonalityWeights();
 
@@ -476,7 +475,6 @@ void ReadPersonality(const char *fileName) {
 
         if (strstr(line, "HIDE_OPTIONS")) Glob.use_personality_files = true;
         if (strstr(line, "SHOW_OPTIONS")) Glob.use_personality_files = false; // DEFAULT
-
         if (strstr(line, "HIDE_PERSFILE")) Glob.show_pers_file = false; // DEFAULT == true
 
         // Normally initializing a personality begins with loading a *human* default.
@@ -512,6 +510,6 @@ void ReadPersonality(const char *fileName) {
     }
     if (cnt != 0) pers_aliases.count = cnt;
     fclose(personalityFile);
-	Par.SpeedToBookDepth(Par.nps_limit);
+    Par.SpeedToBookDepth(Par.nps_limit);
     Glob.reading_personality = false;
 }

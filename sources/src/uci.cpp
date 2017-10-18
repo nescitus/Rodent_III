@@ -233,8 +233,13 @@ void ParseGo(POS *p, const char *ptr) {
     int winc  =  0, binc  =  0;
     int movestogo = 40;
     bool strict_time = false;
-
     Glob.pondering = false;
+
+	// We may assume that when the engine can think on opponent's time,
+	// it can afford to use more time to think. Unfortunately, this fails
+	// with the current time management scheme.
+
+	// if (Par.use_ponder) movestogo = 38;
 
     cEngine::msMoveTime    = -1;
     cEngine::msMoveNodes   =  0;

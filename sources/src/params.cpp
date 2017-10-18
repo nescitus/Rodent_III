@@ -39,10 +39,10 @@ void cParam::DefaultWeights() {  // tuned automatically
     fl_weakening = false;
     elo = 2800;
     eval_blur = 0;
-    book_depth = 256;
 
     // Opening book
 
+    book_depth = 256;
     book_filter = 20;
 
     // Timing
@@ -420,10 +420,10 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     fl_weakening = false;
     elo = 2800;
     eval_blur = 0;
-    book_depth = 256;
 
     // Opening book
 
+    book_depth = 256;
     book_filter = 20;
 
     // Timing
