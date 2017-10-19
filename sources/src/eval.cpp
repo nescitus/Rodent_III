@@ -373,7 +373,7 @@ void cEngine::EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *
 
 void cEngine::EvaluatePawns(POS *p, eData *e, eColor sd) {
 
-    U64 bb_pieces, front_span, fl_phalanx;
+    U64 bb_pieces, front_span, fl_phalanx, fl_defended;
     int sq, fl_unopposed;
     eColor op = ~sd;
     int mass_mg = 0;
@@ -388,11 +388,12 @@ void cEngine::EvaluatePawns(POS *p, eData *e, eColor sd) {
         front_span = BB.GetFrontSpan(SqBb(sq), sd);
         fl_unopposed = ((front_span & p->Pawns(op)) == 0);
         fl_phalanx = (BB.ShiftSideways(SqBb(sq)) & p->Pawns(sd));
+        fl_defended = (SqBb(sq) & e->p_takes[sd]);
 
         // Candidate passers
 
         if (fl_unopposed) {
-            if (fl_phalanx) {
+            if (fl_phalanx || fl_defended) {
                 if (BB.PopCnt((Mask.passed[sd][sq] & p->Pawns(op))) == 1)
                     AddPawns(e, sd, Par.passed_bonus_mg[sd][Rank(sq)] / 3, Par.passed_bonus_eg[sd][Rank(sq)] / 3);
             }
@@ -409,7 +410,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, eColor sd) {
             mass_mg += Par.sp_pst[sd][PHA_MG][sq];
             mass_eg += Par.sp_pst[sd][PHA_EG][sq];
         }
-        else if (SqBb(sq) & e->p_takes[sd]) {
+        else if (fl_defended) {
             mass_mg += Par.sp_pst[sd][DEF_MG][sq];
             mass_eg += Par.sp_pst[sd][DEF_EG][sq];
         }
