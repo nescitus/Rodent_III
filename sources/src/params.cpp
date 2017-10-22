@@ -51,7 +51,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Piece values
 
-    static const bool tunePieceValues = true;
+    static const bool tunePieceValues = false;
 
     SetVal(P_MID,   91,  50, 150, tunePieceValues);
     SetVal(N_MID,  305, 200, 400, tunePieceValues);
@@ -77,7 +77,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Material adjustments
 
-    static const bool tuneAdj = true;
+    static const bool tuneAdj = false;
 
     SetVal(B_PAIR, 51, -100, 100, tuneAdj);
     SetVal(N_PAIR, 0, -50, 50, tuneAdj);
@@ -150,21 +150,23 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Positional weights
 
-    SetVal(W_THREATS, 109, 0, 500, true);
-    SetVal(W_TROPISM,  25, -500, 500, true);
-    SetVal(W_PASSERS, 102, 0, 500, true);
-    SetVal(W_MASS,     98, 0, 500, true);
-    SetVal(W_CHAINS,  100, 0, 500, true);
-    SetVal(W_OUTPOSTS, 73, 0, 500, true);
-    SetVal(W_LINES,   109, 0, 500, true);
-    SetVal(W_STRUCT,  113, 0, 500, true);
-    SetVal(W_SHIELD,  120, 0, 500, true);
-    SetVal(W_STORM,    95, 0, 500, true);
-    SetVal(W_CENTER,   48, 0, 500, true);
+	static const bool tuneWeights = false;
+
+    SetVal(W_THREATS, 109, 0, 500, tuneWeights);
+    SetVal(W_TROPISM,  25, -500, 500, tuneWeights);
+    SetVal(W_PASSERS, 102, 0, 500, tuneWeights);
+    SetVal(W_MASS,     98, 0, 500, tuneWeights);
+    SetVal(W_CHAINS,  100, 0, 500, tuneWeights);
+    SetVal(W_OUTPOSTS, 73, 0, 500, tuneWeights);
+    SetVal(W_LINES,   109, 0, 500, tuneWeights);
+    SetVal(W_STRUCT,  113, 0, 500, tuneWeights);
+    SetVal(W_SHIELD,  120, 0, 500, tuneWeights);
+    SetVal(W_STORM,    95, 0, 500, tuneWeights);
+    SetVal(W_CENTER,   48, 0, 500, tuneWeights);
 
     // Pawn structure parameters
 
-    static const bool tuneStruct = true;
+    static const bool tuneStruct = false;
 
     SetVal(DB_MID,  -8, -50, 0, tuneStruct);  // doubled
     SetVal(DB_END, -21, -50, 0, tuneStruct);
@@ -185,7 +187,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Pawn chain values
 
-    static const bool tuneChain = true;
+    static const bool tuneChain = false;
 
     SetVal(P_BIGCHAIN, 38, 0, 50, tuneChain);   // general penalty for a compact pawn chain pointing at our king
     SetVal(P_SMALLCHAIN, 27, 0, 50, tuneChain); // similar penalty for a chain that is not fully blocked by enemy pawns
@@ -195,7 +197,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Passed pawn bonuses per rank
 
-    static const bool tunePassers = true;
+    static const bool tunePassers = false;
 
     SetVal(PMG2,   2, 0, 300, tunePassers);
     SetVal(PMG3,   2, 0, 300, tunePassers);
@@ -219,9 +221,27 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(P_DEFMUL, 6, 0, 50, tunePassers);       // passer defended by own pawn
     SetVal(P_STOPMUL, 6, 0, 50, tunePassers);      // passers' stop square defended by own pawn
 
+												   // Passed pawn bonuses per rank
+
+	static const bool tuneCandidates = true;
+
+	SetVal(CMG2, 2/3, 0, 300, tuneCandidates);
+	SetVal(CMG3, 2/3, 0, 300, tuneCandidates);
+	SetVal(CMG4, 11/3, 0, 300, tuneCandidates);
+	SetVal(CMG5, 33/3, 0, 300, tuneCandidates);
+	SetVal(CMG6, 71/3, 0, 300, tuneCandidates);
+	SetVal(CMG7, 135/3, 0, 300, false);
+
+	SetVal(CEG2, 12/3, 0, 300, tuneCandidates);
+	SetVal(CEG3, 21/3, 0, 300, tuneCandidates);
+	SetVal(CEG4, 48/3, 0, 300, tuneCandidates);
+	SetVal(CEG5, 93/3, 0, 300, tuneCandidates);
+	SetVal(CEG6, 161/3, 0, 300, tuneCandidates);
+	SetVal(CEG7, 266/3, 0, 300, false);
+
     // King's pawn shield
 
-    static const bool tuneShield = true;
+    static const bool tuneShield = false;
 
     SetVal(P_SH_NONE, -40, -50, 50, tuneShield);
     SetVal(P_SH_2,   2, -50, 50, tuneShield);
@@ -240,7 +260,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Knight parameters
 
-    static const bool tuneKnight = true;
+    static const bool tuneKnight = false;
 
     SetVal(N_TRAP, -168, -300, 0, tuneKnight); // trapped knight
     SetVal(N_BLOCK, -17, -50, 0, tuneKnight);  // knight blocks c pawn in queen pawn openings
@@ -250,7 +270,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Bishop parameters
 
-    static const bool tuneBishop = true;
+    static const bool tuneBishop = false;
 
     SetVal(B_FIANCH, 13, 0, 50, tuneBishop);   // general bonus for fianchettoed bishop
     SetVal(B_KING, 20, 0, 50, tuneBishop);     // fianchettoed bishop near own king
@@ -270,7 +290,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Rook parameters
 
-    static const bool tuneRook = true;
+    static const bool tuneRook = false;
 
     SetVal(RSR_MG, 16, 0, 50, tuneRook); // rook on the 7th rank
     SetVal(RSR_EG, 32, 0, 50, tuneRook);
@@ -289,21 +309,21 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Queen parameters
 
-	static const bool tuneQueen = true;
+	static const bool tuneQueen = false;
 
     SetVal(QSR_MG, 0, 0, 50, tuneQueen);       // queen on the 7th rank
     SetVal(QSR_EG, 2, 0, 50, tuneQueen);
 
     // King parameters
 
-    static const bool tuneKing = true;
+    static const bool tuneKing = false;
 
     SetVal(K_NO_LUFT, -11, -50, 0, tuneKing); // queen on the 7th rank
     SetVal(K_CASTLE, 32, 0, 50, tuneKing);
 
     // Forwardness parameters
 
-    static const bool tuneFwd = true;
+    static const bool tuneFwd = false;
 
     SetVal(W_FWD, 0, -500, 500, tuneFwd);
     SetVal(N_FWD,   1, 0, 50, tuneFwd);
@@ -525,7 +545,7 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[W_TROPISM] = 20;
     values[W_FWD] = 0;
     values[W_PASSERS] = 100;
-    values[W_MASS] = 100; // seems optimal
+    values[W_MASS] = 100;
     values[W_CHAINS] = 100;
     values[W_OUTPOSTS] = 78;
     values[W_LINES] = 100;
@@ -581,6 +601,22 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[P_OPPSTOP_MUL] = 10; // side without a passer controls its stop square
     values[P_DEFMUL] = 4;       // passer defended by own pawn
     values[P_STOPMUL] = 4;      // passers' stop square defended by own pawn
+
+    // Candidate passer bonuses per rank
+
+    values[CMG2] = 11/3;
+    values[CMG3] = 12/3;
+    values[CMG4] = 24/3;
+    values[CMG5] = 45/3;
+    values[CMG6] = 78/3;
+    values[CMG7] = 130/3;
+
+    values[CEG2] = 22/3;
+    values[CEG3] = 23/3;
+    values[CEG4] = 57/3;
+    values[CEG5] = 96 /3;
+    values[CEG6] = 161 /3;
+    values[CEG7] = 260 /3;
 
     // King's pawn shield
 
@@ -689,6 +725,24 @@ void cParam::InitPassers() {
     passed_bonus_eg[WC][5] = values[PEG6];     passed_bonus_eg[BC][2] = values[PEG6];
     passed_bonus_eg[WC][6] = values[PEG7];     passed_bonus_eg[BC][1] = values[PEG7];
     passed_bonus_eg[WC][7] = 0;                passed_bonus_eg[BC][0] = 0;
+
+	cand_bonus_mg[WC][0] = 0;                cand_bonus_mg[BC][7] = 0;
+	cand_bonus_mg[WC][1] = values[CMG2];     cand_bonus_mg[BC][6] = values[CMG2];
+	cand_bonus_mg[WC][2] = values[CMG3];     cand_bonus_mg[BC][5] = values[CMG3];
+	cand_bonus_mg[WC][3] = values[CMG4];     cand_bonus_mg[BC][4] = values[CMG4];
+	cand_bonus_mg[WC][4] = values[CMG5];     cand_bonus_mg[BC][3] = values[CMG5];
+	cand_bonus_mg[WC][5] = values[CMG6];     cand_bonus_mg[BC][2] = values[CMG6];
+	cand_bonus_mg[WC][6] = values[CMG7];     cand_bonus_mg[BC][1] = values[CMG7];
+	cand_bonus_mg[WC][7] = 0;                cand_bonus_mg[BC][0] = 0;
+
+	cand_bonus_eg[WC][0] = 0;                cand_bonus_eg[BC][7] = 0;
+	cand_bonus_eg[WC][1] = values[CEG2];     cand_bonus_eg[BC][6] = values[CEG2];
+	cand_bonus_eg[WC][2] = values[CEG3];     cand_bonus_eg[BC][5] = values[CEG3];
+	cand_bonus_eg[WC][3] = values[CEG4];     cand_bonus_eg[BC][4] = values[CEG4];
+	cand_bonus_eg[WC][4] = values[CEG5];     cand_bonus_eg[BC][3] = values[CEG5];
+	cand_bonus_eg[WC][5] = values[CEG6];     cand_bonus_eg[BC][2] = values[CEG6];
+	cand_bonus_eg[WC][6] = values[CEG7];     cand_bonus_eg[BC][1] = values[CEG7];
+	cand_bonus_eg[WC][7] = 0;                cand_bonus_eg[BC][0] = 0;
 }
 
 void cParam::InitBackward() {

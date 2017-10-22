@@ -395,7 +395,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, eColor sd) {
         if (fl_unopposed) {
             if (fl_phalanx || fl_defended) {
                 if (BB.PopCnt((Mask.passed[sd][sq] & p->Pawns(op))) == 1)
-                    AddPawns(e, sd, Par.passed_bonus_mg[sd][Rank(sq)] / 3, Par.passed_bonus_eg[sd][Rank(sq)] / 3);
+                    AddPawns(e, sd, Par.cand_bonus_mg[sd][Rank(sq)], Par.cand_bonus_eg[sd][Rank(sq)]);
             }
         }
 

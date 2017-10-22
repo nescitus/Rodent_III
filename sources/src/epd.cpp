@@ -49,10 +49,11 @@ void cEngine::TuneMe(POS *p, int *pv, int iterations) {
 	int test = 0;
 
 
-	for (int curr_iter = 0; curr_iter < iterations; curr_iter++) {
+	for (;;) {
         int par = rand() % N_OF_VAL;
 		if (!Par.tunable[par]) continue;
 		test++;
+		if (test > iterations) break;
         printf("Iteration %4d, testing %14s\r", test, paramNames[par]);
         if (TuneOne(p, pv, par)) Par.PrintValues();
 	}
