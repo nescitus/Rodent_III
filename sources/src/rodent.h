@@ -432,6 +432,8 @@ struct eData {
     int eg[2];
     int mg_pawns[2];
     int eg_pawns[2];
+    int att[2];
+    int wood[2];
     U64 p_takes[2];
     U64 two_pawns_take[2];
     U64 p_can_take[2];
@@ -472,10 +474,10 @@ enum Values {
     W_MATERIAL, W_PST, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,           // weights part 1
     W_TROPISM, W_FWD, W_PASSERS, W_SHIELD, W_STORM, W_MASS, W_CHAINS, W_STRUCT,         // weights part 2
     W_LINES, W_OUTPOSTS, W_CENTER,
-	NMG0, NMG1, NMG2, NMG3, NMG4, NMG5, NMG6, NMG7, NMG8,
-	NEG0, NEG1, NEG2, NEG3, NEG4, NEG5, NEG6, NEG7, NEG8,
-	BMG0, BMG1, BMG2, BMG3, BMG4, BMG5, BMG6, BMG7, BMG8, BMG9, BMG10, BMG11, BMG12, BMG13,
-	BEG0, BEG1, BEG2, BEG3, BEG4, BEG5, BEG6, BEG7, BEG8, BEG9, BEG10, BEG11, BEG12, BEG13,
+    NMG0, NMG1, NMG2, NMG3, NMG4, NMG5, NMG6, NMG7, NMG8,
+    NEG0, NEG1, NEG2, NEG3, NEG4, NEG5, NEG6, NEG7, NEG8,
+    BMG0, BMG1, BMG2, BMG3, BMG4, BMG5, BMG6, BMG7, BMG8, BMG9, BMG10, BMG11, BMG12, BMG13,
+    BEG0, BEG1, BEG2, BEG3, BEG4, BEG5, BEG6, BEG7, BEG8, BEG9, BEG10, BEG11, BEG12, BEG13,
     RMG0, RMG1, RMG2, RMG3, RMG4, RMG5, RMG6, RMG7, RMG8, RMG9, RMG10, RMG11, RMG12, RMG13, RMG14,
     REG0, REG1, REG2, REG3, REG4, REG5, REG6, REG7, REG8, REG9, REG10, REG11, REG12, REG13, REG14,
     N_OF_VAL
@@ -483,7 +485,7 @@ enum Values {
 
 const char* const paramNames[N_OF_VAL] = {
     "PawnValueMg", "PawnValueEg", "KnightValueMg", "KnightValueEg", "BishopValueMg", 
-	"BishopValueEg", "RookValueMg", "RookValueEg", "QueenValueMg", "QueenValueEg",             // piece values
+    "BishopValueEg", "RookValueMg", "RookValueEg", "QueenValueMg", "QueenValueEg",             // piece values
     "BishopPair", "N_PAIR", "R_PAIR", "ELEPH", "A_EXC", "A_TWO", "A_MAJ", "A_MIN", "A_ALL",    // material adjustments
     "N_ATT1", "N_ATT2", "B_ATT1", "B_ATT2", "R_ATT1", "R_ATT2", "Q_ATT1", "Q_ATT2",            // attacks against enemy king zone
     "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
@@ -504,10 +506,10 @@ const char* const paramNames[N_OF_VAL] = {
     "Material", "W_PST", "OwnAttack", "OppAttack", "OwnMobility", "OppMobility", "PiecePressure", // weights part 1
     "KingTropism", "Forwardness", "PassedPawns", "PawnShield", "PawnStorm", "W_MASS", "W_CHAINS", "PawnStructure", // weights part 2
     "Lines", "Outposts", "W_CENTER",
-	"NMG0", "NMG1", "NMG2", "NMG3", "NMG4", "NMG5", "NMG6", "NMG7", "NMG8",
-	"NEG0", "NEG1", "NEG2", "NEG3", "NEG4", "NEG5", "NEG6", "NEG7", "NEG8",
-	"BMG0", "BMG1", "BMG2", "BMG3", "BMG4", "BMG5", "BMG6", "BMG7", "BMG8", "BMG9", "BMG10", "BMG11", "BMG12", "BMG13",
-	"BEG0", "BEG1", "BEG2", "BEG3", "BEG4", "BEG5", "BEG6", "BEG7", "BEG8", "BEG9", "BEG10", "BEG11", "BEG12", "BEG13",
+    "NMG0", "NMG1", "NMG2", "NMG3", "NMG4", "NMG5", "NMG6", "NMG7", "NMG8",
+    "NEG0", "NEG1", "NEG2", "NEG3", "NEG4", "NEG5", "NEG6", "NEG7", "NEG8",
+    "BMG0", "BMG1", "BMG2", "BMG3", "BMG4", "BMG5", "BMG6", "BMG7", "BMG8", "BMG9", "BMG10", "BMG11", "BMG12", "BMG13",
+    "BEG0", "BEG1", "BEG2", "BEG3", "BEG4", "BEG5", "BEG6", "BEG7", "BEG8", "BEG9", "BEG10", "BEG11", "BEG12", "BEG13",
     "RMG0", "RMG1", "RMG2", "RMG3", "RMG4", "RMG5", "RMG6", "RMG7", "RMG8", "RMG9", "RMG10", "RMG11", "RMG12", "RMG13", "RMG14",
     "REG0", "REG1", "REG2", "REG3", "REG4", "REG5", "REG6", "REG7", "REG8", "REG9", "REG10", "REG11", "REG12", "REG13", "REG14"
 };
@@ -516,10 +518,10 @@ const char* const paramNames[N_OF_VAL] = {
 class cParam {
   public:
     int values[N_OF_VAL]; // evaluation parameters
-	int max_val[N_OF_VAL];
-	int min_val[N_OF_VAL];
-	bool tunable[N_OF_VAL];
-	bool use_ponder; // this option does nothing
+    int max_val[N_OF_VAL];
+    int min_val[N_OF_VAL];
+    bool tunable[N_OF_VAL];
+    bool use_ponder; // this option does nothing
     bool use_book;
     bool verbose_book;
     int book_filter;
@@ -544,8 +546,8 @@ class cParam {
     int sp_pst[2][6][64];
     int passed_bonus_mg[2][8];
     int passed_bonus_eg[2][8];
-	int cand_bonus_mg[2][8];
-	int cand_bonus_eg[2][8];
+    int cand_bonus_mg[2][8];
+    int cand_bonus_eg[2][8];
     int mob_style;
     int pst_style;
     int n_mob_mg[9];
@@ -570,9 +572,9 @@ class cParam {
     NOINLINE void InitMaterialTweaks();
     NOINLINE void InitTables();
     NOINLINE void DefaultWeights();
-	NOINLINE void InitialPersonalityWeights();
+    NOINLINE void InitialPersonalityWeights();
     NOINLINE void InitAsymmetric(POS *p);
-	NOINLINE void PrintValues();
+    NOINLINE void PrintValues();
     void Recalculate();
     void SetSpeed(int elo_in);
     int EloToSpeed(int elo_in);
@@ -658,8 +660,8 @@ class cGlobals {
     glob_int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels
     int thread_no;
-	int time_buffer;
-	U64 game_key;         // random key initialized on ucinewgame to ensure non-repeating random eval modification for weak personalities
+    int time_buffer;
+    U64 game_key;         // random key initialized on ucinewgame to ensure non-repeating random eval modification for weak personalities
 
     void ClearData();
     void Init();
@@ -785,6 +787,7 @@ class cEngine {
     static void EvaluateKnightPatterns(POS *p, eData *e);
     static void EvaluateCentralPatterns(POS *p, eData *e);
     static void EvaluateKingPatterns(POS *p, eData *e);
+    void EvaluateKingAttack(POS *p, eData *e, eColor sd);
     static int Interpolate(POS *p, eData *e);
     static int GetDrawFactor(POS *p, eColor sd);
     static int CheckmateHelper(POS *p);
@@ -841,10 +844,10 @@ class cEngine {
 
 #ifdef USE_TUNING
 
-	double best_tune;
-	double TexelFit(POS *p, int *pv);
-	bool TuneOne(POS *p, int *pv, int par);
-	void TuneMe(POS *p, int *pv, int iterations);
+    double best_tune;
+    double TexelFit(POS *p, int *pv);
+    bool TuneOne(POS *p, int *pv, int par);
+    void TuneMe(POS *p, int *pv, int iterations);
 
 #endif
 

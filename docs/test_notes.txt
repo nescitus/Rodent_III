@@ -1,26 +1,46 @@
+2017-10-26
+
+- FAILED Nf1 etc defending castled king
+
+2017-10-25
+
+- FAILED pieces defending king ring decrease attack eval
+
+2017-10-23
+
+- FAILED pawns that can be defended in one move also ca be candidates
+
+2017-10-19
+
+- PASSED defended pawns evaluated as candidates
+
+2017-10-12
+
+- PASSED changing aspiration window
+
 2017-10-11
 
-- inconclusive test of decreasing minimal depth for internal iterative deepening
+- INCONCLUSIVE test of decreasing minimal depth for internal iterative deepening
 
 2017-09-29
 
-- failed attempt at tuning forwardness. This will remain purely stylistic option.
+- FAILED attempt at tuning forwardness. This will remain purely stylistic option.
 
 2017-09-24
 
-- failed attempt at adding and tuning piece combination values. Will be revisited.
+- FAILED attempt at adding and tuning piece combination values. Will be revisited.
 
 2017-09-17
 
-- succesfully tuning mobility values v. 0216
+- PASSED tuning mobility values v. 0216
 
 2017-09-14
 
-- parameter changes after Texel tuning run v. 0.215
+- PASSED parameter changes after Texel tuning run v. 0.215
 
 2017-09-12
 
-- the first successful automatic Texel tuning run v. 0.214
+- PASSED the first successful automatic Texel tuning run v. 0.214
 
 2017-09-08
 
