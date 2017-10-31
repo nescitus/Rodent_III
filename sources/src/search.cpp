@@ -182,7 +182,9 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
 
 	bool fl_check;
 	bool fl_futility = false;
+	bool did_null = false;
 	bool is_pv = (alpha != beta - 1);
+	bool sherwin_flag;
 
     // QUIESCENCE SEARCH ENTRY POINT
 
@@ -271,6 +273,8 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     && fl_prunable_node
     && p->MayNull()
     && eval >= beta) {
+
+		did_null = true;
 
         // null move depth reduction - modified Stockfish formula
 
@@ -424,6 +428,14 @@ avoid_null:
             p->UndoMove(move, u); continue;
         }
 
+
+		sherwin_flag = false;
+		
+		if (did_null && depth > 2 && !p->InCheck()) {
+			int q_score = QuiesceChecks(p, ply, -beta, -beta + 1, pv);
+			if (q_score >= beta) sherwin_flag = true;
+		}
+
         // LMR 1: NORMAL MOVES
 
         reduction = 0;
@@ -437,7 +449,14 @@ avoid_null:
         && mv_type == MV_NORMAL
         && mv_hist_score < Par.hist_limit
         && MoveType(move) != CASTLE) {
+
+            // read reduction amount from the table
+
             reduction = (int)msLmrSize[is_pv][depth][mv_tried];
+
+            if (sherwin_flag
+            && new_depth - reduction >= 2)
+               reduction++;
 
             // increase reduction on bad history score
 

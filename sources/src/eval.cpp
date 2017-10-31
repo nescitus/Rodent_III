@@ -574,7 +574,7 @@ int cEngine::Interpolate(POS *p, eData *e) {
 
 void cEngine::EvaluateThreats(POS *p, eData *e, eColor sd) {
 
-    int pc, sq, sc;
+    int pc, sq;
     int mg = 0;
     int eg = 0;
     eColor op = ~sd;
@@ -584,26 +584,29 @@ void cEngine::EvaluateThreats(POS *p, eData *e, eColor sd) {
     U64 bb_defended = bb_undefended & e->all_att[op];
     U64 bb_hanging = bb_undefended & ~e->p_takes[op];
 
-    bb_undefended &= ~p->Pawns(op);
     bb_undefended &= ~e->all_att[sd];
     bb_undefended &= ~e->all_att[op];
 
     bb_hanging |= bb_threatened;     // piece attacked by our pawn isn't well defended
     bb_hanging &= e->all_att[sd];    // hanging piece has to be attacked
-    bb_hanging &= ~p->Pawns(op);     // currently we don't evaluate threats against pawns
 
     bb_defended &= e->ev_att[sd];    // N, B, R attacks (pieces attacked by pawns are scored as hanging)
     bb_defended &= ~e->p_takes[sd];  // no defense against pawn attack
-    bb_defended &= ~p->Pawns(op);    // currently we don't evaluate threats against pawns
+
+	const int att_on_hang_mg[7] = {  0, 15, 15, 17, 25,  0,   0 };
+	const int att_on_hang_eg[7] = {  0, 23, 23, 25, 33,  0,   0 };
+	const int att_on_def_mg[7]  = {  0,  8,  8, 10, 15,  0,   0 };
+	const int att_on_def_eg[7]  = {  0, 12, 12, 14, 19,  0,   0 };
+	const int unatt_undef_mg[7] = {  0,  5,  5,  5,  5,  0,   0 };
+	const int unatt_undef_eg[7] = {  0,  9,  9,  9,  9,  0,   0 };
 
     // hanging pieces (attacked and undefended, based on DiscoCheck)
 
     while (bb_hanging) {
         sq = BB.PopFirstBit(&bb_hanging);
         pc = p->TpOnSq(sq);
-        sc = tp_value[pc] / 64;
-        mg += 10 + sc;
-        eg += 18 + sc;
+        mg += att_on_hang_mg[pc];
+        eg += att_on_hang_eg[pc];
     }
 
     // defended pieces under attack
@@ -611,17 +614,17 @@ void cEngine::EvaluateThreats(POS *p, eData *e, eColor sd) {
     while (bb_defended) {
         sq = BB.PopFirstBit(&bb_defended);
         pc = p->TpOnSq(sq);
-        sc = tp_value[pc] / 96;
-        mg += 5 + sc;
-        eg += 9 + sc;
+        mg += att_on_def_mg[pc];
+        eg += att_on_def_eg[pc];
     }
 
     // unattacked and undefended
 
     while (bb_undefended) {
-        bb_undefended &= (bb_undefended - 1);
-        mg += 5;
-        eg += 9;
+		sq = BB.PopFirstBit(&bb_undefended);
+		pc = p->TpOnSq(sq);
+		mg += unatt_undef_mg[pc];
+		eg += unatt_undef_eg[pc];
     }
 
     Add(e, sd, (Par.values[W_THREATS] * mg) / 100, (Par.values[W_THREATS] * eg) / 100);
