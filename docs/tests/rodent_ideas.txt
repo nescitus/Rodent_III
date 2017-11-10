@@ -1,0 +1,11 @@
+"Queen could devaluate more against a Knight than against a Bishop" (HGM)
+
+try spending a little more time if the current best move is an inferior exchange
+
+QN vs RR is a general draw while QB vs RR is a general win
+
+draw in rook ending with b/g pawn and king on the other wing the same way as with a/h pawn
+
+in general bishops are better than knights, but with just a queen to assist each this advantage is much reduced though not completely eliminated (LK)
+
+non-outpost knight stranded on enemy half of the bord beyond enemy pawn

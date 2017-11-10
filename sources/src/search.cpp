@@ -37,15 +37,15 @@ void cParam::InitAsymmetric(POS *p) {
     prog_side = p->mSide;
 
     if (prog_side == WC) { // TODO: no if/else, but progside/op_side
-		sd_att[WC] = values[W_OWN_ATT];
-		sd_att[BC] = values[W_OPP_ATT];
-		sd_mob[WC] = values[W_OWN_MOB];
-		sd_mob[BC] = values[W_OPP_MOB];
+        sd_att[WC] = values[W_OWN_ATT];
+        sd_att[BC] = values[W_OPP_ATT];
+        sd_mob[WC] = values[W_OWN_MOB];
+        sd_mob[BC] = values[W_OPP_MOB];
     } else {
-		sd_att[BC] = values[W_OWN_ATT];
-		sd_att[WC] = values[W_OPP_ATT];
-		sd_mob[BC] = values[W_OWN_MOB];
-		sd_mob[WC] = values[W_OPP_MOB];
+        sd_att[BC] = values[W_OWN_ATT];
+        sd_att[WC] = values[W_OPP_ATT];
+        sd_mob[BC] = values[W_OWN_MOB];
+        sd_mob[WC] = values[W_OPP_MOB];
     }
 }
 
@@ -180,11 +180,11 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     UNDO u[1];
     eData e;
 
-	bool fl_check;
-	bool fl_futility = false;
-	bool did_null = false;
-	bool is_pv = (alpha != beta - 1);
-	bool sherwin_flag;
+    bool fl_check;
+    bool fl_futility = false;
+    bool did_null = false;
+    bool is_pv = (alpha != beta - 1);
+    bool sherwin_flag;
 
     // QUIESCENCE SEARCH ENTRY POINT
 
@@ -274,7 +274,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     && p->MayNull()
     && eval >= beta) {
 
-		did_null = true;
+        did_null = true;
 
         // null move depth reduction - modified Stockfish formula
 
@@ -428,13 +428,14 @@ avoid_null:
             p->UndoMove(move, u); continue;
         }
 
+        // set flag responsible for increasing reduction
 
-		sherwin_flag = false;
-		
-		if (did_null && depth > 2 && !p->InCheck()) {
-			int q_score = QuiesceChecks(p, ply, -beta, -beta + 1, pv);
-			if (q_score >= beta) sherwin_flag = true;
-		}
+        sherwin_flag = false;
+
+        if (did_null && depth > 2 && !p->InCheck()) {
+            int q_score = QuiesceChecks(p, ply, -beta, -beta + 1, pv);
+            if (q_score >= beta) sherwin_flag = true;
+        }
 
         // LMR 1: NORMAL MOVES
 

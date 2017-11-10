@@ -1,3 +1,27 @@
+2017-11-10
+
+- PASSED possibilityofcastling kinside gets greater bonus than castling queenside
+
+2017-11-08
+
+- FAILED pruning in qs when 125% of opponent's most valuable piece would not beat alpha
+
+2017-11-06
+
+- FAILED bishop pins knight to the queen in front of a kingside castle
+
+2017-11-05
+
+- FAILED queen mobility does not increase for more than 23 squares
+
+2017-11-03
+
+- FAILED only one of the lmr enhancements is used (Shervin or history increase)
+
+2017-10-31
+
+- PASSED Sherwin lmr enhancement
+
 2017-10-26
 
 - FAILED Nf1 etc defending castled king
