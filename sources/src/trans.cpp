@@ -47,7 +47,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-ChessHeapClass chc;
+ChessHeapClass Trans;
 
 void ChessHeapClass::AllocTrans(unsigned int mbsize) {
 
@@ -84,19 +84,19 @@ void ChessHeapClass::AllocTrans(unsigned int mbsize) {
 #endif
     }
 
-    ClearTrans();
+    Clear();
 
     printf("info string %uMB of memory allocated\n", prev_size);
 }
 
-void ChessHeapClass::ClearTrans() {
+void ChessHeapClass::Clear() {
 
     tt_date = 0;
 
     ZeroMem();
 }
 
-bool ChessHeapClass::TransRetrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
+bool ChessHeapClass::Retrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
 
     if (!success) return false;
 
@@ -131,7 +131,7 @@ bool ChessHeapClass::TransRetrieve(U64 key, int *move, int *score, int alpha, in
     return false;
 }
 
-void ChessHeapClass::TransRetrieveMove(U64 key, int *move) {
+void ChessHeapClass::RetrieveMove(U64 key, int *move) {
 
     if (!success) return;
 
@@ -151,7 +151,7 @@ void ChessHeapClass::TransRetrieveMove(U64 key, int *move) {
     UNLOCK_ME_PLEASE1;
 }
 
-void ChessHeapClass::TransStore(U64 key, int move, int score, int flags, int depth, int ply) {
+void ChessHeapClass::Store(U64 key, int move, int score, int flags, int depth, int ply) {
 
     if (!success) return;
 

@@ -40,8 +40,8 @@ sBook MainBook;
     #include "book_gen.h"
 #endif
 
-void PrintVersion()
-{
+void PrintVersion() {
+
     printf("id name Rodent III 0.229"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
@@ -152,4 +152,8 @@ void cGlobals::Init() {
     should_clear = false;
     is_console = true;
     elo_slider = true;
+}
+
+bool cGlobals::CanReadBook() {
+    return (use_books_from_pers == reading_personality || !use_personality_files);
 }

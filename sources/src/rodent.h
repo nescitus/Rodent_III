@@ -665,6 +665,7 @@ class cGlobals {
 
     void ClearData();
     void Init();
+    bool CanReadBook();
 };
 
 extern cGlobals Glob;
@@ -728,7 +729,6 @@ class cEngine {
     int mHistory[12][64];
     int mKiller[MAX_PLY][2];
     int mRefutation[64][64];
-    //int local_nodes;
     const int mcThreadId;
     int mRootDepth;
     bool mFlRootChoice;
@@ -934,9 +934,8 @@ extern const int ph_value[7];
 #endif
 
 #include "chessheapclass.h"
-extern ChessHeapClass chc;
+extern ChessHeapClass Trans;
 
-// TODO: move from thread by depth, or if equal, by localnodes at the time of pv change
 // TODO: perhaps don't search moves that has been searched by another thread to greater depth
 // TODO: changing tt date of used entries (thx Kestutis)
 // TODO: IID at cut nodes

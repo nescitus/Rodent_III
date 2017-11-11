@@ -36,7 +36,6 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
-    //local_nodes++; unused
     Slowdown();
     if (Glob.abort_search && mRootDepth > 1) return 0;
     *pv = 0;
@@ -54,7 +53,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (chc.TransRetrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
+    if (Trans.Retrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
         if (!is_pv) return score;
     }
@@ -92,7 +91,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         // BETA CUTOFF
 
         if (score >= beta) {
-            chc.TransStore(p->mHashKey, move, score, LOWER, 0, ply);
+            Trans.Store(p->mHashKey, move, score, LOWER, 0, ply);
             return score;
         }
 
@@ -115,8 +114,8 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
-    if (*pv) chc.TransStore(p->mHashKey, *pv, best, EXACT, 0, ply);
-    else     chc.TransStore(p->mHashKey,   0, best, UPPER, 0, ply);
+    if (*pv) Trans.Store(p->mHashKey, *pv, best, EXACT, 0, ply);
+    else     Trans.Store(p->mHashKey,   0, best, UPPER, 0, ply);
 
     return best;
 }
@@ -133,7 +132,6 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
-    //local_nodes++; unused
     Slowdown();
     if (Glob.abort_search && mRootDepth > 1) return 0;
     *pv = 0;
@@ -142,7 +140,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (chc.TransRetrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
+    if (Trans.Retrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
         if (!is_pv) return score;
     }
@@ -181,7 +179,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         // BETA CUTOFF
 
         if (score >= beta) {
-            chc.TransStore(p->mHashKey, move, score, LOWER, 0, ply);
+            Trans.Store(p->mHashKey, move, score, LOWER, 0, ply);
             return score;
         }
 
@@ -204,8 +202,8 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
-    if (*pv) chc.TransStore(p->mHashKey, *pv, best, EXACT, 0, ply);
-    else     chc.TransStore(p->mHashKey,   0, best, UPPER, 0, ply);
+    if (*pv) Trans.Store(p->mHashKey, *pv, best, EXACT, 0, ply);
+    else     Trans.Store(p->mHashKey,   0, best, UPPER, 0, ply);
 
     return best;
 }
@@ -223,7 +221,6 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
     if (p->InCheck()) return QuiesceFlee(p, ply, alpha, beta, pv);
 
     Glob.nodes++;
-    //local_nodes++; unused
     Slowdown();
 
     // EARLY EXIT

@@ -67,7 +67,7 @@ double cEngine::TexelFit(POS *p, int *pv) {
   double k_const = 1.600;
   int iter = 0;
   int div = 2000000;
-  chc.ClearTrans();
+  Trans.Clear();
   ClearAll();
 
   double result = 1;

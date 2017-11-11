@@ -51,7 +51,7 @@ void cParam::InitAsymmetric(POS *p) {
 
 void cGlobals::ClearData() {
 
-    chc.ClearTrans();
+    Trans.Clear();
 #ifndef USE_THREADS
     EngineSingle.ClearAll();
 #else
@@ -193,7 +193,6 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
-    //local_nodes++; unused
     Slowdown();
     if (Glob.abort_search && mRootDepth > 1) return 0;
     if (ply) *pv = 0;
@@ -220,7 +219,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (chc.TransRetrieve(p->mHashKey, &move, &score, alpha, beta, depth, ply)) {
+    if (Trans.Retrieve(p->mHashKey, &move, &score, alpha, beta, depth, ply)) {
         if (score >= beta) UpdateHistory(p, last_move, move, depth, ply);
         if (!is_pv && Par.search_skill > 0) return score;
     }
@@ -284,7 +283,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
         // omit null move search if normal search to the same depth wouldn't exceed beta
         // (sometimes we can check it for free via hash table)
 
-        if (chc.TransRetrieve(p->mHashKey, &move, &null_score, alpha, beta, new_depth, ply)) {
+        if (Trans.Retrieve(p->mHashKey, &move, &null_score, alpha, beta, new_depth, ply)) {
             if (null_score < beta) goto avoid_null;
         }
 
@@ -295,7 +294,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
         // get location of a piece whose capture refuted null move
         // its escape will be prioritised in the move ordering
 
-        chc.TransRetrieve(p->mHashKey, &null_refutation, &null_score, alpha, beta, depth, ply);
+        Trans.Retrieve(p->mHashKey, &null_refutation, &null_score, alpha, beta, depth, ply);
         if (null_refutation > 0) ref_sq = Tsq(null_refutation);
 
         p->UndoNull(u);
@@ -342,7 +341,7 @@ avoid_null:
     && !move
     && depth > 6) {
         Search(p, ply, alpha, beta, depth - 2, false, -1, last_capt_sq, pv);
-        chc.TransRetrieveMove(p->mHashKey, &move);
+        Trans.RetrieveMove(p->mHashKey, &move);
     }
 
     // TODO: internal iterative deepening in cut nodes
@@ -518,7 +517,7 @@ research:
                     DecreaseHistory(p, mv_played[mv], depth);
                 }
             }
-            chc.TransStore(p->mHashKey, move, score, LOWER, depth, ply);
+            Trans.Store(p->mHashKey, move, score, LOWER, depth, ply);
 
             // At root, change the best move and show the new pv
 
@@ -557,9 +556,9 @@ research:
                 DecreaseHistory(p, mv_played[mv], depth);
             }
         }
-        chc.TransStore(p->mHashKey, *pv, best, EXACT, depth, ply);
+        Trans.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
     } else
-        chc.TransStore(p->mHashKey, 0, best, UPPER, depth, ply);
+        Trans.Store(p->mHashKey, 0, best, UPPER, depth, ply);
 
     return best;
 }
