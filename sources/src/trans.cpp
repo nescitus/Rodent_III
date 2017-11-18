@@ -109,13 +109,14 @@ bool ChessHeapClass::Retrieve(U64 key, int *move, int *score, int *flag, int alp
             entry->date = tt_date;
             *move = entry->move;
             if (entry->depth >= depth) {
+				*flag = entry->flags;
                 *score = entry->score;
                 if (*score < -MAX_EVAL)
                     *score += ply;
                 else if (*score > MAX_EVAL)
                     *score -= ply;
                 if ((entry->flags & UPPER && *score <= alpha)
-                        || (entry->flags & LOWER && *score >= beta)) {
+                || (entry->flags & LOWER && *score >= beta)) {
                     //entry->date = tt_date; // refreshing entry TODO: test at 4 threads, at 1 thread it's a wash
 
                     UNLOCK_ME_PLEASE0;

@@ -169,9 +169,9 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
 
 int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_null, int last_move, int last_capt_sq, int *pv) {
 
-    int best, score, null_score, move, new_depth, new_pv[MAX_PLY];
+    int best, score = -INF, null_score, move, new_depth, new_pv[MAX_PLY];
     int mv_type, reduction, victim, last_capt, hashFlag, nullHashFlag;
-    int null_refutation = -1, ref_sq = -1;
+    int null_refutation = -1, ref_sq = -1, singMove = -1, singScore = -INF;
     int mv_tried = 0;
     int mv_played[MAX_MOVES];
     int quiet_tried = 0;
@@ -181,10 +181,12 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     eData e;
 
     bool fl_check;
+    bool flExtended;
     bool fl_futility = false;
     bool did_null = false;
     bool is_pv = (alpha != beta - 1);
-    bool sherwin_flag;
+    bool sherwinFlag;
+    bool canSing = false;
 
     // QUIESCENCE SEARCH ENTRY POINT
 
@@ -222,6 +224,14 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, depth, ply)) {
         if (score >= beta) UpdateHistory(p, last_move, move, depth, ply);
         if (!is_pv && Par.search_skill > 0) return score;
+    }
+
+    // PREPARE FOR SINGULAR EXTENSION, SENPAI-STYLE
+
+    if (is_pv && depth > 5) {
+        if (Trans.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply)) {
+            if (hashFlag & LOWER) canSing = true;
+        }
     }
 
     // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
@@ -377,6 +387,7 @@ avoid_null:
 
         // GATHER INFO ABOUT THE MOVE
 
+        flExtended = false;
         mv_played[mv_tried] = move;
         mv_tried++;
         if (!ply && mv_tried > 1) mFlRootChoice = true;
@@ -392,18 +403,27 @@ avoid_null:
 
         // 1. check extension, applied in pv nodes or at low depth
 
-        if (is_pv || depth < 8) new_depth += p->InCheck();
+       if (is_pv || depth < 8) { new_depth += p->InCheck(); flExtended = true; };
 
         // 2. recapture extension in pv-nodes
 
-        if (is_pv && Tsq(move) == last_capt_sq) new_depth += 1;
+        if (is_pv && Tsq(move) == last_capt_sq) { new_depth += 1; flExtended = true; };
 
         // 3. pawn to 7th rank extension at the tips of pv-line
 
         if (is_pv
         && depth < 6
         && p->TpOnSq(Tsq(move)) == P
-        && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) new_depth += 1;
+        && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) { new_depth += 1; flExtended = true; };
+
+        // 4. singular extension, Senpai-style
+
+        if (is_pv && depth > 5 && move == singMove && canSing && flExtended == false) {
+            int new_alpha = -singScore - 50;
+            int mockPv;
+            int sc = Search(p, ply, new_alpha, new_alpha - 1, depth - 4, false, -1, -1, &mockPv);
+            if (sc <= new_alpha) { new_depth += 1; flExtended = true; }
+        }
 
         // FUTILITY PRUNING
 
@@ -429,11 +449,11 @@ avoid_null:
 
         // set flag responsible for increasing reduction
 
-        sherwin_flag = false;
+        sherwinFlag = false;
 
         if (did_null && depth > 2 && !p->InCheck()) {
             int q_score = QuiesceChecks(p, ply, -beta, -beta + 1, pv);
-            if (q_score >= beta) sherwin_flag = true;
+            if (q_score >= beta) sherwinFlag = true;
         }
 
         // LMR 1: NORMAL MOVES
@@ -454,7 +474,7 @@ avoid_null:
 
             reduction = (int)msLmrSize[is_pv][depth][mv_tried];
 
-            if (sherwin_flag
+            if (sherwinFlag
             && new_depth - reduction >= 2)
                reduction++;
 
