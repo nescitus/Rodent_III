@@ -1,0 +1,77 @@
+; Tal personality for Rodent III chess engine, version 0.229 or later
+; created by Brendan J. Norman, modified by Pawel Koziol
+; Hommage to Mikhail Tal
+;
+; "My head is filled with sunshine. In the first game 
+; of my match with Botvinnik I will play 1.e4 
+; and I shall win."
+;
+setoption name PawnValueMg value 100
+setoption name KnightValueMg value 325
+setoption name BishopValueMg value 340
+setoption name RookValueMg value 500
+setoption name QueenValueMg value 950
+setoption name PawnValueEg value 101
+setoption name KnightValueEg value 320
+setoption name BishopValueEg value 340
+setoption name RookValueEg value 505
+setoption name QueenValueEg value 960
+setoption name KeepPawn value 8
+setoption name KeepKnight value 10
+setoption name KeepBishop value 10
+setoption name KeepRook value 0
+setoption name KeepQueen value 20
+setoption name BishopPair value 70
+setoption name KnightPair value -10
+setoption name RookPair value -9
+setoption name KnightLikesClosed value 6
+setoption name RookLikesOpen value 3
+setoption name MajorUp value 60
+setoption name MinorUp value 53
+setoption name BothUp value 80
+setoption name ExchangeImbalance value -10
+setoption name MinorVsQueen value 4
+setoption name TwoMinors value 44
+setoption name Material value 48
+setoption name OwnAttack value 450
+setoption name OppAttack value 100
+setoption name OwnMobility value 125
+setoption name OppMobility value 100
+setoption name KingTropism value 80
+setoption name PiecePlacement value 100
+setoption name PiecePressure value 190
+setoption name PassedPawns value 127
+setoption name PawnStructure value 90
+setoption name Lines value 100
+setoption name Outposts value 100
+setoption name PawnShield value 189
+setoption name PawnStorm value 181
+setoption name Forwardness value 0
+setoption name Center value 50
+setoption name DoubledPawnMg value -12
+setoption name DoubledPawnEg value -24
+setoption name IsolatedPawnMg value -10
+setoption name IsolatedPawnEg value -20
+setoption name IsolatedOnOpenMg value -10
+setoption name BackwardPawnMg value -8
+setoption name BackwardPawnEg value -10
+setoption name BackwardOnOpenMg value -8
+setoption name FianchBase value 4
+setoption name Fianchetto value 8
+setoption name ReturningB value 10
+setoption name MinorBehindPawn value 5
+setoption name PawnThreat value 4
+setoption name PawnMass value 100
+setoption name PawnChains value 100
+setoption name PstStyle value 0
+setoption name MobilityStyle value 0
+setoption name NpsLimit value 0
+setoption name EvalBlur value 0
+setoption name Contempt value 5
+setoption name SlowMover value 95
+setoption name Selectivity value 175
+setoption name SearchSkill value 10
+setoption name RiskyDepth value 0
+setoption name BookFilter value 20
+setoption name GuideBookFile value players/ph-tal2.bin
+setoption name MainBookFile value rodent.bin

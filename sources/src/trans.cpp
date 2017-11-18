@@ -96,7 +96,7 @@ void ChessHeapClass::Clear() {
     ZeroMem();
 }
 
-bool ChessHeapClass::Retrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply) {
+bool ChessHeapClass::Retrieve(U64 key, int *move, int *score, int *flag, int alpha, int beta, int depth, int ply) {
 
     if (!success) return false;
 

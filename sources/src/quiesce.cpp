@@ -25,7 +25,7 @@ If not, see <http://www.gnu.org/licenses/>.
 int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     int best, score, move, new_pv[MAX_PLY];
-    int mv_type;
+    int mv_type, hashFlag;
     bool is_pv = (alpha != beta - 1);
     MOVES m[1];
     UNDO u[1];
@@ -53,7 +53,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (Trans.Retrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
+    if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply)) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
         if (!is_pv) return score;
     }
@@ -123,7 +123,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     int best, score, move, new_pv[MAX_PLY];
-    int mv_type;
+    int mv_type, hashFlag;
     bool is_pv = (alpha != beta - 1);
     MOVES m[1];
     UNDO u[1];
@@ -140,7 +140,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (Trans.Retrieve(p->mHashKey, &move, &score, alpha, beta, 0, ply)) {
+    if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply)) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
         if (!is_pv) return score;
     }

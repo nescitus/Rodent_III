@@ -78,7 +78,7 @@ class ChessHeapClass {
 
     void AllocTrans(unsigned int mbsize);
     void Clear();
-    bool Retrieve(U64 key, int *move, int *score, int alpha, int beta, int depth, int ply);
+    bool Retrieve(U64 key, int *move, int *score, int *flag, int alpha, int beta, int depth, int ply);
     void RetrieveMove(U64 key, int *move);
     void Store(U64 key, int move, int score, int flags, int depth, int ply);
 };

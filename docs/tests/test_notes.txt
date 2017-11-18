@@ -1,6 +1,10 @@
+2017-11-16
+
+- FAILED increase king attackby one for the side to move
+
 2017-11-10
 
-- PASSED possibilityofcastling kinside gets greater bonus than castling queenside
+- PASSED possibility of castling kinside gets greater bonus than of castling queenside
 
 2017-11-08
 

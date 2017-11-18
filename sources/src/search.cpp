@@ -170,7 +170,7 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
 int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_null, int last_move, int last_capt_sq, int *pv) {
 
     int best, score, null_score, move, new_depth, new_pv[MAX_PLY];
-    int mv_type, reduction, victim, last_capt;
+    int mv_type, reduction, victim, last_capt, hashFlag, nullHashFlag;
     int null_refutation = -1, ref_sq = -1;
     int mv_tried = 0;
     int mv_played[MAX_MOVES];
@@ -219,7 +219,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (Trans.Retrieve(p->mHashKey, &move, &score, alpha, beta, depth, ply)) {
+    if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, depth, ply)) {
         if (score >= beta) UpdateHistory(p, last_move, move, depth, ply);
         if (!is_pv && Par.search_skill > 0) return score;
     }
@@ -283,7 +283,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
         // omit null move search if normal search to the same depth wouldn't exceed beta
         // (sometimes we can check it for free via hash table)
 
-        if (Trans.Retrieve(p->mHashKey, &move, &null_score, alpha, beta, new_depth, ply)) {
+        if (Trans.Retrieve(p->mHashKey, &move, &null_score, &nullHashFlag, alpha, beta, new_depth, ply)) {
             if (null_score < beta) goto avoid_null;
         }
 
@@ -294,7 +294,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
         // get location of a piece whose capture refuted null move
         // its escape will be prioritised in the move ordering
 
-        Trans.Retrieve(p->mHashKey, &null_refutation, &null_score, alpha, beta, depth, ply);
+        Trans.Retrieve(p->mHashKey, &null_refutation, &null_score, &nullHashFlag, alpha, beta, depth, ply);
         if (null_refutation > 0) ref_sq = Tsq(null_refutation);
 
         p->UndoNull(u);
