@@ -19,6 +19,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "book.h"
 #include <cstdio>
 #include <cstdlib>
+#include <math.h> // for floor()
 
 // Random numbers from PolyGlot, used to compute book hash keys
 
