@@ -286,6 +286,12 @@ const U64 PG[781] = {
     UINT64_C(0xF8D626AAAF278509)
 };
 
+int my_random(int n) {
+
+  double r;
+  r = double(rand()) / (double(RAND_MAX) + 1.0);
+  return int(floor(r*double(n)));
+}
 
 U64 sBook::GetPolyglotKey(POS *p) {
 
@@ -375,6 +381,8 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
     polyglot_move entry[1];
     U64 key = GetPolyglotKey(p);
 
+	if (bookFile != NULL) srand(GetMS());
+
     printf("info string probing '%s'...\n", bookName);
 
     for (int pos = FindPos(key); pos < bookSizeInEntries && (ReadEntry(entry, pos), entry->key == key); pos++) {
@@ -423,7 +431,7 @@ int sBook::GetPolyglotMove(POS *p, bool print_output) {
         // shall we pick this move?
         if (!IsInfrequent(values[i], max_weight)) {
             vals_acc += values[i];
-            if (random30bit(vals_acc) < values[i]) best_move = moves[i];
+            if (my_random(vals_acc) < values[i]) best_move = moves[i];
         }
     }
 

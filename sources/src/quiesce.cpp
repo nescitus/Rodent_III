@@ -280,7 +280,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
         // DELTA PRUNING
         // Prune insufficient captures (unless opponent has just one piece left). This is done in two stages:
 
-        if (p->mCnt[op][N] + p->mCnt[op][B] + p->mCnt[op][R] + p->mCnt[op][Q] > 1) {
+        if (p->mCnt[op][N] + p->mCnt[op][B] + p->mCnt[op][R] + p->mCnt[op][Q] > 1 ) {
 
             // 1. Prune captures that are unlikely to raise alpha even if opponent does not recapture
 
