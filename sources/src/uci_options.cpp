@@ -108,6 +108,7 @@ void PrintUciOptions() {
         printf("option name RiskyDepth type spin default %d min 0 max 10\n", Par.riskydepth);
 #endif
     }
+	printf("option name Verbose type check default %s\n", Glob.is_noisy ? "true" : "false");
     printf("option name Ponder type check default %s\n", Par.use_ponder ? "true" : "false");
     printf("option name UseBook type check default %s\n", Par.use_book ? "true" : "false");
     printf("option name VerboseBook type check default %s\n", Par.verbose_book ? "true" : "false");
@@ -355,6 +356,8 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "uci_elo") == 0)                                 {
         Par.elo = atoi(value);
         Par.SetSpeed(Par.elo);
+    } else if (strcmp(name, "verbose") == 0)                                 {
+        valuebool(Glob.is_noisy, value);
     } else if (strcmp(name, "uci_limitstrength") == 0)                       {
         valuebool(Par.fl_weakening, value);
     } else if (strcmp(name, "ponder") == 0)                                  {
@@ -420,7 +423,8 @@ void ReadPersonality(const char *fileName) {
             || ChDir(_PERSONALITIESPATH))       // next built-in path
                 personalityFile = fopen(fileName, "r");
 
-    printf("info string reading personality '%s' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
+    if (Glob.is_noisy)
+        printf("info string reading personality '%s' (%s)\n", fileName, personalityFile == NULL ? "failure" : "success");
 
     // Exit if this personality file doesn't exist
 

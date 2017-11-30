@@ -53,7 +53,8 @@ void sInternalBook::Init()
     });
 #endif
 
-    printf("info string %d moves loaded from the internal book\n", n_of_records);
+    if (Glob.is_noisy)
+       printf("info string %d moves loaded from the internal book\n", n_of_records);
 
 #ifdef BOOKGEN
     FILE *f = fopen("book_gen.h", "w");
@@ -139,7 +140,8 @@ void sInternalBook::MoveToInternal(U64 hashKey, int move, int val) {
 
 int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
 
-    printf("info string probing the internal book...\n");
+    if (Glob.is_noisy)
+        printf("info string probing the internal book...\n");
 
     int choice = 0;
 
@@ -162,7 +164,7 @@ int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
             const int freq_with_correction = internal_book[i].freq + min_freq;
 
             // display info about book moves
-            if (print_output) {
+            if (print_output && Glob.is_noisy) {
                 printf("info string %s %d\n", MoveToStr(internal_book[i].move), freq_with_correction);
             }
 

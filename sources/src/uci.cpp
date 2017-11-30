@@ -221,7 +221,8 @@ void cEngine::SetMoveTime(int base, int inc, int movestogo) {
         // assign less time per move on extremely short time controls
 
         msMoveTime = BulletCorrection(msMoveTime);
-        printf("info string base %d, Inc %d, ToGo %d, assigned %d milliseconds\n", base, inc, movestogo, msMoveTime);
+        if (Glob.is_noisy)
+            printf("info string base %d, Inc %d, ToGo %d, assigned %d milliseconds\n", base, inc, movestogo, msMoveTime);
     }
 }
 
@@ -307,7 +308,8 @@ void ParseGo(POS *p, const char *ptr) {
 
     if (Par.use_book) {
 
-        printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
+        if (Glob.is_noisy)
+            printf("info string bd %d mfs %d\n", Par.book_depth, Glob.moves_from_start);
 
         int pvb = GuideBook.GetPolyglotMove(p, Par.verbose_book);
 

@@ -98,6 +98,7 @@ int main() {
 
     PrintVersion();
 
+if (Glob.is_noisy) {
 #if defined(_WIN32) || defined(_WIN64)
     printf("info string opening books path is '%ls' (%s)\n", _BOOKSPATH, ChDir(_BOOKSPATH) ? "exists" : "doesn't exist");
     printf("info string personalities path is '%ls' (%s)\n", _PERSONALITIESPATH, ChDir(_PERSONALITIESPATH) ? "exists" : "doesn't exist");
@@ -105,6 +106,7 @@ int main() {
     printf("info string opening books path is '%s' (%s)\n", _BOOKSPATH, ChDir(_BOOKSPATH) ? "exists" : "doesn't exist");
     printf("info string personalities path is '%s' (%s)\n", _PERSONALITIESPATH, ChDir(_PERSONALITIESPATH) ? "exists" : "doesn't exist");
 #endif
+}
 
     PrintOverrides(); // print books and pers paths overrides (26/08/17: linux only)
 
@@ -127,6 +129,7 @@ int main() {
 
 void cGlobals::Init() {
 
+	is_noisy = false;
     is_testing = false;
     is_tuning = false;
     reading_personality = false;

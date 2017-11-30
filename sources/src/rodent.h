@@ -647,6 +647,7 @@ class cGlobals {
     glob_U64 nodes;
     glob_bool abort_search;
     glob_bool is_testing;
+	bool is_noisy;
     bool elo_slider;
     bool is_console;
     bool is_tuning;
@@ -881,6 +882,7 @@ void SetPieceValue(int pc, int val, int slot);
 void UciLoop();
 void PrintBb(U64 bbTest);
 int random30bit(int n);
+int my_random(int n);
 
 extern const int tp_value[7];
 extern const int ph_value[7];

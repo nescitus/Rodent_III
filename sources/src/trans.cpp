@@ -61,7 +61,8 @@ void ChessHeapClass::AllocTrans(unsigned int mbsize) {
     if (prev_size != tt_size) { // don't waste time if the size is the same
 
         if (!Alloc(tt_size)) {
-            printf("info string memory allocation error\n");
+            if (Glob.is_noisy)
+                printf("info string memory allocation error\n");
             prev_size = 0; // will realloc next time
             return;
         }
@@ -86,7 +87,8 @@ void ChessHeapClass::AllocTrans(unsigned int mbsize) {
 
     Clear();
 
-    printf("info string %uMB of memory allocated\n", prev_size);
+    if (Glob.is_noisy)
+        printf("info string %uMB of memory allocated\n", prev_size);
 }
 
 void ChessHeapClass::Clear() {
