@@ -170,7 +170,7 @@ int sInternalBook::MoveFromInternal(POS *p, bool print_output) const {
 
             // pick move with the best random value based on frequency
             vals_acc += freq_with_correction;
-            if (random30bit(vals_acc) < freq_with_correction) choice = internal_book[i].move;
+            if (my_random(vals_acc) < freq_with_correction) choice = internal_book[i].move;
         }
     }
 

@@ -77,11 +77,6 @@ int GetMS() {
 #endif
 }
 
-int random30bit(int n) {
-
-    return ((rand() << 15) ^ rand()) % n;
-}
-
 void POS::InitHashKey() {
 
     U64 key = 0;

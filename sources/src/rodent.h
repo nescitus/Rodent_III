@@ -881,7 +881,6 @@ void ReadPersonality(const char *fileName);
 void SetPieceValue(int pc, int val, int slot);
 void UciLoop();
 void PrintBb(U64 bbTest);
-int random30bit(int n);
 int my_random(int n);
 
 extern const int tp_value[7];
