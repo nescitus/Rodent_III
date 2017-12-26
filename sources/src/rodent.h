@@ -755,6 +755,7 @@ class cEngine {
 
     void Iterate(POS *p, int *pv);
     int Widen(POS *p, int depth, int *pv, int lastScore);
+	int SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv);
     int Search(POS *p, int ply, int alpha, int beta, int depth, bool was_null, int last_move, int last_capt_sq, int *pv);
     int QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv);
     int QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv);

@@ -767,6 +767,7 @@ int cEngine::Evaluate(POS *p, eData *e) {
     if (score < 0) draw_factor = GetDrawFactor(p, BC);
     score = (score * draw_factor) / 64;
 
+
     // Ensure that returned value doesn't exceed mate score
 
     score = Clip(score, MAX_EVAL);
