@@ -133,7 +133,7 @@ void cGlobals::Init() {
     is_testing = false;
     is_tuning = false;
     reading_personality = false;
-    use_personality_files = false;
+    use_personality_files = true;
     use_books_from_pers = true;
     show_pers_file = true;
     thread_no = 1;

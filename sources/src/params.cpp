@@ -284,7 +284,7 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(B_OWH, -7, -50, 0, tuneBishop);     // bishop can move only to own half of the board
     SetVal(B_REACH, 2, 0, 50, tuneBishop);     // bishop can reach an outpost square
     SetVal(B_TOUCH, 5, 0, 50, tuneBishop);     // two bishops on adjacent squares
-    SetVal(B_OWN_P, -3, -50, 0, false);  // own pawn on the square of own bishop's color
+    SetVal(B_OWN_P, -4, -50, 0, false);  // own pawn on the square of own bishop's color
     SetVal(B_OPP_P, -1, -50, 0, false);  // enemy pawn on the square of own bishop's color
     SetVal(B_RETURN, 7, 0, 50, tuneBishop);    // bishop returning to initial position after castling
 
