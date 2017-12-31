@@ -668,6 +668,9 @@ class cGlobals {
     void ClearData();
     void Init();
     bool CanReadBook();
+	bool MoveToAvoid(int move);
+	void ClearAvoidList();
+	void SetAvoidMove(int loc, int move);
 
 	int avoidMove[24];
 };

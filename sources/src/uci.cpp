@@ -103,8 +103,8 @@ void UciLoop() {
 #ifndef USE_THREADS
             printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));
 #else
-           // printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().mPvEng));
-			Engines.front().TuneMe(p, Engines.front().mPvEng, 2000);
+            // printf("FIT: %lf\n", Engines.front().TexelFit(p, Engines.front().mPvEng));
+            Engines.front().TuneMe(p, Engines.front().mPvEng, 2000);
 
 #endif
             Glob.is_tuning = false;
@@ -236,11 +236,11 @@ void ParseGo(POS *p, const char *ptr) {
     bool strict_time = false;
     Glob.pondering = false;
 
-	// We may assume that when the engine can think on opponent's time,
-	// it can afford to use more time to think. Unfortunately, this fails
-	// with the current time management scheme.
+    // We may assume that when the engine can think on opponent's time,
+    // it can afford to use more time to think. Unfortunately, this fails
+    // with the current time management scheme.
 
-	// if (Par.use_ponder) movestogo = 38;
+    // if (Par.use_ponder) movestogo = 38;
 
     cEngine::msMoveTime    = -1;
     cEngine::msMoveNodes   =  0;
@@ -335,10 +335,10 @@ void ParseGo(POS *p, const char *ptr) {
 #endif
 
         if (Glob.goodbye)
-            exit(0);		
+            exit(0);
     }
 
-	if (Glob.multiPv == 1) {
+    if (Glob.multiPv == 1) {
 
     // Set engine-dependent variables and search using the designated number of threads
 
@@ -382,7 +382,7 @@ void ParseGo(POS *p, const char *ptr) {
     ExtractMove(best_pv);
 #endif
 
-	}
+    }
 
 }
 

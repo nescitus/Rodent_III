@@ -61,6 +61,21 @@ void cGlobals::ClearData() {
     should_clear = false;
 }
 
+bool cGlobals::MoveToAvoid(int move) {
+    for (int i = 0; i < 24; i++)
+        if (avoidMove[i] == move) return true;
+    return false;
+}
+
+void cGlobals::ClearAvoidList() {
+    for (int i = 0; i < 24; i++)
+        avoidMove[i] = 0;
+}
+
+void cGlobals::SetAvoidMove(int loc, int move) {
+    avoidMove[loc] = move;
+}
+
 void cEngine::InitSearch() { // static init function
 
     // Set depth of late move reduction (formula based on Stockfish)
@@ -87,8 +102,7 @@ void cEngine::Think(POS *p) {
     POS curr[1];
     mPvEng[0] = 0; // clear engine's move
     mPvEng[1] = 0; // clear ponder move
-	for (int i = 0; i<24; i++)
-	     Glob.avoidMove[i] = 0;
+    Glob.ClearAvoidList();
     mFlRootChoice = false;
     *curr = *p;
     AgeHist();
@@ -97,28 +111,65 @@ void cEngine::Think(POS *p) {
 
 void cEngine::MultiPv(POS * p, int * pv) {
 
-	int pv1[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY];
-	int cur_val1, cur_val2, cur_val3;
-	for (int i = 0; i<24; i++)
-		Glob.avoidMove[i] = 0;
+    int pv1[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY], pv5[MAX_PLY], pv6[MAX_PLY];
+    int cur_val1 = 0, cur_val2 = 0, cur_val3 = 0, cur_val4 = 0, cur_val5 = 0, cur_val6 = 0;
+	int bestPv = 1;
+	int bestScore;
 
-	for (mRootDepth = 1; mRootDepth <= msSearchDepth; mRootDepth++) {
-		cur_val1 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv1);
-		if (Glob.abort_search) break;
-		Glob.avoidMove[1] = pv1[0];
-		cur_val2 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv2);
-		if (Glob.abort_search) break;
-		Glob.avoidMove[2] = pv2[0];
-		if (Glob.multiPv > 2) cur_val3 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv3);
-		if (Glob.abort_search) break;
-		
-		if (Glob.multiPv > 2) DisplayPv(3, cur_val3, pv3);
-		DisplayPv(2, cur_val2, pv2);
-		DisplayPv(1, cur_val1, pv1);
-		pv = pv1;
-	}
+    for (mRootDepth = 1; mRootDepth <= msSearchDepth; mRootDepth++) {
+		Glob.ClearAvoidList();
+		bestScore = -INF;
+		bestPv = 1;
 
-	ExtractMove(pv1);
+        cur_val1 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv1);
+        if (Glob.abort_search) break;
+		if (cur_val1 > bestScore) { bestPv = 1; bestScore = cur_val1; };
+        Glob.SetAvoidMove(1, pv1[0]);
+        cur_val2 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv2);
+        if (Glob.abort_search) break;
+		if (cur_val1 > bestScore) { bestPv = 2; bestScore = cur_val2; };
+        Glob.SetAvoidMove(2, pv2[0]);
+        if (Glob.multiPv > 2) {
+           cur_val3 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv3);
+           if (Glob.abort_search) break;
+		   if (cur_val3 > bestScore) { bestPv = 3; bestScore = cur_val3; };
+           Glob.SetAvoidMove(3, pv3[0]);
+        }
+        if (Glob.multiPv > 3) {
+           cur_val4 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv4);
+           if (Glob.abort_search) break;
+		   if (cur_val3 > bestScore) { bestPv = 4; bestScore = cur_val4; };
+           Glob.SetAvoidMove(4, pv4[0]);
+        }
+        if (Glob.multiPv > 4) {
+            cur_val5 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv5);
+            if (Glob.abort_search) break;
+			if (cur_val3 > bestScore) { bestPv = 5; bestScore = cur_val5; };
+            Glob.SetAvoidMove(5, pv5[0]);
+        }
+        if (Glob.multiPv > 5) {
+            cur_val6 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv6);
+            if (Glob.abort_search) break;
+			if (cur_val3 > bestScore) { bestPv = 6; bestScore = cur_val6; };
+            Glob.SetAvoidMove(6, pv6[0]);
+        }
+
+        if (Glob.multiPv > 5 && p->Legal(pv6[0])) DisplayPv(6, cur_val6, pv6);
+        if (Glob.multiPv > 4 && p->Legal(pv5[0])) DisplayPv(5, cur_val5, pv5);
+        if (Glob.multiPv > 3 && p->Legal(pv4[0])) DisplayPv(4, cur_val4, pv4);
+        if (Glob.multiPv > 2 && p->Legal(pv3[0])) DisplayPv(3, cur_val3, pv3);
+        if (p->Legal(pv2[0])) DisplayPv(2, cur_val2, pv2);
+		if (p->Legal(pv1[0])) DisplayPv(1, cur_val1, pv1);
+        pv = pv1;
+    }
+
+    if (bestPv == 1) ExtractMove(pv1);
+	else if (bestPv == 2) ExtractMove(pv2);
+	else if (bestPv == 3) ExtractMove(pv3);
+	else if (bestPv == 4) ExtractMove(pv4);
+	else if (bestPv == 5) ExtractMove(pv5);
+	else if (bestPv == 6) ExtractMove(pv6);
+	else  ExtractMove(pv1); // shouldn't happen of course
 
 }
 
@@ -278,7 +329,9 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
         p->DoMove(move, u);
         if (p->Illegal()) { p->UndoMove(move, u); continue; }
 
-		if (move == Glob.avoidMove[1] || move == Glob.avoidMove[2] ) { p->UndoMove(move, u); continue; }
+        // DON'T SEARCH THE SAME MOVES IN MULTI-PV MODE 
+
+        if (Glob.MoveToAvoid(move) ) { p->UndoMove(move, u); continue; }
 
         // GATHER INFO ABOUT THE MOVE
 
