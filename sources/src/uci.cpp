@@ -324,20 +324,19 @@ void ParseGo(POS *p, const char *ptr) {
         }
     }
 
-	if (Glob.multiPv > 1) {
+    if (Glob.multiPv > 1) {
 
-		int pv[MAX_PLY];
+        int pv[MAX_PLY];
 
 #ifndef USE_THREADS
-		EngineSingle.MultiPv(p, pv));
+        EngineSingle.MultiPv(p, pv);
 #else
-		Engines.front().MultiPv(p, pv);
+        Engines.front().MultiPv(p, pv);
 #endif
 
-		if (Glob.goodbye)
-			exit(0);
-		
-	}
+        if (Glob.goodbye)
+            exit(0);		
+    }
 
 	if (Glob.multiPv == 1) {
 
