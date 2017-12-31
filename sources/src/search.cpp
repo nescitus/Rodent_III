@@ -935,6 +935,14 @@ void cEngine::Slowdown() {
     &&   mRootDepth > 1) CheckTimeout();
 #endif
 
+    // for MultiPv
+
+	if (Glob.multiPv > 1) {
+		 if ( (!(Glob.nodes & 2047))
+         &&   !Glob.is_testing
+         &&   mRootDepth > 1) CheckTimeout();
+	}
+
 }
 
 int POS::DrawScore() const {

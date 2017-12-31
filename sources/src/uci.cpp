@@ -328,24 +328,11 @@ void ParseGo(POS *p, const char *ptr) {
 
 		int pv[MAX_PLY];
 
-		std::thread timer([] {
-			while (Glob.abort_search == false) {
-
-				// Check for timeout every 5 milliseconds. This allows Rodent
-				// to survive extreme time controls, like 1 s + 10 ms
-
-				std::this_thread::sleep_for(5ms);
-				if (!Glob.is_tuning) CheckTimeout();
-	}
-	});
-
 #ifndef USE_THREADS
 		EngineSingle.MultiPv(p, pv));
 #else
 		Engines.front().MultiPv(p, pv);
 #endif
-
-		timer.join();
 
 		if (Glob.goodbye)
 			exit(0);
