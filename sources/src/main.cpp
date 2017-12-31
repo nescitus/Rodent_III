@@ -42,7 +42,7 @@ sBook MainBook;
 
 void PrintVersion() {
 
-    printf("id name Rodent III 0.233"
+    printf("id name Rodent III 0.234"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
             " 32-bit"
@@ -155,6 +155,7 @@ void cGlobals::Init() {
     should_clear = false;
     is_console = true;
     elo_slider = true;
+	multiPv = 1;
 }
 
 bool cGlobals::CanReadBook() {

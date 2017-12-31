@@ -87,10 +87,39 @@ void cEngine::Think(POS *p) {
     POS curr[1];
     mPvEng[0] = 0; // clear engine's move
     mPvEng[1] = 0; // clear ponder move
+	for (int i = 0; i<24; i++)
+	     Glob.avoidMove[i] = 0;
     mFlRootChoice = false;
     *curr = *p;
     AgeHist();
     Iterate(curr, mPvEng);
+}
+
+void cEngine::MultiPv(POS * p, int * pv) {
+
+	int pv1[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY];
+	int cur_val1, cur_val2, cur_val3;
+	for (int i = 0; i<24; i++)
+		Glob.avoidMove[i] = 0;
+
+	for (mRootDepth = 1; mRootDepth <= msSearchDepth; mRootDepth++) {
+		cur_val1 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv1);
+		if (Glob.abort_search) break;
+		Glob.avoidMove[1] = pv1[0];
+		cur_val2 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv2);
+		if (Glob.abort_search) break;
+		Glob.avoidMove[2] = pv2[0];
+		if (Glob.multiPv > 2) cur_val3 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv3);
+		if (Glob.abort_search) break;
+		
+		if (Glob.multiPv > 2) DisplayPv(3, cur_val3, pv3);
+		DisplayPv(2, cur_val2, pv2);
+		DisplayPv(1, cur_val1, pv1);
+		pv = pv1;
+	}
+
+	ExtractMove(pv1);
+
 }
 
 void cEngine::Iterate(POS *p, int *pv) {
@@ -171,7 +200,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
 
     int best, score = -INF, move, new_depth, new_pv[MAX_PLY];
     int mv_type, reduction, victim, last_capt, hashFlag;
-    int null_refutation = -1, ref_sq = -1, singMove = -1, singScore = -INF;
+    int singMove = -1, singScore = -INF;
     int mv_tried = 0;
     int mv_played[MAX_MOVES];
     int quiet_tried = 0;
@@ -234,7 +263,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
     // PREPARE FOR MAIN SEARCH
 
     best = -INF;
-    InitMoves(p, m, move, Refutation(move), ref_sq, ply);
+    InitMoves(p, m, move, Refutation(move), -1, ply);
 
     // MAIN LOOP
 
@@ -248,6 +277,8 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
         else last_capt = -1;
         p->DoMove(move, u);
         if (p->Illegal()) { p->UndoMove(move, u); continue; }
+
+		if (move == Glob.avoidMove[1] || move == Glob.avoidMove[2] ) { p->UndoMove(move, u); continue; }
 
         // GATHER INFO ABOUT THE MOVE
 
@@ -354,7 +385,7 @@ research:
 
             if (!ply) {
                 BuildPv(pv, new_pv, move);
-                DisplayPv(score, pv);
+                if (Glob.multiPv == 1) DisplayPv(0, score, pv);
             }
 
             return score;
@@ -367,7 +398,7 @@ research:
             if (score > alpha) {
                 alpha = score;
                 BuildPv(pv, new_pv, move);
-                if (!ply) DisplayPv(score, pv);
+                if (Glob.multiPv == 1) DisplayPv(0, score, pv);
             }
         }
 
@@ -817,7 +848,7 @@ void DisplayCurrmove(int move, int tried) {
     }
 }
 
-void cEngine::DisplayPv(int score, int *pv) {
+void cEngine::DisplayPv(int multipv, int score, int *pv) {
 
     // don't display information from threads that are late
 
@@ -837,8 +868,12 @@ void cEngine::DisplayPv(int score, int *pv) {
 
     PvToStr(pv, pv_str);
 
-    printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
-           mRootDepth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
+	if (multipv == 0) 
+       printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
+              mRootDepth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
+	else
+       printf("info depth %d multipv %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
+              mRootDepth, multipv, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
 }
 
 void CheckTimeout() {

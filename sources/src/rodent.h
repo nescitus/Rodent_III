@@ -661,12 +661,15 @@ class cGlobals {
     glob_int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels
     int thread_no;
+	int multiPv;
     int time_buffer;
     U64 game_key;         // random key initialized on ucinewgame to ensure non-repeating random eval modification for weak personalities
 
     void ClearData();
     void Init();
     bool CanReadBook();
+
+	int avoidMove[24];
 };
 
 extern cGlobals Glob;
@@ -760,7 +763,7 @@ class cEngine {
     int QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv);
     int QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv);
     int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
-    void DisplayPv(int score, int *pv);
+    void DisplayPv(int multipv, int score, int *pv);
     void Slowdown();
 
     int Evaluate(POS *p, eData *e);
@@ -843,6 +846,7 @@ class cEngine {
     void Bench(int depth);
     void ClearAll();
     void Think(POS *p);
+	void MultiPv(POS *p, int * pv);
 
 #ifdef USE_TUNING
 

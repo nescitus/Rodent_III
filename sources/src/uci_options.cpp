@@ -43,6 +43,7 @@ void PrintUciOptions() {
     printf("option name Threads type spin default %d min 1 max %d\n", Glob.thread_no, MAX_THREADS);
 #endif
     printf("option name Clear Hash type button\n");
+	printf("option name MultiPV type spin default %d min 1 max 3\n", Glob.multiPv);
 
     if (Glob.use_personality_files) {
         if (pers_aliases.count == 0 || Glob.show_pers_file)
@@ -187,6 +188,8 @@ void ParseSetoption(const char *ptr) {
 #endif
     } else if (strcmp(name, "clear hash") == 0)                              {
         Trans.Clear();
+    } else if (strcmp(name, "multipv") == 0)                                 {
+        Glob.multiPv = atoi(value);
     } else if (strcmp(name, "timebuffer") == 0)                              {
         Glob.time_buffer = atoi(value);
     } else if (strcmp(name, "pawnvaluemg") == 0)                             {
