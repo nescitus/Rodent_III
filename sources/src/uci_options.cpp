@@ -42,8 +42,8 @@ void PrintUciOptions() {
 #ifdef USE_THREADS
     printf("option name Threads type spin default %d min 1 max %d\n", Glob.thread_no, MAX_THREADS);
 #endif
+    printf("option name MultiPV type spin default %d min 1 max 6\n", Glob.multiPv);
     printf("option name Clear Hash type button\n");
-	printf("option name MultiPV type spin default %d min 1 max 6\n", Glob.multiPv);
 
     if (Glob.use_personality_files) {
         if (pers_aliases.count == 0 || Glob.show_pers_file)

@@ -40,9 +40,9 @@ void cEngine::EvaluateMaterial(POS *p, eData *e, eColor sd) {
     int tmp = Par.np_table[p->mCnt[sd][P]] * p->mCnt[sd][N]    // knights lose value as pawns disappear
             - Par.rp_table[p->mCnt[sd][P]] * p->mCnt[sd][R];   // rooks gain value as pawns disappear
 
-    if (p->mCnt[sd][N] > 1) tmp += Par.values[N_PAIR];        // knight pair
-    if (p->mCnt[sd][R] > 1) tmp += Par.values[R_PAIR];        // rook pair
-    if (p->mCnt[sd][B] > 1) tmp += Par.values[B_PAIR];        // bishop pair
+    if (p->mCnt[sd][N] > 1) tmp += Par.values[N_PAIR];         // knight pair
+    if (p->mCnt[sd][R] > 1) tmp += Par.values[R_PAIR];         // rook pair
+    if (p->mCnt[sd][B] > 1) tmp += Par.values[B_PAIR];         // bishop pair
 
     // "elephantiasis correction" for queen, idea by H.G.Mueller (nb. rookVsQueen doesn't help)
 
@@ -87,72 +87,72 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Knights(sd);
     while (bb_pieces) {
-        sq = BB.PopFirstBit(&bb_pieces);                    // get square
+        sq = BB.PopFirstBit(&bb_pieces);                         // get square
 
         // knight tropism to enemy king (based on Gambit Fruit)
 
         tropism_mg += Par.values[NTR_MG] * Dist.bonus[sq][king_sq];
         tropism_eg += Par.values[NTR_EG] * Dist.bonus[sq][king_sq];
 
-        if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
+        if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += Par.values[N_FWD];
             fwd_cnt += 1;
         }
 
-        bb_control = BB.KnightAttacks(sq) & ~p->mClBb[sd];  // get control bitboard
+        bb_control = BB.KnightAttacks(sq) & ~p->mClBb[sd];       // get control bitboard
         center_control += BB.PopCnt(bb_control & Mask.center);
-        if (!(bb_control  & ~e->p_takes[op] & Mask.away[sd])) // we do not attack enemy half of the board
+        if (!(bb_control  & ~e->p_takes[op] & Mask.away[sd]))    // we do not attack enemy half of the board
             Add(e, sd, Par.values[N_OWH]);
         e->all_att[sd] |= BB.KnightAttacks(sq);
         e->ev_att[sd]  |= bb_control;
         if (bb_control & n_checks) e->att[sd] += Par.values[N_CHK];// check threats
 
-        bb_possible = bb_control & ~e->p_takes[op];         // reachable outposts
+        bb_possible = bb_control & ~e->p_takes[op];              // reachable outposts
         bb_possible &= ~e->p_can_take[op];
         bb_possible &= Mask.outpost_map[sd];
         if (bb_possible) Add(e, sd, Par.values[N_REACH], 2);
 
         bb_attack = BB.KnightAttacks(sd);
-        if (bb_attack & bb_zone) {                          // king attack
+        if (bb_attack & bb_zone) {                               // king attack
             e->wood[sd]++;
             e->att[sd] += Par.values[N_ATT1] * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
             e->att[sd] += Par.values[N_ATT2] * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = BB.PopCnt(bb_control & ~e->p_takes[op]);      // get mobility count
+        cnt = BB.PopCnt(bb_control & ~e->p_takes[op]);           // get mobility count
         mob_mg += Par.n_mob_mg[cnt];
         mob_eg += Par.n_mob_eg[cnt];
 
-        EvaluateOutpost(p, e, sd, N, sq, &outpost);         // outpost
+        EvaluateOutpost(p, e, sd, N, sq, &outpost);              // outpost
     }
 
     // Bishop eval
 
     bb_pieces = p->Bishops(sd);
     while (bb_pieces) {
-        sq = BB.PopFirstBit(&bb_pieces);                    // get square
+        sq = BB.PopFirstBit(&bb_pieces);                         // get square
 
         // bishop tropism  to enemy king (based on Gambit Fruit)
 
         tropism_mg += Par.values[BTR_MG] * Dist.bonus[sq][king_sq];
         tropism_eg += Par.values[BTR_EG] * Dist.bonus[sq][king_sq];
 
-        if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
+        if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += Par.values[B_FWD];
             fwd_cnt += 1;
         }
 
-        bb_control = BB.BishAttacks(p->OccBb(), sq);        // get control bitboard
+        bb_control = BB.BishAttacks(p->OccBb(), sq);             // get control bitboard
         center_control += BB.PopCnt(bb_control & Mask.center);
-        e->all_att[sd] |= bb_control;                       // update attack map
+        e->all_att[sd] |= bb_control;                            // update attack map
         e->ev_att[sd]  |= bb_control;
         if (!(bb_control & Mask.away[sd]))
-             Add(e, sd, Par.values[B_OWH]);                 // we do not attack enemy half of the board
+             Add(e, sd, Par.values[B_OWH]);                      // we do not attack enemy half of the board
         if (bb_control & b_checks) e->att[sd] += Par.values[B_CHK];// check threats
 
         bb_attack = BB.BishAttacks(p->OccBb() ^ p->Queens(sd), sq);  // get king attack bitboard
 
-        if (bb_attack & bb_zone) {                          // evaluate king attacks
+        if (bb_attack & bb_zone) {                               // evaluate king attacks
             e->wood[sd]++;
             e->att[sd] += Par.values[B_ATT1] * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
             e->att[sd] += Par.values[B_ATT2] * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
@@ -162,12 +162,12 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         mob_mg += Par.b_mob_mg[cnt];
         mob_eg += Par.b_mob_eg[cnt];
 
-        bb_possible = bb_control & ~e->p_takes[op];         // reachable outposts
+        bb_possible = bb_control & ~e->p_takes[op];              // reachable outposts
         bb_possible &= ~e->p_can_take[op];
         bb_possible &= Mask.outpost_map[sd];
         if (bb_possible) Add(e, sd, Par.values[B_REACH], 2);
 
-        EvaluateOutpost(p, e, sd, B, sq, &outpost);         // outpost
+        EvaluateOutpost(p, e, sd, B, sq, &outpost);              // outpost
 
         // Bishops side by side
 
@@ -194,30 +194,30 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Rooks(sd);
     while (bb_pieces) {
-        sq = BB.PopFirstBit(&bb_pieces);                    // get square
+        sq = BB.PopFirstBit(&bb_pieces);                         // get square
 
         // rook tropism to enemy king (based on Gambit Fruit)
 
         tropism_mg += Par.values[RTR_MG] * Dist.bonus[sq][king_sq];
         tropism_eg += Par.values[RTR_EG] * Dist.bonus[sq][king_sq];
 
-        if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
+        if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += Par.values[R_FWD];
             fwd_cnt += 1;
         }
 
-        bb_control = BB.RookAttacks(p->OccBb(), sq);        // get control bitboard
-        e->all_att[sd] |= bb_control;                       // update attack map
+        bb_control = BB.RookAttacks(p->OccBb(), sq);             // get control bitboard
+        e->all_att[sd] |= bb_control;                            // update attack map
         e->ev_att[sd] |= bb_control;
 
         if ((bb_control & ~p->mClBb[sd] & r_checks)
         && p->Queens(sd)) {
-            e->att[sd] += Par.values[R_CHK];                       // check threat bonus
+            e->att[sd] += Par.values[R_CHK];                     // check threat bonus
             bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
 
             while (bb_contact) {
-                int contactSq = BB.PopFirstBit(&bb_contact);    // find a potential contact check
-                if (p->Swap(sq, contactSq) >= 0) {              // rook exchanges are also accepted
+                int contactSq = BB.PopFirstBit(&bb_contact);     // find a potential contact check
+                if (p->Swap(sq, contactSq) >= 0) {               // rook exchanges are also accepted
                     e->att[sd] += Par.values[R_CONTACT];
                     break;
                 }
@@ -240,13 +240,13 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         bb_file = BB.FillNorth(SqBb(sq)) | BB.FillSouth(SqBb(sq));   // get file
 
-        if (bb_file & p->Queens(op)) {                      // enemy queen on rook's file
+        if (bb_file & p->Queens(op)) {                           // enemy queen on rook's file
             lines_mg += Par.values[ROQ_MG];
             lines_eg += Par.values[ROQ_EG];
         }
 
-        if (!(bb_file & p->Pawns(sd))) {                    // no own pawns on that file
-            if (!(bb_file & p->Pawns(op))) {
+        if (!(bb_file & p->Pawns(sd))) {                         // no own pawns on that file
+            if (!(bb_file & p->Pawns(op))) {                     // open file
                 lines_mg += Par.values[ROF_MG];
                 lines_eg += Par.values[ROF_EG];
             } else {                                             // half-open file...
@@ -276,27 +276,27 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Queens(sd);
     while (bb_pieces) {
-        sq = BB.PopFirstBit(&bb_pieces);                    // get square
+        sq = BB.PopFirstBit(&bb_pieces);                         // get square
 
         // queen tropism to enemy king (based on Gambit Fruit)
 
         tropism_mg += Par.values[QTR_MG] * Dist.bonus[sq][king_sq];
         tropism_eg += Par.values[QTR_EG] * Dist.bonus[sq][king_sq];
 
-        if (SqBb(sq) & Mask.away[sd]) {                     // forwardness (based on Toga II 3.0)
+        if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += Par.values[Q_FWD];
             fwd_cnt += 1;
         }
 
-        bb_control = BB.QueenAttacks(p->OccBb(), sq);       // get control bitboard
-        e->all_att[sd] |= bb_control;                       // update attack map
-        if (bb_control & q_checks) {                        // check threat bonus
+        bb_control = BB.QueenAttacks(p->OccBb(), sq);            // get control bitboard
+        e->all_att[sd] |= bb_control;                            // update attack map
+        if (bb_control & q_checks) {                             // check threat bonus
             e->att[sd] += Par.values[Q_CHK];
 
-            bb_contact = bb_control & BB.KingAttacks(king_sq);  // queen contact checks
+            bb_contact = bb_control & BB.KingAttacks(king_sq);   // queen contact checks
             while (bb_contact) {
-                int contactSq = BB.PopFirstBit(&bb_contact);    // find potential contact check square
-                if (p->Swap(sq, contactSq) >= 0) {              // if check doesn't lose material, evaluate
+                int contactSq = BB.PopFirstBit(&bb_contact);     // find potential contact check square
+                if (p->Swap(sq, contactSq) >= 0) {               // if check doesn't lose material, evaluate
                     e->att[sd] += Par.values[Q_CONTACT];
                     break;
                 }
@@ -306,19 +306,19 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         bb_attack  = BB.BishAttacks(p->OccBb() ^ p->DiagMovers(sd), sq);
         bb_attack |= BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);
 
-        if (bb_attack & bb_zone) {                          // evaluate king attacks
+        if (bb_attack & bb_zone) {                               // evaluate king attacks
             e->wood[sd]++;
             e->att[sd] += Par.values[Q_ATT1] * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
             e->att[sd] += Par.values[Q_ATT2] * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = BB.PopCnt(bb_control & ~bb_excluded);         // get mobility count
+        cnt = BB.PopCnt(bb_control & ~bb_excluded);              // get mobility count
         mob_mg += Par.q_mob_mg[cnt];
         mob_eg += Par.q_mob_eg[cnt];
 
-        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {           // queen on 7th rank
-            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]      // attacking enemy pawns
-            ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) {   // or cutting off enemy king
+        if (SqBb(sq) & bb_rel_rank[sd][RANK_7]) {                // queen on 7th rank
+            if (p->Pawns(op) & bb_rel_rank[sd][RANK_7]           // attacking enemy pawns
+            ||  p->Kings(op) & bb_rel_rank[sd][RANK_8]) {        // or cutting off enemy king
                 lines_mg += Par.values[QSR_MG];
                 lines_eg += Par.values[QSR_EG];
             }

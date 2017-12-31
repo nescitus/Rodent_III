@@ -121,34 +121,36 @@ void cEngine::MultiPv(POS * p, int * pv) {
 		bestScore = -INF;
 		bestPv = 1;
 
-        cur_val1 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv1);
+		cur_val1 = Widen(p, mRootDepth, pv1, cur_val1);
         if (Glob.abort_search) break;
 		if (cur_val1 > bestScore) { bestPv = 1; bestScore = cur_val1; };
         Glob.SetAvoidMove(1, pv1[0]);
-        cur_val2 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv2);
+
+        cur_val2 = Widen(p, mRootDepth, pv2, cur_val2);
         if (Glob.abort_search) break;
 		if (cur_val1 > bestScore) { bestPv = 2; bestScore = cur_val2; };
         Glob.SetAvoidMove(2, pv2[0]);
+
         if (Glob.multiPv > 2) {
-           cur_val3 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv3);
+           cur_val3 = Widen(p, mRootDepth, pv3, cur_val3);
            if (Glob.abort_search) break;
 		   if (cur_val3 > bestScore) { bestPv = 3; bestScore = cur_val3; };
            Glob.SetAvoidMove(3, pv3[0]);
         }
         if (Glob.multiPv > 3) {
-           cur_val4 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv4);
+           cur_val4 = Widen(p, mRootDepth, pv4, cur_val4);
            if (Glob.abort_search) break;
 		   if (cur_val3 > bestScore) { bestPv = 4; bestScore = cur_val4; };
            Glob.SetAvoidMove(4, pv4[0]);
         }
         if (Glob.multiPv > 4) {
-            cur_val5 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv5);
+            cur_val5 = Widen(p, mRootDepth, pv5, cur_val5);
             if (Glob.abort_search) break;
 			if (cur_val3 > bestScore) { bestPv = 5; bestScore = cur_val5; };
             Glob.SetAvoidMove(5, pv5[0]);
         }
         if (Glob.multiPv > 5) {
-            cur_val6 = SearchRoot(p, 0, -INF, INF, mRootDepth, pv6);
+            cur_val6 = Widen(p, mRootDepth, pv6, cur_val6);
             if (Glob.abort_search) break;
 			if (cur_val3 > bestScore) { bestPv = 6; bestScore = cur_val6; };
             Glob.SetAvoidMove(6, pv6[0]);
