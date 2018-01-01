@@ -38,12 +38,13 @@ void PrintSingleOption(int ind) {
 
 void PrintUciOptions() {
 
+	printf("option name Clear Hash type button\n");
     printf("option name Hash type spin default 16 min 1 max 4096\n");
 #ifdef USE_THREADS
     printf("option name Threads type spin default %d min 1 max %d\n", Glob.thread_no, MAX_THREADS);
 #endif
     printf("option name MultiPV type spin default %d min 1 max 6\n", Glob.multiPv);
-    printf("option name Clear Hash type button\n");
+	printf("option name TimeBuffer type spin default %d min 0 max 1000\n", Glob.time_buffer);
 
     if (Glob.use_personality_files) {
         if (pers_aliases.count == 0 || Glob.show_pers_file)
@@ -118,9 +119,6 @@ void PrintUciOptions() {
         printf("option name GuideBookFile type string default %s\n", GuideBook.bookName);
         printf("option name MainBookFile type string default %s\n", MainBook.bookName);
     }
-
-    printf("option name TimeBuffer type spin default %d min 0 max 1000\n", Glob.time_buffer);
-
 }
 
 static void valuebool(bool& param, char *val) {

@@ -223,7 +223,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
 												   // Passed pawn bonuses per rank
 
-	static const bool tuneCandidates = true;
+	static const bool tuneCandidates = false;
 
 	SetVal(CMG2, 2/3, 0, 300, tuneCandidates);
 	SetVal(CMG3, 2/3, 0, 300, tuneCandidates);
@@ -284,8 +284,8 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(B_OWH, -7, -50, 0, tuneBishop);     // bishop can move only to own half of the board
     SetVal(B_REACH, 2, 0, 50, tuneBishop);     // bishop can reach an outpost square
     SetVal(B_TOUCH, 5, 0, 50, tuneBishop);     // two bishops on adjacent squares
-    SetVal(B_OWN_P, -4, -50, 0, false);  // own pawn on the square of own bishop's color
-    SetVal(B_OPP_P, -1, -50, 0, false);  // enemy pawn on the square of own bishop's color
+    SetVal(B_OWN_P, -4, -50, 0, false);        // own pawn on the square of own bishop's color
+    SetVal(B_OPP_P, -1, -50, 0, false);        // enemy pawn on the square of own bishop's color
     SetVal(B_RETURN, 7, 0, 50, tuneBishop);    // bishop returning to initial position after castling
 
     // Rook parameters
@@ -318,8 +318,9 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     static const bool tuneKing = false;
 
-    SetVal(K_NO_LUFT, -11, -50, 0, tuneKing); // queen on the 7th rank
-    SetVal(K_CASTLE, 32, 0, 50, tuneKing);
+    SetVal(K_NO_LUFT, -11, -50, 0, tuneKing); // king cannot move upwards
+    SetVal(K_CASTLE_KS, 32, 0, 50, tuneKing);
+	SetVal(K_CASTLE_QS, 21, 0, 50, tuneKing);
 
     // Forwardness parameters
 
@@ -416,6 +417,67 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(REG12, 22, -50, 50, tuneMobility);
     SetVal(REG13, 24, -50, 50, tuneMobility);
     SetVal(REG14, 29, -50, 50, tuneMobility);
+
+	static const bool tuneQueenMov = true;
+
+	SetVal(QMG0, -22, -50, 50, tuneQueenMov);
+	SetVal(QMG1, -21, -50, 50, tuneQueenMov);
+	SetVal(QMG2, -20, -50, 50, tuneQueenMov);
+	SetVal(QMG3, -20, -50, 50, tuneQueenMov);
+	SetVal(QMG4, -19, -50, 50, tuneQueenMov);
+	SetVal(QMG5, -13, -50, 50, tuneQueenMov);
+	SetVal(QMG6, -12, -50, 50, tuneQueenMov);
+	SetVal(QMG7, -6, -50, 50, tuneQueenMov);
+	SetVal(QMG8, -1, -50, 50, tuneQueenMov);
+	SetVal(QMG9,  2, -50, 50, tuneQueenMov);
+	SetVal(QMG10, 2, -50, 50, tuneQueenMov);
+	SetVal(QMG11, 1, -50, 50, tuneQueenMov);
+	SetVal(QMG12, -2, -50, 50, tuneQueenMov);
+	SetVal(QMG13, -7, -50, 50, tuneQueenMov);
+	SetVal(QMG14, -6, -50, 50, tuneQueenMov);
+	SetVal(QMG15, -5, -50, 50, tuneQueenMov);
+	SetVal(QMG16, -3, -50, 50, tuneQueenMov);
+	SetVal(QMG17, -1, -50, 50, tuneQueenMov);
+	SetVal(QMG18, 4, -50, 50, tuneQueenMov);
+	SetVal(QMG19, -3, -50, 50, tuneQueenMov);
+	SetVal(QMG20, 7, -50, 50, tuneQueenMov);
+	SetVal(QMG21, 9, -50, 50, tuneQueenMov);
+	SetVal(QMG22, 15, -50, 50, tuneQueenMov);
+	SetVal(QMG23, 23, -50, 50, tuneQueenMov);
+	SetVal(QMG24, 24, -50, 50, tuneQueenMov);
+	SetVal(QMG25, 26, -50, 50, tuneQueenMov);
+	SetVal(QMG26, 27, -50, 50, tuneQueenMov);
+	SetVal(QMG27, 29, -50, 50, tuneQueenMov);
+
+	SetVal(QEG0, -31, -50, 50, tuneQueenMov);
+	SetVal(QEG1, -28, -50, 50, tuneQueenMov);
+	SetVal(QEG2, -23, -50, 50, tuneQueenMov);
+	SetVal(QEG3, -31, -50, 50, tuneQueenMov);
+	SetVal(QEG4, -31, -50, 50, tuneQueenMov);
+	SetVal(QEG5, -31, -50, 50, tuneQueenMov);
+	SetVal(QEG6, -27, -50, 50, tuneQueenMov);
+	SetVal(QEG7, -24, -50, 50, tuneQueenMov);
+	SetVal(QEG8, -24, -50, 50, tuneQueenMov);
+	SetVal(QEG9, -23, -50, 50, tuneQueenMov);
+	SetVal(QEG10,-25, -50, 50, tuneQueenMov);
+	SetVal(QEG11, -26, -50, 50, tuneQueenMov);
+	SetVal(QEG12, -9, -50, 50, tuneQueenMov);
+	SetVal(QEG13, -4, -50, 50, tuneQueenMov);
+	SetVal(QEG14, -2, -50, 50, tuneQueenMov);
+	SetVal(QEG15, 6, -50, 50, tuneQueenMov);
+	SetVal(QEG16, 6, -50, 50, tuneQueenMov);
+	SetVal(QEG17, 13, -50, 50, tuneQueenMov);
+	SetVal(QEG18, 14, -50, 50, tuneQueenMov);
+	SetVal(QEG19, 24, -50, 50, tuneQueenMov);
+	SetVal(QEG20, 26, -50, 50, tuneQueenMov);
+	SetVal(QEG21, 28, -50, 50, tuneQueenMov);
+	SetVal(QEG22, 29, -50, 50, tuneQueenMov);
+	SetVal(QEG23, 30, -50, 50, tuneQueenMov);
+	SetVal(QEG24, 31, -50, 50, tuneQueenMov);
+	SetVal(QEG25, 32, -50, 50, tuneQueenMov);
+	SetVal(QEG26, 33, -50, 50, tuneQueenMov);
+	SetVal(QEG27, 34, -50, 50, tuneQueenMov);
+
 
 #ifdef USE_RISKY_PARAMETER
     riskydepth = 0;
@@ -686,7 +748,8 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     // King parameters
 
     values[K_NO_LUFT] = -15;
-    values[K_CASTLE] = 10;
+    values[K_CASTLE_KS] = 10;
+	values[K_CASTLE_QS] = 6;
 
     // Forwardness parameters
 
@@ -808,8 +871,8 @@ void cParam::InitMobility() {
     // one day queen mobility will be Texel-tuned too
 
     for (int i = 0; i < 28; i++) {
-        q_mob_mg[i] = Par.mob_style == 0 ? 1 * (i - 14) : 1 * (i - 14); //-V583 get rid of PVS Studio warning
-        q_mob_eg[i] = Par.mob_style == 0 ? 2 * (i - 14) : 2 * (i - 14);
+        q_mob_mg[i] = Par.mob_style == 0 ? 1 * (i - 14) : values[QMG0 + i]; //-V583 get rid of PVS Studio warning
+        q_mob_eg[i] = Par.mob_style == 0 ? 2 * (i - 14) : values[QEG0 + i];
     }
 
 }

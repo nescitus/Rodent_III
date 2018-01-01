@@ -571,6 +571,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     if (fl_prunable_node
     && (!was_null || depth <= mscSelectiveDepth)) {
         eval = Evaluate(p, &e);
+		// TODO: use the hash entry to "correct" the static eval (lower bounds pushing the score up and upper bounds pushing it down, depending on the score).
 #ifdef USE_RISKY_PARAMETER
         eval = EvalScaleByDepth(p, ply, eval);
 #endif

@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 37.036.742
+// b15: 30.311.237
 
 #pragma once
 
@@ -459,7 +459,7 @@ enum Values {
     N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
     NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
     N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OWH, N_REACH, BN_SHIELD,
-    N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE,
+    N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE_KS, K_CASTLE_QS,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
     B_OPP_P, B_OWN_P, B_REACH, B_TOUCH, B_RETURN,
     P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
@@ -480,6 +480,10 @@ enum Values {
     BEG0, BEG1, BEG2, BEG3, BEG4, BEG5, BEG6, BEG7, BEG8, BEG9, BEG10, BEG11, BEG12, BEG13,
     RMG0, RMG1, RMG2, RMG3, RMG4, RMG5, RMG6, RMG7, RMG8, RMG9, RMG10, RMG11, RMG12, RMG13, RMG14,
     REG0, REG1, REG2, REG3, REG4, REG5, REG6, REG7, REG8, REG9, REG10, REG11, REG12, REG13, REG14,
+	QMG0, QMG1, QMG2, QMG3, QMG4, QMG5, QMG6, QMG7, QMG8, QMG9, QMG10, QMG11, QMG12, QMG13, QMG14,
+	QMG15, QMG16, QMG17, QMG18, QMG19, QMG20, QMG21, QMG22, QMG23, QMG24, QMG25, QMG26, QMG27,
+	QEG0, QEG1, QEG2, QEG3, QEG4, QEG5, QEG6, QEG7, QEG8, QEG9, QEG10, QEG11, QEG12, QEG13, QEG14,
+	QEG15, QEG16, QEG17, QEG18, QEG19, QEG20, QEG21, QEG22, QEG23, QEG24, QEG25, QEG26, QEG27,
     N_OF_VAL
 };
 
@@ -491,7 +495,7 @@ const char* const paramNames[N_OF_VAL] = {
     "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
     "NTR_MG", "NTR_EG", "BTR_MG", "BTR_EG", "RTR_MG", "RTR_EG", "QTR_MG", "QTR_EG",            // king tropism
     "N_FWD", "B_FWD", "R_FWD", "Q_FWD", "N_OWH", "B_OWH", "N_REACH", "BN_SHIELD",
-    "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT", "K_CASTLE",
+    "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT", "K_CASTLE_KS", "K_CASTLE_QS",
     "B_TRAP_A2", "B_TRAP_A3", "B_BLOCK", "B_FIANCH", "B_BADF", "B_KING", "B_BF_MG", "B_BF_EG", "B_WING",  // bishop parameters
     "B_OPP_P", "B_OWN_P", "B_REACH", "B_TOUCH", "B_RETURN",
     "P_SH_NONE", "P_SH_2", "P_SH_3", "P_SH_4", "P_SH_5", "P_SH_6", "P_SH_7",                    // king's pawn shield
@@ -511,7 +515,11 @@ const char* const paramNames[N_OF_VAL] = {
     "BMG0", "BMG1", "BMG2", "BMG3", "BMG4", "BMG5", "BMG6", "BMG7", "BMG8", "BMG9", "BMG10", "BMG11", "BMG12", "BMG13",
     "BEG0", "BEG1", "BEG2", "BEG3", "BEG4", "BEG5", "BEG6", "BEG7", "BEG8", "BEG9", "BEG10", "BEG11", "BEG12", "BEG13",
     "RMG0", "RMG1", "RMG2", "RMG3", "RMG4", "RMG5", "RMG6", "RMG7", "RMG8", "RMG9", "RMG10", "RMG11", "RMG12", "RMG13", "RMG14",
-    "REG0", "REG1", "REG2", "REG3", "REG4", "REG5", "REG6", "REG7", "REG8", "REG9", "REG10", "REG11", "REG12", "REG13", "REG14"
+    "REG0", "REG1", "REG2", "REG3", "REG4", "REG5", "REG6", "REG7", "REG8", "REG9", "REG10", "REG11", "REG12", "REG13", "REG14",
+	"QMG0", "QMG1", "QMG2", "QMG3", "QMG4", "QMG5", "QMG6", "QMG7", "QMG8", "QMG9", "QMG10", "QMG11", "QMG12", "QMG13", "QMG14",
+	"QMG15", "QMG16", "QMG17", "QMG18", "QMG19", "QMG20", "QMG21", "QMG22", "QMG23", "QMG24", "QMG25", "QMG26", "QMG27",
+	"QEG0", "QEG1", "QEG2", "QEG3", "QEG4", "QEG5", "QEG6", "QEG7", "QEG8", "QEG9", "QEG10", "QEG11", "QEG12", "QEG13", "QEG14",
+	"QEG15", "QEG16", "QEG17", "QEG18", "QEG19", "QEG20", "QEG21", "QEG22", "QEG23", "QEG24", "QEG25", "QEG26", "QEG27"
 };
 
 
