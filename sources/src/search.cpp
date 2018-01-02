@@ -111,57 +111,67 @@ void cEngine::Think(POS *p) {
 
 void cEngine::MultiPv(POS * p, int * pv) {
 
-    int pv1[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY], pv5[MAX_PLY], pv6[MAX_PLY];
-    int cur_val1 = 0, cur_val2 = 0, cur_val3 = 0, cur_val4 = 0, cur_val5 = 0, cur_val6 = 0;
+    int pv1[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY], pv5[MAX_PLY], pv6[MAX_PLY], pv7[MAX_PLY];
+	int val[8];
 	int bestPv = 1;
 	int bestScore;
+
+	for (int i = 0; i < 8; i++)
+		val[i] = 0;
 
     for (mRootDepth = 1; mRootDepth <= msSearchDepth; mRootDepth++) {
 		Glob.ClearAvoidList();
 		bestScore = -INF;
 		bestPv = 1;
 
-		cur_val1 = Widen(p, mRootDepth, pv1, cur_val1);
+		val[1] = Widen(p, mRootDepth, pv1, val[1]);
         if (Glob.abort_search) break;
-		if (cur_val1 > bestScore) { bestPv = 1; bestScore = cur_val1; };
+		if (val[1] > bestScore) { bestPv = 1; bestScore = val[1]; };
         Glob.SetAvoidMove(1, pv1[0]);
 
-        cur_val2 = Widen(p, mRootDepth, pv2, cur_val2);
+        val[2] = Widen(p, mRootDepth, pv2, val[2]);
         if (Glob.abort_search) break;
-		if (cur_val1 > bestScore) { bestPv = 2; bestScore = cur_val2; };
+		if (val[2] > bestScore) { bestPv = 2; bestScore = val[2]; };
         Glob.SetAvoidMove(2, pv2[0]);
 
         if (Glob.multiPv > 2) {
-           cur_val3 = Widen(p, mRootDepth, pv3, cur_val3);
+           val[3] = Widen(p, mRootDepth, pv3, val[3]);
            if (Glob.abort_search) break;
-		   if (cur_val3 > bestScore) { bestPv = 3; bestScore = cur_val3; };
+		   if (val[3] > bestScore) { bestPv = 3; bestScore = val[3]; };
            Glob.SetAvoidMove(3, pv3[0]);
         }
         if (Glob.multiPv > 3) {
-           cur_val4 = Widen(p, mRootDepth, pv4, cur_val4);
+           val[4] = Widen(p, mRootDepth, pv4, val[4]);
            if (Glob.abort_search) break;
-		   if (cur_val3 > bestScore) { bestPv = 4; bestScore = cur_val4; };
+		   if (val[3] > bestScore) { bestPv = 4; bestScore = val[4]; };
            Glob.SetAvoidMove(4, pv4[0]);
         }
         if (Glob.multiPv > 4) {
-            cur_val5 = Widen(p, mRootDepth, pv5, cur_val5);
+            val[5] = Widen(p, mRootDepth, pv5, val[5]);
             if (Glob.abort_search) break;
-			if (cur_val3 > bestScore) { bestPv = 5; bestScore = cur_val5; };
+			if (val[5] > bestScore) { bestPv = 5; bestScore = val[5]; };
             Glob.SetAvoidMove(5, pv5[0]);
         }
         if (Glob.multiPv > 5) {
-            cur_val6 = Widen(p, mRootDepth, pv6, cur_val6);
+            val[6] = Widen(p, mRootDepth, pv6, val[6]);
             if (Glob.abort_search) break;
-			if (cur_val3 > bestScore) { bestPv = 6; bestScore = cur_val6; };
+			if (val[6] > bestScore) { bestPv = 6; bestScore = val[6]; };
             Glob.SetAvoidMove(6, pv6[0]);
         }
+		if (Glob.multiPv > 6) {
+			val[6] = Widen(p, mRootDepth, pv7, val[7]);
+			if (Glob.abort_search) break;
+			if (val[7] > bestScore) { bestPv = 7; bestScore = val[7]; };
+			Glob.SetAvoidMove(6, pv6[0]);
+		}
 
-        if (Glob.multiPv > 5 && p->Legal(pv6[0])) DisplayPv(6, cur_val6, pv6);
-        if (Glob.multiPv > 4 && p->Legal(pv5[0])) DisplayPv(5, cur_val5, pv5);
-        if (Glob.multiPv > 3 && p->Legal(pv4[0])) DisplayPv(4, cur_val4, pv4);
-        if (Glob.multiPv > 2 && p->Legal(pv3[0])) DisplayPv(3, cur_val3, pv3);
-        if (p->Legal(pv2[0])) DisplayPv(2, cur_val2, pv2);
-		if (p->Legal(pv1[0])) DisplayPv(1, cur_val1, pv1);
+		if (Glob.multiPv > 6 && p->Legal(pv7[0])) DisplayPv(6, val[7], pv7);
+        if (Glob.multiPv > 5 && p->Legal(pv6[0])) DisplayPv(6, val[6], pv6);
+        if (Glob.multiPv > 4 && p->Legal(pv5[0])) DisplayPv(5, val[5], pv5);
+        if (Glob.multiPv > 3 && p->Legal(pv4[0])) DisplayPv(4, val[4], pv4);
+        if (Glob.multiPv > 2 && p->Legal(pv3[0])) DisplayPv(3, val[3], pv3);
+        if (p->Legal(pv2[0])) DisplayPv(2, val[2], pv2);
+		if (p->Legal(pv1[0])) DisplayPv(1, val[1], pv1);
         pv = pv1;
     }
 
@@ -171,6 +181,7 @@ void cEngine::MultiPv(POS * p, int * pv) {
 	else if (bestPv == 4) ExtractMove(pv4);
 	else if (bestPv == 5) ExtractMove(pv5);
 	else if (bestPv == 6) ExtractMove(pv6);
+	else if (bestPv == 7) ExtractMove(pv7);
 	else  ExtractMove(pv1); // shouldn't happen of course
 
 }
@@ -571,7 +582,6 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     if (fl_prunable_node
     && (!was_null || depth <= mscSelectiveDepth)) {
         eval = Evaluate(p, &e);
-		// TODO: use the hash entry to "correct" the static eval (lower bounds pushing the score up and upper bounds pushing it down, depending on the score).
 #ifdef USE_RISKY_PARAMETER
         eval = EvalScaleByDepth(p, ply, eval);
 #endif
