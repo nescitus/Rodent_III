@@ -43,7 +43,7 @@ void PrintUciOptions() {
 #ifdef USE_THREADS
     printf("option name Threads type spin default %d min 1 max %d\n", Glob.thread_no, MAX_THREADS);
 #endif
-    printf("option name MultiPV type spin default %d min 1 max 6\n", Glob.multiPv);
+    printf("option name MultiPV type spin default %d min 1 max %d\n", Glob.multiPv, MAX_PV);
 	printf("option name TimeBuffer type spin default %d min 0 max 1000\n", Glob.time_buffer);
 
     if (Glob.use_personality_files) {

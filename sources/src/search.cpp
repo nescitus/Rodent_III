@@ -111,78 +111,43 @@ void cEngine::Think(POS *p) {
 
 void cEngine::MultiPv(POS * p, int * pv) {
 
-    int pv1[MAX_PLY], pv2[MAX_PLY], pv3[MAX_PLY], pv4[MAX_PLY], pv5[MAX_PLY], pv6[MAX_PLY], pv7[MAX_PLY];
-	int val[8];
+	int val[MAX_PV+1];
 	int bestPv = 1;
 	int bestScore;
 
-	for (int i = 0; i < 8; i++)
+	Line line[MAX_PV+1];
+
+	for (int i = 0; i <= MAX_PV; i++)
 		val[i] = 0;
 
     for (mRootDepth = 1; mRootDepth <= msSearchDepth; mRootDepth++) {
 		Glob.ClearAvoidList();
 		bestScore = -INF;
-		bestPv = 1;
+		bestPv = 0;
 
-		val[1] = Widen(p, mRootDepth, pv1, val[1]);
+		val[1] = Widen(p, mRootDepth, line[1].pv, val[1]);
         if (Glob.abort_search) break;
 		if (val[1] > bestScore) { bestPv = 1; bestScore = val[1]; };
-        Glob.SetAvoidMove(1, pv1[0]);
+        Glob.SetAvoidMove(1, line[1].pv[0]);
 
-        val[2] = Widen(p, mRootDepth, pv2, val[2]);
-        if (Glob.abort_search) break;
-		if (val[2] > bestScore) { bestPv = 2; bestScore = val[2]; };
-        Glob.SetAvoidMove(2, pv2[0]);
+		for (int i = 2; i <= Glob.multiPv; i++) {
 
-        if (Glob.multiPv > 2) {
-           val[3] = Widen(p, mRootDepth, pv3, val[3]);
-           if (Glob.abort_search) break;
-		   if (val[3] > bestScore) { bestPv = 3; bestScore = val[3]; };
-           Glob.SetAvoidMove(3, pv3[0]);
-        }
-        if (Glob.multiPv > 3) {
-           val[4] = Widen(p, mRootDepth, pv4, val[4]);
-           if (Glob.abort_search) break;
-		   if (val[3] > bestScore) { bestPv = 4; bestScore = val[4]; };
-           Glob.SetAvoidMove(4, pv4[0]);
-        }
-        if (Glob.multiPv > 4) {
-            val[5] = Widen(p, mRootDepth, pv5, val[5]);
-            if (Glob.abort_search) break;
-			if (val[5] > bestScore) { bestPv = 5; bestScore = val[5]; };
-            Glob.SetAvoidMove(5, pv5[0]);
-        }
-        if (Glob.multiPv > 5) {
-            val[6] = Widen(p, mRootDepth, pv6, val[6]);
-            if (Glob.abort_search) break;
-			if (val[6] > bestScore) { bestPv = 6; bestScore = val[6]; };
-            Glob.SetAvoidMove(6, pv6[0]);
-        }
-		if (Glob.multiPv > 6) {
-			val[6] = Widen(p, mRootDepth, pv7, val[7]);
+			val[i] = Widen(p, mRootDepth, line[i].pv, val[i]);
 			if (Glob.abort_search) break;
-			if (val[7] > bestScore) { bestPv = 7; bestScore = val[7]; };
-			Glob.SetAvoidMove(6, pv6[0]);
+			if (val[i] > bestScore) { bestPv = i; bestScore = val[i]; };
+			Glob.SetAvoidMove(i, line[i].pv[0]);
+		}
+		if (Glob.abort_search) break;
+
+		for (int i = Glob.multiPv; i > 0; i--) {
+			if ( p->Legal(line[i].pv[0])) DisplayPv(i, val[i], line[i].pv);
 		}
 
-		if (Glob.multiPv > 6 && p->Legal(pv7[0])) DisplayPv(6, val[7], pv7);
-        if (Glob.multiPv > 5 && p->Legal(pv6[0])) DisplayPv(6, val[6], pv6);
-        if (Glob.multiPv > 4 && p->Legal(pv5[0])) DisplayPv(5, val[5], pv5);
-        if (Glob.multiPv > 3 && p->Legal(pv4[0])) DisplayPv(4, val[4], pv4);
-        if (Glob.multiPv > 2 && p->Legal(pv3[0])) DisplayPv(3, val[3], pv3);
-        if (p->Legal(pv2[0])) DisplayPv(2, val[2], pv2);
-		if (p->Legal(pv1[0])) DisplayPv(1, val[1], pv1);
-        pv = pv1;
+        pv = line[1].pv;
     }
 
-    if (bestPv == 1) ExtractMove(pv1);
-	else if (bestPv == 2) ExtractMove(pv2);
-	else if (bestPv == 3) ExtractMove(pv3);
-	else if (bestPv == 4) ExtractMove(pv4);
-	else if (bestPv == 5) ExtractMove(pv5);
-	else if (bestPv == 6) ExtractMove(pv6);
-	else if (bestPv == 7) ExtractMove(pv7);
-	else  ExtractMove(pv1); // shouldn't happen of course
+	if (bestPv == 0) ExtractMove(line[1].pv);
+	else ExtractMove(line[bestPv].pv);
 
 }
 

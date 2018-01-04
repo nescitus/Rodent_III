@@ -107,6 +107,7 @@ constexpr int INF       = 32767;
 constexpr int MATE      = 32000;
 constexpr int MAX_EVAL  = 29999;
 constexpr int MAX_HIST  = 1 << 15;
+constexpr int MAX_PV    = 12;
 
 constexpr U64 RANK_1_BB = 0x00000000000000FF;
 constexpr U64 RANK_2_BB = 0x000000000000FF00;
@@ -452,6 +453,10 @@ struct sPawnHashEntry {
     int eg_pawns;
 };
 
+struct Line {
+	int pv[MAX_PLY];
+};
+
 enum Values {
     P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,               // piece values
     B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustments
@@ -680,7 +685,7 @@ class cGlobals {
 	void ClearAvoidList();
 	void SetAvoidMove(int loc, int move);
 
-	int avoidMove[24];
+	int avoidMove[MAX_PV];
 };
 
 extern cGlobals Glob;
