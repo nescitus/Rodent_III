@@ -443,6 +443,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, eColor sd) {
         // pawn can attack enemy piece
 
         if (!(bb_stop & p->OccBb())) {
+			Add(e, sd, Par.values[P_MOB_MG], Par.values[P_MOB_EG]); // pawn mobility bonus
             if (!(bb_stop & e->p_can_take[op])) {
                 if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
                     Add(e, sd, Par.values[P_THR]);

@@ -334,6 +334,9 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Mobility
 
+    SetVal(P_MOB_MG, 2, 0, 50, true);
+    SetVal(P_MOB_EG, 2, 0, 50, true);
+
     static const bool tuneMobility = false;
 
     SetVal(NMG0, -32, -50, 50, tuneMobility);
@@ -586,6 +589,8 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[W_PST] = 75;
     pst_style = 0;
     mob_style = 0;         // 1 is only marginally behind
+    values[P_MOB_MG] = 2;
+    values[P_MOB_EG] = 2;
 
 #ifdef USE_RISKY_PARAMETER
     riskydepth = 0;

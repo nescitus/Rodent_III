@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 30.311.237
+// b15: 33.404.862
 
 #pragma once
 
@@ -479,6 +479,7 @@ enum Values {
     W_MATERIAL, W_PST, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,           // weights part 1
     W_TROPISM, W_FWD, W_PASSERS, W_SHIELD, W_STORM, W_MASS, W_CHAINS, W_STRUCT,         // weights part 2
     W_LINES, W_OUTPOSTS, W_CENTER,
+	P_MOB_MG, P_MOB_EG,
     NMG0, NMG1, NMG2, NMG3, NMG4, NMG5, NMG6, NMG7, NMG8,
     NEG0, NEG1, NEG2, NEG3, NEG4, NEG5, NEG6, NEG7, NEG8,
     BMG0, BMG1, BMG2, BMG3, BMG4, BMG5, BMG6, BMG7, BMG8, BMG9, BMG10, BMG11, BMG12, BMG13,
@@ -515,6 +516,7 @@ const char* const paramNames[N_OF_VAL] = {
     "Material", "W_PST", "OwnAttack", "OppAttack", "OwnMobility", "OppMobility", "PiecePressure", // weights part 1
     "KingTropism", "Forwardness", "PassedPawns", "PawnShield", "PawnStorm", "W_MASS", "W_CHAINS", "PawnStructure", // weights part 2
     "Lines", "Outposts", "W_CENTER",
+    "P_MOB_MG", "P_MOB_EG",
     "NMG0", "NMG1", "NMG2", "NMG3", "NMG4", "NMG5", "NMG6", "NMG7", "NMG8",
     "NEG0", "NEG1", "NEG2", "NEG3", "NEG4", "NEG5", "NEG6", "NEG7", "NEG8",
     "BMG0", "BMG1", "BMG2", "BMG3", "BMG4", "BMG5", "BMG6", "BMG7", "BMG8", "BMG9", "BMG10", "BMG11", "BMG12", "BMG13",
@@ -677,6 +679,7 @@ class cGlobals {
 	int multiPv;
     int time_buffer;
     U64 game_key;         // random key initialized on ucinewgame to ensure non-repeating random eval modification for weak personalities
+    int avoidMove[MAX_PV + 1]; // list of moves to avoid in multi-pv re-searches
 
     void ClearData();
     void Init();
@@ -684,8 +687,6 @@ class cGlobals {
 	bool MoveToAvoid(int move);
 	void ClearAvoidList();
 	void SetAvoidMove(int loc, int move);
-
-	int avoidMove[MAX_PV+1];
 };
 
 extern cGlobals Glob;
