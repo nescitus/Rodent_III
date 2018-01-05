@@ -62,13 +62,13 @@ void cGlobals::ClearData() {
 }
 
 bool cGlobals::MoveToAvoid(int move) {
-    for (int i = 0; i < 24; i++)
+    for (int i = 0; i <= MAX_PV; i++)
         if (avoidMove[i] == move) return true;
     return false;
 }
 
 void cGlobals::ClearAvoidList() {
-    for (int i = 0; i < 24; i++)
+    for (int i = 0; i <= MAX_PV; i++)
         avoidMove[i] = 0;
 }
 

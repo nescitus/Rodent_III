@@ -685,7 +685,7 @@ class cGlobals {
 	void ClearAvoidList();
 	void SetAvoidMove(int loc, int move);
 
-	int avoidMove[MAX_PV];
+	int avoidMove[MAX_PV+1];
 };
 
 extern cGlobals Glob;
