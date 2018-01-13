@@ -23,7 +23,7 @@ build_script:
   - dir *.exe
   # pack exe's to 7z's and delete exe's
   - for %%i in (*.exe) do 7z a -sdel -bso0 %APPVEYOR_BUILD_FOLDER%\mingw-"%%~ni.7z" "%%i"
-  - buildme_vs2017.bat pgo
+  - buildme_vs2017.bat pgo winxp
   - dir *.exe
   # pack exe's to zip's and delete exe's
   - for %%i in (*.exe) do 7z a -sdel -bso0 %APPVEYOR_BUILD_FOLDER%\"%%~ni.zip" "%%i"
