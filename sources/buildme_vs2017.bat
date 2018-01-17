@@ -4,12 +4,13 @@ setlocal
 
 set vswhere="%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
 
-for /f "usebackq tokens=*" %%i in (`%vswhere% -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do (
+for /f "usebackq tokens=*" %%i in (`%vswhere% -latest -property installationPath`) do (
   set InstallDir=%%i
 )
 
 set EXENAME=RodentIII
 set PROF=%1
+set WXP=%2
 
 call "%InstallDir%\Common7\Tools\VsDevCmd.bat" -arch=x86
 
@@ -29,6 +30,25 @@ call :build
 
 set POPCNTDEF=/D NO_MM_POPCNT
 set ENAME="%EXENAME%_x64_noPOPCNT.exe"
+if not "%WXP%"=="winxp" goto :build
+call :build
+
+rem WINXP
+call "%InstallDir%\Common7\Tools\VsDevCmd.bat" -arch=x86
+
+set INCLUDE=%ProgramFiles(x86)%\Microsoft SDKs\Windows\7.1A\Include;%INCLUDE%
+set PATH=%ProgramFiles(x86)%\Microsoft SDKs\Windows\7.1A\Bin;%PATH%
+set LIB=%ProgramFiles(x86)%\Microsoft SDKs\Windows\7.1A\Lib;%LIB%
+set CL=/D_USING_V110_SDK71_;%CL%
+set LINK=/SUBSYSTEM:CONSOLE,5.01 %LINK%
+
+set POPCNTDEF=
+set ENAME="%EXENAME%_x32_POPCNT_xp.exe"
+call :build
+
+set POPCNTDEF=/D NO_MM_POPCNT
+set ENAME="%EXENAME%_x32_noPOPCNT_xp.exe"
+rem WINXP
 
 :build
 
