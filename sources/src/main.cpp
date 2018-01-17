@@ -42,7 +42,7 @@ sBook MainBook;
 
 void PrintVersion() {
 
-    printf("id name Rodent III 0.239"
+    printf("id name Rodent III 0.240"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
             " 32-bit"
@@ -94,9 +94,9 @@ int main() {
     Dist.Init();
 
 	Par.use_book = true;
-	Par.verbose_book = true; // TODO: change to false in release
+	Par.verbose_book = false;
 
-    PrintVersion();
+    //PrintVersion();
 
 if (Glob.is_noisy) {
 #if defined(_WIN32) || defined(_WIN64)
