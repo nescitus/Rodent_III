@@ -11,6 +11,7 @@ install:
 
 before_build:
   - set PATH=c:\tools\msys64\usr\bin;%PATH%
+  - pacman -Rdd catgets libcatgets --noconfirm & exit 0
   - pacman -Syuu --noconfirm
   - pacman -Syuu --noconfirm --needed mingw-w64-i686-gcc mingw-w64-x86_64-gcc
   - cd %APPVEYOR_BUILD_FOLDER%\sources
