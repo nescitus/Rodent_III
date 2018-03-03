@@ -343,7 +343,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
         if (is_pv && depth > 5 && move == singMove && canSing && flExtended == false) {
             int new_alpha = -singScore - 50;
             int mockPv;
-            int sc = Search(p, ply, new_alpha, new_alpha - 1, depth - 4, false, -1, -1, &mockPv);
+            int sc = Search(p, ply, new_alpha, new_alpha + 1, depth - 4, false, -1, -1, &mockPv);
             if (sc <= new_alpha) { new_depth += 1; flExtended = true; }
         }
 
@@ -557,6 +557,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     if (fl_prunable_node
     && Par.search_skill > 7
     && depth <= mscSnpDepth
+    && p->MayNull()
     && !was_null) {
         int sc = eval - 120 * depth;
         if (sc > beta) return sc;
@@ -709,8 +710,8 @@ avoid_null:
         if (is_pv && depth > 5 && move == singMove && canSing && flExtended == false) {
             int new_alpha = -singScore - 50;
             int mockPv;
-            int sc = Search(p, ply, new_alpha, new_alpha - 1, depth - 4, false, -1, -1, &mockPv);
-            if (sc <= new_alpha) { new_depth += 1; flExtended = true; }
+            int sc = Search(p, ply, new_alpha, new_alpha + 1, depth - 4, false, -1, -1, &mockPv);
+			if (sc <= new_alpha) { new_depth += 1; flExtended = true; }
         }
 
         // FUTILITY PRUNING
