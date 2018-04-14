@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// b15: 33.404.862
+// 36078684 nodes searched in 31625, speed 1140791 nps (Score: 2.647)
 
 #pragma once
 
@@ -63,7 +63,7 @@ using U64 = uint64_t;
     #ifndef USE_THREADS
        #define USE_THREADS
     #endif
-    #define MAX_THREADS 8
+    #define MAX_THREADS 48
 #else
     #undef USE_THREADS
 #endif
