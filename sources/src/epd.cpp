@@ -8,6 +8,9 @@
 #include "epd_black_won.h"
 #include "epd_draw.h"
 
+int startTune = 0;
+int endTune = N_ATT1;
+
 bool cEngine::TuneOne(POS *p, int *pv, int par) {
 
     bool tuned = false;
@@ -48,14 +51,23 @@ void cEngine::TuneMe(POS *p, int *pv, int iterations) {
 	srand(GetMS());
 	int test = 0;
 
+	for (int i = 0; i < N_OF_VAL; i++)
+		Par.wait[i] = 0;
 
 	for (;;) {
-        int par = rand() % N_OF_VAL;
-		if (!Par.tunable[par]) continue;
 		test++;
 		if (test > iterations) break;
-        printf("Iteration %4d, testing %14s\r", test, paramNames[par]);
-        if (TuneOne(p, pv, par)) Par.PrintValues();
+		for (int par = startTune; par < endTune; ++par) {
+			if (Par.wait[par] == 0 && Par.tunable[par]) {
+				printf("Iteration %4d, testing %14s\r", test, paramNames[par]);
+				if (TuneOne(p, pv, par)) Par.PrintValues(startTune, endTune);
+				else Par.wait[par] = 2;
+			}
+			else {
+				Par.wait[par] -= 1;
+				if (Par.wait[par] < 0) Par.wait[par] = 0;
+			}
+		}
 	}
 }
 

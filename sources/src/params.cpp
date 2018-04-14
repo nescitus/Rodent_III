@@ -993,12 +993,12 @@ void cParam::SetVal(int slot, int val, int min, int max, bool tune) {
         printf("%14s ERROR\n", paramNames[slot]);
 }
 
-void cParam::PrintValues() {
+void cParam::PrintValues(int startTune, int endTune) {
 
     int iter = 0;
 
     printf("\n\n");
-    for (int i = 0; i < N_OF_VAL; ++i) {
+    for (int i = startTune; i < endTune; ++i) {
         if (tunable[i] == true) {
             printf("%14s : %4d     ", paramNames[i], Par.values[i]);
             iter++;

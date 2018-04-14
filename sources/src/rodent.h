@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// 36078684 nodes searched in 31625, speed 1140791 nps (Score: 2.647)
+// bench 15: 36078684 nodes searched in 28781, speed 1253515 nps (Score: 2.909)
 
 #pragma once
 
@@ -532,6 +532,7 @@ const char* const paramNames[N_OF_VAL] = {
 
 class cParam {
   public:
+	int wait[N_OF_VAL];
     int values[N_OF_VAL]; // evaluation parameters
     int max_val[N_OF_VAL];
     int min_val[N_OF_VAL];
@@ -589,7 +590,7 @@ class cParam {
     NOINLINE void DefaultWeights();
     NOINLINE void InitialPersonalityWeights();
     NOINLINE void InitAsymmetric(POS *p);
-    NOINLINE void PrintValues();
+    NOINLINE void PrintValues(int startTune, int endTune);
     void Recalculate();
     void SetSpeed(int elo_in);
     int EloToSpeed(int elo_in);
