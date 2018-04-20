@@ -65,7 +65,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     int lines_eg = 0;
     int fwd_weight = 0;
     int fwd_cnt = 0;
-    int outpost = 0;
+    int outpost_mg = 0;
+	int outpost_eg = 0;
     int center_control = 2 * BB.PopCnt(e->p_takes[sd] & Mask.center);
 
     // Init king attack zone
@@ -110,7 +111,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         bb_possible = bb_control & ~e->p_takes[op];              // reachable outposts
         bb_possible &= ~e->p_can_take[op];
         bb_possible &= Mask.outpost_map[sd];
-        if (bb_possible) Add(e, sd, Par.values[N_REACH], 2);
+        if (bb_possible) Add(e, sd, Par.values[N_REACH_MG], Par.values[N_REACH_EG]);
 
         bb_attack = BB.KnightAttacks(sd);
         if (bb_attack & bb_zone) {                               // king attack
@@ -123,7 +124,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         mob_mg += Par.n_mob_mg[cnt];
         mob_eg += Par.n_mob_eg[cnt];
 
-        EvaluateOutpost(p, e, sd, N, sq, &outpost);              // outpost
+		EvaluateShielded(p, e, sd, sq, Par.values[N_SH_MG], Par.values[N_SH_EG], &outpost_mg, &outpost_eg);   // knight shielded by a pawn
+        EvaluateOutpost(p, e, sd, N, sq, &outpost_mg, &outpost_eg);    // outpost
     }
 
     // Bishop eval
@@ -165,9 +167,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         bb_possible = bb_control & ~e->p_takes[op];              // reachable outposts
         bb_possible &= ~e->p_can_take[op];
         bb_possible &= Mask.outpost_map[sd];
-        if (bb_possible) Add(e, sd, Par.values[B_REACH], 2);
+        if (bb_possible) Add(e, sd, Par.values[B_REACH_MG], Par.values[B_REACH_EG]);
 
-        EvaluateOutpost(p, e, sd, B, sq, &outpost);              // outpost
+		EvaluateShielded(p, e, sd, sq, Par.values[B_SH_MG], Par.values[B_SH_EG], &outpost_mg, &outpost_eg);             // bishop shielded by a pawn
+        EvaluateOutpost(p, e, sd, B, sq, &outpost_mg, &outpost_eg);              // outpost
 
         // Bishops side by side
 
@@ -338,7 +341,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     Add(e, sd, (Par.values[W_TROPISM] * tropism_mg) / 100, (Par.values[W_TROPISM] * tropism_eg) / 100);
     Add(e, sd, (Par.values[W_LINES] * lines_mg)     / 100, (Par.values[W_LINES] * lines_eg)     / 100);
     Add(e, sd, (Par.values[W_FWD] * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
-    Add(e, sd, (Par.values[W_OUTPOSTS] * outpost) / 100);
+    Add(e, sd, (Par.values[W_OUTPOSTS] * outpost_mg) / 100, (Par.values[W_OUTPOSTS] * outpost_eg) / 100);
     Add(e, sd, (Par.values[W_CENTER] * center_control) / 100, 0);
 
 }
@@ -353,21 +356,28 @@ void cEngine::EvaluateKingAttack(POS *p, eData *e, eColor sd) {
 
 }
 
-void cEngine::EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost) {
+void cEngine::EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int v2, int *outpost_mg, int *outpost_eg) {
 
     if (SqBb(sq) & Mask.home[sd]) {
         U64 stop = BB.ShiftFwd(SqBb(sq), sd);             // get square in front of a minor
-        if (stop & p->Pawns(sd))                          // is it occupied by own pawn?
-            *outpost += Par.values[BN_SHIELD];            // bonus for a pawn shielding a minor
+		if (stop & p->Pawns(sd)) {                        // is it occupied by own pawn?
+			*outpost_mg += v1;                            // bonus for a pawn shielding a minor
+			*outpost_eg += v2;
+		}
     }
+}
+
+void cEngine::EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost_mg, int *outpost_eg) {
 
     int tmp = Par.sp_pst[sd][pc][sq];                     // get base outpost bonus
     if (tmp) {
         int mul = 0;                                      // reset outpost multiplier
-        if (SqBb(sq) & ~e->p_can_take[~sd]) mul += 2; // is piece in hole of enemy pawn structure?
+        if (SqBb(sq) & ~e->p_can_take[~sd]) mul += 2;     // is piece in hole of enemy pawn structure?
         if (SqBb(sq) & e->p_takes[sd]) mul += 1;          // is piece defended by own pawn?
         if (SqBb(sq) & e->two_pawns_take[sd]) mul += 1;   // is piece defended by two pawns?
-        *outpost += (tmp * mul) / 2;                      // add outpost bonus
+        *outpost_mg += (tmp * mul) / 2;                   // add outpost bonus
+		*outpost_eg += (tmp * mul) / 2;
+
     }
 }
 

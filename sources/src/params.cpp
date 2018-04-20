@@ -223,7 +223,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
 												   // Passed pawn bonuses per rank
 
-	static const bool tuneCandidates = true;
+	static const bool tuneCandidates = false;
 
 	SetVal(CMG2,  0, 0, 300, tuneCandidates);
 	SetVal(CMG3,  0, 0, 300, tuneCandidates);
@@ -258,13 +258,19 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Knight parameters
 
-    static const bool tuneKnight = false;
+    static const bool tuneKnight = true;
 
     SetVal(N_TRAP, -168, -300, 0, tuneKnight); // trapped knight
     SetVal(N_BLOCK, -17, -50, 0, tuneKnight);  // knight blocks c pawn in queen pawn openings
     SetVal(N_OWH, -1, -50, 0, tuneKnight);     // knight can move only to own half of the board
-    SetVal(N_REACH, 11, 0, 50, tuneKnight);    // knight can reach an outpost square
-    SetVal(BN_SHIELD,  5,  0, 50, tuneKnight); // pawn in front of a minor
+    SetVal(N_REACH_MG, 11, 0, 50, tuneKnight);    // knight can reach an outpost square
+	SetVal(N_REACH_EG, 2, 0, 50, tuneKnight);    // knight can reach an outpost square
+	SetVal(B_REACH_MG, 2, 0, 50, tuneKnight);     // bishop can reach an outpost square
+	SetVal(B_REACH_EG, 2, 0, 50, tuneKnight);     // bishop can reach an outpost square
+    SetVal(N_SH_MG,  5,  0, 50, tuneKnight);   // pawn in front of a minor
+	SetVal(N_SH_EG, 5, 0, 50, tuneKnight);     // pawn in front of a minor
+	SetVal(B_SH_MG, 5, 0, 50, tuneKnight);     // pawn in front of a minor
+	SetVal(B_SH_EG, 5, 0, 50, tuneKnight);     // pawn in front of a minor
 
     // Bishop parameters
 
@@ -280,7 +286,6 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(B_BF_EG, -20, -50, 0, tuneBishop);
     SetVal(B_WING, 3, 0, 50, tuneBishop);      // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2) 
     SetVal(B_OWH, -7, -50, 0, tuneBishop);     // bishop can move only to own half of the board
-    SetVal(B_REACH, 2, 0, 50, tuneBishop);     // bishop can reach an outpost square
     SetVal(B_TOUCH, 5, 0, 50, tuneBishop);     // two bishops on adjacent squares
     SetVal(B_OWN_P, -4, -50, 0, false);        // own pawn on the square of own bishop's color
     SetVal(B_OPP_P, -1, -50, 0, false);        // enemy pawn on the square of own bishop's color
@@ -703,8 +708,14 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[N_TRAP] = -150; // trapped knight
     values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
     values[N_OWH] = -5;    // knight can move only to own half of the board
-    values[N_REACH] = 4;   // knight can reach an outpost square
-    values[BN_SHIELD] = 5;
+    values[N_REACH_MG] = 4;   // knight can reach an outpost square
+	values[N_REACH_EG] = 2;   // knight can reach an outpost square
+	values[B_REACH_MG] = 2;   // bishop can reach an outpost square
+	values[B_REACH_EG] = 2;   // bishop can reach an outpost square
+    values[N_SH_MG] = 5;
+	values[N_SH_EG] = 5;
+	values[B_SH_MG] = 5;
+	values[B_SH_EG] = 5;
 
     // Bishop parameters
 
@@ -718,7 +729,6 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[B_BF_EG] = -20;
     values[B_WING] = 10;   // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2)
     values[B_OWH] = -5;    // bishop can move only to own half of the board
-    values[B_REACH] = 2;   // bishop can reach an outpost square
     values[B_TOUCH] = 4;   // two bishops on adjacent squares
     values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
     values[B_OPP_P] = -1;  // enemy pawn on the square of own bishop's color

@@ -463,10 +463,11 @@ enum Values {
     N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
     N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
     NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
-    N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OWH, N_REACH, BN_SHIELD,
+    N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OWH, N_REACH_MG, N_REACH_EG,
+	B_REACH_MG, B_REACH_EG, N_SH_MG, N_SH_EG, B_SH_MG, B_SH_EG,
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE_KS, K_CASTLE_QS,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
-    B_OPP_P, B_OWN_P, B_REACH, B_TOUCH, B_RETURN,
+    B_OPP_P, B_OWN_P, B_TOUCH, B_RETURN,
     P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
     P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
@@ -500,10 +501,11 @@ const char* const paramNames[N_OF_VAL] = {
     "N_ATT1", "N_ATT2", "B_ATT1", "B_ATT2", "R_ATT1", "R_ATT2", "Q_ATT1", "Q_ATT2",            // attacks against enemy king zone
     "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
     "NTR_MG", "NTR_EG", "BTR_MG", "BTR_EG", "RTR_MG", "RTR_EG", "QTR_MG", "QTR_EG",            // king tropism
-    "N_FWD", "B_FWD", "R_FWD", "Q_FWD", "N_OWH", "B_OWH", "N_REACH", "BN_SHIELD",
+    "N_FWD", "B_FWD", "R_FWD", "Q_FWD", "N_OWH", "B_OWH", "N_REACH_MG", "N_REACH_EG",
+	"B_REACH_MG", "B_REACH_EG", "N_SH_MG", "N_SH_EG", "B_SH_MG", "B_SH_EG",
     "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT", "K_CASTLE_KS", "K_CASTLE_QS",
     "B_TRAP_A2", "B_TRAP_A3", "B_BLOCK", "B_FIANCH", "B_BADF", "B_KING", "B_BF_MG", "B_BF_EG", "B_WING",  // bishop parameters
-    "B_OPP_P", "B_OWN_P", "B_REACH", "B_TOUCH", "B_RETURN",
+    "B_OPP_P", "B_OWN_P", "B_TOUCH", "B_RETURN",
     "P_SH_NONE", "P_SH_2", "P_SH_3", "P_SH_4", "P_SH_5", "P_SH_6", "P_SH_7",                    // king's pawn shield
     "P_ST_OPEN", "P_ST_3", "P_ST_4", "P_ST_5",                                                  // pawn storm on enemy king
     "ISO_MG", "ISO_EG", "ISO_OF", "BK_MID", "BK_END", "BK_OPE", "DB_MID", "DB_END",             // pawn weaknesses
@@ -791,8 +793,8 @@ class cEngine {
     static int EvaluateChains(POS *p, eColor sd);
     static void EvaluateMaterial(POS *p, eData *e, eColor sd);
     static void EvaluatePieces(POS *p, eData *e, eColor sd);
-	static void EvaluateShielded(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost);
-    static void EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost);
+	static void EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int v2, int *outpost_mg, int *outpost_eg);
+    static void EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost_mg, int *outpost_eg);
     static void EvaluatePawns(POS *p, eData *e, eColor sd);
     static void EvaluatePassers(POS *p, eData *e, eColor sd);
     static void EvaluateKing(POS *p, eData *e, eColor sd);

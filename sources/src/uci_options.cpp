@@ -336,7 +336,10 @@ void ParseSetoption(const char *ptr) {
         Par.InitMaterialTweaks();
         Glob.should_clear = true;
     } else if (strcmp(name, "minorbehindpawn") == 0 )                        {
-        setvalue(BN_SHIELD, atoi(value), false);
+		setvalue(N_SH_MG, atoi(value), false);
+		setvalue(N_SH_EG, atoi(value), false);
+        setvalue(B_SH_MG, atoi(value), false);
+		setvalue(B_SH_EG, atoi(value), false);
     } else if (strcmp(name, "pawnthreat") == 0 )                             {
         setvalue(P_THR, atoi(value), false);
 
