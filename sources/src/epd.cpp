@@ -8,8 +8,8 @@
 #include "epd_black_won.h"
 #include "epd_draw.h"
 
-int startTune = 0;
-int endTune = N_ATT1;
+int startTune = ROF_MG;
+int endTune = W_MATERIAL;
 
 bool cEngine::TuneOne(POS *p, int *pv, int par) {
 

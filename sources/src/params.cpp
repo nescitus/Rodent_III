@@ -223,21 +223,19 @@ void cParam::DefaultWeights() {  // tuned automatically
 
 												   // Passed pawn bonuses per rank
 
-	static const bool tuneCandidates = false;
+	static const bool tuneCandidates = true;
 
-	SetVal(CMG2, 2/3, 0, 300, tuneCandidates);
-	SetVal(CMG3, 2/3, 0, 300, tuneCandidates);
-	SetVal(CMG4, 11/3, 0, 300, tuneCandidates);
-	SetVal(CMG5, 33/3, 0, 300, tuneCandidates);
-	SetVal(CMG6, 71/3, 0, 300, tuneCandidates);
-	SetVal(CMG7, 135/3, 0, 300, false);
+	SetVal(CMG2,  0, 0, 300, tuneCandidates);
+	SetVal(CMG3,  0, 0, 300, tuneCandidates);
+	SetVal(CMG4,  3, 0, 300, tuneCandidates);
+	SetVal(CMG5, 11, 0, 300, tuneCandidates);
+	SetVal(CMG6, 23, 0, 300, tuneCandidates);
 
-	SetVal(CEG2, 12/3, 0, 300, tuneCandidates);
-	SetVal(CEG3, 21/3, 0, 300, tuneCandidates);
-	SetVal(CEG4, 48/3, 0, 300, tuneCandidates);
-	SetVal(CEG5, 93/3, 0, 300, tuneCandidates);
-	SetVal(CEG6, 161/3, 0, 300, tuneCandidates);
-	SetVal(CEG7, 266/3, 0, 300, false);
+	SetVal(CEG2,  4, 0, 300, tuneCandidates);
+	SetVal(CEG3,  7, 0, 300, tuneCandidates);
+	SetVal(CEG4, 16, 0, 300, tuneCandidates);
+	SetVal(CEG5, 31, 0, 300, tuneCandidates);
+	SetVal(CEG6, 53, 0, 300, tuneCandidates);
 
     // King's pawn shield
 
@@ -676,14 +674,12 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[CMG4] = 24/3;
     values[CMG5] = 45/3;
     values[CMG6] = 78/3;
-    values[CMG7] = 130/3;
 
     values[CEG2] = 22/3;
     values[CEG3] = 23/3;
     values[CEG4] = 57/3;
     values[CEG5] = 96 /3;
     values[CEG6] = 161 /3;
-    values[CEG7] = 260 /3;
 
     // King's pawn shield
 
@@ -707,7 +703,7 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[N_TRAP] = -150; // trapped knight
     values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
     values[N_OWH] = -5;    // knight can move only to own half of the board
-    values[N_REACH] = 4;   // knight can reach an outpost square WAS 2
+    values[N_REACH] = 4;   // knight can reach an outpost square
     values[BN_SHIELD] = 5;
 
     // Bishop parameters
@@ -800,7 +796,7 @@ void cParam::InitPassers() {
 	cand_bonus_mg[WC][3] = values[CMG4];     cand_bonus_mg[BC][4] = values[CMG4];
 	cand_bonus_mg[WC][4] = values[CMG5];     cand_bonus_mg[BC][3] = values[CMG5];
 	cand_bonus_mg[WC][5] = values[CMG6];     cand_bonus_mg[BC][2] = values[CMG6];
-	cand_bonus_mg[WC][6] = values[CMG7];     cand_bonus_mg[BC][1] = values[CMG7];
+	cand_bonus_mg[WC][6] = 0;                cand_bonus_mg[BC][1] = 0;
 	cand_bonus_mg[WC][7] = 0;                cand_bonus_mg[BC][0] = 0;
 
 	cand_bonus_eg[WC][0] = 0;                cand_bonus_eg[BC][7] = 0;
@@ -809,7 +805,7 @@ void cParam::InitPassers() {
 	cand_bonus_eg[WC][3] = values[CEG4];     cand_bonus_eg[BC][4] = values[CEG4];
 	cand_bonus_eg[WC][4] = values[CEG5];     cand_bonus_eg[BC][3] = values[CEG5];
 	cand_bonus_eg[WC][5] = values[CEG6];     cand_bonus_eg[BC][2] = values[CEG6];
-	cand_bonus_eg[WC][6] = values[CEG7];     cand_bonus_eg[BC][1] = values[CEG7];
+	cand_bonus_eg[WC][6] = 0;                cand_bonus_eg[BC][1] = 0;
 	cand_bonus_eg[WC][7] = 0;                cand_bonus_eg[BC][0] = 0;
 }
 
@@ -951,7 +947,7 @@ int cParam::EloToSpeed(int elo_in) {
     int search_nodes = (int)(pow(1.0069555500567, (((use_rating) / 1200) - 1)
                              + (use_rating - 1200)) * 128);
 
-    return (search_nodes / 7) + (elo / 60);
+    return (search_nodes / 7) + (elo_in / 60);
 }
 
 int cParam::EloToBlur(int elo_in) {

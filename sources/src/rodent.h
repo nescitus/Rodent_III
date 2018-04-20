@@ -471,7 +471,7 @@ enum Values {
     P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
     PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7, P_BL_MUL,   // passed pawns
-    CMG2, CMG3, CMG4, CMG5, CMG6, CMG7, CEG2, CEG3, CEG4, CEG5, CEG6, CEG7,             // candidate passers
+    CMG2, CMG3, CMG4, CMG5, CMG6, CEG2, CEG3, CEG4, CEG5, CEG6,                         // candidate passers
     P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_THR, P_BIND, P_BADBIND, P_ISL, // pawn special terms
     P_BIGCHAIN, P_SMALLCHAIN, P_CS1, P_CS2, P_CSFAIL,
     ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,     // rook bonuses
@@ -508,7 +508,7 @@ const char* const paramNames[N_OF_VAL] = {
     "P_ST_OPEN", "P_ST_3", "P_ST_4", "P_ST_5",                                                  // pawn storm on enemy king
     "ISO_MG", "ISO_EG", "ISO_OF", "BK_MID", "BK_END", "BK_OPE", "DB_MID", "DB_END",             // pawn weaknesses
     "PMG2", "PMG3", "PMG4", "PMG5", "PMG6", "PMG7", "PEG2", "PEG3", "PEG4", "PEG5", "PEG6", "PEG7", "P_BL_MUL",   // passed pawns
-    "CMG2", "CMG3", "CMG4", "CMG5", "CMG6", "CMG7", "CEG2", "CEG3", "CEG4", "CEG5", "CEG6", "CEG7",             // candidate passers
+    "CMG2", "CMG3", "CMG4", "CMG5", "CMG6", "CEG2", "CEG3", "CEG4", "CEG5", "CEG6",             // candidate passers
     "P_OURSTOP_MUL", "P_OPPSTOP_MUL", "P_DEFMUL", "P_STOPMUL", "P_THR", "P_BIND", "P_BADBIND", "P_ISL", // pawn special terms
     "P_BIGCHAIN", "P_SMALLCHAIN", "P_CS1", "P_CS2", "P_CSFAIL",
     "ROF_MG", "ROF_EG", "RGH_MG", "RGH_EG", "RBH_MG", "RBH_EG", "RSR_MG", "RSR_EG", "ROQ_MG", "ROQ_EG",     // rook bonuses
@@ -791,6 +791,7 @@ class cEngine {
     static int EvaluateChains(POS *p, eColor sd);
     static void EvaluateMaterial(POS *p, eData *e, eColor sd);
     static void EvaluatePieces(POS *p, eData *e, eColor sd);
+	static void EvaluateShielded(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost);
     static void EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost);
     static void EvaluatePawns(POS *p, eData *e, eColor sd);
     static void EvaluatePassers(POS *p, eData *e, eColor sd);
