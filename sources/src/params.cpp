@@ -221,7 +221,7 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(P_DEFMUL, 6, 0, 50, tunePassers);       // passer defended by own pawn
     SetVal(P_STOPMUL, 6, 0, 50, tunePassers);      // passers' stop square defended by own pawn
 
-												   // Passed pawn bonuses per rank
+												   // Candidate passer bonuses per rank
 
 	static const bool tuneCandidates = false;
 
@@ -263,14 +263,14 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(N_TRAP, -168, -300, 0, tuneKnight); // trapped knight
     SetVal(N_BLOCK, -17, -50, 0, tuneKnight);  // knight blocks c pawn in queen pawn openings
     SetVal(N_OWH, -1, -50, 0, tuneKnight);     // knight can move only to own half of the board
-    SetVal(N_REACH_MG, 11, 0, 50, tuneKnight);    // knight can reach an outpost square
-	SetVal(N_REACH_EG, 2, 0, 50, tuneKnight);    // knight can reach an outpost square
-	SetVal(B_REACH_MG, 2, 0, 50, tuneKnight);     // bishop can reach an outpost square
-	SetVal(B_REACH_EG, 2, 0, 50, tuneKnight);     // bishop can reach an outpost square
-    SetVal(N_SH_MG,  5,  0, 50, tuneKnight);   // pawn in front of a minor
-	SetVal(N_SH_EG, 5, 0, 50, tuneKnight);     // pawn in front of a minor
-	SetVal(B_SH_MG, 5, 0, 50, tuneKnight);     // pawn in front of a minor
-	SetVal(B_SH_EG, 5, 0, 50, tuneKnight);     // pawn in front of a minor
+    SetVal(N_REACH_MG, 11, 0, 50, tuneKnight); // knight can reach an outpost square - midgame bonus
+	SetVal(N_REACH_EG, 4, 0, 50, tuneKnight);  // knight can reach an outpost square - endgame bonus
+	SetVal(B_REACH_MG, 5, 0, 50, tuneKnight);  // bishop can reach an outpost square - midgame bonus
+	SetVal(B_REACH_EG, 0, 0, 50, tuneKnight);  // bishop can reach an outpost square - endgame bonus
+    SetVal(N_SH_MG,  7,  0, 50, tuneKnight);   // pawn in front of a knight - midgame bonus
+	SetVal(N_SH_EG, 7, 0, 50, tuneKnight);     // pawn in front of a knight - endgame bonus
+	SetVal(B_SH_MG, 5, 0, 50, tuneKnight);     // pawn in front of a bishop - midgame bonus
+	SetVal(B_SH_EG, 5, 0, 50, tuneKnight);     // pawn in front of a bishop - endgame bonus
 
     // Bishop parameters
 
@@ -674,17 +674,17 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
 
     // Candidate passer bonuses per rank
 
-    values[CMG2] = 11/3;
-    values[CMG3] = 12/3;
-    values[CMG4] = 24/3;
-    values[CMG5] = 45/3;
-    values[CMG6] = 78/3;
+    values[CMG2] = 3;
+    values[CMG3] = 4;
+    values[CMG4] = 8;
+    values[CMG5] = 15;
+    values[CMG6] = 26;
 
-    values[CEG2] = 22/3;
-    values[CEG3] = 23/3;
-    values[CEG4] = 57/3;
-    values[CEG5] = 96 /3;
-    values[CEG6] = 161 /3;
+    values[CEG2] = 7;
+    values[CEG3] = 7;
+    values[CEG4] = 17;
+    values[CEG5] = 32;
+    values[CEG6] = 53;
 
     // King's pawn shield
 
@@ -708,10 +708,10 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[N_TRAP] = -150; // trapped knight
     values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
     values[N_OWH] = -5;    // knight can move only to own half of the board
-    values[N_REACH_MG] = 4;   // knight can reach an outpost square
-	values[N_REACH_EG] = 2;   // knight can reach an outpost square
-	values[B_REACH_MG] = 2;   // bishop can reach an outpost square
-	values[B_REACH_EG] = 2;   // bishop can reach an outpost square
+    values[N_REACH_MG] = 4;   // knight can reach an outpost square - midgame bonus
+	values[N_REACH_EG] = 2;   // knight can reach an outpost square - endgame bonus
+	values[B_REACH_MG] = 2;   // bishop can reach an outpost square - midgame bonus
+	values[B_REACH_EG] = 2;   // bishop can reach an outpost square - endgame bonus
     values[N_SH_MG] = 5;
 	values[N_SH_EG] = 5;
 	values[B_SH_MG] = 5;
