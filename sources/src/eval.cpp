@@ -103,7 +103,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         bb_control = BB.KnightAttacks(sq) & ~p->mClBb[sd];       // get control bitboard
         center_control += BB.PopCnt(bb_control & Mask.center);
         if (!(bb_control  & ~e->p_takes[op] & Mask.away[sd]))    // we do not attack enemy half of the board
-            Add(e, sd, Par.values[N_OWH]);
+            Add(e, sd, Par.values[N_OWH_MG], Par.values[N_OWH_EG] );
         e->all_att[sd] |= BB.KnightAttacks(sq);
         e->ev_att[sd]  |= bb_control;
         if (bb_control & n_checks) e->att[sd] += Par.values[N_CHK];// check threats
@@ -149,8 +149,8 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         e->all_att[sd] |= bb_control;                            // update attack map
         e->ev_att[sd]  |= bb_control;
         if (!(bb_control & Mask.away[sd]))
-             Add(e, sd, Par.values[B_OWH]);                      // we do not attack enemy half of the board
-        if (bb_control & b_checks) e->att[sd] += Par.values[B_CHK];// check threats
+             Add(e, sd, Par.values[B_OWH_MG], Par.values[B_OWH_EG]); // we do not attack enemy half of the board
+        if (bb_control & b_checks) e->att[sd] += Par.values[B_CHK];  // check threats
 
         bb_attack = BB.BishAttacks(p->OccBb() ^ p->Queens(sd), sq);  // get king attack bitboard
 
@@ -454,6 +454,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, eColor sd) {
 
         if (!(bb_stop & p->OccBb())) {
 			Add(e, sd, Par.values[P_MOB_MG], Par.values[P_MOB_EG]); // pawn mobility bonus
+			// TODO: perhaps bigger bonus for central mobility
             if (!(bb_stop & e->p_can_take[op])) {
                 if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
                     Add(e, sd, Par.values[P_THR]);

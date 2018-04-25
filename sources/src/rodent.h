@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// bench 15: 39088227 nodes searched in 32328, speed 1209076 nps (Score: 2.806)
+// bench 15: 38277884 nodes searched in 30266, speed 1264673 nps (Score: 2.935)
 
 #pragma once
 
@@ -463,8 +463,10 @@ enum Values {
     N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
     N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
     NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
-    N_FWD, B_FWD, R_FWD, Q_FWD, N_OWH, B_OWH, N_REACH_MG, N_REACH_EG,
-	B_REACH_MG, B_REACH_EG, N_SH_MG, N_SH_EG, B_SH_MG, B_SH_EG,
+    N_FWD, B_FWD, R_FWD, Q_FWD, 
+	N_OWH_MG, N_OWH_EG, B_OWH_MG, B_OWH_EG, 
+	N_REACH_MG, N_REACH_EG, B_REACH_MG, B_REACH_EG, 
+	N_SH_MG, N_SH_EG, B_SH_MG, B_SH_EG,
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE_KS, K_CASTLE_QS,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
     B_OPP_P, B_OWN_P, B_TOUCH, B_RETURN,
@@ -501,8 +503,10 @@ const char* const paramNames[N_OF_VAL] = {
     "N_ATT1", "N_ATT2", "B_ATT1", "B_ATT2", "R_ATT1", "R_ATT2", "Q_ATT1", "Q_ATT2",            // attacks against enemy king zone
     "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
     "NTR_MG", "NTR_EG", "BTR_MG", "BTR_EG", "RTR_MG", "RTR_EG", "QTR_MG", "QTR_EG",            // king tropism
-    "N_FWD", "B_FWD", "R_FWD", "Q_FWD", "N_OWH", "B_OWH", "N_REACH_MG", "N_REACH_EG",
-	"B_REACH_MG", "B_REACH_EG", "N_SH_MG", "N_SH_EG", "B_SH_MG", "B_SH_EG",
+    "N_FWD", "B_FWD", "R_FWD", "Q_FWD", 
+	"N_OWH_MG", "N_OWH_EG", "B_OWH_MG", "B_OWH_EG",
+	"N_REACH_MG", "N_REACH_EG", "B_REACH_MG", "B_REACH_EG", 
+	"N_SH_MG", "N_SH_EG", "B_SH_MG", "B_SH_EG",
     "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT", "K_CASTLE_KS", "K_CASTLE_QS",
     "B_TRAP_A2", "B_TRAP_A3", "B_BLOCK", "B_FIANCH", "B_BADF", "B_KING", "B_BF_MG", "B_BF_EG", "B_WING",  // bishop parameters
     "B_OPP_P", "B_OWN_P", "B_TOUCH", "B_RETURN",

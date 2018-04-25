@@ -262,7 +262,8 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     SetVal(N_TRAP, -168, -300, 0, tuneKnight); // trapped knight
     SetVal(N_BLOCK, -17, -50, 0, tuneKnight);  // knight blocks c pawn in queen pawn openings
-    SetVal(N_OWH, -1, -50, 0, tuneKnight);     // knight can move only to own half of the board
+    SetVal(N_OWH_MG, -1, -50, 0, tuneKnight);     // knight can move only to own half of the board
+	SetVal(N_OWH_EG,  0, -50, 0, tuneKnight);     // knight can move only to own half of the board
     SetVal(N_REACH_MG, 11, 0, 50, tuneKnight); // knight can reach an outpost square - midgame bonus
 	SetVal(N_REACH_EG, 4, 0, 50, tuneKnight);  // knight can reach an outpost square - endgame bonus
 	SetVal(B_REACH_MG, 5, 0, 50, tuneKnight);  // bishop can reach an outpost square - midgame bonus
@@ -285,7 +286,8 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(B_BF_MG, -12, -50, 0, tuneBishop);  // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
     SetVal(B_BF_EG, -20, -50, 0, tuneBishop);
     SetVal(B_WING, 3, 0, 50, tuneBishop);      // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2) 
-    SetVal(B_OWH, -7, -50, 0, tuneBishop);     // bishop can move only to own half of the board
+    SetVal(B_OWH_MG, -3, -50, 0, true);     // bishop can move only to own half of the board
+	SetVal(B_OWH_EG, -7, -50, 0, true);     // bishop can move only to own half of the board
     SetVal(B_TOUCH, 5, 0, 50, tuneBishop);     // two bishops on adjacent squares
     SetVal(B_OWN_P, -4, -50, 0, false);        // own pawn on the square of own bishop's color
     SetVal(B_OPP_P, -1, -50, 0, false);        // enemy pawn on the square of own bishop's color
@@ -707,7 +709,8 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
 
     values[N_TRAP] = -150; // trapped knight
     values[N_BLOCK] = -20; // knight blocks c pawn in queen pawn openings
-    values[N_OWH] = -5;    // knight can move only to own half of the board
+    values[N_OWH_MG] = -5;    // knight can move only to own half of the board
+	values[N_OWH_EG] = -5;    // knight can move only to own half of the board
     values[N_REACH_MG] = 4;   // knight can reach an outpost square - midgame bonus
 	values[N_REACH_EG] = 2;   // knight can reach an outpost square - endgame bonus
 	values[B_REACH_MG] = 2;   // bishop can reach an outpost square - midgame bonus
@@ -728,7 +731,8 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[B_BF_MG] = -10; // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
     values[B_BF_EG] = -20;
     values[B_WING] = 10;   // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2)
-    values[B_OWH] = -5;    // bishop can move only to own half of the board
+    values[B_OWH_MG] = -5;    // bishop can move only to own half of the board
+	values[B_OWH_EG] = -5;    // bishop can move only to own half of the board
     values[B_TOUCH] = 4;   // two bishops on adjacent squares
     values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
     values[B_OPP_P] = -1;  // enemy pawn on the square of own bishop's color
