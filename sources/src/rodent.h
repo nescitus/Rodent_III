@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// bench 15: 38277884 nodes searched in 30266, speed 1264673 nps (Score: 2.935)
+// bench 14, release: 25359894 nodes searched in 23157, speed 1095081 nps (Score: 2.541)
 
 #pragma once
 
@@ -910,7 +910,6 @@ void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
 void SetPieceValue(int pc, int val, int slot);
 void UciLoop();
-void PrintBb(U64 bbTest);
 int my_random(int n);
 
 extern const int tp_value[7];

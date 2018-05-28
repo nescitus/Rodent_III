@@ -19,16 +19,6 @@ If not, see <http://www.gnu.org/licenses/>.
 #include "magicmoves.h"
 #include <cstdio>
 
-void PrintBb(U64 bbTest) {
-
-    for (int sq = 0; sq < 64; sq++) {
-        if (bbTest & SqBb(sq ^ 56)) printf("+ ");
-        else                        printf(". ");
-        if ((sq + 1) % 8 == 0) printf(" %d\n", 9 - ((sq + 1) / 8));
-    }
-    printf("\na b c d e f g h\n");
-}
-
 void cBitBoard::Init() {
 
 #ifdef USE_MAGIC

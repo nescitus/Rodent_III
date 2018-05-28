@@ -101,23 +101,23 @@ void cParam::DefaultWeights() {  // tuned automatically
     // All these values are NOT the actual bonuses; their sum is used as index
     // to a non-linear king safety table. Tune them with extreme caution.
 
-    static const bool tuneAttack = false;
+    static const bool tuneAttack = true;
 
-    SetVal(N_ATT1, 6,  0, 50, tuneAttack);
-    SetVal(N_ATT2, 4,  0, 50, tuneAttack);
-    SetVal(B_ATT1, 7,  0, 50, tuneAttack);
+    SetVal(N_ATT1, 5,  0, 50, tuneAttack);
+    SetVal(N_ATT2, 5,  0, 50, tuneAttack);
+    SetVal(B_ATT1, 8,  0, 50, tuneAttack);
     SetVal(B_ATT2, 2,  0, 50, tuneAttack);
-    SetVal(R_ATT1, 10, 0, 50, tuneAttack);
-    SetVal(R_ATT2, 4,  0, 50, tuneAttack);
-    SetVal(Q_ATT1, 16, 0, 50, tuneAttack);
-    SetVal(Q_ATT2, 5,  0, 50, tuneAttack);
+    SetVal(R_ATT1, 12, 0, 50, tuneAttack);
+    SetVal(R_ATT2, 3,  0, 50, tuneAttack);
+    SetVal(Q_ATT1, 15, 0, 50, tuneAttack);
+    SetVal(Q_ATT2, 4,  0, 50, tuneAttack);
 
-    SetVal(N_CHK,  11, 0, 50, tuneAttack);
-    SetVal(B_CHK,  18, 0, 50, tuneAttack);
-    SetVal(R_CHK,  16, 0, 50, tuneAttack);
+    SetVal(N_CHK,  12, 0, 50, tuneAttack);
+    SetVal(B_CHK,  20, 0, 50, tuneAttack);
+    SetVal(R_CHK,  18, 0, 50, tuneAttack);
     SetVal(Q_CHK,  12, 0, 50, tuneAttack);
 
-    SetVal(R_CONTACT, 29, 0, 50, tuneAttack);
+    SetVal(R_CONTACT, 32, 0, 50, tuneAttack);
     SetVal(Q_CONTACT, 36, 0, 50, tuneAttack);
 
     // King tropism
