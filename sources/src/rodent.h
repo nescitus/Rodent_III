@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2017 Pawel Koziol
+Copyright (C) 2011-2018 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// bench 14, release: 25359894 nodes searched in 23157, speed 1095081 nps (Score: 2.541)
+// bench 14, release: 25359894 nodes searched in 22156, speed 1144554 nps (Score: 2.656)
 
 #pragma once
 
@@ -467,7 +467,7 @@ enum Values {
 	N_OWH_MG, N_OWH_EG, B_OWH_MG, B_OWH_EG, 
 	N_REACH_MG, N_REACH_EG, B_REACH_MG, B_REACH_EG, 
 	N_SH_MG, N_SH_EG, B_SH_MG, B_SH_EG,
-    N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT, K_CASTLE_KS, K_CASTLE_QS,
+    N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT_MG, K_NO_LUFT_EG, K_CASTLE_KS, K_CASTLE_QS,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
     B_OPP_P, B_OWN_P, B_TOUCH, B_RETURN,
     P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
@@ -493,6 +493,16 @@ enum Values {
 	QMG15, QMG16, QMG17, QMG18, QMG19, QMG20, QMG21, QMG22, QMG23, QMG24, QMG25, QMG26, QMG27,
 	QEG0, QEG1, QEG2, QEG3, QEG4, QEG5, QEG6, QEG7, QEG8, QEG9, QEG10, QEG11, QEG12, QEG13, QEG14,
 	QEG15, QEG16, QEG17, QEG18, QEG19, QEG20, QEG21, QEG22, QEG23, QEG24, QEG25, QEG26, QEG27,
+	c2Pawn, d2Pawn, e2Pawn, f2Pawn, c3Pawn, d3Pawn, e3Pawn, f3Pawn,
+	c4Pawn, d4Pawn, e4Pawn, f4Pawn, c5Pawn, d5Pawn, e5Pawn, f5Pawn,
+	c2Knight, d2Knight, e2Knight, f2Knight, c3Knight, d3Knight, e3Knight, f3Knight,
+	c4Knight, d4Knight, e4Knight, f4Knight, c5Knight, d5Knight, e5Knight, f5Knight,
+	a2Pawn, b2Pawn, g2Pawn, h2Pawn, a3Pawn, b3Pawn, g3Pawn, h3Pawn,
+	a4Pawn, b4Pawn, g4Pawn, h4Pawn, a5Pawn, b5Pawn, g5Pawn, h5Pawn,
+	a2Knight, b2Knight, g2Knight, h2Knight, a3Knight, b3Knight, g3Knight, h3Knight,
+	a4Knight, b4Knight, g4Knight, h4Knight, a5Knight, b5Knight, g5Knight, h5Knight,
+	a6Knight, b6Knight, c6Knight, d6Knight, e6Knight, f6Knight, g6Knight, h6Knight,
+	a7Knight, b7Knight, c7Knight, d7Knight, e7Knight, f7Knight, g7Knight, h7Knight,
     N_OF_VAL
 };
 
@@ -507,7 +517,7 @@ const char* const paramNames[N_OF_VAL] = {
 	"N_OWH_MG", "N_OWH_EG", "B_OWH_MG", "B_OWH_EG",
 	"N_REACH_MG", "N_REACH_EG", "B_REACH_MG", "B_REACH_EG", 
 	"N_SH_MG", "N_SH_EG", "B_SH_MG", "B_SH_EG",
-    "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT", "K_CASTLE_KS", "K_CASTLE_QS",
+    "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT_MG", "K_NO_LUFT_EG", "K_CASTLE_KS", "K_CASTLE_QS",
     "B_TRAP_A2", "B_TRAP_A3", "B_BLOCK", "B_FIANCH", "B_BADF", "B_KING", "B_BF_MG", "B_BF_EG", "B_WING",  // bishop parameters
     "B_OPP_P", "B_OWN_P", "B_TOUCH", "B_RETURN",
     "P_SH_NONE", "P_SH_2", "P_SH_3", "P_SH_4", "P_SH_5", "P_SH_6", "P_SH_7",                    // king's pawn shield
@@ -532,7 +542,17 @@ const char* const paramNames[N_OF_VAL] = {
 	"QMG0", "QMG1", "QMG2", "QMG3", "QMG4", "QMG5", "QMG6", "QMG7", "QMG8", "QMG9", "QMG10", "QMG11", "QMG12", "QMG13", "QMG14",
 	"QMG15", "QMG16", "QMG17", "QMG18", "QMG19", "QMG20", "QMG21", "QMG22", "QMG23", "QMG24", "QMG25", "QMG26", "QMG27",
 	"QEG0", "QEG1", "QEG2", "QEG3", "QEG4", "QEG5", "QEG6", "QEG7", "QEG8", "QEG9", "QEG10", "QEG11", "QEG12", "QEG13", "QEG14",
-	"QEG15", "QEG16", "QEG17", "QEG18", "QEG19", "QEG20", "QEG21", "QEG22", "QEG23", "QEG24", "QEG25", "QEG26", "QEG27"
+	"QEG15", "QEG16", "QEG17", "QEG18", "QEG19", "QEG20", "QEG21", "QEG22", "QEG23", "QEG24", "QEG25", "QEG26", "QEG27",
+	"c2Pawn", "d2Pawn", "e2Pawn", "f2Pawn", "c3Pawn", "d3Pawn", "e3Pawn", "f3Pawn",
+	"c4Pawn", "d4Pawn", "e4Pawn", "f4Pawn", "c5Pawn", "d5Pawn", "e5Pawn", "f5Pawn",
+	"c2Knight", "d2Knight", "e2Knight", "f2Knight", "c3Knight", "d3Knight", "e3Knight", "f3Knight",
+	"c4Knight", "d4Knight", "e4Knight", "f4Knight", "c5Knight", "d5Knight", "e5Knight", "f5Knight",
+	"a2Pawn", "b2Pawn", "g2Pawn", "h2Pawn", "a3Pawn", "b3Pawn", "g3Pawn", "h3Pawn",
+	"a4Pawn", "b4Pawn", "g4Pawn", "h4Pawn", "a5Pawn", "b5Pawn", "g5Pawn", "h5Pawn",
+	"a2Knight", "b2Knight", "g2Knight", "h2Knight", "a3Knight", "b3Knight", "g3Knight", "h3Knight",
+	"a4Knight", "b4Knight", "g4Knight", "h4Knight", "a5Knight", "b5Knight", "g5Knight", "h5Knight",
+	"a6Knight", "b6Knight", "c6Knight", "d6Knight", "e6Knight", "f6Knight", "g6Knight", "h6Knight",
+	"a7Knight", "b7Knight", "c7Knight", "d7Knight", "e7Knight", "f7Knight", "g7Knight", "h7Knight",
 };
 
 

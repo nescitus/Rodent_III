@@ -150,7 +150,9 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         e->ev_att[sd]  |= bb_control;
         if (!(bb_control & Mask.away[sd]))
              Add(e, sd, Par.values[B_OWH_MG], Par.values[B_OWH_EG]); // we do not attack enemy half of the board
-        if (bb_control & b_checks) e->att[sd] += Par.values[B_CHK];  // check threats
+		if (bb_control & b_checks) {
+			e->att[sd] += Par.values[B_CHK];  // check threats
+		}
 
         bb_attack = BB.BishAttacks(p->OccBb() ^ p->Queens(sd), sq);  // get king attack bitboard
 
@@ -326,6 +328,22 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
                 lines_eg += Par.values[QSR_EG];
             }
         }
+
+	  // premature queen developement penalty
+
+		U64 b = SqBb(sq);
+
+		if (b & ~(bb_rel_rank[sd][RANK_1] | bb_rel_rank[sd][RANK_2]) ) {
+			int tmp = 0;
+			if (p->IsOnSq(sd, N, REL_SQ(sd, B1))) tmp -= 2;
+			if (p->IsOnSq(sd, N, REL_SQ(sd, G1))) tmp -= 2;
+			if (p->IsOnSq(sd, B, REL_SQ(sd, C1))) tmp -= 2;
+			if (p->IsOnSq(sd, B, REL_SQ(sd, F1))) tmp -= 2;
+			if (p->IsOnSq(sd, P, REL_SQ(sd, E2))) tmp -= 3;
+			if (p->IsOnSq(sd, P, REL_SQ(sd, D2))) tmp -= 3;
+			Add(e, sd, tmp, 0);
+		}
+
     } // end of queen eval
 
     // Composite factors

@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2017 Pawel Koziol
+Copyright (C) 2011-2018 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the

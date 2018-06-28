@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2017 Pawel Koziol
+Copyright (C) 2011-2018 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -129,16 +129,16 @@ void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
         // White castled king that cannot escape upwards
 
         if (p->IsOnSq(WC, K, H1) && p->IsOnSq(WC, P, H2) && p->IsOnSq(WC, P, G2))
-            Add(e, WC, Par.values[K_NO_LUFT]);
+            Add(e, WC, Par.values[K_NO_LUFT_MG], Par.values[K_NO_LUFT_EG]);
 
         if (p->IsOnSq(WC, K, G1) && p->IsOnSq(WC, P, H2) && p->IsOnSq(WC, P, G2) && p->IsOnSq(WC, P, F2))
-            Add(e, WC, Par.values[K_NO_LUFT]);
+            Add(e, WC, Par.values[K_NO_LUFT_MG], Par.values[K_NO_LUFT_EG]);
 
         if (p->IsOnSq(WC, K, A1) && p->IsOnSq(WC, P, A2) && p->IsOnSq(WC, P, B2))
-            Add(e, WC, Par.values[K_NO_LUFT]);
+            Add(e, WC, Par.values[K_NO_LUFT_MG], Par.values[K_NO_LUFT_EG]);
 
         if (p->IsOnSq(WC, K, B1) && p->IsOnSq(WC, P, A2) && p->IsOnSq(WC, P, B2) && p->IsOnSq(WC, P, C2))
-            Add(e, WC, Par.values[K_NO_LUFT]);
+            Add(e, WC, Par.values[K_NO_LUFT_MG], Par.values[K_NO_LUFT_EG]);
 
         // White rook blocked by uncastled king
 
@@ -167,16 +167,16 @@ void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
         // Black castled king that cannot escape upwards
 
         if (p->IsOnSq(BC, K, H8) && p->IsOnSq(BC, P, H7) && p->IsOnSq(BC, P, G7))
-            Add(e, BC, Par.values[K_NO_LUFT]);
+            Add(e, BC, Par.values[K_NO_LUFT_MG], Par.values[K_NO_LUFT_EG]);
 
         if (p->IsOnSq(BC, K, G8) && p->IsOnSq(BC, P, H7) && p->IsOnSq(BC, P, G7) && p->IsOnSq(BC, P, F7))
-            Add(e, BC, Par.values[K_NO_LUFT]);
+            Add(e, BC, Par.values[K_NO_LUFT_MG], Par.values[K_NO_LUFT_EG]);
 
         if (p->IsOnSq(BC, K, A8) && p->IsOnSq(BC, P, A7) && p->IsOnSq(BC, P, B7))
-            Add(e, BC, Par.values[K_NO_LUFT]);
+            Add(e, BC, Par.values[K_NO_LUFT_MG], Par.values[K_NO_LUFT_EG]);
 
         if (p->IsOnSq(BC, K, B8) && p->IsOnSq(BC, P, A7) && p->IsOnSq(BC, P, B7) && p->IsOnSq(BC, P, C7))
-            Add(e, BC, Par.values[K_NO_LUFT]);
+            Add(e, BC, Par.values[K_NO_LUFT_MG], Par.values[K_NO_LUFT_EG]);
 
         // Black rook blocked by uncastled king
 
