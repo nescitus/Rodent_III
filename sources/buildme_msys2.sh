@@ -76,7 +76,7 @@ if [[ "$BGN" == "true" ]]; then
 	mv src/book_gen.h src/book_gen.h.bk
 	# Internal book generator
 	echo -n "Building instrumental internal book generator binary ... "
-	gcc -Ofast -march=native -std=c++14 -fno-rtti -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o ${EXENAME}_bookgen.exe
+	g++ -Ofast -march=native -std=c++14 -fno-rtti -fno-stack-protector -fno-exceptions -fwhole-program -DBOOKGEN -DNDEBUG -DNO_THREADS -D_FORTIFY_SOURCE=0 src/combined.cpp -static -o ${EXENAME}_bookgen.exe
 	echo "generating ..."
 	./${EXENAME}_bookgen.exe > /dev/null
 	rm ${EXENAME}_bookgen.exe
