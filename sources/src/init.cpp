@@ -15,14 +15,17 @@ You should have received a copy of the GNU General Public License along with thi
 If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <random>
+#include <cmath>
+#include <string.h>
 #include "rodent.h"
 
 U64 POS::Random64() {
 
-    static U64 next = 1;
-
-    next = next * 1103515245 + 12345;
-    return next;
+	std::random_device rd;
+	std::mt19937_64 e2(rd());
+	std::uniform_int_distribution<U64> dist(std::llround(std::pow(2, 48)), std::llround(std::pow(2, 62)));
+	return dist(e2);
 }
 
 void POS::Init() { // static init function

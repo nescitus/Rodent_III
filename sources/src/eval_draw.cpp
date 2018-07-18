@@ -274,6 +274,7 @@ bool cEngine::DifferentBishops(POS *p) {
 
 int cEngine::CheckmateHelper(POS *p) {
 
+	// TODO: make color-agnostic
     int result = 0;
 
     // KQ vs Kx: drive enemy king towards the edge
