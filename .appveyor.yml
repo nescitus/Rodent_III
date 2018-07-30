@@ -4,7 +4,7 @@ clone_folder: c:\rodent_iii_src
 shallow_clone: true
 
 before_build:
-  - set PATH=c:\msys64\usr\bin;%PATH%
+  - set PATH=c:\msys64\usr\bin;c:\msys64;%PATH%
   - pacman -Syuu --noconfirm
   - pacman -Syuu --noconfirm
   - pacman -Syuu --noconfirm --needed mingw-w64-i686-gcc mingw-w64-x86_64-gcc
