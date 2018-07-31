@@ -306,6 +306,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
         if (victim != NO_TP) last_capt = Tsq(move);
         else last_capt = -1;
         p->DoMove(move, u);
+		if (mcThreadId == 0) t0move[mcThreadId] = move;
         if (p->Illegal()) { p->UndoMove(move, u); continue; }
 
         // DON'T SEARCH THE SAME MOVES IN MULTI-PV MODE 

@@ -240,11 +240,11 @@ void cEngine::ScoreQuiet(MOVES *m, int ply) {
 
     valuep = m->value;
     for (movep = m->move; movep < m->last; movep++) {
-		if (mcThreadId % 3 == 0 && ply == 0)
-			mv_score = -mHistory[m->p->mPc[Fsq(*movep)]][Tsq(*movep)];
+		if (ply == 0 && ( (mcThreadId < 47 && *movep == t0move[mcThreadId+1]) || (mcThreadId < 46 && *movep == t0move[mcThreadId + 2]) ) )
+			mv_score = -MAX_HIST;
 		else
            mv_score = mHistory[m->p->mPc[Fsq(*movep)]][Tsq(*movep)]; // use history score
-        if (Fsq(*movep) == m->ref_sq) mv_score += 2048;               // but bump up refutation move
+        if (Fsq(*movep) == m->ref_sq) mv_score += 2048;              // but bump up refutation move
         *valuep++ = mv_score;
     }
 }

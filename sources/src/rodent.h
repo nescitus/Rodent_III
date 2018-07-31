@@ -989,6 +989,8 @@ extern const int ph_value[7];
 #include "chessheapclass.h"
 extern ChessHeapClass Trans;
 
+extern int t0move[MAX_THREADS];
+
 // TODO: perhaps don't search moves that has been searched by another thread to greater depth
 // TODO: changing tt date of used entries (thx Kestutis)
 // TODO: IID at cut nodes
