@@ -42,7 +42,7 @@ sBook MainBook;
 
 void PrintVersion() {
 
-    printf("id name Rodent III 0.257"
+    printf("id name Rodent III 0.258"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
             " 32-bit"
@@ -136,7 +136,7 @@ void cGlobals::Init() {
     use_personality_files = true;
     use_books_from_pers = true;
     show_pers_file = true;
-    thread_no = 1;
+    thread_no = 4;
 	time_buffer = 10; // blitz under Arena would require something like 200, but it's user's job
 	game_key = 0;
 

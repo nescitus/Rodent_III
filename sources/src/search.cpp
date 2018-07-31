@@ -107,6 +107,7 @@ void cEngine::Think(POS *p) {
     *curr = *p;
     AgeHist();
     Iterate(curr, mPvEng);
+	mEngSide = p->mSide;
 }
 
 void cEngine::MultiPv(POS * p, int * pv) {
@@ -296,7 +297,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
 
     // MAIN LOOP
 
-    while ((move = NextMove(m, &mv_type))) {
+    while ((move = NextMove(m, &mv_type, ply))) {
 
         // MAKE MOVE
 
@@ -652,7 +653,7 @@ avoid_null:
 
     // MAIN LOOP
 
-    while ((move = NextMove(m, &mv_type))) {
+    while ((move = NextMove(m, &mv_type, ply))) {
 
         // SET FUTILITY PRUNING FLAG
         // before the first applicable move is tried

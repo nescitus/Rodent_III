@@ -51,12 +51,14 @@ using U64 = uint64_t;
 #define USE_FIRST_ONE_INTRINSICS
 //#define USE_TUNING // needs epd.cpp, long compile time, huge file!!!
 
-#define USE_RISKY_PARAMETER
+//#define USE_RISKY_PARAMETER
 
 // max size of an opening book to fully cache in memory (in MB)
 #ifndef NO_BOOK_IN_MEMORY
     #define BOOK_IN_MEMORY_MB 16
 #endif
+
+//#define NO_THREADS
 
 #ifndef NO_THREADS
     #include <thread>
@@ -780,14 +782,15 @@ class cEngine {
     const int mcThreadId;
     int mRootDepth;
     bool mFlRootChoice;
+	int mEngSide;
 
     static void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
-    int NextMove(MOVES *m, int *flag);
+    int NextMove(MOVES *m, int *flag, int ply);
     int NextSpecialMove(MOVES *m, int *flag);
     static int NextCapture(MOVES *m);
     static void ScoreCaptures(MOVES *m);
-    void ScoreQuiet(MOVES *m);
+    void ScoreQuiet(MOVES *m, int ply);
     static int SelectBest(MOVES *m);
     static int BadCapture(POS *p, int move);
     static int MvvLva(POS *p, int move);
