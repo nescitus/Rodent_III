@@ -262,8 +262,8 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     SetVal(N_TRAP, -168, -300, 0, tuneKnight); // trapped knight
     SetVal(N_BLOCK, -17, -50, 0, tuneKnight);  // knight blocks c pawn in queen pawn openings
-    SetVal(N_OWH_MG, -1, -50, 0, tuneKnight);     // knight can move only to own half of the board
-	SetVal(N_OWH_EG,  0, -50, 0, tuneKnight);     // knight can move only to own half of the board
+    SetVal(N_OWH_MG, -1, -50, 0, tuneKnight);  // knight can move only to own half of the board
+	SetVal(N_OWH_EG,  0, -50, 0, tuneKnight);  // knight can move only to own half of the board
     SetVal(N_REACH_MG, 11, 0, 50, tuneKnight); // knight can reach an outpost square - midgame bonus
 	SetVal(N_REACH_EG, 4, 0, 50, tuneKnight);  // knight can reach an outpost square - endgame bonus
 	SetVal(B_REACH_MG, 5, 0, 50, tuneKnight);  // bishop can reach an outpost square - midgame bonus
