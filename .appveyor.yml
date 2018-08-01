@@ -4,21 +4,22 @@ clone_folder: c:\rodent_iii_src
 shallow_clone: true
 
 before_build:
-  - set PATH=c:\msys64\usr\bin;c:\msys64;%PATH%
-  - pacman -Syuu --noconfirm
-  - pacman -Syuu --noconfirm
-  - pacman -Syuu --noconfirm --needed mingw-w64-i686-gcc mingw-w64-x86_64-gcc
+  ###- set PATH=c:\msys64\usr\bin;c:\msys64;%PATH%
+  ###- pacman -Syuu --noconfirm
+  ###- pacman -Syuu --noconfirm
+  ###- pacman -Syuu --noconfirm --needed mingw-w64-i686-gcc mingw-w64-x86_64-gcc
   - cd %APPVEYOR_BUILD_FOLDER%\sources
 
 build_script:
-  - msys2_shell.cmd -mingw32 -defterm -no-start -here buildme_msys2.sh pentium4 core2 nehalem sandybridge haswell skylake znver1 pgo
-  - msys2_shell.cmd -mingw64 -defterm -no-start -here buildme_msys2.sh core2 nehalem sandybridge haswell skylake znver1 pgo
+  ###- msys2_shell.cmd -mingw32 -defterm -no-start -here buildme_msys2.sh pentium4 core2 nehalem sandybridge haswell skylake znver1 pgo
+  ###- msys2_shell.cmd -mingw64 -defterm -no-start -here buildme_msys2.sh core2 nehalem sandybridge haswell skylake znver1 pgo
   # print current 7zip version
-  - 7z | findstr /i "copyright"
-  - dir *.exe
+  ###- 7z | findstr /i "copyright"
+  ###- dir *.exe
   # pack exe's to 7z's and delete exe's
-  - for %%i in (*.exe) do 7z a -sdel -bso0 %APPVEYOR_BUILD_FOLDER%\mingw-"%%~ni.7z" "%%i"
-  - buildme_vs2017.bat pgo winxp
+  ###- for %%i in (*.exe) do 7z a -sdel -bso0 %APPVEYOR_BUILD_FOLDER%\mingw-"%%~ni.7z" "%%i"
+  ###- buildme_vs2017.bat pgo winxp
+  - buildme_vs2017.bat pgo
   - dir *.exe
   # pack exe's to zip's and delete exe's
   - for %%i in (*.exe) do 7z a -sdel -bso0 %APPVEYOR_BUILD_FOLDER%\"%%~ni.zip" "%%i"
