@@ -388,14 +388,16 @@ void cEngine::EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int 
 void cEngine::EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost_mg, int *outpost_eg) {
 
     int tmp = Par.sp_pst[sd][pc][sq];                     // get base outpost bonus
+	int dst = Dist.metric[sd][p->KingSq(~sd)];
+	if (dst > 0) tmp += dst / 2;
+
     if (tmp) {
         int mul = 0;                                      // reset outpost multiplier
         if (SqBb(sq) & ~e->p_can_take[~sd]) mul += 2;     // is piece in hole of enemy pawn structure?
         if (SqBb(sq) & e->p_takes[sd]) mul += 1;          // is piece defended by own pawn?
         if (SqBb(sq) & e->two_pawns_take[sd]) mul += 1;   // is piece defended by two pawns?
-        *outpost_mg += (tmp * mul) / 2;                   // add outpost bonus
+        *outpost_mg += ((tmp * mul) / 2);                 // add outpost bonus
 		*outpost_eg += (tmp * mul) / 2;
-
     }
 }
 
