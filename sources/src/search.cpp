@@ -155,6 +155,7 @@ void cEngine::MultiPv(POS * p, int * pv) {
 void cEngine::Iterate(POS *p, int *pv) {
 
     int cur_val = 0;
+	int depthCounter = 0;
 
     // Lazy SMP works best with some depth variance,
     // so every other thread will search to depth + 1
@@ -162,6 +163,15 @@ void cEngine::Iterate(POS *p, int *pv) {
     int offset = mcThreadId & 0x01;
 
     for (mRootDepth = 1 + offset; mRootDepth <= msSearchDepth; mRootDepth++) {
+
+		// skip depth if it already has good coverage in multi-threaded mode
+
+		tDepth[mcThreadId] = mRootDepth;
+		depthCounter = 0;
+		for (int j = 0; j < Glob.thread_no; j++) {
+			if (tDepth[j] >= mRootDepth) depthCounter++;
+		}
+		if (mRootDepth > 5 && Glob.thread_no > 1 && depthCounter > Glob.thread_no / 2) continue;
 
         // If a thread is lagging behind too much, which makes it unlikely
         // to contribute to the final result, skip the iteration.

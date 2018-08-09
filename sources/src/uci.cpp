@@ -349,6 +349,10 @@ void ParseGo(POS *p, const char *ptr) {
 #else
     Glob.goodbye = false;
 
+	for (int i = 0; i < MAX_THREADS; i++) {
+		tDepth[i] = 0;
+	}
+
     for (auto& engine: Engines) // mDpCompleted cleared in StartThinkThread();
         engine.StartThinkThread(p);
 

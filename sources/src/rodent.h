@@ -990,6 +990,7 @@ extern const int ph_value[7];
 extern ChessHeapClass Trans;
 
 extern int t0move[MAX_THREADS];
+extern int tDepth[MAX_THREADS];
 
 // TODO: perhaps don't search moves that has been searched by another thread to greater depth
 // TODO: changing tt date of used entries (thx Kestutis)
