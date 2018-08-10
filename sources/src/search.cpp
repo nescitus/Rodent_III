@@ -160,18 +160,22 @@ void cEngine::Iterate(POS *p, int *pv) {
     // Lazy SMP works best with some depth variance,
     // so every other thread will search to depth + 1
 
-    int offset = mcThreadId & 0x01;
+	int offset = mcThreadId & 0x01;
 
     for (mRootDepth = 1 + offset; mRootDepth <= msSearchDepth; mRootDepth++) {
-
-		// skip depth if it already has good coverage in multi-threaded mode
 
 		tDepth[mcThreadId] = mRootDepth;
 		depthCounter = 0;
 		for (int j = 0; j < Glob.thread_no; j++) {
 			if (tDepth[j] >= mRootDepth) depthCounter++;
 		}
-		if (mRootDepth > 5 && Glob.thread_no > 1 && depthCounter > Glob.thread_no / 2) continue;
+
+		// skip depth if it already has good coverage in multi-threaded mode
+
+		if (mRootDepth > 5 
+        && mRootDepth < msSearchDepth
+        && Glob.thread_no > 1 
+        && depthCounter > Glob.thread_no / 2) continue;
 
         // If a thread is lagging behind too much, which makes it unlikely
         // to contribute to the final result, skip the iteration.
@@ -316,7 +320,6 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
         if (victim != NO_TP) last_capt = Tsq(move);
         else last_capt = -1;
         p->DoMove(move, u);
-		if (mcThreadId == 0) t0move[mcThreadId] = move;
         if (p->Illegal()) { p->UndoMove(move, u); continue; }
 
         // DON'T SEARCH THE SAME MOVES IN MULTI-PV MODE 

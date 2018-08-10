@@ -17,7 +17,6 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include "rodent.h"
 
-//int max_depth_completed;
 int POS::msCastleMask[64];
 
 const int tp_value[7] = { 100, 325, 325, 500, 1000,  0,   0 };
@@ -26,7 +25,6 @@ const int ph_value[7] = {   0,   1,   1,   2,    4,  0,   0 };
 U64 POS::msZobPiece[12][64];
 U64 POS::msZobCastle[16];
 U64 POS::msZobEp[8];
-int t0move[MAX_THREADS];
 int tDepth[MAX_THREADS];
 int cEngine::msMoveTime;
 int cEngine::msMoveNodes;
