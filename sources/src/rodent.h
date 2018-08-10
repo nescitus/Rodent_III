@@ -701,6 +701,7 @@ class cGlobals {
     bool should_clear;
     bool goodbye;
     bool use_personality_files;
+	bool scoreDrop;
     bool show_pers_file;
     glob_int depth_reached;
     int moves_from_start; // to restrict book depth for weaker levels

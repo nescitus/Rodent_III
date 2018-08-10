@@ -103,6 +103,7 @@ void cEngine::Think(POS *p) {
     mPvEng[0] = 0; // clear engine's move
     mPvEng[1] = 0; // clear ponder move
     Glob.ClearAvoidList();
+	Glob.scoreDrop = false;
     mFlRootChoice = false;
     *curr = *p;
     AgeHist();
@@ -230,6 +231,7 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
             beta  = lastScore + margin;
             cur_val = SearchRoot(p, 0, alpha, beta, depth, pv);
             if (Glob.abort_search) break;
+			if (cur_val < alpha && margin > 50) Glob.scoreDrop = true;
             if (cur_val > alpha && cur_val < beta)
                 return cur_val;              // we have finished within the window
             if (cur_val > MAX_EVAL) break;   // verify mate searching with infinite bounds
@@ -943,7 +945,10 @@ void CheckTimeout() {
             Glob.pondering = false;
     }
 
-    if (!Glob.pondering && cEngine::msMoveTime >= 0 && GetMS() - cEngine::msStartTime >= cEngine::msMoveTime)
+	int time = cEngine::msMoveTime;
+	if (Glob.scoreDrop) time *= 2;
+
+    if (!Glob.pondering && cEngine::msMoveTime >= 0 && GetMS() - cEngine::msStartTime >= time)
         Glob.abort_search = true;
 }
 
