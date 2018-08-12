@@ -475,20 +475,8 @@ void cEngine::EvaluatePassers(POS *p, eData *e, eColor sd) {
         if (!(bb_stop & p->OccBb())) {
 			Add(e, sd, Par.values[P_MOB_MG], Par.values[P_MOB_EG]); // pawn mobility bonus
 			// TODO: perhaps bigger bonus for central mobility
-			/*
-            if (!(bb_stop & e->p_can_take[op])) {
-                if (BB.GetPawnControl(bb_stop, sd) & (p->Bishops(op) | p->Knights(op)))
-                    Add(e, sd, Par.values[P_THR]);
-                if (bb_pawn & (RANK_2_BB | RANK_7_BB)) { // possible attack by a double pawn move
-                    U64 next = BB.ShiftFwd(bb_stop, sd);
-                    if (!(next & p->OccBb())) {
-                        if (!(next & e->p_can_take[op])) {
-                            if (BB.GetPawnControl(next, sd) & (p->Bishops(op) | p->Knights(op)))
-                                Add(e, sd, Par.values[P_THR]);
-                        }
-                    }
-                }
-            } */
+			if (bb_pawn & Mask.center) Add(e, sd, 2, 0);
+
         }
 
         // passed pawns
