@@ -39,10 +39,9 @@ sBook MainBook;
 #else
     #include "book_gen.h"
 #endif
-
 void PrintVersion() {
 
-    printf("id name Rodent III 0.262"
+    printf("id name Rodent III 0.263"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
             " 32-bit"
