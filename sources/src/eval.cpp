@@ -474,9 +474,9 @@ void cEngine::EvaluatePassers(POS *p, eData *e, eColor sd) {
 
         if (!(bb_stop & p->OccBb())) {
 			Add(e, sd, Par.values[P_MOB_MG], Par.values[P_MOB_EG]); // pawn mobility bonus
-			// TODO: perhaps bigger bonus for central mobility
-			if (bb_pawn & Mask.center) Add(e, sd, 2, 0);
+			if (bb_pawn & Mask.center) Add(e, sd, 2, 0);            // additional central pawn mobility bonus
 
+			// TODO: pawn can attack enemy piece in one move
         }
 
         // passed pawns

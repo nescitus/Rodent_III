@@ -86,7 +86,7 @@ void cEngine::InitSearch() { // static init function
             int r = 0;
 
             if (dp != 0 && mv != 0) // +-inf to int is undefined
-                r = (int)(log((double)dp) * log((double)Min(mv, 63)) / 2.0);
+                r = (int)(log((double)dp) * log(1.4 * (double)Min(mv, 63)) / 2.25); // older Ethereal formula, thx Andrew Grant
 
             msLmrSize[0][dp][mv] = r;     // zero window node
             msLmrSize[1][dp][mv] = r - 1; // principal variation node (checking for pos. values is in `Search()`)
