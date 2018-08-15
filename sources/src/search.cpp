@@ -236,7 +236,7 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
 
 			if (cur_val < alpha && margin > 50) Glob.scoreJump = true;
 
-			// score increases (this hurts at more threads)
+			// score increases (this seems to hurt at more threads, need a confirmation run)
 
 			if (cur_val > beta 
 			&& margin > 50 

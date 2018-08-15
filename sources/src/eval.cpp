@@ -76,6 +76,13 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     bb_zone = BB.KingAttacks(king_sq);
     bb_zone |= BB.ShiftFwd(bb_zone, op);
 
+	// Factor in minor pieces as king defenders
+
+	int defenders[5] = { -5, 0, 3, 6, 9 };
+	U64 minors = p->Knights(~sd) | p->Bishops(~sd);
+	cnt = Min(BB.PopCnt(minors & bb_zone), 4);
+	Add(e, ~sd, defenders[cnt], 0);
+
     // Init helper bitboards
 
     U64 n_checks = BB.KnightAttacks(king_sq) & ~p->mClBb[sd] & ~e->p_takes[op];
@@ -371,7 +378,6 @@ void cEngine::EvaluateKingAttack(POS *p, eData *e, eColor sd) {
         if (p->mCnt[sd][Q] == 0) e->att[sd] = 0;
         Add(e, sd, (Par.danger[e->att[sd]] * Par.sd_att[sd]) / 100);
     }
-
 }
 
 void cEngine::EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int v2, int *outpost_mg, int *outpost_eg) {
