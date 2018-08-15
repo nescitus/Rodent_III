@@ -55,7 +55,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply)) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
-        if (!is_pv) return score;
+        if (!is_pv) return score; // !is_pv condition confirmed 2018-08-13
     }
 
     // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
@@ -66,6 +66,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         eval = EvalScaleByDepth(p, ply, eval);
 #endif
         return eval;
+
     }
 
     // PREPARE FOR SEARCH
