@@ -187,12 +187,13 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Pawn chain values
 
-    static const bool tuneChain = false;
+    static const bool tuneChain = true;
 
     SetVal(P_BIGCHAIN, 38, 0, 50, tuneChain);   // general penalty for a compact pawn chain pointing at our king
     SetVal(P_SMALLCHAIN, 27, 0, 50, tuneChain); // similar penalty for a chain that is not fully blocked by enemy pawns
     SetVal(P_CS1, 12, 0, 50, tuneChain);        // bonus for a pawn storm next to a fixed chain - like g5 in King's Indian
-    SetVal(P_CS2, 3, 0, 50, tuneChain);         // as above, this time like g4 in King's Indian
+    SetVal(P_CS2, 4, 0, 50, tuneChain);         // as above, this time like g4 in King's Indian
+	SetVal(P_CS_EDGE, 8, 0, 50, tuneChain);     // similarly, h5 in King's Indian
     SetVal(P_CSFAIL, 32, 0, 50, tuneChain);     // penalty for misplaying pawn strom next to a chain
 
     // Passed pawn bonuses per rank
@@ -732,6 +733,7 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[P_SMALLCHAIN] = 13; // similar penalty for a chain that is not fully blocked by enemy pawns
     values[P_CS1] = 4;         // additional evaluation of a pawn storm next to a fixed chain - like g5 in King's Indian
     values[P_CS2] = 12;        // as above, this time like g4 in King's Indian
+	values[P_CS_EDGE] = 4;     // edge pawn march, like h5 in King's Indian
     values[P_CSFAIL] = 10;     // penalty for a badly performed pawn storm next to a chain
 
 

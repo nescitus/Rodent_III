@@ -233,6 +233,9 @@ int cEngine::EvaluateChains(POS *p, eColor sd) {
 
         if (OPP_PAWN(E5)) {
             if (CONTAINS(opPawns, F4, D6)) { // d6-e5-f4 triad
+                // h5
+				if (OPP_PAWN(H5)) mg_result -= Par.values[P_CS_EDGE];
+
                 // storm of a "g" pawn in the King's Indian
                 if (OPP_PAWN(G5)) {
                     mg_result -= Par.values[P_CS1];
@@ -262,6 +265,7 @@ int cEngine::EvaluateChains(POS *p, eColor sd) {
 
         if (OPP_PAWN(D5)) {
             if (CONTAINS(opPawns, C4, E6)) {
+				if (OPP_PAWN(A5)) mg_result -= Par.values[P_CS_EDGE];
                 // storm of a "b" pawn
                 if (OPP_PAWN(B5)) {
                     mg_result -= Par.values[P_CS1];
