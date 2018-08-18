@@ -126,11 +126,11 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
 
     const U64 w_pawns = p->Pawns(WC);
     const U64 w_pawn_files = BB.FillSouth(w_pawns) & 0xff;
-    const int w_islands = BB.PopCnt(((~w_pawn_files) >> 1) & w_pawn_files);
+    const int w_islands = PopCnt(((~w_pawn_files) >> 1) & w_pawn_files);
 
     const U64 b_pawns = p->Pawns(BC);
     const U64 b_pawn_files = BB.FillSouth(b_pawns) & 0xff;
-    const int b_islands = BB.PopCnt(((~b_pawn_files) >> 1) & b_pawn_files);
+    const int b_islands = PopCnt(((~b_pawn_files) >> 1) & b_pawn_files);
     e->mg_pawns[WC] -= (w_islands - b_islands) * Par.values[P_ISL];
     e->eg_pawns[WC] -= (w_islands - b_islands) * Par.values[P_ISL];
     // pawn islands code would also break detailed score display

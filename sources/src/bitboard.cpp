@@ -95,24 +95,24 @@ U64 cBitBoard::GetBetween(int sq1, int sq2) {
     #define popcnt_gcc(x) __builtin_popcountll(x)
 #endif
 
-int cBitBoard::PopCnt(U64 bb) {
+int PopCnt(U64 bb) {
     return popcnt_gcc(bb);
 }
 
 #elif defined(USE_MM_POPCNT)
     #include <nmmintrin.h>
     #ifndef _M_AMD64 // 32 bit windows
-        int cBitBoard::PopCnt(U64 bb) {
+        int PopCnt(U64 bb) {
             return _mm_popcnt_u32((unsigned int)(bb >> 32)) + _mm_popcnt_u32((unsigned int)(bb));
         }
     #else            // 64 bit windows
-        int cBitBoard::PopCnt(U64 bb) {
+        int PopCnt(U64 bb) {
             return (int)_mm_popcnt_u64(bb);
         }
     #endif
 #else
 
-int cBitBoard::PopCnt(U64 bb) { // general purpose population count
+int PopCnt(U64 bb) { // general purpose population count
 
     U64 k1 = (U64)0x5555555555555555;
     U64 k2 = (U64)0x3333333333333333;
@@ -127,7 +127,7 @@ int cBitBoard::PopCnt(U64 bb) { // general purpose population count
 
 #endif
 
-int cBitBoard::PopFirstBit(U64 *bb) {
+int PopFirstBit(U64 *bb) {
 
     U64 bb_local = *bb;
     *bb &= (*bb - 1);

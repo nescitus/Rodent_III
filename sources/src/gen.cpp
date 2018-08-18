@@ -28,7 +28,7 @@ int *POS::GenerateCaptures(int *list) const {
     if (sd == WC) {
         bb_moves = ((Pawns(WC) & ~FILE_A_BB & RANK_7_BB) << 7) & mClBb[BC];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (Q_PROM << 12) | (to << 6) | (to - 7);
             *list++ = (R_PROM << 12) | (to << 6) | (to - 7);
             *list++ = (B_PROM << 12) | (to << 6) | (to - 7);
@@ -37,7 +37,7 @@ int *POS::GenerateCaptures(int *list) const {
 
         bb_moves = ((Pawns(WC) & ~FILE_H_BB & RANK_7_BB) << 9) & mClBb[BC];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (Q_PROM << 12) | (to << 6) | (to - 9);
             *list++ = (R_PROM << 12) | (to << 6) | (to - 9);
             *list++ = (B_PROM << 12) | (to << 6) | (to - 9);
@@ -46,7 +46,7 @@ int *POS::GenerateCaptures(int *list) const {
 
         bb_moves = ((Pawns(WC) & RANK_7_BB) << 8) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (Q_PROM << 12) | (to << 6) | (to - 8);
             *list++ = (R_PROM << 12) | (to << 6) | (to - 8);
             *list++ = (B_PROM << 12) | (to << 6) | (to - 8);
@@ -55,13 +55,13 @@ int *POS::GenerateCaptures(int *list) const {
 
         bb_moves = ((Pawns(WC) & ~FILE_A_BB & ~RANK_7_BB) << 7) & mClBb[BC];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | (to - 7);
         }
 
         bb_moves = ((Pawns(WC) & ~FILE_H_BB & ~RANK_7_BB) << 9) & mClBb[BC];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | (to - 9);
         }
 
@@ -74,7 +74,7 @@ int *POS::GenerateCaptures(int *list) const {
     } else {
         bb_moves = ((Pawns(BC) & ~FILE_A_BB & RANK_2_BB) >> 9) & mClBb[WC];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (Q_PROM << 12) | (to << 6) | (to + 9);
             *list++ = (R_PROM << 12) | (to << 6) | (to + 9);
             *list++ = (B_PROM << 12) | (to << 6) | (to + 9);
@@ -83,7 +83,7 @@ int *POS::GenerateCaptures(int *list) const {
 
         bb_moves = ((Pawns(BC) & ~FILE_H_BB & RANK_2_BB) >> 7) & mClBb[WC];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (Q_PROM << 12) | (to << 6) | (to + 7);
             *list++ = (R_PROM << 12) | (to << 6) | (to + 7);
             *list++ = (B_PROM << 12) | (to << 6) | (to + 7);
@@ -92,7 +92,7 @@ int *POS::GenerateCaptures(int *list) const {
 
         bb_moves = ((Pawns(BC) & RANK_2_BB) >> 8) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (Q_PROM << 12) | (to << 6) | (to + 8);
             *list++ = (R_PROM << 12) | (to << 6) | (to + 8);
             *list++ = (B_PROM << 12) | (to << 6) | (to + 8);
@@ -101,13 +101,13 @@ int *POS::GenerateCaptures(int *list) const {
 
         bb_moves = ((Pawns(BC) & ~FILE_A_BB & ~RANK_2_BB) >> 9) & mClBb[WC];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | (to + 9);
         }
 
         bb_moves = ((Pawns(BC) & ~FILE_H_BB & ~RANK_2_BB) >> 7) & mClBb[WC];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | (to + 7);
         }
 
@@ -123,10 +123,10 @@ int *POS::GenerateCaptures(int *list) const {
 
     bb_pieces = Knights(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
         bb_moves = BB.KnightAttacks(from) & mClBb[~sd];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -135,10 +135,10 @@ int *POS::GenerateCaptures(int *list) const {
 
     bb_pieces = Bishops(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
         bb_moves = BB.BishAttacks(OccBb(), from) & mClBb[op];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -147,10 +147,10 @@ int *POS::GenerateCaptures(int *list) const {
 
     bb_pieces = Rooks(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
         bb_moves = BB.RookAttacks(OccBb(), from) & mClBb[op];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -159,10 +159,10 @@ int *POS::GenerateCaptures(int *list) const {
 
     bb_pieces = Queens(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
         bb_moves = BB.QueenAttacks(OccBb(), from) & mClBb[op];
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -171,7 +171,7 @@ int *POS::GenerateCaptures(int *list) const {
 
     bb_moves = BB.KingAttacks(KingSq(sd)) & mClBb[op];
     while (bb_moves) {
-        to = BB.PopFirstBit(&bb_moves);
+        to = PopFirstBit(&bb_moves);
         *list++ = (to << 6) | KingSq(sd);
     }
     return list;
@@ -194,13 +194,13 @@ int *POS::GenerateQuiet(int *list) const {
 
         bb_moves = ((((Pawns(WC) & RANK_2_BB) << 8) & UnoccBb()) << 8) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (EP_SET << 12) | (to << 6) | (to - 16);
         }
 
         bb_moves = ((Pawns(WC) & ~RANK_7_BB) << 8) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | (to - 8);
         }
     } else {
@@ -213,13 +213,13 @@ int *POS::GenerateQuiet(int *list) const {
 
         bb_moves = ((((Pawns(BC) & RANK_7_BB) >> 8) & UnoccBb()) >> 8) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (EP_SET << 12) | (to << 6) | (to + 16);
         }
 
         bb_moves = ((Pawns(BC) & ~RANK_2_BB) >> 8) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | (to + 8);
         }
     }
@@ -228,10 +228,10 @@ int *POS::GenerateQuiet(int *list) const {
 
     bb_pieces = Knights(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
         bb_moves = BB.KnightAttacks(from) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -240,10 +240,10 @@ int *POS::GenerateQuiet(int *list) const {
 
     bb_pieces = Bishops(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
         bb_moves = BB.BishAttacks(OccBb(), from) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -252,10 +252,10 @@ int *POS::GenerateQuiet(int *list) const {
 
     bb_pieces = Rooks(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
         bb_moves = BB.RookAttacks(OccBb(), from) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -264,10 +264,10 @@ int *POS::GenerateQuiet(int *list) const {
 
     bb_pieces = Queens(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
         bb_moves = BB.QueenAttacks(OccBb(), from) & UnoccBb();
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -276,7 +276,7 @@ int *POS::GenerateQuiet(int *list) const {
 
     bb_moves = BB.KingAttacks(KingSq(sd)) & UnoccBb();
     while (bb_moves) {
-        to = BB.PopFirstBit(&bb_moves);
+        to = PopFirstBit(&bb_moves);
         *list++ = (to << 6) | KingSq(sd);
     }
     return list;
@@ -304,28 +304,28 @@ int *POS::GenerateSpecial(int *list) const {
         bb_moves = ((((Pawns(WC) & RANK_2_BB) << 8) & UnoccBb()) << 8) & UnoccBb();
         bb_moves = bb_moves & p_check;
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (EP_SET << 12) | (to << 6) | (to - 16);
         }
 
         bb_moves = ((Pawns(WC) & ~RANK_7_BB) << 8) & UnoccBb();
         bb_moves = bb_moves & p_check;
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | (to - 8);
         }
     } else {
         bb_moves = ((((Pawns(BC) & RANK_7_BB) >> 8) & UnoccBb()) >> 8) & UnoccBb();
         bb_moves = bb_moves & p_check;
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (EP_SET << 12) | (to << 6) | (to + 16);
         }
 
         bb_moves = ((Pawns(BC) & ~RANK_2_BB) >> 8) & UnoccBb();
         bb_moves = bb_moves & p_check;
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | (to + 8);
         }
     }
@@ -334,7 +334,7 @@ int *POS::GenerateSpecial(int *list) const {
 
     bb_pieces = Knights(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
 
         // are discovered checks possible?
 
@@ -344,7 +344,7 @@ int *POS::GenerateSpecial(int *list) const {
         bb_moves = BB.KnightAttacks(from) & UnoccBb();
         if (!knight_discovers) bb_moves = bb_moves & n_check;
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -353,7 +353,7 @@ int *POS::GenerateSpecial(int *list) const {
 
     bb_pieces = Bishops(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
 
         // are straight discovered checks possible?
 
@@ -362,7 +362,7 @@ int *POS::GenerateSpecial(int *list) const {
         bb_moves = BB.BishAttacks(OccBb(), from) & UnoccBb();
         if (!bish_discovers) bb_moves = bb_moves & b_check;
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -371,7 +371,7 @@ int *POS::GenerateSpecial(int *list) const {
 
     bb_pieces = Rooks(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
 
         // are diagonal discovered checks possible?
 
@@ -380,7 +380,7 @@ int *POS::GenerateSpecial(int *list) const {
         bb_moves = BB.RookAttacks(OccBb(), from) & UnoccBb();
         if (!rook_discovers) bb_moves = bb_moves & r_check;
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -389,11 +389,11 @@ int *POS::GenerateSpecial(int *list) const {
 
     bb_pieces = Queens(sd);
     while (bb_pieces) {
-        from = BB.PopFirstBit(&bb_pieces);
+        from = PopFirstBit(&bb_pieces);
         bb_moves = BB.QueenAttacks(OccBb(), from) & UnoccBb();
         bb_moves = bb_moves & (r_check | b_check);
         while (bb_moves) {
-            to = BB.PopFirstBit(&bb_moves);
+            to = PopFirstBit(&bb_moves);
             *list++ = (to << 6) | from;
         }
     }
@@ -404,7 +404,7 @@ int *POS::GenerateSpecial(int *list) const {
 
     moves = k_attacks[KingSq(sd)] & UnoccBb();
     while (moves) {
-      to = BB.PopFirstBit(&moves);
+      to = PopFirstBit(&moves);
       *list++ = (to << 6) | KingSq(sd);
     }
     */
@@ -414,11 +414,11 @@ int *POS::GenerateSpecial(int *list) const {
 bool POS::CanDiscoverCheck(U64 bb_checkers, eColor op, int from) const {
 
     while (bb_checkers) {
-        int checker = BB.PopFirstBit(&bb_checkers);
+        int checker = PopFirstBit(&bb_checkers);
         U64 bb_ray = BB.bbBetween[checker][mKingSq[op]];
 
         if (SqBb(from) & bb_ray) {
-            if (BB.PopCnt(bb_ray & OccBb()) == 1)
+            if (PopCnt(bb_ray & OccBb()) == 1)
                 return true;
         }
     }

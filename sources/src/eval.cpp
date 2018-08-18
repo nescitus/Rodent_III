@@ -67,7 +67,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     int fwd_cnt = 0;
     int outpost_mg = 0;
 	int outpost_eg = 0;
-    int center_control = 2 * BB.PopCnt(e->p_takes[sd] & Mask.center);
+    int center_control = 2 * PopCnt(e->p_takes[sd] & Mask.center);
 
     // Init king attack zone
 
@@ -80,7 +80,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
 	int defenders[5] = { -5, 0, 3, 6, 9 };
 	U64 minors = p->Knights(~sd) | p->Bishops(~sd);
-	cnt = Min(BB.PopCnt(minors & bb_zone), 4);
+	cnt = Min(PopCnt(minors & bb_zone), 4);
 	Add(e, ~sd, defenders[cnt], 0);
 
     // Init helper bitboards
@@ -95,7 +95,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Knights(sd);
     while (bb_pieces) {
-        sq = BB.PopFirstBit(&bb_pieces);                         // get square
+        sq = PopFirstBit(&bb_pieces);                         // get square
 
         // knight tropism to enemy king (based on Gambit Fruit)
 
@@ -108,7 +108,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         }
 
         bb_control = BB.KnightAttacks(sq) & ~p->mClBb[sd];       // get control bitboard
-        center_control += BB.PopCnt(bb_control & Mask.center);
+        center_control += PopCnt(bb_control & Mask.center);
         if (!(bb_control  & ~e->p_takes[op] & Mask.away[sd]))    // we do not attack enemy half of the board
             Add(e, sd, V(N_OWH_MG), V(N_OWH_EG) );
         e->all_att[sd] |= BB.KnightAttacks(sq);
@@ -123,11 +123,11 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         bb_attack = BB.KnightAttacks(sd);
         if (bb_attack & bb_zone) {                               // king attack
             e->wood[sd]++;
-            e->att[sd] += V(N_ATT1) * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            e->att[sd] += V(N_ATT2) * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            e->att[sd] += V(N_ATT1) * PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            e->att[sd] += V(N_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = BB.PopCnt(bb_control & ~e->p_takes[op]);           // get mobility count
+        cnt = PopCnt(bb_control & ~e->p_takes[op]);           // get mobility count
         mob_mg += Par.n_mob_mg[cnt];
         mob_eg += Par.n_mob_eg[cnt];
 
@@ -139,7 +139,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Bishops(sd);
     while (bb_pieces) {
-        sq = BB.PopFirstBit(&bb_pieces);                         // get square
+        sq = PopFirstBit(&bb_pieces);                         // get square
 
         // bishop tropism  to enemy king (based on Gambit Fruit)
 
@@ -152,7 +152,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         }
 
         bb_control = BB.BishAttacks(p->OccBb(), sq);             // get control bitboard
-        center_control += BB.PopCnt(bb_control & Mask.center);
+        center_control += PopCnt(bb_control & Mask.center);
         e->all_att[sd] |= bb_control;                            // update attack map
         e->ev_att[sd]  |= bb_control;
         if (!(bb_control & Mask.away[sd]))
@@ -165,11 +165,11 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         if (bb_attack & bb_zone) {                               // evaluate king attacks
             e->wood[sd]++;
-            e->att[sd] += V(B_ATT1) * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            e->att[sd] += V(B_ATT2) * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            e->att[sd] += V(B_ATT1) * PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            e->att[sd] += V(B_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = BB.PopCnt(bb_control & ~e->p_takes[op] & ~bb_excluded); // get mobility count
+        cnt = PopCnt(bb_control & ~e->p_takes[op] & ~bb_excluded); // get mobility count
         mob_mg += Par.b_mob_mg[cnt];
         mob_eg += Par.b_mob_eg[cnt];
 
@@ -191,11 +191,11 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         // Pawns on the same square color as our bishop
 
         if (bbWhiteSq & SqBb(sq)) {
-            own_p_cnt = BB.PopCnt(bbWhiteSq & p->Pawns(sd)) - 4;
-            opp_p_cnt = BB.PopCnt(bbWhiteSq & p->Pawns(op)) - 4;
+            own_p_cnt = PopCnt(bbWhiteSq & p->Pawns(sd)) - 4;
+            opp_p_cnt = PopCnt(bbWhiteSq & p->Pawns(op)) - 4;
         } else {
-            own_p_cnt = BB.PopCnt(bbBlackSq & p->Pawns(sd)) - 4;
-            opp_p_cnt = BB.PopCnt(bbBlackSq & p->Pawns(op)) - 4;
+            own_p_cnt = PopCnt(bbBlackSq & p->Pawns(sd)) - 4;
+            opp_p_cnt = PopCnt(bbBlackSq & p->Pawns(op)) - 4;
         }
 
         Add(e, sd, V(B_OWN_P) * own_p_cnt
@@ -206,7 +206,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Rooks(sd);
     while (bb_pieces) {
-        sq = BB.PopFirstBit(&bb_pieces);                         // get square
+        sq = PopFirstBit(&bb_pieces);                         // get square
 
         // rook tropism to enemy king (based on Gambit Fruit)
 
@@ -228,7 +228,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
             bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
 
             while (bb_contact) {
-                int contactSq = BB.PopFirstBit(&bb_contact);     // find a potential contact check
+                int contactSq = PopFirstBit(&bb_contact);     // find a potential contact check
                 if (p->Swap(sq, contactSq) >= 0) {               // rook exchanges are also accepted
                     e->att[sd] += V(R_CONTACT);
                     break;
@@ -240,11 +240,11 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         if (bb_attack & bb_zone) {                                         // evaluate king attacks
             e->wood[sd]++;
-            e->att[sd] += V(R_ATT1) * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            e->att[sd] += V(R_ATT2) * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            e->att[sd] += V(R_ATT1) * PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            e->att[sd] += V(R_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = BB.PopCnt(bb_control & ~bb_excluded);                        // get mobility count
+        cnt = PopCnt(bb_control & ~bb_excluded);                        // get mobility count
         mob_mg += Par.r_mob_mg[cnt];
         mob_eg += Par.r_mob_eg[cnt];
 
@@ -288,7 +288,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Queens(sd);
     while (bb_pieces) {
-        sq = BB.PopFirstBit(&bb_pieces);                         // get square
+        sq = PopFirstBit(&bb_pieces);                         // get square
 
         // queen tropism to enemy king (based on Gambit Fruit)
 
@@ -307,7 +307,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
             bb_contact = bb_control & BB.KingAttacks(king_sq);   // queen contact checks
             while (bb_contact) {
-                int contactSq = BB.PopFirstBit(&bb_contact);     // find potential contact check square
+                int contactSq = PopFirstBit(&bb_contact);     // find potential contact check square
                 if (p->Swap(sq, contactSq) >= 0) {               // if check doesn't lose material, evaluate
                     e->att[sd] += V(Q_CONTACT);
                     break;
@@ -320,11 +320,11 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         if (bb_attack & bb_zone) {                               // evaluate king attacks
             e->wood[sd]++;
-            e->att[sd] += V(Q_ATT1) * BB.PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            e->att[sd] += V(Q_ATT2) * BB.PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            e->att[sd] += V(Q_ATT1) * PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
+            e->att[sd] += V(Q_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = BB.PopCnt(bb_control & ~bb_excluded);              // get mobility count
+        cnt = PopCnt(bb_control & ~bb_excluded);              // get mobility count
         mob_mg += Par.q_mob_mg[cnt];
         mob_eg += Par.q_mob_eg[cnt];
 
@@ -385,7 +385,7 @@ void cEngine::EvaluateKingAttack(POS *p, eData *e, eColor sd) {
 	// TODO: tuned tables, perhaps then it will work
 
 	//U64 bbMob = BB.KingAttacks(p->KingSq(sd)) && ~e->all_att[~sd];
-	//int cnt = BB.PopCnt(bbMob);
+	//int cnt = PopCnt(bbMob);
 	//Add(e, sd, 0, 4 * (cnt - 4));
 }
 
@@ -429,7 +429,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, eColor sd) {
 
         // Set data and flags
 
-        sq = BB.PopFirstBit(&bb_pieces);
+        sq = PopFirstBit(&bb_pieces);
         front_span = BB.GetFrontSpan(SqBb(sq), sd);
         fl_unopposed = ((front_span & p->Pawns(op)) == 0);
         fl_phalanx = (BB.ShiftSideways(SqBb(sq)) & p->Pawns(sd));
@@ -439,7 +439,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, eColor sd) {
 
         if (fl_unopposed) {
             if (fl_phalanx || fl_defended) {
-                if (BB.PopCnt((Mask.passed[sd][sq] & p->Pawns(op))) == 1)
+                if (PopCnt((Mask.passed[sd][sq] & p->Pawns(op))) == 1)
                     AddPawns(e, sd, Par.cand_bonus_mg[sd][Rank(sq)], Par.cand_bonus_eg[sd][Rank(sq)]);
             }
         }
@@ -481,7 +481,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Pawns(sd);
     while (bb_pieces) {
-        sq = BB.PopFirstBit(&bb_pieces);
+        sq = PopFirstBit(&bb_pieces);
         bb_pawn = SqBb(sq);
         bb_stop = BB.ShiftFwd(SqBb(sq), sd);
 
@@ -540,7 +540,7 @@ void cEngine::EvaluateUnstoppable(eData *e, POS *p) {
         if (p->mSide == BC) tempo = 1; else tempo = 0;
         bb_pieces = p->Pawns(WC);
         while (bb_pieces) {
-            sq = BB.PopFirstBit(&bb_pieces);
+            sq = PopFirstBit(&bb_pieces);
             if (!(Mask.passed[WC][sq] & p->Pawns(BC))) {
                 bb_span = BB.GetFrontSpan(SqBb(sq), WC);
                 pawn_sq = ((WC - 1) & 56) + (sq & 7);
@@ -561,7 +561,7 @@ void cEngine::EvaluateUnstoppable(eData *e, POS *p) {
         if (p->mSide == WC) tempo = 1; else tempo = 0;
         bb_pieces = p->Pawns(BC);
         while (bb_pieces) {
-            sq = BB.PopFirstBit(&bb_pieces);
+            sq = PopFirstBit(&bb_pieces);
             if (!(Mask.passed[BC][sq] & p->Pawns(WC))) {
                 bb_span = BB.GetFrontSpan(SqBb(sq), BC);
                 pawn_sq = ((BC - 1) & 56) + (sq & 7);
@@ -639,7 +639,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, eColor sd) {
     // hanging pieces (attacked and undefended, based on DiscoCheck)
 
     while (bb_hanging) {
-        sq = BB.PopFirstBit(&bb_hanging);
+        sq = PopFirstBit(&bb_hanging);
         pc = p->TpOnSq(sq);
         mg += att_on_hang_mg[pc];
         eg += att_on_hang_eg[pc];
@@ -648,7 +648,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, eColor sd) {
     // defended pieces under attack
 
     while (bb_defended) {
-        sq = BB.PopFirstBit(&bb_defended);
+        sq = PopFirstBit(&bb_defended);
         pc = p->TpOnSq(sq);
         mg += att_on_def_mg[pc];
         eg += att_on_def_eg[pc];
@@ -657,7 +657,7 @@ void cEngine::EvaluateThreats(POS *p, eData *e, eColor sd) {
     // unattacked and undefended
 
     while (bb_undefended) {
-		sq = BB.PopFirstBit(&bb_undefended);
+		sq = PopFirstBit(&bb_undefended);
 		pc = p->TpOnSq(sq);
 		mg += unatt_undef_mg[pc];
 		eg += unatt_undef_eg[pc];

@@ -258,6 +258,11 @@ constexpr U64 ShiftSE(const U64& x)    { return (x & bbNotH) >> 7; }
 
 constexpr bool MoreThanOne(const U64& bb) { return bb & (bb - 1); }
 
+// bitboard functions
+
+int PopCnt(U64);
+int PopFirstBit(U64 *bb);
+
 class cBitBoard {
   private:
     U64 p_attacks[2][64];
@@ -295,9 +300,6 @@ class cBitBoard {
     U64 FillSouthSq(int sq);
     U64 FillNorthExcl(U64 bb);
     U64 FillSouthExcl(U64 bb);
-
-    int PopCnt(U64);
-    int PopFirstBit(U64 *bb);
 
     U64 PawnAttacks(eColor sd, int sq);
     U64 KingAttacks(int sq);

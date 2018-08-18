@@ -695,6 +695,19 @@ avoid_null:
 		// GET MOVE HISTORY SCORE
 
 		mv_hist_score = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
+
+		// SEE PRUNING
+		// taken from Laser, see
+		// https://github.com/jeffreyan11/uci-chess-engine/commit/8d5fd060f81ade365950cb9dcb2ef8eaab5078e4
+
+		if (fl_prunable_node
+		&& Par.search_skill > 5
+		&& depth <= 3
+		&& !p->InCheck()
+		&& mv_hist_score < Par.hist_limit
+		&& mv_type == MV_NORMAL
+		&& p->Swap(Fsq(move), Tsq(move)) < -20 * depth * depth)
+			continue;
 		
 		// MAKE MOVE
 
