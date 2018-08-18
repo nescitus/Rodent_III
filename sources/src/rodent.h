@@ -557,6 +557,7 @@ const char* const paramNames[N_OF_VAL] = {
 	"a7Knight", "b7Knight", "c7Knight", "d7Knight", "e7Knight", "f7Knight", "g7Knight", "h7Knight",
 };
 
+#define V(x) (Par.values[x]) // a little shorthand to unclutter eval code
 
 class cParam {
   public:

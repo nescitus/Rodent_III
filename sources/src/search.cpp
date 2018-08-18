@@ -586,7 +586,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     && depth <= mscSnpDepth
     && p->MayNull()
     && !was_null) {
-        int sc = eval - 120 * depth;
+        int sc = eval - 120 * depth; // TODO: test 90
         if (sc > beta) return sc;
     }
 
@@ -692,9 +692,12 @@ avoid_null:
            if (eval + mscFutMargin[depth] < beta) fl_futility = true;
         }
 
-        // MAKE MOVE
+		// GET MOVE HISTORY SCORE
 
-        mv_hist_score = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
+		mv_hist_score = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
+		
+		// MAKE MOVE
+
         victim = p->TpOnSq(Tsq(move));
         if (victim != NO_TP) last_capt = Tsq(move);
         else last_capt = -1;

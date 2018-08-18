@@ -57,11 +57,11 @@ void PrintUciOptions() {
         }
     } else {
 
-        printf("option name PawnValue type spin default %d min 0 max 1200\n", Par.values[P_MID]);
-        printf("option name KnightValue type spin default %d min 0 max 1200\n", Par.values[N_MID]);
-        printf("option name BishopValue type spin default %d min 0 max 1200\n", Par.values[B_MID]);
-        printf("option name RookValue type spin default %d min 0 max 1200\n", Par.values[R_MID]);
-        printf("option name QueenValue type spin default %d min 0 max 1200\n", Par.values[Q_MID]);
+        printf("option name PawnValue type spin default %d min 0 max 1200\n", V(P_MID));
+        printf("option name KnightValue type spin default %d min 0 max 1200\n", V(N_MID));
+        printf("option name BishopValue type spin default %d min 0 max 1200\n", V(B_MID));
+        printf("option name RookValue type spin default %d min 0 max 1200\n", V(R_MID));
+        printf("option name QueenValue type spin default %d min 0 max 1200\n", V(Q_MID));
 
         printf("option name KeepPawn type spin default %d min 0 max 500\n", Par.keep_pc[P]);
         printf("option name KeepKnight type spin default %d min 0 max 500\n", Par.keep_pc[N]);
@@ -70,12 +70,12 @@ void PrintUciOptions() {
         printf("option name KeepQueen type spin default %d min 0 max 500\n", Par.keep_pc[Q]);
 
         PrintSingleOption(B_PAIR);
-        printf("option name ExchangeImbalance type spin default %d min -200 max 200\n", Par.values[A_EXC]);
-        printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", Par.values[N_CL]);
+        printf("option name ExchangeImbalance type spin default %d min -200 max 200\n", V(A_EXC));
+        printf("option name KnightLikesClosed type spin default %d min 0 max 10\n", V(N_CL));
 
         PrintSingleOption(W_MATERIAL);
         printf("option name PstStyle type spin default %d min 0 max 3\n", Par.pst_style);
-        printf("option name PiecePlacement type spin default %d min 0 max 500\n", Par.values[W_PST]);
+        printf("option name PiecePlacement type spin default %d min 0 max 500\n", V(W_PST));
         PrintSingleOption(W_OWN_ATT);
         PrintSingleOption(W_OPP_ATT);
         PrintSingleOption(W_OWN_MOB);
@@ -91,7 +91,7 @@ void PrintUciOptions() {
         PrintSingleOption(W_OUTPOSTS);
         PrintSingleOption(W_LINES);
 
-        printf("option name Fianchetto type spin default %d min 0 max 100\n", Par.values[B_KING]);
+        printf("option name Fianchetto type spin default %d min 0 max 100\n", V(B_KING));
 
         printf("option name Contempt type spin default %d min -500 max 500\n", Par.draw_score);
 
