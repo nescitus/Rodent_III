@@ -512,6 +512,15 @@ enum Values {
 	a7Knight, b7Knight, c7Knight, d7Knight, e7Knight, f7Knight, g7Knight, h7Knight,
 	a8Knight, b8Knight, c8Knight, d8Knight, e8Knight, f8Knight, g8Knight, h8Knight,
 
+	a1Bish, b1Bish, c1Bish, d1Bish, e1Bish, f1Bish, g1Bish, h1Bish,
+	a2Bish, b2Bish, c2Bish, d2Bish, e2Bish, f2Bish, g2Bish, h2Bish,
+	a3Bish, b3Bish, c3Bish, d3Bish, e3Bish, f3Bish, g3Bish, h3Bish,
+	a4Bish, b4Bish, c4Bish, d4Bish, e4Bish, f4Bish, g4Bish, h4Bish,
+	a5Bish, b5Bish, c5Bish, d5Bish, e5Bish, f5Bish, g5Bish, h5Bish,
+	a6Bish, b6Bish, c6Bish, d6Bish, e6Bish, f6Bish, g6Bish, h6Bish,
+	a7Bish, b7Bish, c7Bish, d7Bish, e7Bish, f7Bish, g7Bish, h7Bish,
+	a8Bish, b8Bish, c8Bish, d8Bish, e8Bish, f8Bish, g8Bish, h8Bish,
+
     N_OF_VAL
 };
 
@@ -566,6 +575,15 @@ const char* const paramNames[N_OF_VAL] = {
 	"a6Knight", "b6Knight", "c6Knight", "d6Knight", "e6Knight", "f6Knight", "g6Knight", "h6Knight",
 	"a7Knight", "b7Knight", "c7Knight", "d7Knight", "e7Knight", "f7Knight", "g7Knight", "h7Knight",
 	"a8Knight", "b8Knight", "c8Knight", "d8Knight", "e8Knight", "f8Knight", "g8Knight", "h8Knight",
+
+	"a1Bish", "b1Bish", "c1Bish", "d1Bish", "e1Bish", "f1Bish", "g1Bish", "h1Bish",
+	"a2Bish", "b2Bish", "c2Bish", "d2Bish", "e2Bish", "f2Bish", "g2Bish", "h2Bish",
+	"a3Bish", "b3Bish", "c3Bish", "d3Bish", "e3Bish", "f3Bish", "g3Bish", "h3Bish",
+	"a4Bish", "b4Bish", "c4Bish", "d4Bish", "e4Bish", "f4Bish", "g4Bish", "h4Bish",
+	"a5Bish", "b5Bish", "c5Bish", "d5Bish", "e5Bish", "f5Bish", "g5Bish", "h5Bish",
+	"a6Bish", "b6Bish", "c6Bish", "d6Bish", "e6Bish", "f6Bish", "g6Bish", "h6Bish",
+	"a7Bish", "b7Bish", "c7Bish", "d7Bish", "e7Bish", "f7Bish", "g7Bish", "h7Bish",
+	"a8Bish", "b8Bish", "c8Bish", "d8Bish", "e8Bish", "f8Bish", "g8Bish", "h8Bish",
 };
 
 #define V(x) (Par.values[x]) // a little shorthand to unclutter eval code
