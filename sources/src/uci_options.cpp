@@ -340,8 +340,6 @@ void ParseSetoption(const char *ptr) {
 		setvalue(N_SH_EG, atoi(value), false);
         setvalue(B_SH_MG, atoi(value), false);
 		setvalue(B_SH_EG, atoi(value), false);
-    } else if (strcmp(name, "pawnthreat") == 0 )                             {
-        setvalue(P_THR, atoi(value), false);
 
     // Here starts a block of non-eval options
 

@@ -479,7 +479,7 @@ enum Values {
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
     PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7, P_BL_MUL,   // passed pawns
     CMG2, CMG3, CMG4, CMG5, CMG6, CEG2, CEG3, CEG4, CEG5, CEG6,                         // candidate passers
-    P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_THR, P_BIND, P_BADBIND, P_ISL, // pawn special terms
+    P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_BIND, P_BADBIND, P_ISL,        // pawn special terms
     P_BIGCHAIN, P_SMALLCHAIN, P_CS1, P_CS2, P_CS_EDGE, P_CSFAIL,
     ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,     // rook bonuses
     RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK_MG, R_BLOCK_EG,                             // queen and rook bonuses
@@ -497,16 +497,21 @@ enum Values {
 	QMG15, QMG16, QMG17, QMG18, QMG19, QMG20, QMG21, QMG22, QMG23, QMG24, QMG25, QMG26, QMG27,
 	QEG0, QEG1, QEG2, QEG3, QEG4, QEG5, QEG6, QEG7, QEG8, QEG9, QEG10, QEG11, QEG12, QEG13, QEG14,
 	QEG15, QEG16, QEG17, QEG18, QEG19, QEG20, QEG21, QEG22, QEG23, QEG24, QEG25, QEG26, QEG27,
-	c2Pawn, d2Pawn, e2Pawn, f2Pawn, c3Pawn, d3Pawn, e3Pawn, f3Pawn,
-	c4Pawn, d4Pawn, e4Pawn, f4Pawn, c5Pawn, d5Pawn, e5Pawn, f5Pawn,
-	c2Knight, d2Knight, e2Knight, f2Knight, c3Knight, d3Knight, e3Knight, f3Knight,
-	c4Knight, d4Knight, e4Knight, f4Knight, c5Knight, d5Knight, e5Knight, f5Knight,
-	a2Pawn, b2Pawn, g2Pawn, h2Pawn, a3Pawn, b3Pawn, g3Pawn, h3Pawn,
-	a4Pawn, b4Pawn, g4Pawn, h4Pawn, a5Pawn, b5Pawn, g5Pawn, h5Pawn,
-	a2Knight, b2Knight, g2Knight, h2Knight, a3Knight, b3Knight, g3Knight, h3Knight,
-	a4Knight, b4Knight, g4Knight, h4Knight, a5Knight, b5Knight, g5Knight, h5Knight,
+	 
+	a2Pawn, b2Pawn, c2Pawn, d2Pawn, e2Pawn, f2Pawn,  g2Pawn, h2Pawn, 
+	a3Pawn, b3Pawn, c3Pawn, d3Pawn, e3Pawn, f3Pawn,  g3Pawn, h3Pawn,
+	a4Pawn, b4Pawn, c4Pawn, d4Pawn, e4Pawn, f4Pawn,  g4Pawn, h4Pawn, 
+	a5Pawn, b5Pawn, c5Pawn, d5Pawn, e5Pawn, f5Pawn,  g5Pawn, h5Pawn,
+
+	a1Knight, b1Knight, c1Knight, d1Knight, e1Knight, f1Knight, g1Knight, h1Knight,
+	a2Knight, b2Knight, c2Knight, d2Knight, e2Knight, f2Knight, g2Knight, h2Knight, 
+	a3Knight, b3Knight, c3Knight, d3Knight, e3Knight, f3Knight, g3Knight, h3Knight,
+	a4Knight, b4Knight, c4Knight, d4Knight, e4Knight, f4Knight, g4Knight, h4Knight, 
+	a5Knight, b5Knight, c5Knight, d5Knight, e5Knight, f5Knight, g5Knight, h5Knight,
 	a6Knight, b6Knight, c6Knight, d6Knight, e6Knight, f6Knight, g6Knight, h6Knight,
 	a7Knight, b7Knight, c7Knight, d7Knight, e7Knight, f7Knight, g7Knight, h7Knight,
+	a8Knight, b8Knight, c8Knight, d8Knight, e8Knight, f8Knight, g8Knight, h8Knight,
+
     N_OF_VAL
 };
 
@@ -529,7 +534,7 @@ const char* const paramNames[N_OF_VAL] = {
     "ISO_MG", "ISO_EG", "ISO_OF", "BK_MID", "BK_END", "BK_OPE", "DB_MID", "DB_END",             // pawn weaknesses
     "PMG2", "PMG3", "PMG4", "PMG5", "PMG6", "PMG7", "PEG2", "PEG3", "PEG4", "PEG5", "PEG6", "PEG7", "P_BL_MUL",   // passed pawns
     "CMG2", "CMG3", "CMG4", "CMG5", "CMG6", "CEG2", "CEG3", "CEG4", "CEG5", "CEG6",             // candidate passers
-    "P_OURSTOP_MUL", "P_OPPSTOP_MUL", "P_DEFMUL", "P_STOPMUL", "P_THR", "P_BIND", "P_BADBIND", "P_ISL", // pawn special terms
+    "P_OURSTOP_MUL", "P_OPPSTOP_MUL", "P_DEFMUL", "P_STOPMUL", "P_BIND", "P_BADBIND", "P_ISL",  // pawn special terms
     "P_BIGCHAIN", "P_SMALLCHAIN", "P_CS1", "P_CS2", "P_CS_EDGE", "P_CSFAIL",
     "ROF_MG", "ROF_EG", "RGH_MG", "RGH_EG", "RBH_MG", "RBH_EG", "RSR_MG", "RSR_EG", "ROQ_MG", "ROQ_EG",     // rook bonuses
     "RS2_MG", "RS2_EG", "QSR_MG", "QSR_EG", "R_BLOCK_MG",  "R_BLOCK_EG",                                    // queen and rook bonuses
@@ -547,16 +552,20 @@ const char* const paramNames[N_OF_VAL] = {
 	"QMG15", "QMG16", "QMG17", "QMG18", "QMG19", "QMG20", "QMG21", "QMG22", "QMG23", "QMG24", "QMG25", "QMG26", "QMG27",
 	"QEG0", "QEG1", "QEG2", "QEG3", "QEG4", "QEG5", "QEG6", "QEG7", "QEG8", "QEG9", "QEG10", "QEG11", "QEG12", "QEG13", "QEG14",
 	"QEG15", "QEG16", "QEG17", "QEG18", "QEG19", "QEG20", "QEG21", "QEG22", "QEG23", "QEG24", "QEG25", "QEG26", "QEG27",
-	"c2Pawn", "d2Pawn", "e2Pawn", "f2Pawn", "c3Pawn", "d3Pawn", "e3Pawn", "f3Pawn",
-	"c4Pawn", "d4Pawn", "e4Pawn", "f4Pawn", "c5Pawn", "d5Pawn", "e5Pawn", "f5Pawn",
-	"c2Knight", "d2Knight", "e2Knight", "f2Knight", "c3Knight", "d3Knight", "e3Knight", "f3Knight",
-	"c4Knight", "d4Knight", "e4Knight", "f4Knight", "c5Knight", "d5Knight", "e5Knight", "f5Knight",
-	"a2Pawn", "b2Pawn", "g2Pawn", "h2Pawn", "a3Pawn", "b3Pawn", "g3Pawn", "h3Pawn",
-	"a4Pawn", "b4Pawn", "g4Pawn", "h4Pawn", "a5Pawn", "b5Pawn", "g5Pawn", "h5Pawn",
-	"a2Knight", "b2Knight", "g2Knight", "h2Knight", "a3Knight", "b3Knight", "g3Knight", "h3Knight",
-	"a4Knight", "b4Knight", "g4Knight", "h4Knight", "a5Knight", "b5Knight", "g5Knight", "h5Knight",
+
+	"a2Pawn", "b2Pawn", "c2Pawn", "d2Pawn", "e2Pawn", "f2Pawn",  "g2Pawn", "h2Pawn",
+	"a3Pawn", "b3Pawn", "c3Pawn", "d3Pawn", "e3Pawn", "f3Pawn",  "g3Pawn", "h3Pawn",
+	"a4Pawn", "b4Pawn", "c4Pawn", "d4Pawn", "e4Pawn", "f4Pawn",  "g4Pawn", "h4Pawn",
+	"a5Pawn", "b5Pawn", "c5Pawn", "d5Pawn", "e5Pawn", "f5Pawn",  "g5Pawn", "h5Pawn",
+
+	"a1Knight", "b1Knight", "c1Knight", "d1Knight", "e1Knight", "f1Knight", "g1Knight", "h1Knight",
+	"a2Knight", "b2Knight", "c2Knight", "d2Knight", "e2Knight", "f2Knight", "g2Knight", "h2Knight",
+	"a3Knight", "b3Knight", "c3Knight", "d3Knight", "e3Knight", "f3Knight", "g3Knight", "h3Knight",
+	"a4Knight", "b4Knight", "c4Knight", "d4Knight", "e4Knight", "f4Knight", "g4Knight", "h4Knight",
+	"a5Knight", "b5Knight", "c5Knight", "d5Knight", "e5Knight", "f5Knight", "g5Knight", "h5Knight",
 	"a6Knight", "b6Knight", "c6Knight", "d6Knight", "e6Knight", "f6Knight", "g6Knight", "h6Knight",
 	"a7Knight", "b7Knight", "c7Knight", "d7Knight", "e7Knight", "f7Knight", "g7Knight", "h7Knight",
+	"a8Knight", "b8Knight", "c8Knight", "d8Knight", "e8Knight", "f8Knight", "g8Knight", "h8Knight",
 };
 
 #define V(x) (Par.values[x]) // a little shorthand to unclutter eval code

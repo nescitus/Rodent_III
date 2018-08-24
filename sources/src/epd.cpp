@@ -8,8 +8,8 @@
 #include "epd_black_won.h"
 #include "epd_draw.h"
 
-int startTune = P_BIGCHAIN;
-int endTune = ROF_MG;
+int startTune = a1Knight;
+int endTune = h8Knight+1;
 
 bool cEngine::TuneOne(POS *p, int *pv, int par) {
 

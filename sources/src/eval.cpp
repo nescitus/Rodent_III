@@ -380,13 +380,6 @@ void cEngine::EvaluateKingAttack(POS *p, eData *e, eColor sd) {
         if (p->mCnt[sd][Q] == 0) e->att[sd] = 0;
         Add(e, sd, (Par.danger[e->att[sd]] * Par.sd_att[sd]) / 100);
     }
-
-	// own king mobility
-	// TODO: tuned tables, perhaps then it will work
-
-	//U64 bbMob = BB.KingAttacks(p->KingSq(sd)) && ~e->all_att[~sd];
-	//int cnt = PopCnt(bbMob);
-	//Add(e, sd, 0, 4 * (cnt - 4));
 }
 
 void cEngine::EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int v2, int *outpost_mg, int *outpost_eg) {

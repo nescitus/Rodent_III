@@ -183,7 +183,6 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(P_BADBIND, 13, 0, 50, tuneStruct); // penalty for a "wing triangle" like a4-b3-c4
 
     SetVal(P_ISL, 5, 0, 50, tuneStruct);      // penalty for each pawn island
-    SetVal(P_THR, 3, 0, 50, tuneStruct);      // pawn move threatens to attack enemy minor
 
     // Pawn chain values
 
@@ -490,88 +489,111 @@ void cParam::DefaultWeights() {  // tuned automatically
 
 	SetVal(a2Pawn, -24, -50, 50, true);
 	SetVal(b2Pawn, -19, -50, 50, true);
-	SetVal(g2Pawn, -6, -50, 50, true);
+	SetVal(c2Pawn, -24, -50, 50, true);
+	SetVal(d2Pawn,  -9, -50, 50, true);
+	SetVal(e2Pawn, -20, -50, 50, true);
+	SetVal(f2Pawn,  10, -50, 50, true);
+	SetVal(g2Pawn,  -6, -50, 50, true);
 	SetVal(h2Pawn, -31, -50, 50, true);
+
 	SetVal(a3Pawn, -15, -50, 50, true);
 	SetVal(b3Pawn, -16, -50, 50, true);
-	SetVal(g3Pawn, -5, -50, 50, true);
+	SetVal(c3Pawn,  -6, -50, 50, true);
+	SetVal(d3Pawn, -12, -50, 50, true);
+	SetVal(e3Pawn,  -2, -50, 50, true);
+	SetVal(f3Pawn,  -3, -50, 50, true);
+	SetVal(g3Pawn,  -5, -50, 50, true);
 	SetVal(h3Pawn, -21, -50, 50, true);
+
 	SetVal(a4Pawn, -12, -50, 50, true);
 	SetVal(b4Pawn, -18, -50, 50, true);
+	SetVal(c4Pawn,  -5, -50, 50, true);
+	SetVal(d4Pawn,   7, -50, 50, true);
+	SetVal(e4Pawn,   3, -50, 50, true);
+	SetVal(f4Pawn,   4, -50, 50, true);
 	SetVal(g4Pawn, -21, -50, 50, true);
 	SetVal(h4Pawn, -27, -50, 50, true);
+
 	SetVal(a5Pawn, -1, -50, 50, true);
 	SetVal(b5Pawn,  1, -50, 50, true);
-	SetVal(g5Pawn, -2, -50, 50, true);
-	SetVal(h5Pawn, -22, -50, 50, true);
-
-	SetVal(c2Pawn, -24, -50, 50, true);
-	SetVal(d2Pawn, -9, -50, 50, true);
-	SetVal(e2Pawn, -20, -50, 50, true);
-	SetVal(f2Pawn, 10, -50, 50, true);
-	SetVal(c3Pawn, -6, -50, 50, true);
-	SetVal(d3Pawn, -12, -50, 50, true);
-	SetVal(e3Pawn, -2, -50, 50, true);
-	SetVal(f3Pawn, -3, -50, 50, true);
-	SetVal(c4Pawn, -5, -50, 50, true);
-	SetVal(d4Pawn, 7, -50, 50, true);
-	SetVal(e4Pawn, 3, -50, 50, true);
-	SetVal(f4Pawn, 4, -50, 50, true);
-	SetVal(c5Pawn, 4, -50, 50, true);
+	SetVal(c5Pawn,  4, -50, 50, true);
 	SetVal(d5Pawn, 13, -50, 50, true);
 	SetVal(e5Pawn, 15, -50, 50, true);
 	SetVal(f5Pawn, -7, -50, 50, true);
+	SetVal(g5Pawn, -2, -50, 50, true);
+	SetVal(h5Pawn, -22, -50, 50, true);
 
-	SetVal(a2Knight, -28, -50, 50, true);
-	SetVal(b2Knight, -24, -50, 50, true);
+	SetVal(a1Knight, -64, -99, 50, true);
+	SetVal(b1Knight, -27, -99, 50, true);
+	SetVal(c1Knight, -30, -50, 50, true);
+	SetVal(d1Knight, -24, -50, 50, true);
+	SetVal(e1Knight, -24, -50, 50, true);
+	SetVal(f1Knight, -24, -50, 50, true);
+	SetVal(g1Knight, -27, -50, 50, true);
+	SetVal(h1Knight, -56, -99, 50, true);
+
+	SetVal(a2Knight, -29, -50, 50, true);
+	SetVal(b2Knight, -22, -50, 50, true);
+	SetVal(c2Knight,  -7, -50, 50, true);
+	SetVal(d2Knight,   3, -50, 50, true);
+	SetVal(e2Knight,   4, -50, 50, true);
+	SetVal(f2Knight,   8, -50, 50, true);
 	SetVal(g2Knight,  -4, -50, 50, true);
-	SetVal(h2Knight, -10, -50, 50, true);
-	SetVal(a3Knight, -19, -50, 50, true);
-	SetVal(b3Knight,  -6, -50, 50, true);
-	SetVal(g3Knight,  15, -50, 50, true);
-	SetVal(h3Knight, -10, -50, 50, true);
+	SetVal(h2Knight, -11, -50, 50, true);
+	
+	SetVal(a3Knight, -22, -50, 50, true);
+	SetVal(b3Knight,  -7, -50, 50, true);
+	SetVal(c3Knight,   2, -50, 50, true);
+	SetVal(d3Knight,  14, -50, 50, true);
+	SetVal(e3Knight,  16, -50, 50, true);
+	SetVal(f3Knight,   6, -50, 50, true);
+	SetVal(g3Knight,  13, -50, 50, true);
+	SetVal(h3Knight, -12, -50, 50, true);
+
 	SetVal(a4Knight, -10, -50, 50, true);
-	SetVal(b4Knight,   6, -50, 50, true);
+	SetVal(b4Knight,   1, -50, 50, true);
+	SetVal(c4Knight,   1, -50, 50, true);
+	SetVal(d4Knight,   4, -50, 50, true);
+	SetVal(e4Knight,  10, -50, 50, true);
+	SetVal(f4Knight,  14, -50, 50, true);
 	SetVal(g4Knight,  18, -50, 50, true);
-	SetVal(h4Knight,  -2, -50, 50, true);
+	SetVal(h4Knight,  -3, -50, 50, true);
+
 	SetVal(a5Knight, -8, -50, 50, true);
-	SetVal(b5Knight,  4, -50, 50, true);
-	SetVal(g5Knight,  9, -50, 50, true);
+	SetVal(b5Knight,  3, -50, 50, true);
+	SetVal(c5Knight, 13, -50, 50, true);
+	SetVal(d5Knight, 23, -50, 50, true);
+	SetVal(e5Knight, 16, -50, 50, true);
+	SetVal(f5Knight, 43, -50, 50, true);
+	SetVal(g5Knight,  8, -50, 50, true);
 	SetVal(h5Knight, 18, -50, 50, true);
 
-	SetVal(c2Knight, -7, -50, 50, true);
-	SetVal(d2Knight,  5, -50, 50, true);
-	SetVal(e2Knight,  7, -50, 50, true);
-	SetVal(f2Knight,  4, -50, 50, true);
-	SetVal(c3Knight,  5, -50, 50, true);
-	SetVal(d3Knight, 14, -50, 50, true);
-	SetVal(e3Knight, 15, -50, 50, true);
-	SetVal(f3Knight, 11, -50, 50, true);
-	SetVal(c4Knight,  3, -50, 50, true);
-	SetVal(d4Knight,  7, -50, 50, true);
-	SetVal(e4Knight, 11, -50, 50, true);
-	SetVal(f4Knight, 14, -50, 50, true);
-	SetVal(c5Knight, 20, -50, 50, true);
-	SetVal(d5Knight, 27, -50, 50, true);
-	SetVal(e5Knight, 23, -50, 50, true);
-	SetVal(f5Knight, 41, -50, 50, true);
+	SetVal(a6Knight,  5, -50, 50, true);
+	SetVal(b6Knight, 27, -50, 50, true);
+	SetVal(c6Knight, 66, -50, 99, true);
+	SetVal(d6Knight, 81, -50, 99, true);
+	SetVal(e6Knight, 81, -50, 99, true);
+	SetVal(f6Knight, 66, -50, 99, true);
+	SetVal(g6Knight, 32, -50, 50, true);
+	SetVal(h6Knight, 17, -50, 50, true);
 
-	SetVal(a6Knight, 12, -50, 50, true);
-	SetVal(b6Knight, 34, -50, 50, true);
-	SetVal(c6Knight, 73, -50, 150, true);
-	SetVal(d6Knight, 88, -50, 150, true);
-	SetVal(e6Knight, 88, -50, 150, true);
-	SetVal(f6Knight, 73, -50, 150, true);
-	SetVal(g6Knight, 34, -50, 50, true);
-	SetVal(h6Knight, 12, -50, 50, true);
-	SetVal(a7Knight, -17, -50, 50, true);
-	SetVal(b7Knight, -1, -50, 50, true);
-	SetVal(c7Knight, 49, -50, 150, true);
-	SetVal(d7Knight, 61, -50, 150, true);
-	SetVal(e7Knight, 61, -50, 150, true);
-	SetVal(f7Knight, 49, -50, 150, true);
-	SetVal(g7Knight, -1, -50, 50, true);
-	SetVal(h7Knight, -17, -50, 50, true);
+	SetVal(a7Knight, -24, -50, 50, true);
+	SetVal(b7Knight,  -8, -50, 50, true);
+	SetVal(c7Knight,  42, -50, 99, true);
+	SetVal(d7Knight,  54, -50, 99, true);
+	SetVal(e7Knight,  54, -50, 99, true);
+	SetVal(f7Knight,  42, -50, 99, true);
+	SetVal(g7Knight,  -2, -50, 50, true);
+	SetVal(h7Knight, -24, -50, 50, true);
+
+	SetVal(a8Knight, -91, -150, 50, true);
+	SetVal(b8Knight, -43, -50, 50, true);
+	SetVal(c8Knight,  -6, -50, 50, true);
+	SetVal(d8Knight,  11, -50, 50, true);
+	SetVal(e8Knight,  23, -50, 50, true);
+	SetVal(f8Knight,  -8, -50, 50, true);
+	SetVal(g8Knight, -40, -50, 50, true);
+	SetVal(h8Knight, -91, -150, 50, true);
 
 #ifdef USE_RISKY_PARAMETER
     riskydepth = 0;
@@ -725,7 +747,6 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[P_BIND] = 5;    // two pawns control central square
     values[P_BADBIND] = 10; // penalty for a "wing triangle" like a4-b3-c4
     values[P_ISL] = 7;     // penalty for each pawn island
-    values[P_THR] = 4;     // pawn move threatens to attack enemy minor
 
     // Pawn chain values
 
@@ -953,15 +974,23 @@ void cParam::InitPst() {
         }
     }
 
-
 	mg_pst[WC][P][A2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a2Pawn];
 	mg_pst[BC][P][A7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a2Pawn];
 	mg_pst[WC][P][B2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b2Pawn];
 	mg_pst[BC][P][B7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b2Pawn];
+	mg_pst[WC][P][C2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c2Pawn];
+	mg_pst[BC][P][C7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c2Pawn];
+	mg_pst[WC][P][D2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d2Pawn];
+	mg_pst[BC][P][D7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d2Pawn];
+	mg_pst[WC][P][E2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e2Pawn];
+	mg_pst[BC][P][E7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e2Pawn];
+	mg_pst[WC][P][F2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f2Pawn];
+	mg_pst[BC][P][F7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f2Pawn];
 	mg_pst[WC][P][G2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g2Pawn];
 	mg_pst[BC][P][G7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g2Pawn];
 	mg_pst[WC][P][H2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h2Pawn];
 	mg_pst[BC][P][H7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h2Pawn];
+
 	mg_pst[WC][P][A3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a3Pawn];
 	mg_pst[BC][P][A6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a3Pawn];
 	mg_pst[WC][P][B3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b3Pawn];
@@ -987,15 +1016,6 @@ void cParam::InitPst() {
 	mg_pst[WC][P][H5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h5Pawn];
 	mg_pst[BC][P][H4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h5Pawn];
 
-
-	mg_pst[WC][P][C2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c2Pawn];
-	mg_pst[BC][P][C7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c2Pawn];
-	mg_pst[WC][P][D2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d2Pawn];
-	mg_pst[BC][P][D7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d2Pawn];
-	mg_pst[WC][P][E2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e2Pawn];
-	mg_pst[BC][P][E7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e2Pawn];
-	mg_pst[WC][P][F2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f2Pawn];
-	mg_pst[BC][P][F7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f2Pawn];
 	mg_pst[WC][P][C3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c3Pawn];
 	mg_pst[BC][P][C6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c3Pawn];
 	mg_pst[WC][P][D3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d3Pawn];
@@ -1021,14 +1041,40 @@ void cParam::InitPst() {
 	mg_pst[WC][P][F5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f5Pawn];
 	mg_pst[BC][P][F4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f5Pawn];
 
+	mg_pst[WC][N][A1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a1Knight];
+	mg_pst[BC][N][A8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a1Knight];
+	mg_pst[WC][N][B1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[b1Knight];
+	mg_pst[BC][N][B8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[b1Knight];
+	mg_pst[WC][N][C1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c1Knight];
+	mg_pst[BC][N][C8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c1Knight];
+	mg_pst[WC][N][D1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[d1Knight];
+	mg_pst[BC][N][D8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[d1Knight];
+	mg_pst[WC][N][E1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[e1Knight];
+	mg_pst[BC][N][E8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[e1Knight];
+	mg_pst[WC][N][F1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[f1Knight];
+	mg_pst[BC][N][F8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[f1Knight];
+	mg_pst[WC][N][G1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[g1Knight];
+	mg_pst[BC][N][G8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[g1Knight];
+	mg_pst[WC][N][H1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h1Knight];
+	mg_pst[BC][N][H8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h1Knight];
+
 	mg_pst[WC][N][A2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a2Knight];
 	mg_pst[BC][N][A7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a2Knight];
 	mg_pst[WC][N][B2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[b2Knight];
 	mg_pst[BC][N][B7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[b2Knight];
+	mg_pst[WC][N][C2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c2Knight];
+	mg_pst[BC][N][C7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c2Knight];
+	mg_pst[WC][N][D2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[d2Knight];
+	mg_pst[BC][N][D7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[d2Knight];
+	mg_pst[WC][N][E2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[e2Knight];
+	mg_pst[BC][N][E7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[e2Knight];
+	mg_pst[WC][N][F2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[f2Knight];
+	mg_pst[BC][N][F7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[f2Knight];
 	mg_pst[WC][N][G2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[g2Knight];
 	mg_pst[BC][N][G7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[g2Knight];
 	mg_pst[WC][N][H2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h2Knight];
 	mg_pst[BC][N][H7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h2Knight];
+	
 	mg_pst[WC][N][A3] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a3Knight];
 	mg_pst[BC][N][A6] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a3Knight];
 	mg_pst[WC][N][B3] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[b3Knight];
@@ -1054,14 +1100,6 @@ void cParam::InitPst() {
 	mg_pst[WC][N][H5] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h5Knight];
 	mg_pst[BC][N][H4] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h5Knight];
 
-	mg_pst[WC][N][C2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c2Knight];
-	mg_pst[BC][N][C7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c2Knight];
-	mg_pst[WC][N][D2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[d2Knight];
-	mg_pst[BC][N][D7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[d2Knight];
-	mg_pst[WC][N][E2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[e2Knight];
-	mg_pst[BC][N][E7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[e2Knight];
-	mg_pst[WC][N][F2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[f2Knight];
-	mg_pst[BC][N][F7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[f2Knight];
 	mg_pst[WC][N][C3] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c3Knight];
 	mg_pst[BC][N][C6] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c3Knight];
 	mg_pst[WC][N][D3] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[d3Knight];
@@ -1120,6 +1158,24 @@ void cParam::InitPst() {
 	mg_pst[BC][N][G2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[g7Knight];
 	mg_pst[WC][N][H7] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h7Knight];
 	mg_pst[BC][N][H2] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h7Knight];
+
+	mg_pst[WC][N][A8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a8Knight];
+	mg_pst[BC][N][A1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a8Knight];
+	mg_pst[WC][N][B8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[b8Knight];
+	mg_pst[BC][N][B1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[b8Knight];
+	mg_pst[WC][N][C8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c8Knight];
+	mg_pst[BC][N][C1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[c8Knight];
+	mg_pst[WC][N][D8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[d8Knight];
+	mg_pst[BC][N][D1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[d8Knight];
+	mg_pst[WC][N][E8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[e8Knight];
+	mg_pst[BC][N][E1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[e8Knight];
+	mg_pst[WC][N][F8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[f8Knight];
+	mg_pst[BC][N][F1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[f8Knight];
+	mg_pst[WC][N][G8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[g8Knight];
+	mg_pst[BC][N][G1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[g8Knight];
+	mg_pst[WC][N][H8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h8Knight];
+	mg_pst[BC][N][H1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[h8Knight];
+
 }
 
 void cParam::InitMobility() {
