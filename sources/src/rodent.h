@@ -502,6 +502,8 @@ enum Values {
 	a3Pawn, b3Pawn, c3Pawn, d3Pawn, e3Pawn, f3Pawn,  g3Pawn, h3Pawn,
 	a4Pawn, b4Pawn, c4Pawn, d4Pawn, e4Pawn, f4Pawn,  g4Pawn, h4Pawn, 
 	a5Pawn, b5Pawn, c5Pawn, d5Pawn, e5Pawn, f5Pawn,  g5Pawn, h5Pawn,
+	a6Pawn, b6Pawn, c6Pawn, d6Pawn, e6Pawn, f6Pawn,  g6Pawn, h6Pawn,
+	a7Pawn, b7Pawn, c7Pawn, d7Pawn, e7Pawn, f7Pawn,  g7Pawn, h7Pawn,
 
 	a1Knight, b1Knight, c1Knight, d1Knight, e1Knight, f1Knight, g1Knight, h1Knight,
 	a2Knight, b2Knight, c2Knight, d2Knight, e2Knight, f2Knight, g2Knight, h2Knight, 
@@ -566,6 +568,8 @@ const char* const paramNames[N_OF_VAL] = {
 	"a3Pawn", "b3Pawn", "c3Pawn", "d3Pawn", "e3Pawn", "f3Pawn",  "g3Pawn", "h3Pawn",
 	"a4Pawn", "b4Pawn", "c4Pawn", "d4Pawn", "e4Pawn", "f4Pawn",  "g4Pawn", "h4Pawn",
 	"a5Pawn", "b5Pawn", "c5Pawn", "d5Pawn", "e5Pawn", "f5Pawn",  "g5Pawn", "h5Pawn",
+	"a6Pawn", "b6Pawn", "c6Pawn", "d6Pawn", "e6Pawn", "f6Pawn",  "g6Pawn", "h6Pawn",
+	"a7Pawn", "b7Pawn", "c7Pawn", "d7Pawn", "e7Pawn", "f7Pawn",  "g7Pawn", "h7Pawn",
 
 	"a1Knight", "b1Knight", "c1Knight", "d1Knight", "e1Knight", "f1Knight", "g1Knight", "h1Knight",
 	"a2Knight", "b2Knight", "c2Knight", "d2Knight", "e2Knight", "f2Knight", "g2Knight", "h2Knight",

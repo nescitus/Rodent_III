@@ -523,6 +523,24 @@ void cParam::DefaultWeights() {  // tuned automatically
 	SetVal(g5Pawn, -2, -50, 50, true);
 	SetVal(h5Pawn, -22, -50, 50, true);
 
+	SetVal(a6Pawn, 9, -50, 50, true);
+	SetVal(b6Pawn, 22, -50, 50, true);
+	SetVal(c6Pawn, 43, -50, 50, true);
+	SetVal(d6Pawn, 39, -50, 50, true);
+	SetVal(e6Pawn, 39, -50, 50, true);
+	SetVal(f6Pawn, 43, -50, 50, true);
+	SetVal(g6Pawn, 22, -50, 50, true);
+	SetVal(h6Pawn,  9, -50, 50, true);
+
+	SetVal(a7Pawn, 15, -50, 50, true);
+	SetVal(b7Pawn, 16, -50, 50, true);
+	SetVal(c7Pawn, 76, -50, 99, true);
+	SetVal(d7Pawn, 93, -50, 99, true);
+	SetVal(e7Pawn, 93, -50, 99, true);
+	SetVal(f7Pawn, 76, -50, 99, true);
+	SetVal(g7Pawn, 16, -50, 50, true);
+	SetVal(h7Pawn, 15, -50, 50, true);
+
 	SetVal(a1Knight, -64, -99, 50, true);
 	SetVal(b1Knight, -27, -99, 50, true);
 	SetVal(c1Knight, -30, -50, 50, true);
@@ -1068,27 +1086,6 @@ void cParam::InitPst() {
 	mg_pst[BC][P][A6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a3Pawn];
 	mg_pst[WC][P][B3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b3Pawn];
 	mg_pst[BC][P][B6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b3Pawn];
-	mg_pst[WC][P][G3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g3Pawn];
-	mg_pst[BC][P][G6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g3Pawn];
-	mg_pst[WC][P][H3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h3Pawn];
-	mg_pst[BC][P][H6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h3Pawn];
-	mg_pst[WC][P][A4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a4Pawn];
-	mg_pst[BC][P][A5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a4Pawn];
-	mg_pst[WC][P][B4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b4Pawn];
-	mg_pst[BC][P][B5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b4Pawn];
-	mg_pst[WC][P][G4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g4Pawn];
-	mg_pst[BC][P][G5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g4Pawn];
-	mg_pst[WC][P][H4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h4Pawn];
-	mg_pst[BC][P][H5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h4Pawn];
-	mg_pst[WC][P][A5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a5Pawn];
-	mg_pst[BC][P][A4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a5Pawn];
-	mg_pst[WC][P][B5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b5Pawn];
-	mg_pst[BC][P][B4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b5Pawn];
-	mg_pst[WC][P][G5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g5Pawn];
-	mg_pst[BC][P][G4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g5Pawn];
-	mg_pst[WC][P][H5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h5Pawn];
-	mg_pst[BC][P][H4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h5Pawn];
-
 	mg_pst[WC][P][C3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c3Pawn];
 	mg_pst[BC][P][C6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c3Pawn];
 	mg_pst[WC][P][D3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d3Pawn];
@@ -1097,6 +1094,15 @@ void cParam::InitPst() {
 	mg_pst[BC][P][E6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e3Pawn];
 	mg_pst[WC][P][F3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f3Pawn];
 	mg_pst[BC][P][F6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f3Pawn];
+	mg_pst[WC][P][G3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g3Pawn];
+	mg_pst[BC][P][G6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g3Pawn];
+	mg_pst[WC][P][H3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h3Pawn];
+	mg_pst[BC][P][H6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h3Pawn];
+
+	mg_pst[WC][P][A4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a4Pawn];
+	mg_pst[BC][P][A5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a4Pawn];
+	mg_pst[WC][P][B4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b4Pawn];
+	mg_pst[BC][P][B5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b4Pawn];
 	mg_pst[WC][P][C4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c4Pawn];
 	mg_pst[BC][P][C5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c4Pawn];
 	mg_pst[WC][P][D4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d4Pawn];
@@ -1105,6 +1111,15 @@ void cParam::InitPst() {
 	mg_pst[BC][P][E5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e4Pawn];
 	mg_pst[WC][P][F4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f4Pawn];
 	mg_pst[BC][P][F5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f4Pawn];
+	mg_pst[WC][P][G4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g4Pawn];
+	mg_pst[BC][P][G5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g4Pawn];
+	mg_pst[WC][P][H4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h4Pawn];
+	mg_pst[BC][P][H5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h4Pawn];
+
+	mg_pst[WC][P][A5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a5Pawn];
+	mg_pst[BC][P][A4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a5Pawn];
+	mg_pst[WC][P][B5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b5Pawn];
+ 	mg_pst[BC][P][B4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b5Pawn];
 	mg_pst[WC][P][C5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c5Pawn];
 	mg_pst[BC][P][C4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c5Pawn];
 	mg_pst[WC][P][D5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d5Pawn];
@@ -1113,6 +1128,44 @@ void cParam::InitPst() {
 	mg_pst[BC][P][E4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e5Pawn];
 	mg_pst[WC][P][F5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f5Pawn];
 	mg_pst[BC][P][F4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f5Pawn];
+	mg_pst[WC][P][G5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g5Pawn];
+	mg_pst[BC][P][G4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g5Pawn];
+	mg_pst[WC][P][H5] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h5Pawn];
+	mg_pst[BC][P][H4] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h5Pawn];
+
+	mg_pst[WC][P][A6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a6Pawn];
+	mg_pst[BC][P][A3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a6Pawn];
+	mg_pst[WC][P][B6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b6Pawn];
+	mg_pst[BC][P][B3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b6Pawn];
+	mg_pst[WC][P][C6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c6Pawn];
+	mg_pst[BC][P][C3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c6Pawn];
+	mg_pst[WC][P][D6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d6Pawn];
+	mg_pst[BC][P][D3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d6Pawn];
+	mg_pst[WC][P][E6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e6Pawn];
+	mg_pst[BC][P][E3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e6Pawn];
+	mg_pst[WC][P][F6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f6Pawn];
+	mg_pst[BC][P][F3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f6Pawn];
+	mg_pst[WC][P][G6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g6Pawn];
+	mg_pst[BC][P][G3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g6Pawn];
+	mg_pst[WC][P][H6] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h6Pawn];
+	mg_pst[BC][P][H3] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h6Pawn];
+
+	mg_pst[WC][P][A7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a7Pawn];
+	mg_pst[BC][P][A2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a7Pawn];
+	mg_pst[WC][P][B7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b7Pawn];
+	mg_pst[BC][P][B2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b7Pawn];
+	mg_pst[WC][P][C7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c7Pawn];
+	mg_pst[BC][P][C2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[c7Pawn];
+	mg_pst[WC][P][D7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d7Pawn];
+	mg_pst[BC][P][D2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[d7Pawn];
+	mg_pst[WC][P][E7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e7Pawn];
+	mg_pst[BC][P][E2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[e7Pawn];
+	mg_pst[WC][P][F7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f7Pawn];
+	mg_pst[BC][P][F2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[f7Pawn];
+	mg_pst[WC][P][G7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g7Pawn];
+	mg_pst[BC][P][G2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[g7Pawn];
+	mg_pst[WC][P][H7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h7Pawn];
+	mg_pst[BC][P][H2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[h7Pawn];
 
 	mg_pst[WC][N][A1] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a1Knight];
 	mg_pst[BC][N][A8] = ((values[N_MID] * Par.values[W_MATERIAL]) / 100) + values[a1Knight];
