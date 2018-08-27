@@ -20,11 +20,10 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include "rodent.h"
 
-U64 POS::Random64() {
+std::mt19937_64 e2(2018);
+std::uniform_int_distribution<U64> dist(std::llround(std::pow(2, 56)), std::llround(std::pow(2, 62)));
 
-	std::random_device rd;
-	std::mt19937_64 e2(rd());
-	std::uniform_int_distribution<U64> dist(std::llround(std::pow(2, 48)), std::llround(std::pow(2, 62)));
+U64 POS::Random64() {
 	return dist(e2);
 }
 
