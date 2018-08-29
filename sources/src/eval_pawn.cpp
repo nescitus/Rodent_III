@@ -84,24 +84,24 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     // - important squares controlled by two pawns
 
     int tmp = 0;
-    if (e->two_pawns_take[WC] & SqBb(D5)) tmp += Par.values[P_BIND];
-    if (e->two_pawns_take[WC] & SqBb(E5)) tmp += Par.values[P_BIND];
-    if (e->two_pawns_take[WC] & SqBb(D6)) tmp += Par.values[P_BIND];
-    if (e->two_pawns_take[WC] & SqBb(E6)) tmp += Par.values[P_BIND];
+    if (e->two_pawns_take[WC] & SqBb(D5)) tmp += V(P_BIND);
+    if (e->two_pawns_take[WC] & SqBb(E5)) tmp += V(P_BIND);
+    if (e->two_pawns_take[WC] & SqBb(D6)) tmp += V(P_BIND);
+    if (e->two_pawns_take[WC] & SqBb(E6)) tmp += V(P_BIND);
 
-    if (p->IsOnSq(WC, P, B3) && (e->two_pawns_take[WC] & SqBb(B5))) tmp -= Par.values[P_BADBIND];
-    if (p->IsOnSq(WC, P, G3) && (e->two_pawns_take[WC] & SqBb(G5))) tmp -= Par.values[P_BADBIND];
+    if (p->IsOnSq(WC, P, B3) && (e->two_pawns_take[WC] & SqBb(B5))) tmp -= V(P_BADBIND);
+    if (p->IsOnSq(WC, P, G3) && (e->two_pawns_take[WC] & SqBb(G5))) tmp -= V(P_BADBIND);
 
     Add(e, WC, tmp, 0);
 
     tmp = 0;
-    if (e->two_pawns_take[BC] & SqBb(D4)) tmp += Par.values[P_BIND];
-    if (e->two_pawns_take[BC] & SqBb(E4)) tmp += Par.values[P_BIND];
-    if (e->two_pawns_take[BC] & SqBb(D3)) tmp += Par.values[P_BIND];
-    if (e->two_pawns_take[BC] & SqBb(E3)) tmp += Par.values[P_BIND];
+    if (e->two_pawns_take[BC] & SqBb(D4)) tmp += V(P_BIND);
+    if (e->two_pawns_take[BC] & SqBb(E4)) tmp += V(P_BIND);
+    if (e->two_pawns_take[BC] & SqBb(D3)) tmp += V(P_BIND);
+    if (e->two_pawns_take[BC] & SqBb(E3)) tmp += V(P_BIND);
 
-    if (p->IsOnSq(BC, P, B6) && (e->two_pawns_take[BC] & SqBb(B4))) tmp -= Par.values[P_BADBIND];
-    if (p->IsOnSq(BC, P, G6) && (e->two_pawns_take[BC] & SqBb(G4))) tmp -= Par.values[P_BADBIND];
+    if (p->IsOnSq(BC, P, B6) && (e->two_pawns_take[BC] & SqBb(B4))) tmp -= V(P_BADBIND);
+    if (p->IsOnSq(BC, P, G6) && (e->two_pawns_take[BC] & SqBb(G4))) tmp -= V(P_BADBIND);
 
     Add(e, BC, tmp, 0);
 
@@ -131,8 +131,8 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     const U64 b_pawns = p->Pawns(BC);
     const U64 b_pawn_files = BB.FillSouth(b_pawns) & 0xff;
     const int b_islands = PopCnt(((~b_pawn_files) >> 1) & b_pawn_files);
-    e->mg_pawns[WC] -= (w_islands - b_islands) * Par.values[P_ISL];
-    e->eg_pawns[WC] -= (w_islands - b_islands) * Par.values[P_ISL];
+    e->mg_pawns[WC] -= (w_islands - b_islands) * V(P_ISL);
+    e->eg_pawns[WC] -= (w_islands - b_islands) * V(P_ISL);
     // pawn islands code would also break detailed score display
 
     // Save stuff in pawn hashtable.
@@ -140,8 +140,8 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     // It might become a problem if we decide to print detailed eval score.
 
     mPawnTT[addr].key = p->mPawnKey;
-    mPawnTT[addr].mg_pawns = (Par.values[W_STRUCT] * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
-    mPawnTT[addr].eg_pawns = (Par.values[W_STRUCT] * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
+    mPawnTT[addr].mg_pawns = (V(W_STRUCT) * (e->mg_pawns[WC] - e->mg_pawns[BC])) / 100;
+    mPawnTT[addr].eg_pawns = (V(W_STRUCT) * (e->eg_pawns[WC] - e->eg_pawns[BC])) / 100;
 }
 
 void cEngine::EvaluateKing(POS *p, eData *e, eColor sd) {
@@ -170,7 +170,7 @@ void cEngine::EvaluateKing(POS *p, eData *e, eColor sd) {
     bb_next_file = ShiftWest(bb_king_file);
     if (bb_next_file) EvaluateKingFile(p, sd, bb_next_file, &shield, &storm);
 
-    AddPawns(e, sd, ((Par.values[W_SHIELD] * shield) / 100) + ((Par.values[W_STORM] * storm) / 100), 0);
+    AddPawns(e, sd, ((V(W_SHIELD) * shield) / 100) + ((V(W_STORM) * storm) / 100), 0);
     AddPawns(e, sd, EvaluateChains(p, sd), 0);
 }
 
@@ -180,27 +180,27 @@ void cEngine::EvaluateKingFile(POS *p, eColor sd, U64 bb_file, int *shield, int 
     if (p->Kings(sd) & bb_file) shelter = ((shelter * 120) / 100);
     if (bb_file & bb_central_file) shelter /= 2;
     *shield += shelter;
-    *storm += EvaluateFileStorm(bb_file & p->Pawns(~sd), sd);
+    *storm += EvaluateFileStorm(p, bb_file & p->Pawns(~sd), sd);
 }
 
 int cEngine::EvaluateFileShelter(U64 bb_own_pawns, eColor sd) {
 
-    if (!bb_own_pawns) return Par.values[P_SH_NONE];
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_2]) return Par.values[P_SH_2];
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_3]) return Par.values[P_SH_3];
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_4]) return Par.values[P_SH_4];
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_5]) return Par.values[P_SH_5];
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_6]) return Par.values[P_SH_6];
-    if (bb_own_pawns & bb_rel_rank[sd][RANK_7]) return Par.values[P_SH_7];
+    if (!bb_own_pawns) return V(P_SH_NONE);
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_2]) return V(P_SH_2);
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_3]) return V(P_SH_3);
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_4]) return V(P_SH_4);
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_5]) return V(P_SH_5);
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_6]) return V(P_SH_6);
+    if (bb_own_pawns & bb_rel_rank[sd][RANK_7]) return V(P_SH_7);
     return 0;
 }
 
-int cEngine::EvaluateFileStorm(U64 bb_opp_pawns, eColor sd) {
+int cEngine::EvaluateFileStorm(POS * p, U64 bb_opp_pawns, eColor sd) {
 
-    if (!bb_opp_pawns) return Par.values[P_ST_OPEN];
-    if (bb_opp_pawns & bb_rel_rank[sd][RANK_3]) return Par.values[P_ST_3];
-    if (bb_opp_pawns & bb_rel_rank[sd][RANK_4]) return Par.values[P_ST_4];
-    if (bb_opp_pawns & bb_rel_rank[sd][RANK_5]) return Par.values[P_ST_5];
+    if (!bb_opp_pawns) return V(P_ST_OPEN);
+    if (bb_opp_pawns & bb_rel_rank[sd][RANK_3]) return V(P_ST_3);
+    if (bb_opp_pawns & bb_rel_rank[sd][RANK_4]) return V(P_ST_4);
+    if (bb_opp_pawns & bb_rel_rank[sd][RANK_5]) return V(P_ST_5);
     return 0;
 }
 
@@ -225,29 +225,29 @@ int cEngine::EvaluateChains(POS *p, eColor sd) {
 
         if (OPP_PAWN(E4)) {
             if (CONTAINS(opPawns, D5, C6)) // c6-d5-e4 triad
-                mg_result -= (CONTAINS(sdPawns, D4, E3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
+                mg_result -= (CONTAINS(sdPawns, D4, E3)) ? V(P_BIGCHAIN) : V(P_SMALLCHAIN);
 
             if (CONTAINS(opPawns, D5, F3)) // d5-e4-f3 triad
-                mg_result -= (OWN_PAWN(E3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
+                mg_result -= (OWN_PAWN(E3)) ? V(P_BIGCHAIN) : V(P_SMALLCHAIN);
         }
 
         if (OPP_PAWN(E5)) {
             if (CONTAINS(opPawns, F4, D6)) { // d6-e5-f4 triad
                 // h5
-				if (OPP_PAWN(H5)) mg_result -= Par.values[P_CS_EDGE];
+				if (OPP_PAWN(H5)) mg_result -= V(P_CS_EDGE);
 
                 // storm of a "g" pawn in the King's Indian
                 if (OPP_PAWN(G5)) {
-                    mg_result -= Par.values[P_CS1];
-                    if (OPP_PAWN(H4)) return Par.values[P_CSFAIL]; // opponent did us a favour, rendering his chain immobile
+                    mg_result -= V(P_CS1);
+                    if (OPP_PAWN(H4)) return V(P_CSFAIL); // opponent did us a favour, rendering his chain immobile
                 }
-                if (OPP_PAWN(G4)) mg_result -= Par.values[P_CS2];
+                if (OPP_PAWN(G4)) mg_result -= V(P_CS2);
 
-                mg_result -= (CONTAINS(sdPawns, E4, D5)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
+                mg_result -= (CONTAINS(sdPawns, E4, D5)) ? V(P_BIGCHAIN) : V(P_SMALLCHAIN);
             }
 
             if (CONTAINS(opPawns, G3, F4)) // e5-f4-g3 triad
-                mg_result -= (OWN_PAWN(F3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
+                mg_result -= (OWN_PAWN(F3)) ? V(P_BIGCHAIN) : V(P_SMALLCHAIN);
         }
     }
 
@@ -257,29 +257,29 @@ int cEngine::EvaluateChains(POS *p, eColor sd) {
 
         if (OPP_PAWN(D4)) {
             if (CONTAINS(opPawns, E5, F6))
-                mg_result -= (CONTAINS(sdPawns, E4, D3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
+                mg_result -= (CONTAINS(sdPawns, E4, D3)) ? V(P_BIGCHAIN) : V(P_SMALLCHAIN);
 
             if (CONTAINS(opPawns, F5, C3))
-                mg_result -= (SQ(D3) & sdPawns) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
+                mg_result -= (SQ(D3) & sdPawns) ? V(P_BIGCHAIN) : V(P_SMALLCHAIN);
         }
 
         if (OPP_PAWN(D5)) {
             if (CONTAINS(opPawns, C4, E6)) {
-				if (OPP_PAWN(A5)) mg_result -= Par.values[P_CS_EDGE];
+				if (OPP_PAWN(A5)) mg_result -= V(P_CS_EDGE);
                 // storm of a "b" pawn
                 if (OPP_PAWN(B5)) {
-                    mg_result -= Par.values[P_CS1];
-                    if (OPP_PAWN(A4)) return Par.values[P_CSFAIL]; // opponent did us a favour, rendering his chain immobile
+                    mg_result -= V(P_CS1);
+                    if (OPP_PAWN(A4)) return V(P_CSFAIL); // opponent did us a favour, rendering his chain immobile
                 }
-                if (OPP_PAWN(B4)) mg_result -= Par.values[P_CS2];
+                if (OPP_PAWN(B4)) mg_result -= V(P_CS2);
 
-                mg_result -= (CONTAINS(sdPawns, E4, D5)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
+                mg_result -= (CONTAINS(sdPawns, E4, D5)) ? V(P_BIGCHAIN) : V(P_SMALLCHAIN);
             }
 
             if (CONTAINS(opPawns, B3, C4))
-                mg_result -= (OWN_PAWN(C3)) ? Par.values[P_BIGCHAIN] : Par.values[P_SMALLCHAIN];
+                mg_result -= (OWN_PAWN(C3)) ? V(P_BIGCHAIN) : V(P_SMALLCHAIN);
         }
     }
 
-    return (mg_result * Par.values[W_CHAINS]) / 100;
+    return (mg_result * V(W_CHAINS)) / 100;
 }

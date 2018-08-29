@@ -29,7 +29,7 @@ const int cEngine::mscFutDepth = 6;       // max depth at which futility pruning
 const int cEngine::mscSelectiveDepth = Max(Max(mscSnpDepth, mscRazorDepth), mscFutDepth);
 
 const int cEngine::mscRazorMargin[5] = { 0, 300, 360, 420, 480 };
-const int cEngine::mscFutMargin[7] = { 0, 100, 160, 220, 280, 340, 400 };
+const int cEngine::mscFutMargin[7] = { 0, 100, 150, 200, 250, 300, 400 };
 int cEngine::msLmrSize[2][MAX_PLY][MAX_MOVES];
 
 void cParam::InitAsymmetric(POS *p) {

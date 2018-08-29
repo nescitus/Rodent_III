@@ -862,7 +862,7 @@ class cEngine {
     static void EvaluateKing(POS *p, eData *e, eColor sd);
     static void EvaluateKingFile(POS *p, eColor sd, U64 bb_file, int *shield, int *storm);
     static int EvaluateFileShelter(U64 bb_own_pawns, eColor sd);
-    static int EvaluateFileStorm(U64 bb_opp_pawns, eColor sd);
+    static int EvaluateFileStorm(POS * p, U64 bb_opp_pawns, eColor sd);
     void EvaluatePawnStruct(POS *p, eData *e);
     static void EvaluateUnstoppable(eData *e, POS *p);
     static void EvaluateThreats(POS *p, eData *e, eColor sd);
