@@ -9,7 +9,7 @@
 #include "epd_draw.h"
 
 int startTune = a2Pawn;
-int endTune = h7Pawn+1;
+int endTune = h8Bish+1;
 
 bool cEngine::TuneOne(POS *p, int *pv, int par) {
 
@@ -48,7 +48,7 @@ bool cEngine::TuneOne(POS *p, int *pv, int par) {
 void cEngine::TuneMe(POS *p, int *pv, int iterations) {
 
 	best_tune = TexelFit(p, pv);
-	srand(GetMS());
+	//srand(GetMS());
 	int test = 0;
 
 	for (int i = 0; i < N_OF_VAL; i++)

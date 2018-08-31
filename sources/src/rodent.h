@@ -50,6 +50,7 @@ using U64 = uint64_t;
 #endif
 #define USE_FIRST_ONE_INTRINSICS
 //#define USE_TUNING // needs epd.cpp, long compile time, huge file!!!
+#define TEXEL_PST    // should we use Texel-tuned piece/square tables?
 
 //#define USE_RISKY_PARAMETER
 

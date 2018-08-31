@@ -36,8 +36,9 @@ Rodent can use several sets of piece/square tables (currently 4).
 
 */
 
-static const int pstPawnMg[4][64] = {
+static const int pstPawnMg[5][64] = {
  //A1                                H1 Midgame pawn table - wing-neutral average of Hakkapeliitta table
+
 { 0,   0,   0,   0,   0,   0,   0,   0,
 -30, -16, -22, -27, -27, -17, -16, -30,
 -25, -16, -16, -18, -18, -16, -16, -25,
@@ -45,7 +46,8 @@ static const int pstPawnMg[4][64] = {
 -12,  -3,   2,  16,  16,   2,  -3, -12,
   9,  22,  43,  39,  39,  43,  22,   9,
  15,  16,  76,  93,  93,  76,  16,  15,
-  0,   0,   0,   0,   0,   0,   0,   0 },
+  0,   0,   0,   0,   0,   0,   0,   0 	
+},
 //A8                                H8
 
 //A1                                H1  Midgame pawn table based on Fruit
@@ -80,7 +82,17 @@ static const int pstPawnMg[4][64] = {
  50,  50,  50,  50,  50,  50,  50, 50,
   0,   0,   0,   0,   0,   0,   0,  0
 //A8                                H8
-  }
+  },
+
+{  0,   0,   0,   0,   0,   0,  0,   0, // Rofchade table with flattened last rows
+ -35,  -1, -20, -23, -15,  24, 38, -22,
+ -26,  -4,  -4, -10,   3,   3, 33, -12,
+ -27,  -2,  -5,  12,  17,   6, 10, -25,
+ -14,  13,   6,  21,  23,  12, 17, -23,
+  -6,   7,  26,  31,  35,  36, 25, -20,
+  38,  34,  31,  35,  38,  36, 34,  33,
+  0,   0,   0,   0,   0,   0,  0,   0, }
+
 };
 
 static const int pstPawnEg[4][64] = {
