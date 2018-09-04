@@ -962,7 +962,7 @@ void CheckTimeout() {
     }
 
 	int time = cEngine::msMoveTime;
-	if (Glob.scoreJump) time *= 2;
+	if (Glob.scoreJump && Glob.time_tricks) time *= 2;
 
     if (!Glob.pondering && cEngine::msMoveTime >= 0 && GetMS() - cEngine::msStartTime >= time)
         Glob.abort_search = true;

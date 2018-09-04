@@ -114,6 +114,7 @@ void PrintUciOptions() {
     printf("option name Ponder type check default %s\n", Par.use_ponder ? "true" : "false");
     printf("option name UseBook type check default %s\n", Par.use_book ? "true" : "false");
     printf("option name VerboseBook type check default %s\n", Par.verbose_book ? "true" : "false");
+	printf("option name TimeTricks type check default %s\n", Glob.time_tricks ? "true" : "false");
 
     if (!Glob.use_books_from_pers || !Glob.use_personality_files) {
         printf("option name GuideBookFile type string default %s\n", GuideBook.bookName);
@@ -368,6 +369,8 @@ void ParseSetoption(const char *ptr) {
         valuebool(Par.use_book, value);
     } else if (strcmp(name, "verbosebook") == 0)                             {
         valuebool(Par.verbose_book, value);
+    } else if (strcmp(name, "timetricks") == 0)                              {
+        valuebool(Glob.time_tricks, value);
     } else if (strcmp(name, "searchskill") == 0)                             {
         Par.search_skill = atoi(value);
         Glob.should_clear = true;

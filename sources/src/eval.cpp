@@ -478,7 +478,7 @@ void cEngine::EvaluatePassers(POS *p, eData *e, eColor sd) {
         bb_pawn = SqBb(sq);
         bb_stop = BB.ShiftFwd(SqBb(sq), sd);
 
-        // pawn can attack enemy piece
+        // pawn mobility
 
         if (!(bb_stop & p->OccBb())) {
 			Add(e, sd, V(P_MOB_MG), V(P_MOB_EG));        // pawn mobility bonus

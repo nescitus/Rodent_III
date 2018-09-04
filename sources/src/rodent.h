@@ -743,6 +743,7 @@ class cGlobals {
     int thread_no;
 	int multiPv;
     int time_buffer;
+	bool time_tricks;
     U64 game_key;         // random key initialized on ucinewgame to ensure non-repeating random eval modification for weak personalities
     int avoidMove[MAX_PV + 1]; // list of moves to avoid in multi-pv re-searches
 

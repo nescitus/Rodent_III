@@ -543,8 +543,6 @@ void cParam::DefaultWeights() {  // tuned automatically
 	SetVal(g7Pawn, 13, -50, 50, true);
 	SetVal(h7Pawn, 15, -50, 50, true);
 
-#endif
-
 	SetVal(a1Knight, -63, -99, 50, true);
 	SetVal(b1Knight, -20, -99, 50, true);
 	SetVal(c1Knight, -26, -50, 50, true);
@@ -616,9 +614,6 @@ void cParam::DefaultWeights() {  // tuned automatically
 	SetVal(f8Knight, -14, -50, 50, true);
 	SetVal(g8Knight, -46, -50, 50, true);
 	SetVal(h8Knight, -97, -150, 50, true);
-
-	/*
-	*/
 
 	SetVal(a1Bish, -15, -99, 50, true);
 	SetVal(b1Bish,  -4, -99, 50, true);
@@ -692,6 +687,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 	SetVal(g8Bish, -43, -50, 50, true);
 	SetVal(h8Bish, -28, -150, 50, true);
 
+#endif
 
 #ifdef USE_RISKY_PARAMETER
     riskydepth = 0;
@@ -1578,7 +1574,6 @@ void cParam::InitPst() {
 	mg_pst[BC][B][G1] = ((values[B_MID] * Par.values[W_MATERIAL]) / 100) + values[g8Bish];
 	mg_pst[WC][B][H8] = ((values[B_MID] * Par.values[W_MATERIAL]) / 100) + values[h8Bish];
 	mg_pst[BC][B][H1] = ((values[B_MID] * Par.values[W_MATERIAL]) / 100) + values[h8Bish];
-
 }
 
 void cParam::InitMobility() {
