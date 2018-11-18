@@ -438,6 +438,8 @@ void ReadThreadNumber(const char * fileName) {
 		Glob.threadOverride = cnt;
 	}
 
+	fclose(threadFile);
+
 }
 
 void ReadPersonality(const char *fileName) {
