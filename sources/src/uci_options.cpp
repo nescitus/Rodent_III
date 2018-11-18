@@ -41,6 +41,7 @@ void PrintUciOptions() {
 	printf("option name Clear Hash type button\n");
     printf("option name Hash type spin default 16 min 1 max 4096\n");
 #ifdef USE_THREADS
+	if (Glob.threadOverride == 0)
     printf("option name Threads type spin default %d min 1 max %d\n", Glob.thread_no, MAX_THREADS);
 #endif
     printf("option name MultiPV type spin default %d min 1 max %d\n", Glob.multiPv, MAX_PV);
@@ -175,7 +176,7 @@ void ParseSetoption(const char *ptr) {
     if (strcmp(name, "hash") == 0)                                           {
         Trans.AllocTrans(atoi(value));
 #ifdef USE_THREADS
-    } else if (strcmp(name, "threads") == 0)                                 {
+    } else if (strcmp(name, "threads") == 0 && Glob.threadOverride == 0)     {
         Glob.thread_no = (atoi(value));
         if (Glob.thread_no > MAX_THREADS) Glob.thread_no = MAX_THREADS;
 
@@ -418,6 +419,25 @@ void SetPieceValue(int pc, int val, int slot) {
     Par.values[slot + 1] = eg_val;
     Par.InitPst();
     Glob.should_clear = true;
+}
+
+void ReadThreadNumber(const char * fileName) {
+	FILE *threadFile = NULL;
+	threadFile = fopen(fileName, "r");
+
+	if (threadFile == NULL)
+		return;
+
+	char line[256], token[180]; int cnt = 0; char *pos;
+	Glob.threadOverride = 0;
+
+	while (fgets(line, sizeof(line), threadFile)) {
+
+		while ((pos = strpbrk(line, "\r\n"))) *pos = '\0'; // clean the sh!t
+		int cnt = atoi(line);
+		Glob.threadOverride = cnt;
+	}
+
 }
 
 void ReadPersonality(const char *fileName) {

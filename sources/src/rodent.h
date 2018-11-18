@@ -723,6 +723,7 @@ extern cMask Mask;
 
 class cGlobals {
   public:
+    glob_int threadOverride;
     glob_U64 nodes;
     glob_bool abort_search;
     glob_bool is_testing;
@@ -968,6 +969,7 @@ void PrintSingleOption(int ind);
 void PrintUciOptions();
 void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
+void ReadThreadNumber(const char *fileName);
 void SetPieceValue(int pc, int val, int slot);
 void UciLoop();
 int my_random(int n);

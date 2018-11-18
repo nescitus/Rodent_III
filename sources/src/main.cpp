@@ -41,7 +41,7 @@ sBook MainBook;
 #endif
 void PrintVersion() {
 
-    printf("id name Rodent III 0.275"
+    printf("id name Rodent III 0.276"
 
 #if !(defined(_WIN64) || defined(__x86_64__))
             " 32-bit"
@@ -74,6 +74,8 @@ void PrintVersion() {
 }
 
 int main() {
+	Glob.threadOverride = 0;
+	ReadThreadNumber("threads.ini");
 
     // catching memory leaks using MS Visual Studio
 #if defined(_MSC_VER) && !defined(NDEBUG)
@@ -81,7 +83,6 @@ int main() {
 #endif
 
     srand(GetMS());
-
     BB.Init();
     cEngine::InitSearch();
     POS::Init();
@@ -136,6 +137,8 @@ void cGlobals::Init() {
     use_books_from_pers = true;
     show_pers_file = true;
     thread_no = 1;
+	if (Glob.threadOverride)
+		thread_no = Glob.threadOverride;
 	time_buffer = 10; // blitz under Arena would require something like 200, but it's user's job
 	time_tricks = false;
 	game_key = 0;
