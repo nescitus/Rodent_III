@@ -417,7 +417,8 @@ research:
 
         // DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
 
-        if (score > alpha && reduction) {
+        if (score > alpha 
+        && reduction) {
             new_depth = new_depth + reduction;
             reduction = 0;
             goto research;
@@ -496,6 +497,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     MOVES m[1];
     UNDO u[1];
     eData e;
+    int moveSEEscore = 0; // see score of a bad capture
 
     bool fl_check;
     bool flExtended;
@@ -692,17 +694,22 @@ avoid_null:
            if (eval + mscFutMargin[depth] < beta) fl_futility = true;
         }
 
-		// GET MOVE HISTORY SCORE
+        // GET MOVE HISTORY SCORE
 
-		mv_hist_score = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
-		
-		// SAVE INFORMATION ABOUT A POSSIBLE CAPTURE VICTIM
+        mv_hist_score = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
+
+        // GET SEE SCORE OF A BAD CAPTURE
+
+        if (mv_type == MV_BADCAPT)
+           moveSEEscore = p->Swap(Fsq(move), Tsq(move));
+
+        // SAVE INFORMATION ABOUT A POSSIBLE CAPTURE VICTIM
 
         victim = p->TpOnSq(Tsq(move));
         if (victim != NO_TP) last_capt = Tsq(move);
         else last_capt = -1;
 
-		// MAKE MOVE
+        // MAKE MOVE
 
         p->DoMove(move, u);
         if (p->Illegal()) { p->UndoMove(move, u); continue; }
@@ -740,11 +747,15 @@ avoid_null:
 
         // 4. singular extension, Senpai-style
 
-        if (is_pv && depth > 5 && move == singMove && canSing && flExtended == false) {
+        if (is_pv 
+        && depth > 5 
+        && move == singMove 
+        && canSing 
+        && flExtended == false) {
             int new_alpha = -singScore - 50;
             int mockPv;
             int sc = Search(p, ply, new_alpha, new_alpha + 1, depth - 4, false, -1, -1, &mockPv);
-			if (sc <= new_alpha) { new_depth += 1; flExtended = true; }
+            if (sc <= new_alpha) { new_depth += 1; flExtended = true; }
         }
 
         // FUTILITY PRUNING
@@ -767,6 +778,21 @@ avoid_null:
         && mv_hist_score < Par.hist_limit
         && mv_type == MV_NORMAL) {
             p->UndoMove(move, u); continue;
+        }
+
+        // SEE pruning of bad captures
+
+        if (fl_prunable_node
+        && mv_type == MV_BADCAPT
+        && !p->InCheck()
+        && depth <= 3
+        && !is_pv
+        && alpha > -MAX_EVAL
+        && beta < MAX_EVAL) {
+           if (moveSEEscore > 150 * depth) { // yes, sign is correct
+              p->UndoMove(move, u);
+              continue;
+           }
         }
 
         // set flag responsible for increasing reduction
@@ -933,10 +959,10 @@ void cEngine::DisplayPv(int multipv, int score, int *pv) {
 
     PvToStr(pv, pv_str);
 
-	if (multipv == 0) 
+    if (multipv == 0) 
        printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
               mRootDepth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
-	else
+    else
        printf("info depth %d multipv %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
               mRootDepth, multipv, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
 }
@@ -961,8 +987,8 @@ void CheckTimeout() {
             Glob.pondering = false;
     }
 
-	int time = cEngine::msMoveTime;
-	if (Glob.scoreJump && Glob.time_tricks) time *= 2;
+    int time = cEngine::msMoveTime;
+    if (Glob.scoreJump && Glob.time_tricks) time *= 2;
 
     if (!Glob.pondering && cEngine::msMoveTime >= 0 && GetMS() - cEngine::msStartTime >= time)
         Glob.abort_search = true;
@@ -1005,11 +1031,11 @@ void cEngine::Slowdown() {
 
     // for MultiPv
 
-	if (Glob.multiPv > 1) {
-		 if ( (!(Glob.nodes & 2047))
-         &&   !Glob.is_testing
-         &&   mRootDepth > 1) CheckTimeout();
-	}
+    if (Glob.multiPv > 1) {
+        if ( (!(Glob.nodes & 2047))
+        &&   !Glob.is_testing
+        &&   mRootDepth > 1) CheckTimeout();
+    }
 
 }
 
