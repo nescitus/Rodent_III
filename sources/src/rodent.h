@@ -816,6 +816,7 @@ class cEngine {
     sPawnHashEntry mPawnTT[PAWN_HASH_SIZE];
     int mHistory[12][64];
     int mKiller[MAX_PLY][2];
+    int mEvalStack[MAX_PLY];
     int mRefutation[64][64];
     const int mcThreadId;
     int mRootDepth;
@@ -850,6 +851,7 @@ class cEngine {
     int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
     void DisplayPv(int multipv, int score, int *pv);
     void Slowdown();
+    int SetNullReductionDepth(int depth, int eval, int beta);
 
     int Evaluate(POS *p, eData *e);
 #ifdef USE_RISKY_PARAMETER
