@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2019 Pawel Koziol
+Copyright (C) 2011-2018 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -16,10 +16,9 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 7624 lines
+// 6757 lines
 
-// bench 14, 14947939 nodes searched in 13266, speed 1126700 nps (Score: 2.615)
-// v. 0.010, 2019-04-22, 52,3% vs Rodent III 0.275 (500 games)
+// bench 14, release: 20644278 nodes searched in 15531, speed 1329144 nps (Score: 3.084)
 
 #pragma once
 
@@ -50,8 +49,10 @@ using U64 = uint64_t;
     #define USE_MM_POPCNT
 #endif
 #define USE_FIRST_ONE_INTRINSICS
-#define USE_TUNING // needs epd.cpp, long compile time, huge file!!!
-//#define TEXEL_PST    // should we use Texel-tuned piece/square tables - needs fixing code that tunes them
+//#define USE_TUNING // needs epd.cpp, long compile time, huge file!!!
+#define TEXEL_PST    // should we use Texel-tuned piece/square tables?
+
+//#define USE_RISKY_PARAMETER
 
 // max size of an opening book to fully cache in memory (in MB)
 #ifndef NO_BOOK_IN_MEMORY
@@ -97,8 +98,6 @@ enum eSquare {
 
 inline eColor operator~(eColor c) { return eColor(c ^ BC); }
 inline eColor operator++(eColor& c) { return c = eColor(int(c) + 1); }
-
-inline eSquare operator^(eSquare d1, int d2) { return eSquare(int(d1) ^ d2); }  // needed for en passant
 
 constexpr int PHA_MG = Q;
 constexpr int DEF_MG = K;
@@ -150,7 +149,7 @@ constexpr U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
 
 constexpr U64 SIDE_RANDOM = ~UINT64_C(0);
 
-char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+constexpr char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
 
 template<typename T> constexpr T Abs(const T& x) { return x > 0 ? x : -x; }
 template<typename T> constexpr const T& Max(const T& x, const T& y) { return x > y ? x : y; }
@@ -323,17 +322,10 @@ struct UNDO {
 };
 
 class POS {
-private:
     static int msCastleMask[64];
     static U64 msZobPiece[12][64];
     static U64 msZobCastle[16];
     static U64 msZobEp[8];
-
-    void AddPiece(eColor c, int type, eSquare s);
-    void MovePiece(eColor sd, int movingPiece, eSquare fromSquare, eSquare toSquare);
-    void TakePiece(eColor sd, int takenPiece, eSquare sq);
-    void ChangePiece(eColor sd, int oldPiece, int newPiece, eSquare sq);
-    void ClearEnPassant();
 
     void ClearPosition();
     void InitHashKey();
@@ -352,6 +344,8 @@ private:
     int mKingSq[2];
     int mPhase;
     int mCnt[2][6];
+    int mMgSc[2];
+    int mEgSc[2];
     eColor mSide;
     int mCFlags;
     int mEpSq;
@@ -393,7 +387,7 @@ private:
     void UndoNull(UNDO *u);
     void UndoMove(int move, UNDO *u);
 
-    void SetPosition(char *epd);
+    void SetPosition(const char *epd);
 
     bool IsDraw() const;
     bool KPKdraw(eColor sd) const;
@@ -412,8 +406,6 @@ private:
     int Swap(int from, int to);
 
     int StrToMove(char *move_str) const;
-    bool NoMajorPieces() const;
-    bool NoMinorPieces() const;
 };
 
 struct MOVES {
@@ -442,10 +434,6 @@ struct ENTRY {
 };
 
 struct eData {
-    int mgOwnPst[2];
-    int egOwnPst[2];
-    int mgFruitPst[2];
-    int egFruitPst[2];
     int mg[2];
     int eg[2];
     int mg_pawns[2];
@@ -496,7 +484,7 @@ enum Values {
     P_BIGCHAIN, P_SMALLCHAIN, P_CS1, P_CS2, P_CS_EDGE, P_CSFAIL,
     ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,     // rook bonuses
     RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK_MG, R_BLOCK_EG,                             // queen and rook bonuses
-    W_MATERIAL, W_PST, W_FRU, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,    // weights part 1
+    W_MATERIAL, W_PST, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,           // weights part 1
     W_TROPISM, W_FWD, W_PASSERS, W_SHIELD, W_STORM, W_MASS, W_CHAINS, W_STRUCT,         // weights part 2
     W_LINES, W_OUTPOSTS, W_CENTER,
 	P_MOB_MG, P_MOB_EG,
@@ -510,6 +498,31 @@ enum Values {
 	QMG15, QMG16, QMG17, QMG18, QMG19, QMG20, QMG21, QMG22, QMG23, QMG24, QMG25, QMG26, QMG27,
 	QEG0, QEG1, QEG2, QEG3, QEG4, QEG5, QEG6, QEG7, QEG8, QEG9, QEG10, QEG11, QEG12, QEG13, QEG14,
 	QEG15, QEG16, QEG17, QEG18, QEG19, QEG20, QEG21, QEG22, QEG23, QEG24, QEG25, QEG26, QEG27,
+	 
+	a2Pawn, b2Pawn, c2Pawn, d2Pawn, e2Pawn, f2Pawn,  g2Pawn, h2Pawn, 
+	a3Pawn, b3Pawn, c3Pawn, d3Pawn, e3Pawn, f3Pawn,  g3Pawn, h3Pawn,
+	a4Pawn, b4Pawn, c4Pawn, d4Pawn, e4Pawn, f4Pawn,  g4Pawn, h4Pawn, 
+	a5Pawn, b5Pawn, c5Pawn, d5Pawn, e5Pawn, f5Pawn,  g5Pawn, h5Pawn,
+	a6Pawn, b6Pawn, c6Pawn, d6Pawn, e6Pawn, f6Pawn,  g6Pawn, h6Pawn,
+	a7Pawn, b7Pawn, c7Pawn, d7Pawn, e7Pawn, f7Pawn,  g7Pawn, h7Pawn,
+
+	a1Knight, b1Knight, c1Knight, d1Knight, e1Knight, f1Knight, g1Knight, h1Knight,
+	a2Knight, b2Knight, c2Knight, d2Knight, e2Knight, f2Knight, g2Knight, h2Knight, 
+	a3Knight, b3Knight, c3Knight, d3Knight, e3Knight, f3Knight, g3Knight, h3Knight,
+	a4Knight, b4Knight, c4Knight, d4Knight, e4Knight, f4Knight, g4Knight, h4Knight, 
+	a5Knight, b5Knight, c5Knight, d5Knight, e5Knight, f5Knight, g5Knight, h5Knight,
+	a6Knight, b6Knight, c6Knight, d6Knight, e6Knight, f6Knight, g6Knight, h6Knight,
+	a7Knight, b7Knight, c7Knight, d7Knight, e7Knight, f7Knight, g7Knight, h7Knight,
+	a8Knight, b8Knight, c8Knight, d8Knight, e8Knight, f8Knight, g8Knight, h8Knight,
+
+	a1Bish, b1Bish, c1Bish, d1Bish, e1Bish, f1Bish, g1Bish, h1Bish,
+	a2Bish, b2Bish, c2Bish, d2Bish, e2Bish, f2Bish, g2Bish, h2Bish,
+	a3Bish, b3Bish, c3Bish, d3Bish, e3Bish, f3Bish, g3Bish, h3Bish,
+	a4Bish, b4Bish, c4Bish, d4Bish, e4Bish, f4Bish, g4Bish, h4Bish,
+	a5Bish, b5Bish, c5Bish, d5Bish, e5Bish, f5Bish, g5Bish, h5Bish,
+	a6Bish, b6Bish, c6Bish, d6Bish, e6Bish, f6Bish, g6Bish, h6Bish,
+	a7Bish, b7Bish, c7Bish, d7Bish, e7Bish, f7Bish, g7Bish, h7Bish,
+	a8Bish, b8Bish, c8Bish, d8Bish, e8Bish, f8Bish, g8Bish, h8Bish,
 
     N_OF_VAL
 };
@@ -537,7 +550,7 @@ const char* const paramNames[N_OF_VAL] = {
     "P_BIGCHAIN", "P_SMALLCHAIN", "P_CS1", "P_CS2", "P_CS_EDGE", "P_CSFAIL",
     "ROF_MG", "ROF_EG", "RGH_MG", "RGH_EG", "RBH_MG", "RBH_EG", "RSR_MG", "RSR_EG", "ROQ_MG", "ROQ_EG",     // rook bonuses
     "RS2_MG", "RS2_EG", "QSR_MG", "QSR_EG", "R_BLOCK_MG",  "R_BLOCK_EG",                                    // queen and rook bonuses
-    "Material", "W_PST", "W_FRU", "OwnAttack", "OppAttack", "OwnMobility", "OppMobility", "PiecePressure", // weights part 1
+    "Material", "W_PST", "OwnAttack", "OppAttack", "OwnMobility", "OppMobility", "PiecePressure", // weights part 1
     "KingTropism", "Forwardness", "PassedPawns", "PawnShield", "PawnStorm", "W_MASS", "W_CHAINS", "PawnStructure", // weights part 2
     "Lines", "Outposts", "W_CENTER",
     "P_MOB_MG", "P_MOB_EG",
@@ -551,6 +564,31 @@ const char* const paramNames[N_OF_VAL] = {
 	"QMG15", "QMG16", "QMG17", "QMG18", "QMG19", "QMG20", "QMG21", "QMG22", "QMG23", "QMG24", "QMG25", "QMG26", "QMG27",
 	"QEG0", "QEG1", "QEG2", "QEG3", "QEG4", "QEG5", "QEG6", "QEG7", "QEG8", "QEG9", "QEG10", "QEG11", "QEG12", "QEG13", "QEG14",
 	"QEG15", "QEG16", "QEG17", "QEG18", "QEG19", "QEG20", "QEG21", "QEG22", "QEG23", "QEG24", "QEG25", "QEG26", "QEG27",
+
+	"a2Pawn", "b2Pawn", "c2Pawn", "d2Pawn", "e2Pawn", "f2Pawn",  "g2Pawn", "h2Pawn",
+	"a3Pawn", "b3Pawn", "c3Pawn", "d3Pawn", "e3Pawn", "f3Pawn",  "g3Pawn", "h3Pawn",
+	"a4Pawn", "b4Pawn", "c4Pawn", "d4Pawn", "e4Pawn", "f4Pawn",  "g4Pawn", "h4Pawn",
+	"a5Pawn", "b5Pawn", "c5Pawn", "d5Pawn", "e5Pawn", "f5Pawn",  "g5Pawn", "h5Pawn",
+	"a6Pawn", "b6Pawn", "c6Pawn", "d6Pawn", "e6Pawn", "f6Pawn",  "g6Pawn", "h6Pawn",
+	"a7Pawn", "b7Pawn", "c7Pawn", "d7Pawn", "e7Pawn", "f7Pawn",  "g7Pawn", "h7Pawn",
+
+	"a1Knight", "b1Knight", "c1Knight", "d1Knight", "e1Knight", "f1Knight", "g1Knight", "h1Knight",
+	"a2Knight", "b2Knight", "c2Knight", "d2Knight", "e2Knight", "f2Knight", "g2Knight", "h2Knight",
+	"a3Knight", "b3Knight", "c3Knight", "d3Knight", "e3Knight", "f3Knight", "g3Knight", "h3Knight",
+	"a4Knight", "b4Knight", "c4Knight", "d4Knight", "e4Knight", "f4Knight", "g4Knight", "h4Knight",
+	"a5Knight", "b5Knight", "c5Knight", "d5Knight", "e5Knight", "f5Knight", "g5Knight", "h5Knight",
+	"a6Knight", "b6Knight", "c6Knight", "d6Knight", "e6Knight", "f6Knight", "g6Knight", "h6Knight",
+	"a7Knight", "b7Knight", "c7Knight", "d7Knight", "e7Knight", "f7Knight", "g7Knight", "h7Knight",
+	"a8Knight", "b8Knight", "c8Knight", "d8Knight", "e8Knight", "f8Knight", "g8Knight", "h8Knight",
+
+	"a1Bish", "b1Bish", "c1Bish", "d1Bish", "e1Bish", "f1Bish", "g1Bish", "h1Bish",
+	"a2Bish", "b2Bish", "c2Bish", "d2Bish", "e2Bish", "f2Bish", "g2Bish", "h2Bish",
+	"a3Bish", "b3Bish", "c3Bish", "d3Bish", "e3Bish", "f3Bish", "g3Bish", "h3Bish",
+	"a4Bish", "b4Bish", "c4Bish", "d4Bish", "e4Bish", "f4Bish", "g4Bish", "h4Bish",
+	"a5Bish", "b5Bish", "c5Bish", "d5Bish", "e5Bish", "f5Bish", "g5Bish", "h5Bish",
+	"a6Bish", "b6Bish", "c6Bish", "d6Bish", "e6Bish", "f6Bish", "g6Bish", "h6Bish",
+	"a7Bish", "b7Bish", "c7Bish", "d7Bish", "e7Bish", "f7Bish", "g7Bish", "h7Bish",
+	"a8Bish", "b8Bish", "c8Bish", "d8Bish", "e8Bish", "f8Bish", "g8Bish", "h8Bish",
 };
 
 #define V(x) (Par.values[x]) // a little shorthand to unclutter eval code
@@ -582,9 +620,6 @@ class cParam {
     int imbalance[9][9];
     int sd_att[2];
     int sd_mob[2];
-    int ksPawnPst[2][64];
-    int mg_fru[2][6][64];
-    int eg_fru[2][6][64];
     int mg_pst[2][6][64];
     int eg_pst[2][6][64];
     int sp_pst[2][6][64];
@@ -593,6 +628,7 @@ class cParam {
     int cand_bonus_mg[2][8];
     int cand_bonus_eg[2][8];
     int mob_style;
+    int pst_style;
     int n_mob_mg[9];
     int n_mob_eg[9];
     int b_mob_mg[16];
@@ -605,7 +641,9 @@ class cParam {
     int np_table[9];
     int rp_table[9];
     int backward_malus_mg[8];
-
+#ifdef USE_RISKY_PARAMETER
+    int riskydepth;
+#endif
     NOINLINE void InitPst();
     NOINLINE void InitMobility();
     NOINLINE void InitBackward();
@@ -613,6 +651,7 @@ class cParam {
     NOINLINE void InitMaterialTweaks();
     NOINLINE void InitTables();
     NOINLINE void DefaultWeights();
+    NOINLINE void InitialPersonalityWeights();
     NOINLINE void InitAsymmetric(POS *p);
     NOINLINE void PrintValues(int startTune, int endTune);
     void Recalculate();
@@ -627,13 +666,8 @@ extern cParam Par;
 
 class cDistance {
   public:
-    int base[64][64];
     int metric[64][64]; // chebyshev distance for unstoppable passers
     int bonus[64][64];
-    int qTropismMg[64][64];
-    int rTropismMg[64][64];
-    int bTropismMg[64][64];
-    int nTropismMg[64][64];
     void Init();
 };
 
@@ -724,7 +758,53 @@ class cGlobals {
 
 extern cGlobals Glob;
 
+#ifdef USEGEN
+    #define GIMMESIZE
+    #include "book_gen.h"
+    #undef GIMMESIZE
+#endif
+
+#ifdef PACKSTRUCT
+    #pragma pack(push, 1)
+    struct sBookEntry {
+        U64 hash;
+        uint16_t move;
+        int16_t freq;
+    };
+    #pragma pack(pop)
+#else
+    struct sBookEntry {
+        U64 hash;
+        int move;
+        int freq;
+    };
+#endif
+
+struct sInternalBook {
+  public:
+
+    int n_of_records;
+
+#ifdef USEGEN
+    sBookEntry internal_book[BOOKSIZE];
+    void Init() const;
+#else
+    sBookEntry internal_book[48000];
+    void Init();
+    bool LineToInternal(const char *ptr, int excludedColor);
+    void MoveToInternal(U64 hashKey, int move, int val);
+#endif
+
+    int MoveFromInternal(POS *p, bool print_output) const;
+};
+
 #define ZEROARRAY(x) memset(x, 0, sizeof(x))
+
+extern
+#ifdef USEGEN
+    const
+#endif
+sInternalBook InternalBook;
 
 void CheckTimeout();
 
@@ -735,22 +815,13 @@ class cEngine {
     sEvalHashEntry mEvalTT[EVAL_HASH_SIZE];
     sPawnHashEntry mPawnTT[PAWN_HASH_SIZE];
     int mHistory[12][64];
+    int mEvalStack[MAX_PLY];
     int mKiller[MAX_PLY][2];
     int mRefutation[64][64];
-    int mEvalStack[MAX_PLY];
     const int mcThreadId;
     int mRootDepth;
     bool mFlRootChoice;
 	int mEngSide;
-
-    std::string epd10[10000000];
-    std::string epd01[10000000];
-    std::string epd05[10000000];
-
-    int cnt10;
-    int cnt01;
-    int cnt05;
-    int step = 20;
 
     static void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
@@ -780,13 +851,17 @@ class cEngine {
     int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
     void DisplayPv(int multipv, int score, int *pv);
     void Slowdown();
+    int SetNullReductionDepth(int depth, int eval, int beta);
 
     int Evaluate(POS *p, eData *e);
+#ifdef USE_RISKY_PARAMETER
+    static int EvalScaleByDepth(POS *p, int ply, int eval);
+#endif
     static int EvaluateChains(POS *p, eColor sd);
     static void EvaluateMaterial(POS *p, eData *e, eColor sd);
     static void EvaluatePieces(POS *p, eData *e, eColor sd);
 	static void EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int v2, int *outpost_mg, int *outpost_eg);
-    static void EvaluateOutpost(POS *p, eData *e, eColor sd, int val, int sq, int *outpost_mg, int *outpost_eg);
+    static void EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost_mg, int *outpost_eg);
     static void EvaluatePawns(POS *p, eData *e, eColor sd);
     static void EvaluatePassers(POS *p, eData *e, eColor sd);
     static void EvaluateKing(POS *p, eData *e, eColor sd);
@@ -811,7 +886,6 @@ class cEngine {
     static int CheckmateHelper(POS *p);
     static void Add(eData *e, eColor sd, int mg_val, int eg_val);
     static void Add(eData *e, eColor sd, int val);
-    static void AddPst(eData * e, eColor sd, int pc, int sq);
     static void AddPawns(eData *e, eColor sd, int mg_val, int eg_val);
     static bool NotOnBishColor(POS *p, eColor bish_side, int sq);
     static bool DifferentBishops(POS *p);
@@ -868,13 +942,10 @@ class cEngine {
     double TexelFit(POS *p, int *pv);
     bool TuneOne(POS *p, int *pv, int par);
     void TuneMe(POS *p, int *pv, int iterations);
-    void LoadEpd();
 
 #endif
 
 };
-
-int SetNullReductionDepth(int depth, int eval, int beta);
 
 #ifdef USE_THREADS
     #include <list>
@@ -901,6 +972,7 @@ void PrintUciOptions();
 void ReadLine(char *, int);
 void ReadPersonality(const char *fileName);
 void ReadThreadNumber(const char *fileName);
+void SetPieceValue(int pc, int val, int slot);
 void UciLoop();
 int my_random(int n);
 
