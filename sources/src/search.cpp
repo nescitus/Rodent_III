@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2018 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -15,1032 +15,958 @@ You should have received a copy of the GNU General Public License along with thi
 If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "rodent.h"
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cmath>
+// REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
+// 7624 lines
 
-const int cEngine::mscSnpDepth = 3;       // max depth at which static null move pruning is applied
-const int cEngine::mscRazorDepth = 4;     // max depth at which razoring is applied
-const int cEngine::mscFutDepth = 6;       // max depth at which futility pruning is applied
+// bench 14, 14947939 nodes searched in 13266, speed 1126700 nps (Score: 2.615)
+// v. 0.010, 2019-04-22, 52,3% vs Rodent III 0.275 (500 games)
 
-// this variable controls when evaluation function needs to be called for the sake of pruning
-const int cEngine::mscSelectiveDepth = Max(Max(mscSnpDepth, mscRazorDepth), mscFutDepth);
+#pragma once
 
-const int cEngine::mscRazorMargin[5] = { 0, 300, 360, 420, 480 };
-const int cEngine::mscFutMargin[7] = { 0, 100, 150, 200, 250, 300, 400 };
-int cEngine::msLmrSize[2][MAX_PLY][MAX_MOVES];
+#if !(__cplusplus >= 201402L || _MSVC_LANG >= 201402L)
+    #error Rodent requires C++14 compatible compiler.
+#endif
 
-void cParam::InitAsymmetric(POS *p) {
+#pragma warning( disable : 4577 )
+#pragma warning( disable : 4530 )
 
-    prog_side = p->mSide;
+// catching memory leaks using MS Visual Studio
+// https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library
+#if defined(_MSC_VER) && !defined(NDEBUG)
+    #define _CRTDBG_MAP_ALLOC
+    #include <stdlib.h>
+    #include <crtdbg.h>
+#endif
 
-    if (prog_side == WC) { // TODO: no if/else, but progside/op_side
-        sd_att[WC] = values[W_OWN_ATT];
-        sd_att[BC] = values[W_OPP_ATT];
-        sd_mob[WC] = values[W_OWN_MOB];
-        sd_mob[BC] = values[W_OPP_MOB];
-    } else {
-        sd_att[BC] = values[W_OWN_ATT];
-        sd_att[WC] = values[W_OPP_ATT];
-        sd_mob[BC] = values[W_OWN_MOB];
-        sd_mob[WC] = values[W_OPP_MOB];
-    }
-}
+#include <cstdint>
+#include <cinttypes>
 
-void cGlobals::ClearData() {
+using U64 = uint64_t;
 
-    Trans.Clear();
-#ifndef USE_THREADS
-    EngineSingle.ClearAll();
+// define how Rodent is to be compiled
+
+#define USE_MAGIC
+#ifndef NO_MM_POPCNT
+    #define USE_MM_POPCNT
+#endif
+#define USE_FIRST_ONE_INTRINSICS
+#define USE_TUNING // needs epd.cpp, long compile time, huge file!!!
+//#define TEXEL_PST    // should we use Texel-tuned piece/square tables - needs fixing code that tunes them
+
+// max size of an opening book to fully cache in memory (in MB)
+#ifndef NO_BOOK_IN_MEMORY
+    #define BOOK_IN_MEMORY_MB 16
+#endif
+
+//#define NO_THREADS
+
+#ifndef NO_THREADS
+    #include <thread>
+    #ifndef USE_THREADS
+       #define USE_THREADS
+    #endif
+    #define MAX_THREADS 48
 #else
-    for (auto& engine: Engines)
-        engine.ClearAll();
+    #undef USE_THREADS
 #endif
-    should_clear = false;
-}
 
-bool cGlobals::MoveToAvoid(int move) {
-    for (int i = 0; i <= MAX_PV; i++)
-        if (avoidMove[i] == move) return true;
-    return false;
-}
-
-void cGlobals::ClearAvoidList() {
-    for (int i = 0; i <= MAX_PV; i++)
-        avoidMove[i] = 0;
-}
-
-void cGlobals::SetAvoidMove(int loc, int move) {
-    avoidMove[loc] = move;
-}
-
-void cEngine::InitSearch() { // static init function
-
-    // Set depth of late move reduction (formula based on Stockfish)
-
-    for (int dp = 0; dp < MAX_PLY; dp++)
-        for (int mv = 0; mv < MAX_MOVES; mv++) {
-
-            int r = 0;
-
-            if (dp != 0 && mv != 0) // +-inf to int is undefined
-                r = (int)(log((double)dp) * log(1.4 * (double)Min(mv, 63)) / 2.25); // older Ethereal formula, thx Andrew Grant
-
-            msLmrSize[0][dp][mv] = r;     // zero window node
-            msLmrSize[1][dp][mv] = r - 1; // principal variation node (checking for pos. values is in `Search()`)
-
-            // reduction cannot exceed actual depth
-            if (msLmrSize[0][dp][mv] > dp - 1) msLmrSize[0][dp][mv] = dp - 1;
-            if (msLmrSize[1][dp][mv] > dp - 1) msLmrSize[1][dp][mv] = dp - 1;
-        }
-}
-
-void cEngine::Think(POS *p) {
-
-    POS curr[1];
-    mPvEng[0] = 0; // clear engine's move
-    mPvEng[1] = 0; // clear ponder move
-    Glob.ClearAvoidList();
-	Glob.scoreJump = false;
-    mFlRootChoice = false;
-    *curr = *p;
-    AgeHist();
-    Iterate(curr, mPvEng);
-	mEngSide = p->mSide;
-}
-
-void cEngine::MultiPv(POS * p, int * pv) {
-
-	int val[MAX_PV+1];
-	int bestPv = 1;
-	int bestScore;
-
-	Line line[MAX_PV+1];
-
-	for (int i = 0; i <= MAX_PV; i++)
-		val[i] = 0;
-
-    for (mRootDepth = 1; mRootDepth <= msSearchDepth; mRootDepth++) {
-		Glob.ClearAvoidList();
-		bestScore = -INF;
-		bestPv = 0;
-
-		val[1] = Widen(p, mRootDepth, line[1].pv, val[1]);
-        if (Glob.abort_search) break;
-		if (val[1] > bestScore) { bestPv = 1; bestScore = val[1]; };
-        Glob.SetAvoidMove(1, line[1].pv[0]);
-
-		for (int i = 2; i <= Glob.multiPv; i++) {
-
-			val[i] = Widen(p, mRootDepth, line[i].pv, val[i]);
-			if (Glob.abort_search) break;
-			if (val[i] > bestScore) { bestPv = i; bestScore = val[i]; };
-			Glob.SetAvoidMove(i, line[i].pv[0]);
-		}
-		if (Glob.abort_search) break;
-
-		for (int i = Glob.multiPv; i > 0; i--) {
-			if ( p->Legal(line[i].pv[0])) DisplayPv(i, val[i], line[i].pv);
-		}
-
-        pv = line[1].pv;
-    }
-
-	if (bestPv == 0) ExtractMove(line[1].pv);
-	else ExtractMove(line[bestPv].pv);
-
-}
-
-void cEngine::Iterate(POS *p, int *pv) {
-
-    int cur_val = 0;
-	int depthCounter = 0;
-
-    // Lazy SMP works best with some depth variance,
-    // so every other thread will search to depth + 1
-
-	int offset = mcThreadId & 0x01;
-
-    for (mRootDepth = 1 + offset; mRootDepth <= msSearchDepth; mRootDepth++) {
-
-		tDepth[mcThreadId] = mRootDepth;
-		depthCounter = 0;
-		for (int j = 0; j < Glob.thread_no; j++) {
-			if (tDepth[j] >= mRootDepth) depthCounter++;
-		}
-
-		// skip depth if it already has good coverage in multi-threaded mode
-
-		if (mRootDepth > 5 
-        && mRootDepth < msSearchDepth
-        && Glob.thread_no > 1 
-        && depthCounter > Glob.thread_no / 2) continue;
-
-        // If a thread is lagging behind too much, which makes it unlikely
-        // to contribute to the final result, skip the iteration.
-
-        if (Glob.depth_reached > mDpCompleted + 1) {
-            mDpCompleted++;
-            continue;
-        }
-
-        // Perform actual search
-
-        printf("info depth %d\n", mRootDepth);
-        if (Par.search_skill > 6) cur_val = Widen(p, mRootDepth, pv, cur_val);
-        else                      cur_val = SearchRoot(p, 0, -INF, INF, mRootDepth, pv);
-        if (Glob.abort_search) break;
-
-        // Shorten search if there is only one root move available
-
-        if (mRootDepth >= 8 && mFlRootChoice == false) break;
-
-        // Abort search on finding checkmate score
-
-        if (cur_val > MAX_EVAL || cur_val < -MAX_EVAL) {
-            int max_mate_depth = (MATE - Abs(cur_val) + 1) + 1;
-            max_mate_depth *= 4;
-            max_mate_depth /= 3;
-            if (max_mate_depth <= mRootDepth) {
-                mDpCompleted = mRootDepth;
-                break;
-            }
-        }
-
-        // Set information about depth
-
-        mDpCompleted = mRootDepth;
-        if (Glob.depth_reached < mDpCompleted)
-            Glob.depth_reached = mDpCompleted;
-    }
-
-    if (!Par.shut_up) Glob.abort_search = true; // for correct exit from fixed depth search
-}
-
-// Aspiration search, progressively widening the window (based on Senpai 1.0)
-
-int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
-
-    int cur_val = lastScore, alpha, beta;
-
-    if (depth > 6 && lastScore < MAX_EVAL) {
-        for (int margin = 8; margin < 500; margin *= 2) {
-            alpha = lastScore - margin;
-            beta  = lastScore + margin;
-            cur_val = SearchRoot(p, 0, alpha, beta, depth, pv);
-            if (Glob.abort_search) break;
-
-			// score drops
-
-			if (cur_val < alpha && margin > 50) Glob.scoreJump = true;
-
-			// score increases (this seems to hurt at more threads, need a confirmation run)
-
-			if (cur_val > beta 
-			&& margin > 50 
-			&& Glob.thread_no == 1) Glob.scoreJump = true;
-
-            if (cur_val > alpha && cur_val < beta)
-                return cur_val;              // we have finished within the window
-            if (cur_val > MAX_EVAL) break;   // verify mate searching with infinite bounds
-        }
-    }
-
-    cur_val = SearchRoot(p, 0, -INF, INF, depth, pv); // full window search
-    return cur_val;
-}
-
-int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv) {
-
-    int best, score = -INF, move, new_depth, new_pv[MAX_PLY];
-    int mv_type, reduction, victim, last_capt, hashFlag;
-    int singMove = -1, singScore = -INF;
-    int mv_tried = 0;
-    int mv_played[MAX_MOVES];
-    int quiet_tried = 0;
-    int mv_hist_score = 0;
-    MOVES m[1];
-    UNDO u[1];
-    eData e;
-
-    bool fl_check;
-    bool flExtended;
-    bool is_pv = (alpha != beta - 1);
-    bool canSing = false;
-
-    // EARLY EXIT AND NODE INITIALIZATION
-
-    Glob.nodes++;
-    Slowdown();
-    if (Glob.abort_search && mRootDepth > 1) return 0;
-    if (ply) *pv = 0;
-    if (p->IsDraw() && ply) return p->DrawScore();
-    move = 0;
-
-    // RETRIEVE MOVE FROM TRANSPOSITION TABLE
-
-    if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, depth, ply)) {
-        if (score >= beta) UpdateHistory(p, -1, move, depth, ply);
-        if (!is_pv && Par.search_skill > 0) return score;
-    }
-
-    // PREPARE FOR SINGULAR EXTENSION, SENPAI-STYLE
-
-    if (is_pv && depth > 5) {
-        if (Trans.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply)) {
-            if (hashFlag & LOWER) canSing = true;
-        }
-    }
-
-    // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
-
-    if (ply >= MAX_PLY - 1) {
-        int eval = Evaluate(p, &e);
-#ifdef USE_RISKY_PARAMETER
-        eval = EvalScaleByDepth(p, ply, eval);
+enum eColor      { WC, BC, NO_CL };
+enum ePieceType  { P, N, B, R, Q, K, NO_TP };
+enum ePiece      { WP, BP, WN, BN, WB, BBi, WR, BR, WQ, BQ, WK, BK, NO_PC };
+enum eFile       { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
+enum eRank       { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
+enum eCastleFlag { W_KS = 1, W_QS = 2, B_KS = 4, B_QS = 8 };
+enum eMoveType   { NORMAL, CASTLE, EP_CAP, EP_SET, N_PROM, B_PROM, R_PROM, Q_PROM };
+enum eMoveFlag   { MV_NORMAL, MV_HASH, MV_CAPTURE, MV_REFUTATION, MV_KILLER, MV_BADCAPT };
+enum eHashType   { NONE, UPPER, LOWER, EXACT };
+enum eSquare {
+    A1, B1, C1, D1, E1, F1, G1, H1,
+    A2, B2, C2, D2, E2, F2, G2, H2,
+    A3, B3, C3, D3, E3, F3, G3, H3,
+    A4, B4, C4, D4, E4, F4, G4, H4,
+    A5, B5, C5, D5, E5, F5, G5, H5,
+    A6, B6, C6, D6, E6, F6, G6, H6,
+    A7, B7, C7, D7, E7, F7, G7, H7,
+    A8, B8, C8, D8, E8, F8, G8, H8,
+    NO_SQ
+};
+
+// Operators for eColor type:
+// ~ switches color
+// ++ (placed before variable) iterates
+
+inline eColor operator~(eColor c) { return eColor(c ^ BC); }
+inline eColor operator++(eColor& c) { return c = eColor(int(c) + 1); }
+
+inline eSquare operator^(eSquare d1, int d2) { return eSquare(int(d1) ^ d2); }  // needed for en passant
+
+constexpr int PHA_MG = Q;
+constexpr int DEF_MG = K;
+constexpr int PHA_EG = P;
+constexpr int DEF_EG = R;
+
+constexpr int MAX_PLY   = 64;
+constexpr int MAX_MOVES = 256;
+constexpr int INF       = 32767;
+constexpr int MATE      = 32000;
+constexpr int MAX_EVAL  = 29999;
+constexpr int MAX_HIST  = 1 << 15;
+constexpr int MAX_PV    = 12;
+
+constexpr U64 RANK_1_BB = 0x00000000000000FF;
+constexpr U64 RANK_2_BB = 0x000000000000FF00;
+constexpr U64 RANK_3_BB = 0x0000000000FF0000;
+constexpr U64 RANK_4_BB = 0x00000000FF000000;
+constexpr U64 RANK_5_BB = 0x000000FF00000000;
+constexpr U64 RANK_6_BB = 0x0000FF0000000000;
+constexpr U64 RANK_7_BB = 0x00FF000000000000;
+constexpr U64 RANK_8_BB = 0xFF00000000000000;
+
+constexpr U64 FILE_A_BB = 0x0101010101010101;
+constexpr U64 FILE_B_BB = 0x0202020202020202;
+constexpr U64 FILE_C_BB = 0x0404040404040404;
+constexpr U64 FILE_D_BB = 0x0808080808080808;
+constexpr U64 FILE_E_BB = 0x1010101010101010;
+constexpr U64 FILE_F_BB = 0x2020202020202020;
+constexpr U64 FILE_G_BB = 0x4040404040404040;
+constexpr U64 FILE_H_BB = 0x8080808080808080;
+
+constexpr U64 DIAG_A1H8_BB = 0x8040201008040201;
+constexpr U64 DIAG_A8H1_BB = 0x0102040810204080;
+constexpr U64 DIAG_B8H2_BB = 0x0204081020408000;
+
+#define REL_SQ(sq,cl)   ( (sq) ^ ((cl) * 56) )
+#define RelSqBb(sq,cl)  ( SqBb(REL_SQ(sq,cl) ) )
+
+constexpr U64 bbWhiteSq = 0x55AA55AA55AA55AA;
+constexpr U64 bbBlackSq = 0xAA55AA55AA55AA55;
+
+constexpr U64 bb_rel_rank[2][8] = {
+    { RANK_1_BB, RANK_2_BB, RANK_3_BB, RANK_4_BB, RANK_5_BB, RANK_6_BB, RANK_7_BB, RANK_8_BB },
+    { RANK_8_BB, RANK_7_BB, RANK_6_BB, RANK_5_BB, RANK_4_BB, RANK_3_BB, RANK_2_BB, RANK_1_BB }
+};
+
+constexpr U64 bb_central_file = FILE_C_BB | FILE_D_BB | FILE_E_BB | FILE_F_BB;
+
+constexpr U64 SIDE_RANDOM = ~UINT64_C(0);
+
+char START_POS[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+
+template<typename T> constexpr T Abs(const T& x) { return x > 0 ? x : -x; }
+template<typename T> constexpr const T& Max(const T& x, const T& y) { return x > y ? x : y; }
+template<typename T> constexpr const T& Min(const T& x, const T& y) { return x < y ? x : y; }
+
+template<typename T> constexpr T Clip(const T& sc, const T& lim) { if (sc < -lim) return -lim;
+                                                                   if (sc > lim) return lim;
+                                                                   return sc; }
+
+#define SqBb(x)         (UINT64_C(1) << (x))
+
+#define Cl(x)           ((x) & 1)
+#define Tp(x)           ((x) >> 1)
+#define Pc(x, y)        (((y) << 1) | (x))
+
+#define File(x)         ((x) & 7)
+#define Rank(x)         ((x) >> 3)
+#define Sq(x, y)        (((y) << 3) | (x))
+
+#define Fsq(x)          ((x) & 63)
+#define Tsq(x)          (((x) >> 6) & 63)
+#define MoveType(x)     ((x) >> 12)
+#define IsProm(x)       ((x) & 0x4000)
+#define PromType(x)     (((x) >> 12) - 3)
+
+#ifndef FORCEINLINE
+    #if defined(_MSC_VER)
+        #define FORCEINLINE __forceinline
+    #else
+        #define FORCEINLINE __inline
+    #endif
 #endif
-        return eval;
-    }
 
-    fl_check = p->InCheck();
-
-    // INTERNAL ITERATIVE DEEPENING
-
-    if (is_pv
-    && !fl_check
-    && !move
-    && depth > 6) {
-        Search(p, ply, alpha, beta, depth - 2, false, -1, -1, pv);
-        Trans.RetrieveMove(p->mHashKey, &move);
-    }
-
-    // PREPARE FOR MAIN SEARCH
-
-    best = -INF;
-    InitMoves(p, m, move, Refutation(move), -1, ply);
-
-    // MAIN LOOP
-
-    while ((move = NextMove(m, &mv_type, ply))) {
-
-        // MAKE MOVE
-
-        mv_hist_score = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
-        victim = p->TpOnSq(Tsq(move));
-        if (victim != NO_TP) last_capt = Tsq(move);
-        else last_capt = -1;
-        p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
-
-        // DON'T SEARCH THE SAME MOVES IN MULTI-PV MODE 
-
-        if (Glob.MoveToAvoid(move) ) { p->UndoMove(move, u); continue; }
-
-        // GATHER INFO ABOUT THE MOVE
-
-        flExtended = false;
-        mv_played[mv_tried] = move;
-        mv_tried++;
-        if (!ply && mv_tried > 1) mFlRootChoice = true;
-        if (mv_type == MV_NORMAL) quiet_tried++;
-        if (ply == 0 && !Par.shut_up && depth > 16 && Glob.thread_no == 1)
-            DisplayCurrmove(move, mv_tried);
-
-        // SET NEW SEARCH DEPTH
-
-        new_depth = depth - 1;
-
-        // EXTENSIONS
-
-        // 1. check extension, applied in pv nodes or at low depth
-
-       if (is_pv || depth < 8) { new_depth += p->InCheck(); flExtended = true; };
-
-        // 2. pawn to 7th rank extension at the tips of pv-line
-
-        if (is_pv
-        && depth < 6
-        && p->TpOnSq(Tsq(move)) == P
-        && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) { new_depth += 1; flExtended = true; };
-
-        // 3. singular extension, Senpai-style
-
-        if (is_pv && depth > 5 && move == singMove && canSing && flExtended == false) {
-            int new_alpha = -singScore - 50;
-            int mockPv;
-            int sc = Search(p, ply, new_alpha, new_alpha + 1, depth - 4, false, -1, -1, &mockPv);
-            if (sc <= new_alpha) { new_depth += 1; flExtended = true; }
-        }
-
-        // LMR 1: NORMAL MOVES
-
-        reduction = 0;
-
-        if (depth > 2
-        && Par.search_skill > 2
-        && mv_tried > 3
-        && !fl_check
-        && !p->InCheck()
-        && msLmrSize[is_pv][depth][mv_tried] > 0
-        && mv_type == MV_NORMAL
-        && mv_hist_score < Par.hist_limit
-        && MoveType(move) != CASTLE) {
-
-            // read reduction amount from the table
-
-            reduction = (int)msLmrSize[is_pv][depth][mv_tried];
-
-            // increase reduction on bad history score
-
-            if (mv_hist_score < 0
-            && new_depth - reduction >= 2)
-                reduction++;
-
-            // TODO: decrease reduction of moves with good history score
-
-            new_depth = new_depth - reduction;
-        }
-
-research:
-
-        // PRINCIPAL VARIATION SEARCH
-
-        if (best == -INF)
-            score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
-        else {
-            score = -Search(p, ply + 1, -alpha - 1, -alpha, new_depth, false, move, last_capt, new_pv);
-            if (!Glob.abort_search && score > alpha && score < beta)
-                score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
-        }
-
-        // DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
-
-        if (score > alpha 
-        && reduction) {
-            new_depth = new_depth + reduction;
-            reduction = 0;
-            goto research;
-        }
-
-        // UNDO MOVE
-
-        p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) return 0;
-
-        // BETA CUTOFF
-
-        if (score >= beta) {
-            if (!fl_check) {
-                UpdateHistory(p, -1, move, depth, ply);
-                for (int mv = 0; mv < mv_tried; mv++) {
-                    DecreaseHistory(p, mv_played[mv], depth);
-                }
-            }
-            Trans.Store(p->mHashKey, move, score, LOWER, depth, ply);
-
-            // At root, change the best move and show the new pv
-
-            if (!ply) {
-                BuildPv(pv, new_pv, move);
-                if (Glob.multiPv == 1) DisplayPv(0, score, pv);
-            }
-
-            return score;
-        }
-
-        // NEW BEST MOVE
-
-        if (score > best) {
-            best = score;
-            if (score > alpha) {
-                alpha = score;
-                BuildPv(pv, new_pv, move);
-                if (Glob.multiPv == 1) DisplayPv(0, score, pv);
-            }
-        }
-
-    } // end of main loop
-
-    // RETURN CORRECT CHECKMATE/STALEMATE SCORE
-
-    if (best == -INF)
-        return p->InCheck() ? -MATE + ply : p->DrawScore();
-
-    // SAVE RESULT IN THE TRANSPOSITION TABLE
-
-    if (*pv) {
-        if (!fl_check) {
-            UpdateHistory(p, -1, *pv, depth, ply);
-            for (int mv = 0; mv < mv_tried; mv++) {
-                DecreaseHistory(p, mv_played[mv], depth);
-            }
-        }
-        Trans.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
-    } else
-        Trans.Store(p->mHashKey, 0, best, UPPER, depth, ply);
-
-    return best;
-}
-
-
-int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_null, int last_move, int last_capt_sq, int *pv) {
-
-    int best, score = -INF, null_score, move, new_depth, new_pv[MAX_PLY];
-    int mv_type, reduction, victim, last_capt, hashFlag, nullHashFlag;
-    int null_refutation = -1, ref_sq = -1, singMove = -1, singScore = -INF;
-    int mv_tried = 0;
-    int mv_played[MAX_MOVES];
-    int quiet_tried = 0;
-    int mv_hist_score = 0;
-    MOVES m[1];
-    UNDO u[1];
-    eData e;
-    int moveSEEscore = 0; // see score of a bad capture
-
-    bool fl_check;
-    bool flExtended;
-    bool fl_futility = false;
-    bool did_null = false;
-    bool is_pv = (alpha != beta - 1);
-    bool sherwinFlag;
-    bool canSing = false;
-
-    // QUIESCENCE SEARCH ENTRY POINT
-
-    if (depth <= 0) return QuiesceChecks(p, ply, alpha, beta, pv);
-
-    // EARLY EXIT AND NODE INITIALIZATION
-
-    Glob.nodes++;
-    Slowdown();
-    if (Glob.abort_search && mRootDepth > 1) return 0;
-    *pv = 0;
-    if (p->IsDraw() ) return p->DrawScore();
-    move = 0;
-
-    // MATE DISTANCE PRUNING
-
-    int checkmating_score = MATE - ply;
-    if (checkmating_score < beta) {
-        beta = checkmating_score;
-        if (alpha >= checkmating_score)
-            return alpha;
-    }
-
-    int checkmated_score = -MATE + ply;
-    if (checkmated_score > alpha) {
-        alpha = checkmated_score;
-        if (beta <= checkmated_score)
-            return beta;
-    }
-
-    // RETRIEVE MOVE FROM TRANSPOSITION TABLE
-
-    if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, depth, ply)) {
-        if (score >= beta) UpdateHistory(p, last_move, move, depth, ply);
-        if (!is_pv && Par.search_skill > 0) return score;
-    }
-
-    // PREPARE FOR SINGULAR EXTENSION, SENPAI-STYLE
-
-    if (is_pv && depth > 5) {
-        if (Trans.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply)) {
-            if (hashFlag & LOWER) canSing = true;
-        }
-    }
-
-    // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
-
-    if (ply >= MAX_PLY - 1) {
-        int eval = Evaluate(p, &e);
-#ifdef USE_RISKY_PARAMETER
-        eval = EvalScaleByDepth(p, ply, eval);
+#ifndef NOINLINE
+    #if defined(_MSC_VER)
+        #define NOINLINE __declspec(noinline)
+    #else
+        #define NOINLINE __attribute__((noinline))
+    #endif
 #endif
-        return eval;
-    }
 
-    fl_check = p->InCheck();
+// Compiler and architecture dependent versions of FirstOne() function,
+// triggered by defines at the top of this file.
+#ifdef USE_FIRST_ONE_INTRINSICS
 
-    // CAN WE PRUNE THIS NODE?
+    #if defined(_MSC_VER)
 
-    int fl_prunable_node = !fl_check
-                        && !is_pv
-                        && alpha > -MAX_EVAL
-                        && beta < MAX_EVAL;
+        #include <intrin.h>
 
-    // GET EVAL SCORE IF NEEDED FOR PRUNING/REDUCTION DECISIONS
+        #ifndef _WIN64
+            #pragma intrinsic(_BitScanForward)
+        #else
+            #pragma intrinsic(_BitScanForward64)
+        #endif
 
-    int eval = 0;
-    if (fl_prunable_node
-    && (!was_null || depth <= mscSelectiveDepth)) {
-        eval = Evaluate(p, &e);
-#ifdef USE_RISKY_PARAMETER
-        eval = EvalScaleByDepth(p, ply, eval);
-#endif
-    }
-
-    // BETA PRUNING / STATIC NULL MOVE
-
-    if (fl_prunable_node
-    && Par.search_skill > 7
-    && depth <= mscSnpDepth
-    && p->MayNull()
-    && !was_null) {
-        int sc = eval - 120 * depth; // TODO: test 90
-        if (sc > beta) return sc;
-    }
-
-    // NULL MOVE
-
-    if (depth > 1
-    && Par.search_skill > 1
-    && !was_null
-    && fl_prunable_node
-    && p->MayNull()
-    && eval >= beta) {
-
-        did_null = true;
-
-        // null move depth reduction - modified Stockfish formula
-
-        new_depth = depth - ((823 + 67 * depth) / 256)
-                          - Min(3, (eval - beta) / 200);
-
-        // omit null move search if normal search to the same depth wouldn't exceed beta
-        // (sometimes we can check it for free via hash table)
-
-        if (Trans.Retrieve(p->mHashKey, &move, &null_score, &nullHashFlag, alpha, beta, new_depth, ply)) {
-            if (null_score < beta) goto avoid_null;
+        static int FORCEINLINE FirstOne(U64 x) {
+            unsigned long index;
+        #ifndef _WIN64
+            if (_BitScanForward(&index, (unsigned long)x)) return index;
+            _BitScanForward(&index, x >> 32); return index + 32;
+        #else
+            _BitScanForward64(&index, x);
+            return index;
+        #endif
         }
 
-        p->DoNull(u);
-        if (new_depth <= 0) score = -QuiesceChecks(p, ply + 1, -beta, -beta + 1, new_pv);
-        else                score = -Search(p, ply + 1, -beta, -beta + 1, new_depth, true, 0, -1, new_pv);
+    #elif defined(__GNUC__)
 
-        // get location of a piece whose capture refuted null move
-        // its escape will be prioritised in the move ordering
+        constexpr int FirstOne(const U64& x) {
 
-        Trans.Retrieve(p->mHashKey, &null_refutation, &null_score, &nullHashFlag, alpha, beta, depth, ply);
-        if (null_refutation > 0) ref_sq = Tsq(null_refutation);
-
-        p->UndoNull(u);
-        if (Glob.abort_search && mRootDepth > 1) return 0;
-
-        // do not return unproved mate scores, Stockfish-style
-
-        if (score >= MAX_EVAL) score = beta;
-
-        if (score >= beta) {
-
-            // verification search
-
-            if (new_depth > 6 && Par.search_skill > 9)
-                score = Search(p, ply, alpha, beta, new_depth - 5, true, last_move, last_capt_sq, pv);
-
-            if (Glob.abort_search && mRootDepth > 1) return 0;
-            if (score >= beta) return score;
-        }
-    } // end of null move code
-
-avoid_null:
-
-    // RAZORING (based on Toga II 3.0)
-
-    if (fl_prunable_node
-    && Par.search_skill > 3
-    && !move
-    && !was_null
-    && !(p->Pawns(p->mSide) & bb_rel_rank[p->mSide][RANK_7]) // no pawns to promote in one move
-    && depth <= mscRazorDepth) {
-        int threshold = beta - mscRazorMargin[depth];
-
-        if (eval < threshold) {
-            score = QuiesceChecks(p, ply, alpha, beta, pv);
-            if (score < threshold) return score;
-        }
-    } // end of razoring code
-
-    // INTERNAL ITERATIVE DEEPENING
-
-    if (is_pv
-    && !fl_check
-    && !move
-    && depth > 6) {
-        Search(p, ply, alpha, beta, depth - 2, false, -1, last_capt_sq, pv);
-        Trans.RetrieveMove(p->mHashKey, &move);
-    }
-
-    // TODO: internal iterative deepening in cut nodes
-
-    // PREPARE FOR MAIN SEARCH
-
-    best = -INF;
-    InitMoves(p, m, move, Refutation(move), ref_sq, ply);
-
-    // MAIN LOOP
-
-    while ((move = NextMove(m, &mv_type, ply))) {
-
-        // SET FUTILITY PRUNING FLAG
-        // before the first applicable move is tried
-
-        if (mv_type == MV_NORMAL
-        && Par.search_skill > 4
-        && quiet_tried == 0
-        && fl_prunable_node
-        && depth <= mscFutDepth) {
-           if (eval + mscFutMargin[depth] < beta) fl_futility = true;
+        // workaround for GCC's inability to inline __builtin_ctzll() on x32 (it calls `__ctzdi2` runtime function instead)
+        #if !defined(__amd64__) && defined(__i386__) && !defined(__clang__)
+            const uint32_t xlo = (uint32_t)x;
+            return xlo ? __builtin_ctz(xlo) : __builtin_ctz(x >> 32) + 32;
+        #else
+            return __builtin_ctzll(x);
+        #endif
         }
 
-        // GET MOVE HISTORY SCORE
+    #endif
 
-        mv_hist_score = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
-
-        // GET SEE SCORE OF A BAD CAPTURE
-
-        if (mv_type == MV_BADCAPT)
-           moveSEEscore = p->Swap(Fsq(move), Tsq(move));
-
-        // SAVE INFORMATION ABOUT A POSSIBLE CAPTURE VICTIM
-
-        victim = p->TpOnSq(Tsq(move));
-        if (victim != NO_TP) last_capt = Tsq(move);
-        else last_capt = -1;
-
-        // MAKE MOVE
-
-        p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
-
-        // GATHER INFO ABOUT THE MOVE
-
-        flExtended = false;
-        mv_played[mv_tried] = move;
-        mv_tried++;
-        if (!ply && mv_tried > 1) mFlRootChoice = true;
-        if (mv_type == MV_NORMAL) quiet_tried++;
-        if (ply == 0 && !Par.shut_up && depth > 16 && Glob.thread_no == 1)
-            DisplayCurrmove(move, mv_tried);
-
-        // SET NEW SEARCH DEPTH
-
-        new_depth = depth - 1;
-
-        // EXTENSIONS
-
-        // 1. check extension, applied in pv nodes or at low depth
-
-       if (is_pv || depth < 8) { new_depth += p->InCheck(); flExtended = true; };
-
-        // 2. recapture extension in pv-nodes
-
-        if (is_pv && Tsq(move) == last_capt_sq) { new_depth += 1; flExtended = true; };
-
-        // 3. pawn to 7th rank extension at the tips of pv-line
-
-        if (is_pv
-        && depth < 6
-        && p->TpOnSq(Tsq(move)) == P
-        && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) { new_depth += 1; flExtended = true; };
-
-        // 4. singular extension, Senpai-style
-
-        if (is_pv 
-        && depth > 5 
-        && move == singMove 
-        && canSing 
-        && flExtended == false) {
-            int new_alpha = -singScore - 50;
-            int mockPv;
-            int sc = Search(p, ply, new_alpha, new_alpha + 1, depth - 4, false, -1, -1, &mockPv);
-            if (sc <= new_alpha) { new_depth += 1; flExtended = true; }
-        }
-
-        // FUTILITY PRUNING
-
-        if (fl_futility
-        && !p->InCheck()
-        && mv_hist_score < Par.hist_limit
-        && (mv_type == MV_NORMAL)
-        &&  mv_tried > 1) {
-            p->UndoMove(move, u); continue;
-        }
-
-        // LATE MOVE PRUNING
-
-        if (fl_prunable_node
-        && Par.search_skill > 5
-        && depth <= 3
-        && quiet_tried > 3 * depth
-        && !p->InCheck()
-        && mv_hist_score < Par.hist_limit
-        && mv_type == MV_NORMAL) {
-            p->UndoMove(move, u); continue;
-        }
-
-        // SEE pruning of bad captures
-
-        if (fl_prunable_node
-        && mv_type == MV_BADCAPT
-        && !p->InCheck()
-        && depth <= 3
-        && !is_pv
-        && alpha > -MAX_EVAL
-        && beta < MAX_EVAL) {
-           if (moveSEEscore > 150 * depth) { // yes, sign is correct
-              p->UndoMove(move, u);
-              continue;
-           }
-        }
-
-        // set flag responsible for increasing reduction
-
-        sherwinFlag = false;
-
-        if (did_null && depth > 2 && !p->InCheck()) {
-            int q_score = QuiesceChecks(p, ply, -beta, -beta + 1, pv);
-            if (q_score >= beta) sherwinFlag = true;
-        }
-
-        // LMR 1: NORMAL MOVES
-
-        reduction = 0;
-
-        if (depth > 2
-        && Par.search_skill > 2
-        && mv_tried > 3
-        && !fl_check
-        && !p->InCheck()
-        && msLmrSize[is_pv][depth][mv_tried] > 0
-        && mv_type == MV_NORMAL
-        && mv_hist_score < Par.hist_limit
-        && MoveType(move) != CASTLE) {
-
-            // read reduction amount from the table
-
-            reduction = (int)msLmrSize[is_pv][depth][mv_tried];
-
-            if (sherwinFlag
-            && new_depth - reduction >= 2)
-               reduction++;
-
-            // increase reduction on bad history score
-
-            if (mv_hist_score < 0
-            && new_depth - reduction >= 2)
-                reduction++;
-
-            // TODO: decrease reduction of moves with good history score
-
-            new_depth = new_depth - reduction;
-        }
-
-        // LMR 2: MARGINAL REDUCTION OF BAD CAPTURES
-
-        if (depth > 2
-        && Par.search_skill > 8
-        && mv_tried > 6
-        && alpha > -MAX_EVAL && beta < MAX_EVAL
-        && !fl_check
-        && !p->InCheck()
-        && (mv_type == MV_BADCAPT)
-        && !is_pv) {
-            reduction = 1;
-            new_depth -= reduction;
-        }
-
-research:
-
-        // PRINCIPAL VARIATION SEARCH
-
-        if (best == -INF)
-            score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
-        else {
-            score = -Search(p, ply + 1, -alpha - 1, -alpha, new_depth, false, move, last_capt, new_pv);
-            if (!Glob.abort_search && score > alpha && score < beta)
-                score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
-        }
-
-        // DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
-
-        if (score > alpha && reduction) {
-            new_depth = new_depth + reduction;
-            reduction = 0;
-            goto research;
-        }
-
-        // UNDO MOVE
-
-        p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) return 0;
-
-        // BETA CUTOFF
-
-        if (score >= beta) {
-            if (!fl_check) {
-                UpdateHistory(p, last_move, move, depth, ply);
-                for (int mv = 0; mv < mv_tried; mv++) {
-                    DecreaseHistory(p, mv_played[mv], depth);
-                }
-            }
-            Trans.Store(p->mHashKey, move, score, LOWER, depth, ply);
-
-            return score;
-        }
-
-        // NEW BEST MOVE
-
-        if (score > best) {
-            best = score;
-            if (score > alpha) {
-                alpha = score;
-                BuildPv(pv, new_pv, move);
-            }
-        }
-
-    } // end of main loop
-
-    // RETURN CORRECT CHECKMATE/STALEMATE SCORE
-
-    if (best == -INF)
-        return p->InCheck() ? -MATE + ply : p->DrawScore();
-
-    // SAVE RESULT IN THE TRANSPOSITION TABLE
-
-    if (*pv) {
-        if (!fl_check) {
-            UpdateHistory(p, last_move, *pv, depth, ply);
-            for (int mv = 0; mv < mv_tried; mv++) {
-                DecreaseHistory(p, mv_played[mv], depth);
-            }
-        }
-        Trans.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
-    } else
-        Trans.Store(p->mHashKey, 0, best, UPPER, depth, ply);
-
-    return best;
-}
-
-U64 GetNps(int elapsed) {
-
-    U64 nps = 0;
-    if (elapsed) nps = (Glob.nodes * 1000) / elapsed;
-    return nps;
-}
-
-void DisplayCurrmove(int move, int tried) {
-
-    if (!Glob.is_console) {
-        printf("info currmove ");
-        PrintMove(move);
-        printf(" currmovenumber %d \n", tried);
-    }
-}
-
-void cEngine::DisplayPv(int multipv, int score, int *pv) {
-
-    // don't display information from threads that are late
-
-    if (mRootDepth < Glob.depth_reached) return;
-
-    const char *type; char pv_str[512];
-    int elapsed = GetMS() - msStartTime;
-    U64 nps = GetNps(elapsed);
-
-    type = "mate";
-    if (score < -MAX_EVAL)
-        score = (-MATE - score) / 2;
-    else if (score > MAX_EVAL)
-        score = (MATE - score + 1) / 2;
-    else
-        type = "cp";
-
-    PvToStr(pv, pv_str);
-
-    if (multipv == 0) 
-       printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
-              mRootDepth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
-    else
-       printf("info depth %d multipv %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
-              mRootDepth, multipv, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
-}
-
-void CheckTimeout() {
-
-    char command[80];
-
-    if (InputAvailable()) {
-        ReadLine(command, sizeof(command));
-        if (strcmp(command, "stop") == 0)
-            Glob.abort_search = true;
-        else if (strcmp(command, "quit") == 0) {
-#ifndef USE_THREADS
-            exit(0);
 #else
-            Glob.abort_search = true;
-            Glob.goodbye = true; // will crash if just `exit()`. should wait until threads are terminated
-#endif
-        }
-        else if (strcmp(command, "ponderhit") == 0)
-            Glob.pondering = false;
-    }
-
-    int time = cEngine::msMoveTime;
-    if (Glob.scoreJump && Glob.time_tricks) time *= 2;
-
-    if (!Glob.pondering && cEngine::msMoveTime >= 0 && GetMS() - cEngine::msStartTime >= time)
-        Glob.abort_search = true;
-}
-
-void cEngine::Slowdown() {
-
-    // Handling search limited by the number of nodes
-
-    if (msMoveNodes > 0) {
-        if (Glob.nodes >= (unsigned)msMoveNodes)
-            Glob.abort_search = true;
-    }
-
-    // Handling slowdown for weak levels
-
-    if (Par.nps_limit && mRootDepth > 1) {
-        int time = GetMS() - msStartTime + 1;
-        int nps = (int)GetNps(time);
-        while (nps > Par.nps_limit) {
-            WasteTime(10);
-            time = GetMS() - msStartTime + 1;
-            nps = (int)GetNps(time);
-            if ((!Glob.pondering && msMoveTime >= 0 && GetMS() - msStartTime >= msMoveTime)) {
-                Glob.abort_search = true;
-                return;
-            }
-        }
-    }
-
-    // If Rodent is compiled as a single-threaded engine, Slowdown()
-    // function assumes additional role and enforces time control
-    // handling.
-
-#ifndef USE_THREADS
-    if ( (!(Glob.nodes & 2047))
-    &&   !Glob.is_testing
-    &&   mRootDepth > 1) CheckTimeout();
+    const int bit_table[64] = {
+        0,  1,  2,  7,  3, 13,  8, 19,
+        4, 25, 14, 28,  9, 34, 20, 40,
+        5, 17, 26, 38, 15, 46, 29, 48,
+       10, 31, 35, 54, 21, 50, 41, 57,
+       63,  6, 12, 18, 24, 27, 33, 39,
+       16, 37, 45, 47, 30, 53, 49, 56,
+       62, 11, 23, 32, 36, 44, 52, 55,
+       61, 22, 43, 51, 60, 42, 59, 58
+    };
+    #define FirstOne(x)     bit_table[(((x) & (~(x) + 1)) * (U64)0x0218A392CD3D5DBF) >> 58] // first "1" in a bitboard
 #endif
 
-    // for MultiPv
+constexpr U64 bbNotA = ~FILE_A_BB; // 0xfefefefefefefefe
+constexpr U64 bbNotH = ~FILE_H_BB; // 0x7f7f7f7f7f7f7f7f
 
-    if (Glob.multiPv > 1) {
-        if ( (!(Glob.nodes & 2047))
-        &&   !Glob.is_testing
-        &&   mRootDepth > 1) CheckTimeout();
+constexpr U64 ShiftNorth(const U64& x) { return x << 8; }
+constexpr U64 ShiftSouth(const U64& x) { return x >> 8; }
+constexpr U64 ShiftWest(const U64& x)  { return (x & bbNotA) >> 1; }
+constexpr U64 ShiftEast(const U64& x)  { return (x & bbNotH) << 1; }
+constexpr U64 ShiftNW(const U64& x)    { return (x & bbNotA) << 7; }
+constexpr U64 ShiftNE(const U64& x)    { return (x & bbNotH) << 9; }
+constexpr U64 ShiftSW(const U64& x)    { return (x & bbNotA) >> 9; }
+constexpr U64 ShiftSE(const U64& x)    { return (x & bbNotH) >> 7; }
+
+constexpr bool MoreThanOne(const U64& bb) { return bb & (bb - 1); }
+
+// bitboard functions
+
+int PopCnt(U64);
+int PopFirstBit(U64 *bb);
+
+class cBitBoard {
+  private:
+    U64 p_attacks[2][64];
+    U64 n_attacks[64];
+    U64 k_attacks[64];
+
+#ifndef USE_MAGIC
+    U64 FillOcclSouth(U64 bb_start, U64 bb_block);
+    U64 FillOcclNorth(U64 bb_start, U64 bb_block);
+    U64 FillOcclEast(U64 bb_start, U64 bb_block);
+    U64 FillOcclWest(U64 bb_start, U64 bb_block);
+    U64 FillOcclNE(U64 bb_start, U64 bb_block);
+    U64 FillOcclNW(U64 bb_start, U64 bb_block);
+    U64 FillOcclSE(U64 bb_start, U64 bb_block);
+    U64 FillOcclSW(U64 bb_start, U64 bb_block);
+#endif
+
+    U64 GetBetween(int sq1, int sq2);
+
+  public:
+    U64 bbBetween[64][64];
+    void Init();
+    void Print(U64 bb);
+    U64 ShiftFwd(U64 bb, eColor sd);
+    U64 ShiftSideways(U64 bb);
+    U64 GetWPControl(U64 bb);
+    U64 GetBPControl(U64 bb);
+    U64 GetPawnControl(U64 bb, eColor sd);
+    U64 GetDoubleWPControl(U64 bb);
+    U64 GetDoubleBPControl(U64 bb);
+    U64 GetFrontSpan(U64 bb, eColor sd);
+    U64 FillNorth(U64 bb);
+    U64 FillSouth(U64 bb);
+    U64 FillNorthSq(int sq);
+    U64 FillSouthSq(int sq);
+    U64 FillNorthExcl(U64 bb);
+    U64 FillSouthExcl(U64 bb);
+
+    U64 PawnAttacks(eColor sd, int sq);
+    U64 KingAttacks(int sq);
+    U64 KnightAttacks(int sq);
+    U64 RookAttacks(U64 occ, int sq);
+    U64 BishAttacks(U64 occ, int sq);
+    U64 QueenAttacks(U64 occ, int sq);
+};
+
+extern cBitBoard BB;
+
+struct UNDO {
+    int mTtpUd;
+    int mCFlagsUd;
+    int mEpSqUd;
+    int mRevMovesUd;
+    U64 mHashKeyUd;
+    U64 mPawnKeyUd;
+};
+
+class POS {
+private:
+    static int msCastleMask[64];
+    static U64 msZobPiece[12][64];
+    static U64 msZobCastle[16];
+    static U64 msZobEp[8];
+
+    void AddPiece(eColor c, int type, eSquare s);
+    void MovePiece(eColor sd, int movingPiece, eSquare fromSquare, eSquare toSquare);
+    void TakePiece(eColor sd, int takenPiece, eSquare sq);
+    void ChangePiece(eColor sd, int oldPiece, int newPiece, eSquare sq);
+    void ClearEnPassant();
+
+    void ClearPosition();
+    void InitHashKey();
+    void InitPawnKey();
+
+    U64 AttacksFrom(int sq) const;
+    U64 AttacksTo(int sq) const;
+    bool Attacked(int sq, eColor sd) const;
+
+    bool CanDiscoverCheck(U64 bb_checkers, eColor op, int from) const; // for GenerateSpecial()
+
+  public:
+    U64 mClBb[2];
+    U64 mTpBb[6];
+    int mPc[64];
+    int mKingSq[2];
+    int mPhase;
+    int mCnt[2][6];
+    eColor mSide;
+    int mCFlags;
+    int mEpSq;
+    int mRevMoves;
+    int mHead;
+    U64 mHashKey;
+    U64 mPawnKey;
+    U64 mRepList[256];
+
+    NOINLINE static U64 Random64();
+
+    static void Init();
+
+    U64 Pawns(eColor sd)   const { return mClBb[sd] & mTpBb[P]; }
+    U64 Knights(eColor sd) const { return mClBb[sd] & mTpBb[N]; }
+    U64 Bishops(eColor sd) const { return mClBb[sd] & mTpBb[B]; }
+    U64 Rooks(eColor sd)   const { return mClBb[sd] & mTpBb[R]; }
+    U64 Queens(eColor sd)  const { return mClBb[sd] & mTpBb[Q]; }
+    U64 Kings(eColor sd)   const { return mClBb[sd] & mTpBb[K]; }
+
+    U64 StraightMovers(eColor sd) const { return mClBb[sd] & (mTpBb[R] | mTpBb[Q]); }
+    U64 DiagMovers(eColor sd)     const { return mClBb[sd] & (mTpBb[B] | mTpBb[Q]); }
+
+    U64 PcBb(eColor sd, int tp) const { return mClBb[sd] & mTpBb[tp]; }
+    U64 OccBb()   const { return mClBb[WC] | mClBb[BC]; }
+    U64 UnoccBb() const { return ~OccBb(); }
+
+    int KingSq(eColor sd) const { return mKingSq[sd]; }
+    int TpOnSq(int sq) const { return Tp(mPc[sq]); }
+
+    bool MayNull() const { return (mClBb[mSide] & ~(mTpBb[P] | mTpBb[K])) != 0; }
+    bool IsOnSq(eColor sd, int tp, int sq) const { return PcBb(sd, tp) & SqBb(sq); }
+
+    bool InCheck() const { return Attacked(KingSq(mSide), ~mSide); }
+    bool Illegal() const { return Attacked(KingSq(~mSide), mSide); }
+
+    void DoMove(int move, UNDO *u = nullptr);
+    void DoNull(UNDO *u);
+    void UndoNull(UNDO *u);
+    void UndoMove(int move, UNDO *u);
+
+    void SetPosition(char *epd);
+
+    bool IsDraw() const;
+    bool KPKdraw(eColor sd) const;
+
+    int DrawScore() const;
+    bool Legal(int move) const;
+
+    NOINLINE void PrintBoard() const;
+    NOINLINE void ParseMoves(const char *ptr);
+    void ParsePosition(const char *ptr);
+
+    int *GenerateCaptures(int *list) const;
+    int *GenerateQuiet(int *list) const;
+    int *GenerateSpecial(int *list) const;
+
+    int Swap(int from, int to);
+
+    int StrToMove(char *move_str) const;
+    bool NoMajorPieces() const;
+    bool NoMinorPieces() const;
+};
+
+struct MOVES {
+    POS *p;
+    int phase;
+    int trans_move;
+    int ref_move;
+    int ref_sq;
+    int killer1;
+    int killer2;
+    int *next;
+    int *last;
+    int move[MAX_MOVES];
+    int value[MAX_MOVES];
+    int *badp;
+    int bad[MAX_MOVES];
+};
+
+struct ENTRY {
+    U64 key;
+    int16_t date;
+    int16_t move;
+    int16_t score;
+    uint8_t flags;
+    uint8_t depth;
+};
+
+struct eData {
+    int mgOwnPst[2];
+    int egOwnPst[2];
+    int mgFruitPst[2];
+    int egFruitPst[2];
+    int mg[2];
+    int eg[2];
+    int mg_pawns[2];
+    int eg_pawns[2];
+    int att[2];
+    int wood[2];
+    U64 p_takes[2];
+    U64 two_pawns_take[2];
+    U64 p_can_take[2];
+    U64 all_att[2];
+    U64 ev_att[2];
+};
+
+struct sEvalHashEntry {
+    U64 key;
+    int score;
+};
+
+struct sPawnHashEntry {
+    U64 key;
+    int mg_pawns;
+    int eg_pawns;
+};
+
+struct Line {
+	int pv[MAX_PLY];
+};
+
+enum Values {
+    P_MID, P_END, N_MID, N_END, B_MID, B_END, R_MID, R_END, Q_MID, Q_END,               // piece values
+    B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustments
+    N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
+    N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
+    NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
+    N_FWD, B_FWD, R_FWD, Q_FWD, 
+	N_OWH_MG, N_OWH_EG, B_OWH_MG, B_OWH_EG, 
+	N_REACH_MG, N_REACH_EG, B_REACH_MG, B_REACH_EG, 
+	N_SH_MG, N_SH_EG, B_SH_MG, B_SH_EG,
+    N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT_MG, K_NO_LUFT_EG, K_CASTLE_KS, K_CASTLE_QS,
+    B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
+    B_OPP_P, B_OWN_P, B_TOUCH, B_RETURN,
+    P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
+    P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
+    ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
+    PMG2, PMG3, PMG4, PMG5, PMG6, PMG7, PEG2, PEG3, PEG4, PEG5, PEG6, PEG7, P_BL_MUL,   // passed pawns
+    CMG2, CMG3, CMG4, CMG5, CMG6, CEG2, CEG3, CEG4, CEG5, CEG6,                         // candidate passers
+    P_OURSTOP_MUL, P_OPPSTOP_MUL, P_DEFMUL, P_STOPMUL, P_BIND, P_BADBIND, P_ISL,        // pawn special terms
+    P_BIGCHAIN, P_SMALLCHAIN, P_CS1, P_CS2, P_CS_EDGE, P_CSFAIL,
+    ROF_MG, ROF_EG, RGH_MG, RGH_EG, RBH_MG, RBH_EG, RSR_MG, RSR_EG, ROQ_MG, ROQ_EG,     // rook bonuses
+    RS2_MG, RS2_EG, QSR_MG, QSR_EG, R_BLOCK_MG, R_BLOCK_EG,                             // queen and rook bonuses
+    W_MATERIAL, W_PST, W_FRU, W_OWN_ATT, W_OPP_ATT, W_OWN_MOB, W_OPP_MOB, W_THREATS,    // weights part 1
+    W_TROPISM, W_FWD, W_PASSERS, W_SHIELD, W_STORM, W_MASS, W_CHAINS, W_STRUCT,         // weights part 2
+    W_LINES, W_OUTPOSTS, W_CENTER,
+	P_MOB_MG, P_MOB_EG,
+    NMG0, NMG1, NMG2, NMG3, NMG4, NMG5, NMG6, NMG7, NMG8,
+    NEG0, NEG1, NEG2, NEG3, NEG4, NEG5, NEG6, NEG7, NEG8,
+    BMG0, BMG1, BMG2, BMG3, BMG4, BMG5, BMG6, BMG7, BMG8, BMG9, BMG10, BMG11, BMG12, BMG13,
+    BEG0, BEG1, BEG2, BEG3, BEG4, BEG5, BEG6, BEG7, BEG8, BEG9, BEG10, BEG11, BEG12, BEG13,
+    RMG0, RMG1, RMG2, RMG3, RMG4, RMG5, RMG6, RMG7, RMG8, RMG9, RMG10, RMG11, RMG12, RMG13, RMG14,
+    REG0, REG1, REG2, REG3, REG4, REG5, REG6, REG7, REG8, REG9, REG10, REG11, REG12, REG13, REG14,
+	QMG0, QMG1, QMG2, QMG3, QMG4, QMG5, QMG6, QMG7, QMG8, QMG9, QMG10, QMG11, QMG12, QMG13, QMG14,
+	QMG15, QMG16, QMG17, QMG18, QMG19, QMG20, QMG21, QMG22, QMG23, QMG24, QMG25, QMG26, QMG27,
+	QEG0, QEG1, QEG2, QEG3, QEG4, QEG5, QEG6, QEG7, QEG8, QEG9, QEG10, QEG11, QEG12, QEG13, QEG14,
+	QEG15, QEG16, QEG17, QEG18, QEG19, QEG20, QEG21, QEG22, QEG23, QEG24, QEG25, QEG26, QEG27,
+
+    N_OF_VAL
+};
+
+const char* const paramNames[N_OF_VAL] = {
+    "PawnValueMg", "PawnValueEg", "KnightValueMg", "KnightValueEg", "BishopValueMg", 
+    "BishopValueEg", "RookValueMg", "RookValueEg", "QueenValueMg", "QueenValueEg",             // piece values
+    "BishopPair", "N_PAIR", "R_PAIR", "ELEPH", "A_EXC", "A_TWO", "A_MAJ", "A_MIN", "A_ALL",    // material adjustments
+    "N_ATT1", "N_ATT2", "B_ATT1", "B_ATT2", "R_ATT1", "R_ATT2", "Q_ATT1", "Q_ATT2",            // attacks against enemy king zone
+    "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
+    "NTR_MG", "NTR_EG", "BTR_MG", "BTR_EG", "RTR_MG", "RTR_EG", "QTR_MG", "QTR_EG",            // king tropism
+    "N_FWD", "B_FWD", "R_FWD", "Q_FWD", 
+	"N_OWH_MG", "N_OWH_EG", "B_OWH_MG", "B_OWH_EG",
+	"N_REACH_MG", "N_REACH_EG", "B_REACH_MG", "B_REACH_EG", 
+	"N_SH_MG", "N_SH_EG", "B_SH_MG", "B_SH_EG",
+    "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT_MG", "K_NO_LUFT_EG", "K_CASTLE_KS", "K_CASTLE_QS",
+    "B_TRAP_A2", "B_TRAP_A3", "B_BLOCK", "B_FIANCH", "B_BADF", "B_KING", "B_BF_MG", "B_BF_EG", "B_WING",  // bishop parameters
+    "B_OPP_P", "B_OWN_P", "B_TOUCH", "B_RETURN",
+    "P_SH_NONE", "P_SH_2", "P_SH_3", "P_SH_4", "P_SH_5", "P_SH_6", "P_SH_7",                    // king's pawn shield
+    "P_ST_OPEN", "P_ST_3", "P_ST_4", "P_ST_5",                                                  // pawn storm on enemy king
+    "ISO_MG", "ISO_EG", "ISO_OF", "BK_MID", "BK_END", "BK_OPE", "DB_MID", "DB_END",             // pawn weaknesses
+    "PMG2", "PMG3", "PMG4", "PMG5", "PMG6", "PMG7", "PEG2", "PEG3", "PEG4", "PEG5", "PEG6", "PEG7", "P_BL_MUL",   // passed pawns
+    "CMG2", "CMG3", "CMG4", "CMG5", "CMG6", "CEG2", "CEG3", "CEG4", "CEG5", "CEG6",             // candidate passers
+    "P_OURSTOP_MUL", "P_OPPSTOP_MUL", "P_DEFMUL", "P_STOPMUL", "P_BIND", "P_BADBIND", "P_ISL",  // pawn special terms
+    "P_BIGCHAIN", "P_SMALLCHAIN", "P_CS1", "P_CS2", "P_CS_EDGE", "P_CSFAIL",
+    "ROF_MG", "ROF_EG", "RGH_MG", "RGH_EG", "RBH_MG", "RBH_EG", "RSR_MG", "RSR_EG", "ROQ_MG", "ROQ_EG",     // rook bonuses
+    "RS2_MG", "RS2_EG", "QSR_MG", "QSR_EG", "R_BLOCK_MG",  "R_BLOCK_EG",                                    // queen and rook bonuses
+    "Material", "W_PST", "W_FRU", "OwnAttack", "OppAttack", "OwnMobility", "OppMobility", "PiecePressure", // weights part 1
+    "KingTropism", "Forwardness", "PassedPawns", "PawnShield", "PawnStorm", "W_MASS", "W_CHAINS", "PawnStructure", // weights part 2
+    "Lines", "Outposts", "W_CENTER",
+    "P_MOB_MG", "P_MOB_EG",
+    "NMG0", "NMG1", "NMG2", "NMG3", "NMG4", "NMG5", "NMG6", "NMG7", "NMG8",
+    "NEG0", "NEG1", "NEG2", "NEG3", "NEG4", "NEG5", "NEG6", "NEG7", "NEG8",
+    "BMG0", "BMG1", "BMG2", "BMG3", "BMG4", "BMG5", "BMG6", "BMG7", "BMG8", "BMG9", "BMG10", "BMG11", "BMG12", "BMG13",
+    "BEG0", "BEG1", "BEG2", "BEG3", "BEG4", "BEG5", "BEG6", "BEG7", "BEG8", "BEG9", "BEG10", "BEG11", "BEG12", "BEG13",
+    "RMG0", "RMG1", "RMG2", "RMG3", "RMG4", "RMG5", "RMG6", "RMG7", "RMG8", "RMG9", "RMG10", "RMG11", "RMG12", "RMG13", "RMG14",
+    "REG0", "REG1", "REG2", "REG3", "REG4", "REG5", "REG6", "REG7", "REG8", "REG9", "REG10", "REG11", "REG12", "REG13", "REG14",
+	"QMG0", "QMG1", "QMG2", "QMG3", "QMG4", "QMG5", "QMG6", "QMG7", "QMG8", "QMG9", "QMG10", "QMG11", "QMG12", "QMG13", "QMG14",
+	"QMG15", "QMG16", "QMG17", "QMG18", "QMG19", "QMG20", "QMG21", "QMG22", "QMG23", "QMG24", "QMG25", "QMG26", "QMG27",
+	"QEG0", "QEG1", "QEG2", "QEG3", "QEG4", "QEG5", "QEG6", "QEG7", "QEG8", "QEG9", "QEG10", "QEG11", "QEG12", "QEG13", "QEG14",
+	"QEG15", "QEG16", "QEG17", "QEG18", "QEG19", "QEG20", "QEG21", "QEG22", "QEG23", "QEG24", "QEG25", "QEG26", "QEG27",
+};
+
+#define V(x) (Par.values[x]) // a little shorthand to unclutter eval code
+
+class cParam {
+  public:
+	int wait[N_OF_VAL];
+    int values[N_OF_VAL]; // evaluation parameters
+    int max_val[N_OF_VAL];
+    int min_val[N_OF_VAL];
+    bool tunable[N_OF_VAL];
+    bool use_ponder; // this option does nothing
+    bool use_book;
+    bool verbose_book;
+    int book_filter;
+    int book_depth;
+    int elo;
+    bool fl_weakening;
+    bool shut_up;
+    int time_percentage;
+    int draw_score;
+    eColor prog_side;
+    int search_skill;
+    int nps_limit;
+    int eval_blur;
+    int hist_perc;
+    int hist_limit;
+    int keep_pc[7];
+    int imbalance[9][9];
+    int sd_att[2];
+    int sd_mob[2];
+    int ksPawnPst[2][64];
+    int mg_fru[2][6][64];
+    int eg_fru[2][6][64];
+    int mg_pst[2][6][64];
+    int eg_pst[2][6][64];
+    int sp_pst[2][6][64];
+    int passed_bonus_mg[2][8];
+    int passed_bonus_eg[2][8];
+    int cand_bonus_mg[2][8];
+    int cand_bonus_eg[2][8];
+    int mob_style;
+    int n_mob_mg[9];
+    int n_mob_eg[9];
+    int b_mob_mg[16];
+    int b_mob_eg[16];
+    int r_mob_mg[16];
+    int r_mob_eg[16];
+    int q_mob_mg[32];
+    int q_mob_eg[32];
+    int danger[512];
+    int np_table[9];
+    int rp_table[9];
+    int backward_malus_mg[8];
+
+    NOINLINE void InitPst();
+    NOINLINE void InitMobility();
+    NOINLINE void InitBackward();
+    NOINLINE void InitPassers();
+    NOINLINE void InitMaterialTweaks();
+    NOINLINE void InitTables();
+    NOINLINE void DefaultWeights();
+    NOINLINE void InitAsymmetric(POS *p);
+    NOINLINE void PrintValues(int startTune, int endTune);
+    void Recalculate();
+    void SetSpeed(int elo_in);
+    int EloToSpeed(int elo_in);
+    int EloToBlur(int elo_in);
+    int SpeedToBookDepth(int nps);
+    void SetVal(int slot, int val, int min, int max, bool tune);
+};
+
+extern cParam Par;
+
+class cDistance {
+  public:
+    int base[64][64];
+    int metric[64][64]; // chebyshev distance for unstoppable passers
+    int bonus[64][64];
+    int qTropismMg[64][64];
+    int rTropismMg[64][64];
+    int bTropismMg[64][64];
+    int nTropismMg[64][64];
+    void Init();
+};
+
+extern cDistance Dist;
+
+class cMask {
+  public:
+    void Init();
+
+    static constexpr U64 home[2] = { RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB,
+                                     RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB };
+    static constexpr U64 away[2] = { RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB,
+                                     RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB };
+
+    static constexpr U64 ks_castle[2] = { SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | SqBb(G2) | SqBb(H2),
+                                          SqBb(F8) | SqBb(G8) | SqBb(H8) | SqBb(F7) | SqBb(G7) | SqBb(H7) };
+    static constexpr U64 qs_castle[2] = { SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2),
+                                          SqBb(A8) | SqBb(B8) | SqBb(C8) | SqBb(A7) | SqBb(B7) | SqBb(C7) };
+
+    static constexpr U64 outpost_map[2] = { (bb_rel_rank[WC][RANK_4] | bb_rel_rank[WC][RANK_5] | bb_rel_rank[WC][RANK_6]) & bbNotA & bbNotH,
+                                            (bb_rel_rank[BC][RANK_4] | bb_rel_rank[BC][RANK_5] | bb_rel_rank[BC][RANK_6]) & bbNotA & bbNotH };
+
+    static constexpr U64 k_side = FILE_F_BB | FILE_G_BB | FILE_H_BB;
+    static constexpr U64 q_side = FILE_A_BB | FILE_B_BB | FILE_C_BB;
+    static constexpr U64 center = SqBb(C3) | SqBb(D3) | SqBb(E3) | SqBb(F3)
+                                | SqBb(C4) | SqBb(D4) | SqBb(E4) | SqBb(F4)
+                                | SqBb(C5) | SqBb(D5) | SqBb(E5) | SqBb(F5)
+                                | SqBb(C6) | SqBb(D6) | SqBb(E6) | SqBb(F6);
+
+    static constexpr U64 wb_special = SqBb(A7) | SqBb(A6) | SqBb(B8) | SqBb(H7) | SqBb(H6) | SqBb(G8) | SqBb(C1) | SqBb(F1) | SqBb(G2) | SqBb(B2);
+    static constexpr U64 bb_special = SqBb(A2) | SqBb(A3) | SqBb(B1) | SqBb(H2) | SqBb(H3) | SqBb(G1) | SqBb(C8) | SqBb(F8) | SqBb(G7) | SqBb(B7);
+
+    U64 adjacent[8];
+    U64 passed[2][64];
+    U64 supported[2][64];
+
+    static_assert(WC == 0 && BC == 1, "must be WC == 0 && BC == 1");
+};
+
+extern cMask Mask;
+
+#if defined(USE_THREADS)
+    #include <atomic>
+
+    using glob_bool = std::atomic<bool>;
+    using glob_int  = std::atomic<int>;
+    using glob_U64  = std::atomic<uint64_t>;
+#else
+    using glob_bool = bool;
+    using glob_int  = int;
+    using glob_U64  = uint64_t;
+#endif
+
+class cGlobals {
+  public:
+    glob_int threadOverride;
+    glob_U64 nodes;
+    glob_bool abort_search;
+    glob_bool is_testing;
+	bool is_noisy;
+    bool elo_slider;
+    bool is_console;
+    bool is_tuning;
+    glob_bool pondering;
+    bool reading_personality;
+    bool use_books_from_pers;
+    bool should_clear;
+    bool goodbye;
+    bool use_personality_files;
+	bool scoreJump;
+    bool show_pers_file;
+    glob_int depth_reached;
+    int moves_from_start; // to restrict book depth for weaker levels
+    int thread_no;
+	int multiPv;
+    int time_buffer;
+	bool time_tricks;
+    U64 game_key;         // random key initialized on ucinewgame to ensure non-repeating random eval modification for weak personalities
+    int avoidMove[MAX_PV + 1]; // list of moves to avoid in multi-pv re-searches
+
+    void ClearData();
+    void Init();
+    bool CanReadBook();
+	bool MoveToAvoid(int move);
+	void ClearAvoidList();
+	void SetAvoidMove(int loc, int move);
+};
+
+extern cGlobals Glob;
+
+#define ZEROARRAY(x) memset(x, 0, sizeof(x))
+
+void CheckTimeout();
+
+constexpr int EVAL_HASH_SIZE = 512 * 512 / 4;
+constexpr int PAWN_HASH_SIZE = 512 * 512 / 4;
+
+class cEngine {
+    sEvalHashEntry mEvalTT[EVAL_HASH_SIZE];
+    sPawnHashEntry mPawnTT[PAWN_HASH_SIZE];
+    int mHistory[12][64];
+    int mKiller[MAX_PLY][2];
+    int mRefutation[64][64];
+    int mEvalStack[MAX_PLY];
+    const int mcThreadId;
+    int mRootDepth;
+    bool mFlRootChoice;
+	int mEngSide;
+
+    std::string epd10[10000000];
+    std::string epd01[10000000];
+    std::string epd05[10000000];
+
+    int cnt10;
+    int cnt01;
+    int cnt05;
+    int step = 20;
+
+    static void InitCaptures(POS *p, MOVES *m);
+    void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
+    int NextMove(MOVES *m, int *flag, int ply);
+    int NextSpecialMove(MOVES *m, int *flag);
+    static int NextCapture(MOVES *m);
+    static void ScoreCaptures(MOVES *m);
+    void ScoreQuiet(MOVES *m, int ply);
+    static int SelectBest(MOVES *m);
+    static int BadCapture(POS *p, int move);
+    static int MvvLva(POS *p, int move);
+    void ClearHist();
+    void AgeHist();
+    void ClearEvalHash();
+    void ClearPawnHash();
+    int Refutation(int move);
+    void UpdateHistory(POS *p, int last_move, int move, int depth, int ply);
+    void DecreaseHistory(POS *p, int move, int depth);
+    void TrimHist();
+
+    void Iterate(POS *p, int *pv);
+    int Widen(POS *p, int depth, int *pv, int lastScore);
+	int SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv);
+    int Search(POS *p, int ply, int alpha, int beta, int depth, bool was_null, int last_move, int last_capt_sq, int *pv);
+    int QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv);
+    int QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv);
+    int Quiesce(POS *p, int ply, int alpha, int beta, int *pv);
+    void DisplayPv(int multipv, int score, int *pv);
+    void Slowdown();
+
+    int Evaluate(POS *p, eData *e);
+    static int EvaluateChains(POS *p, eColor sd);
+    static void EvaluateMaterial(POS *p, eData *e, eColor sd);
+    static void EvaluatePieces(POS *p, eData *e, eColor sd);
+	static void EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int v2, int *outpost_mg, int *outpost_eg);
+    static void EvaluateOutpost(POS *p, eData *e, eColor sd, int val, int sq, int *outpost_mg, int *outpost_eg);
+    static void EvaluatePawns(POS *p, eData *e, eColor sd);
+    static void EvaluatePassers(POS *p, eData *e, eColor sd);
+    static void EvaluateKing(POS *p, eData *e, eColor sd);
+    static void EvaluateKingFile(POS *p, eColor sd, U64 bb_file, int *shield, int *storm);
+    static int EvaluateFileShelter(U64 bb_own_pawns, eColor sd);
+    static int EvaluateFileStorm(POS * p, U64 bb_opp_pawns, eColor sd);
+    void EvaluatePawnStruct(POS *p, eData *e);
+    static void EvaluateUnstoppable(eData *e, POS *p);
+    static void EvaluateThreats(POS *p, eData *e, eColor sd);
+    static int ScalePawnsOnly(POS *p, eColor sd, eColor op);
+    static int ScaleKBPK(POS *p, eColor sd, eColor op);
+    static int ScaleKNPK(POS *p, eColor sd, eColor op);
+    static int ScaleKRPKR(POS *p, eColor sd, eColor op);
+    static int ScaleKQKRP(POS *p, eColor sd, eColor op);
+    static void EvaluateBishopPatterns(POS *p, eData *e);
+    static void EvaluateKnightPatterns(POS *p, eData *e);
+    static void EvaluateCentralPatterns(POS *p, eData *e);
+    static void EvaluateKingPatterns(POS *p, eData *e);
+    void EvaluateKingAttack(POS *p, eData *e, eColor sd);
+    static int Interpolate(POS *p, eData *e);
+    static int GetDrawFactor(POS *p, eColor sd);
+    static int CheckmateHelper(POS *p);
+    static void Add(eData *e, eColor sd, int mg_val, int eg_val);
+    static void Add(eData *e, eColor sd, int val);
+    static void AddPst(eData * e, eColor sd, int pc, int sq);
+    static void AddPawns(eData *e, eColor sd, int mg_val, int eg_val);
+    static bool NotOnBishColor(POS *p, eColor bish_side, int sq);
+    static bool DifferentBishops(POS *p);
+    static void PvToStr(int *pv, char *pv_str);
+    static void BuildPv(int *dst, int *src, int move);
+    static void WasteTime(int milliseconds);
+    static int BulletCorrection(int time);
+
+    static const int mscRazorMargin[];
+    static const int mscFutMargin[];
+    static const int mscSelectiveDepth;
+    static const int mscSnpDepth;      // max depth at which static null move pruning is applied
+    static const int mscRazorDepth;    // max depth at which razoring is applied
+    static const int mscFutDepth;      // max depth at which futility pruning is applied
+    static int msLmrSize[2][MAX_PLY][MAX_MOVES];
+
+  public:
+
+    static int msMoveTime;
+    static int msMoveNodes;
+    static int msSearchDepth;
+    static int msStartTime;
+
+    static void InitSearch();
+
+    int mPvEng[MAX_PLY];
+    int mDpCompleted;
+
+    cEngine(const cEngine&) = delete;
+    cEngine& operator=(const cEngine&) = delete;
+    cEngine(int th = 0): mcThreadId(th) { ClearAll(); };
+
+#ifdef USE_THREADS
+    std::thread mWorker;
+    void StartThinkThread(POS *p) {
+        mDpCompleted = 0;
+        mWorker = std::thread([&] { Think(p); });
     }
 
-}
+    ~cEngine() { WaitThinkThread(); };  // should fix crash on windows on console closing
+    void WaitThinkThread() { if (mWorker.joinable()) mWorker.join(); }
+#endif
 
-int POS::DrawScore() const {
+    static void SetMoveTime(int base, int inc, int movestogo);
 
-    if (mSide == Par.prog_side) return -Par.draw_score;
-    else                        return  Par.draw_score;
-}
+    void Bench(int depth);
+    void ClearAll();
+    void Think(POS *p);
+	void MultiPv(POS *p, int * pv);
+
+#ifdef USE_TUNING
+
+    double best_tune;
+    double TexelFit(POS *p, int *pv);
+    bool TuneOne(POS *p, int *pv, int par);
+    void TuneMe(POS *p, int *pv, int iterations);
+    void LoadEpd();
+
+#endif
+
+};
+
+int SetNullReductionDepth(int depth, int eval, int beta);
+
+#ifdef USE_THREADS
+    #include <list>
+    extern std::list<cEngine> Engines;
+#else
+    extern cEngine EngineSingle;
+#endif
+
+void PrintVersion();
+
+void DisplayCurrmove(int move, int tried);
+void ExtractMove(int *pv);
+int GetMS();
+U64 GetNps(int elapsed);
+bool InputAvailable();
+char *MoveToStr(int move); // returns internal static string. not thread safe!!!
+void MoveToStr(int move, char *move_str);
+void ParseGo(POS *p, const char *ptr);
+void ParseSetoption(const char *);
+const char *ParseToken(const char *, char *);
+void PrintMove(int move);
+void PrintSingleOption(int ind);
+void PrintUciOptions();
+void ReadLine(char *, int);
+void ReadPersonality(const char *fileName);
+void ReadThreadNumber(const char *fileName);
+void UciLoop();
+int my_random(int n);
+
+extern const int tp_value[7];
+extern const int ph_value[7];
+
+#define MAKESTRHLP(x) #x
+#define MAKESTR(x) MAKESTRHLP(x)
+
+// macro BOOKSPATH is where books live, default is relative "books/"
+// macro PERSONALITIESPATH is where personalities and `basic.ini` live, default is relative "personalities/"
+
+#if defined(_WIN32) || defined(_WIN64)
+    #if defined(BOOKSPATH)
+        constexpr wchar_t _BOOKSPATH[] = MAKESTR(BOOKSPATH) L"";
+    #else
+        constexpr wchar_t _BOOKSPATH[] = L"books\\";
+    #endif
+    #if defined(PERSONALITIESPATH)
+        constexpr wchar_t _PERSONALITIESPATH[] = MAKESTR(PERSONALITIESPATH) L"";
+    #else
+        constexpr wchar_t _PERSONALITIESPATH[] = L"personalities\\";
+    #endif
+    #define PrintOverrides() {}
+    // change dir and return true on success
+    #define ChDirEnv(dummy) false
+    bool ChDir(const wchar_t *new_path);
+    // classify path
+    constexpr bool isabsolute(const char *path) { return path[0] != '\0' && path[1] == ':'; }
+#else
+    #if defined(BOOKSPATH)
+        constexpr char _BOOKSPATH[] = MAKESTR(BOOKSPATH) "";
+    #else
+        constexpr char _BOOKSPATH[] = "books/";
+    #endif
+    #if defined(PERSONALITIESPATH)
+        constexpr char _PERSONALITIESPATH[] = MAKESTR(PERSONALITIESPATH) "";
+    #else
+        constexpr char _PERSONALITIESPATH[] = "personalities/";
+    #endif
+    void PrintOverrides();
+    // change dir and return true on success
+    bool ChDirEnv(const char *env_name);
+    bool ChDir(const char *new_path);
+    // classify path
+    constexpr bool isabsolute(const char *path) { return path[0] == '/'; }
+#endif
+
+#ifndef NDEBUG
+    #define printf_debug(...) printf("(debug) " __VA_ARGS__)
+#else
+    #define printf_debug(...) {}
+#endif
+
+#include "chessheapclass.h"
+extern ChessHeapClass Trans;
+
+extern int tDepth[MAX_THREADS];
+
+// TODO: changing tt date of used entries (thx Kestutis)
+// TODO: IID at cut nodes
+// TODO: continuation move
+// TODO: easy move code
+// TODO: no book moves in analyze mode
+// TODO: fix small bug: engine crashes on empty book file path or empty personality file path
+// TODO: minor defended by pawn and something else (to decrease the probability of getting doubled pawns)
+// TODO: rook and queen on7th rank
+
+double TexelSigmoid(int score, double k);
