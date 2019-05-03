@@ -815,8 +815,8 @@ class cEngine {
     sEvalHashEntry mEvalTT[EVAL_HASH_SIZE];
     sPawnHashEntry mPawnTT[PAWN_HASH_SIZE];
     int mHistory[12][64];
-    int mKiller[MAX_PLY][2];
     int mEvalStack[MAX_PLY];
+    int mKiller[MAX_PLY][2];
     int mRefutation[64][64];
     const int mcThreadId;
     int mRootDepth;
