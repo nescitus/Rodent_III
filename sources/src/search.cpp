@@ -699,7 +699,7 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     && eval < MAX_EVAL
     && p->MayNull()
     && !was_null) {
-        int sc = eval - (155 - 50 * improving) * depth;
+        int sc = eval - (175 - 50 * improving) * depth;
         if (sc > beta) return sc;
     }
 

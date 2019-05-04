@@ -276,9 +276,6 @@
   <ItemGroup>
     <ClInclude Include="src\book.h" />
     <ClInclude Include="src\chessheapclass.h" />
-    <ClInclude Include="src\epd_black_won.h" />
-    <ClInclude Include="src\epd_draw.h" />
-    <ClInclude Include="src\epd_white_won.h" />
     <ClInclude Include="src\eval.h" />
     <ClInclude Include="src\magicmoves.h" />
     <ClInclude Include="src\rodent.h" />

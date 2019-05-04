@@ -18,7 +18,8 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 6757 lines
 
-// bench 14, release: 20644278 nodes searched in 15531, speed 1329144 nps (Score: 3.084)
+// bench 14, release: 15643177 nodes searched in 13500, speed 1158668 nps (Score: 2.689)
+// 52,6 vs Rodent III 0.275
 
 #pragma once
 
@@ -49,7 +50,6 @@ using U64 = uint64_t;
     #define USE_MM_POPCNT
 #endif
 #define USE_FIRST_ONE_INTRINSICS
-//#define USE_TUNING // needs epd.cpp, long compile time, huge file!!!
 #define TEXEL_PST    // should we use Texel-tuned piece/square tables?
 
 //#define USE_RISKY_PARAMETER
@@ -823,6 +823,15 @@ class cEngine {
     bool mFlRootChoice;
 	int mEngSide;
 
+    std::string epd10[10000000];
+    std::string epd01[10000000];
+    std::string epd05[10000000];
+
+    int cnt10;
+    int cnt01;
+    int cnt05;
+    int step = 20;
+
     static void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
     int NextMove(MOVES *m, int *flag, int ply);
@@ -936,15 +945,11 @@ class cEngine {
     void Think(POS *p);
 	void MultiPv(POS *p, int * pv);
 
-#ifdef USE_TUNING
-
     double best_tune;
     double TexelFit(POS *p, int *pv);
     bool TuneOne(POS *p, int *pv, int par);
     void TuneMe(POS *p, int *pv, int iterations);
-
-#endif
-
+    void LoadEpd();
 };
 
 #ifdef USE_THREADS
