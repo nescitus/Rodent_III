@@ -99,6 +99,7 @@ void UciLoop() {
             p->PrintBoard();
 
         } else if (strcmp(token, "tune") == 0)       {
+            Engines.front().LoadEpd();
             Glob.is_tuning = true;
 #ifndef USE_THREADS
             printf("FIT: %lf\n", EngineSingle.TexelFit(p, pv));

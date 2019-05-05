@@ -51,19 +51,19 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Piece values
 
-    static const bool tunePieceValues = false;
+    static const bool tunePieceValues = true;
 
     SetVal(P_MID,   91,  50, 150, tunePieceValues);
     SetVal(N_MID,  305, 200, 400, tunePieceValues);
     SetVal(B_MID,  334, 200, 400, tunePieceValues);
-    SetVal(R_MID,  501, 400, 600, tunePieceValues);
-    SetVal(Q_MID, 1001, 800, 1200, tunePieceValues);
+    SetVal(R_MID,  501, 400, 700, tunePieceValues);
+    SetVal(Q_MID, 1001, 800, 1500, tunePieceValues);
 
     SetVal(P_END,  105,  50, 150, tunePieceValues);
     SetVal(N_END,  301, 200, 400, tunePieceValues);
     SetVal(B_END,  315, 200, 400, tunePieceValues);
-    SetVal(R_END,  543, 400, 600, tunePieceValues);
-    SetVal(Q_END, 1014, 800, 1200, tunePieceValues);
+    SetVal(R_END,  543, 400, 700, tunePieceValues);
+    SetVal(Q_END, 1014, 800, 1500, tunePieceValues);
 
     // Tendency to keep own pieces
 
@@ -286,9 +286,8 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(B_BF_MG, -12, -50, 0, tuneBishop);  // fianchettoed bishop blocked by own pawn (ie. Bg2, Pf3)
     SetVal(B_BF_EG, -20, -50, 0, tuneBishop);
     SetVal(B_WING, 3, 0, 50, tuneBishop);      // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2) 
-    SetVal(B_OWH_MG, -3, -50, 0, true);     // bishop can move only to own half of the board
-	SetVal(B_OWH_EG, -7, -50, 0, true);     // bishop can move only to own half of the board
-    SetVal(B_TOUCH, 5, 0, 50, tuneBishop);     // two bishops on adjacent squares
+    SetVal(B_OWH_MG, -3, -50, 0, true);        // bishop can move only to own half of the board
+	SetVal(B_OWH_EG, -7, -50, 0, true);        // bishop can move only to own half of the board
     SetVal(B_OWN_P, -4, -50, 0, false);        // own pawn on the square of own bishop's color
     SetVal(B_OPP_P, -1, -50, 0, false);        // enemy pawn on the square of own bishop's color
     SetVal(B_RETURN, 7, 0, 50, tuneBishop);    // bishop returning to initial position after castling
@@ -489,59 +488,59 @@ void cParam::DefaultWeights() {  // tuned automatically
 
 #ifdef TEXEL_PST
 
-	SetVal(a2Pawn, -24, -50, 50, true);
-	SetVal(b2Pawn, -20, -50, 50, true);
-	SetVal(c2Pawn, -28, -50, 50, true);
-	SetVal(d2Pawn, -11, -50, 50, true);
-	SetVal(e2Pawn, -20, -50, 50, true);
-	SetVal(f2Pawn,   9, -50, 50, true);
-	SetVal(g2Pawn,  -4, -50, 50, true);
-	SetVal(h2Pawn, -32, -50, 50, true);
+    SetVal(a2Pawn, -24, -50, 50, true);
+    SetVal(b2Pawn, -20, -50, 50, true);
+    SetVal(c2Pawn, -28, -50, 50, true);
+    SetVal(d2Pawn, -11, -50, 50, true);
+    SetVal(e2Pawn, -20, -50, 50, true);
+    SetVal(f2Pawn, 9, -50, 50, true);
+    SetVal(g2Pawn, -4, -50, 50, true);
+    SetVal(h2Pawn, -32, -50, 50, true);
 
-	SetVal(a3Pawn, -14, -50, 50, true);
-	SetVal(b3Pawn, -16, -50, 50, true);
-	SetVal(c3Pawn, -12, -50, 50, true);
-	SetVal(d3Pawn, -16, -50, 50, true);
-	SetVal(e3Pawn,  -6, -50, 50, true);
-	SetVal(f3Pawn,  -1, -50, 50, true);
-	SetVal(g3Pawn,  -4, -50, 50, true);
-	SetVal(h3Pawn, -21, -50, 50, true);
+    SetVal(a3Pawn, -14, -50, 50, true);
+    SetVal(b3Pawn, -16, -50, 50, true);
+    SetVal(c3Pawn, -12, -50, 50, true);
+    SetVal(d3Pawn, -16, -50, 50, true);
+    SetVal(e3Pawn, -6, -50, 50, true);
+    SetVal(f3Pawn, -1, -50, 50, true);
+    SetVal(g3Pawn, -4, -50, 50, true);
+    SetVal(h3Pawn, -21, -50, 50, true);
 
-	SetVal(a4Pawn, -12, -50, 50, true);
-	SetVal(b4Pawn, -18, -50, 50, true);
-	SetVal(c4Pawn, -10, -50, 50, true);
-	SetVal(d4Pawn,   4, -50, 50, true);
-	SetVal(e4Pawn,   0, -50, 50, true);
-	SetVal(f4Pawn,   3, -50, 50, true);
-	SetVal(g4Pawn, -19, -50, 50, true);
-	SetVal(h4Pawn, -27, -50, 50, true);
+    SetVal(a4Pawn, -12, -50, 50, true);
+    SetVal(b4Pawn, -18, -50, 50, true);
+    SetVal(c4Pawn, -10, -50, 50, true);
+    SetVal(d4Pawn, 4, -50, 50, true);
+    SetVal(e4Pawn, 0, -50, 50, true);
+    SetVal(f4Pawn, 3, -50, 50, true);
+    SetVal(g4Pawn, -19, -50, 50, true);
+    SetVal(h4Pawn, -27, -50, 50, true);
 
-	SetVal(a5Pawn,  3, -50, 50, true);
-	SetVal(b5Pawn,  3, -50, 50, true);
-	SetVal(c5Pawn,  2, -50, 50, true);
-	SetVal(d5Pawn, 11, -50, 50, true);
-	SetVal(e5Pawn, 11, -50, 50, true);
-	SetVal(f5Pawn, -7, -50, 50, true);
-	SetVal(g5Pawn, -2, -50, 50, true);
-	SetVal(h5Pawn, -21, -50, 50, true);
+    SetVal(a5Pawn, 3, -50, 50, true);
+    SetVal(b5Pawn, 3, -50, 50, true);
+    SetVal(c5Pawn, 2, -50, 50, true);
+    SetVal(d5Pawn, 11, -50, 50, true);
+    SetVal(e5Pawn, 11, -50, 50, true);
+    SetVal(f5Pawn, -7, -50, 50, true);
+    SetVal(g5Pawn, -2, -50, 50, true);
+    SetVal(h5Pawn, -21, -50, 50, true);
 
-	SetVal(a6Pawn, 16, -50, 50, true);
-	SetVal(b6Pawn, 18, -50, 50, true);
-	SetVal(c6Pawn, 36, -50, 50, true);
-	SetVal(d6Pawn, 32, -50, 50, true);
-	SetVal(e6Pawn, 32, -50, 50, true);
-	SetVal(f6Pawn, 47, -50, 50, true);
-	SetVal(g6Pawn, 19, -50, 50, true);
-	SetVal(h6Pawn,  2, -50, 50, true);
+    SetVal(a6Pawn, 16, -50, 50, true);
+    SetVal(b6Pawn, 18, -50, 50, true);
+    SetVal(c6Pawn, 36, -50, 50, true);
+    SetVal(d6Pawn, 32, -50, 50, true);
+    SetVal(e6Pawn, 32, -50, 50, true);
+    SetVal(f6Pawn, 47, -50, 50, true);
+    SetVal(g6Pawn, 19, -50, 50, true);
+    SetVal(h6Pawn, 2, -50, 50, true);
 
-	SetVal(a7Pawn, 22, -50, 50, true);
-	SetVal(b7Pawn, 23, -50, 50, true);
-	SetVal(c7Pawn, 69, -50, 99, true);
-	SetVal(d7Pawn, 86, -50, 99, true);
-	SetVal(e7Pawn, 87, -50, 99, true);
-	SetVal(f7Pawn, 69, -50, 99, true);
-	SetVal(g7Pawn, 13, -50, 50, true);
-	SetVal(h7Pawn, 15, -50, 50, true);
+    SetVal(a7Pawn, 22, -50, 50, true);
+    SetVal(b7Pawn, 23, -50, 50, true);
+    SetVal(c7Pawn, 69, -50, 99, true);
+    SetVal(d7Pawn, 86, -50, 99, true);
+    SetVal(e7Pawn, 87, -50, 99, true);
+    SetVal(f7Pawn, 69, -50, 99, true);
+    SetVal(g7Pawn, 13, -50, 50, true);
+    SetVal(h7Pawn, 15, -50, 50, true);
 
 	SetVal(a1Knight, -63, -99, 50, true);
 	SetVal(b1Knight, -20, -99, 50, true);
@@ -935,7 +934,6 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     values[B_WING] = 10;   // bishop on "expected" wing (ie. Pe4, Bc5/b5/a4/b3/c2)
     values[B_OWH_MG] = -5;    // bishop can move only to own half of the board
 	values[B_OWH_EG] = -5;    // bishop can move only to own half of the board
-    values[B_TOUCH] = 4;   // two bishops on adjacent squares
     values[B_OWN_P] = -3;  // own pawn on the square of own bishop's color
     values[B_OPP_P] = -1;  // enemy pawn on the square of own bishop's color
     values[B_RETURN] = 10; // bishop returning to initial position after castling
@@ -1717,7 +1715,7 @@ void cParam::PrintValues(int startTune, int endTune) {
 
     int iter = 0;
 
-    printf("\n\n");
+    printf("Values \n\n");
     for (int i = startTune; i < endTune; ++i) {
         if (tunable[i] == true) {
             printf("%14s : %4d     ", paramNames[i], Par.values[i]);

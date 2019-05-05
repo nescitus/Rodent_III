@@ -46,8 +46,8 @@ void cEngine::LoadEpd() {
     printf("%d Total positions loaded\n", readCnt);
 }
 
-int startTune = NTR_MG;
-int endTune = QTR_EG + 1;
+int startTune = a2Pawn;
+int endTune = h7Pawn + 1;
 
 bool cEngine::TuneOne(POS *p, int *pv, int par) {
 
@@ -62,6 +62,7 @@ bool cEngine::TuneOne(POS *p, int *pv, int par) {
         Par.values[par] += step;
         Par.Recalculate();
         curr_tune = TexelFit(p, pv);
+        printf("\n%f after adding %d \n", curr_tune, step);
         if (curr_tune < best_tune) {
             best_tune = curr_tune;
             return true;
@@ -72,6 +73,7 @@ bool cEngine::TuneOne(POS *p, int *pv, int par) {
         Par.values[par] -= 2 * step;
         Par.Recalculate();
         curr_tune = TexelFit(p, pv);
+        printf("\n%f after substracting %d \n", curr_tune,step);
         if (curr_tune < best_tune) {
             best_tune = curr_tune;
             return true;
@@ -86,6 +88,7 @@ bool cEngine::TuneOne(POS *p, int *pv, int par) {
 void cEngine::TuneMe(POS *p, int *pv, int iterations) {
 
     best_tune = TexelFit(p, pv);
+    printf("%f \n", best_tune);
     int test = 0;
 
     for (int i = 0; i < N_OF_VAL; i++)
@@ -107,7 +110,7 @@ void cEngine::TuneMe(POS *p, int *pv, int iterations) {
             }
         }
         if (step > 1) step--;
-        printf("Step is %d \n", step);
+    //    printf("Step is %d \n", step);
     }
 }
 

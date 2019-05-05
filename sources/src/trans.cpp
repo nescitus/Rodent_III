@@ -24,6 +24,8 @@ If not, see <http://www.gnu.org/licenses/>.
     #include <atomic>
     #include <memory>
 
+    // TODO: see if we get a slowdown by making all these class methods
+
     std::unique_ptr<std::atomic_flag[]> aflags0;
     std::unique_ptr<std::atomic_flag[]> aflags1;
     const unsigned int elem_per_aflag = 4;

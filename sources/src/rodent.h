@@ -16,9 +16,9 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 6757 lines
+// 8844 lines
 
-// bench 14, release: 15643177 nodes searched in 13500, speed 1158668 nps (Score: 2.689)
+// bench 14, release: 14840004 nodes searched in 13031, speed 1138735 nps (Score: 2.643)
 // 52,6 vs Rodent III 0.275
 
 #pragma once
@@ -474,7 +474,7 @@ enum Values {
 	N_SH_MG, N_SH_EG, B_SH_MG, B_SH_EG,
     N_CL, R_OP, N_TRAP, N_BLOCK, K_NO_LUFT_MG, K_NO_LUFT_EG, K_CASTLE_KS, K_CASTLE_QS,
     B_TRAP_A2, B_TRAP_A3, B_BLOCK, B_FIANCH, B_BADF, B_KING, B_BF_MG, B_BF_EG, B_WING,  // bishop parameters
-    B_OPP_P, B_OWN_P, B_TOUCH, B_RETURN,
+    B_OPP_P, B_OWN_P, B_RETURN,
     P_SH_NONE, P_SH_2, P_SH_3, P_SH_4, P_SH_5, P_SH_6, P_SH_7,                          // king's pawn shield
     P_ST_OPEN, P_ST_3, P_ST_4, P_ST_5,                                                  // pawn storm on enemy king
     ISO_MG, ISO_EG, ISO_OF, BK_MID, BK_END, BK_OPE, DB_MID, DB_END,                     // pawn weaknesses
@@ -540,7 +540,7 @@ const char* const paramNames[N_OF_VAL] = {
 	"N_SH_MG", "N_SH_EG", "B_SH_MG", "B_SH_EG",
     "N_CL", "R_OP", "N_TRAP", "N_BLOCK", "K_NO_LUFT_MG", "K_NO_LUFT_EG", "K_CASTLE_KS", "K_CASTLE_QS",
     "B_TRAP_A2", "B_TRAP_A3", "B_BLOCK", "B_FIANCH", "B_BADF", "B_KING", "B_BF_MG", "B_BF_EG", "B_WING",  // bishop parameters
-    "B_OPP_P", "B_OWN_P", "B_TOUCH", "B_RETURN",
+    "B_OPP_P", "B_OWN_P", "B_RETURN",
     "P_SH_NONE", "P_SH_2", "P_SH_3", "P_SH_4", "P_SH_5", "P_SH_6", "P_SH_7",                    // king's pawn shield
     "P_ST_OPEN", "P_ST_3", "P_ST_4", "P_ST_5",                                                  // pawn storm on enemy king
     "ISO_MG", "ISO_EG", "ISO_OF", "BK_MID", "BK_END", "BK_OPE", "DB_MID", "DB_END",             // pawn weaknesses
@@ -830,7 +830,7 @@ class cEngine {
     int cnt10;
     int cnt01;
     int cnt05;
-    int step = 20;
+    int step = 10;
 
     static void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);

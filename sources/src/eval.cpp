@@ -181,13 +181,6 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 		EvaluateShielded(p, e, sd, sq, V(B_SH_MG), V(B_SH_EG), &outpost_mg, &outpost_eg);  // bishop shielded by a pawn
         EvaluateOutpost(p, e, sd, B, sq, &outpost_mg, &outpost_eg);              // outpost
 
-        // Bishops side by side
-
-        if (ShiftNorth(SqBb(sq)) & p->Bishops(sd))
-            Add(e, sd, V(B_TOUCH));
-        if (ShiftEast(SqBb(sq)) & p->Bishops(sd))
-            Add(e, sd, V(B_TOUCH));
-
         // Pawns on the same square color as our bishop
 
         if (bbWhiteSq & SqBb(sq)) {
@@ -198,6 +191,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
             opp_p_cnt = PopCnt(bbBlackSq & p->Pawns(op)) - 4;
         }
 
+        // TODO: perhaps slightly bigger endgame penalties
         Add(e, sd, V(B_OWN_P) * own_p_cnt
                  + V(B_OPP_P) * opp_p_cnt);
     }
