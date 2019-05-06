@@ -735,11 +735,16 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
         if (null_refutation > 0) ref_sq = Tsq(null_refutation);
 
         p->UndoNull(u);
-        if (Glob.abort_search && mRootDepth > 1) return 0;
+
+        if (Glob.abort_search && mRootDepth > 1) {
+            return 0;
+        }
 
         // do not return unproved mate scores, Stockfish-style
 
-        if (score >= MAX_EVAL) score = beta;
+        if (score >= MAX_EVAL) {
+            score = beta;
+        }
 
         if (score >= beta) {
 
@@ -809,8 +814,9 @@ avoid_null:
 
         // GET SEE SCORE OF A BAD CAPTURE
 
-        if (mv_type == MV_BADCAPT)
+        if (mv_type == MV_BADCAPT) {
             moveSEEscore = p->Swap(Fsq(move), Tsq(move));
+        }
 
         // SAVE INFORMATION ABOUT A POSSIBLE CAPTURE VICTIM
 

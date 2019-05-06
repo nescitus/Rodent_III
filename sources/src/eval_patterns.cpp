@@ -102,7 +102,7 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
         }
         if (p->IsOnSq(BC, B, G7)) {
             if (p->IsOnSq(BC, P, F6)) Add(e, BC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
-            if (p->IsOnSq(BC, P, G6) && (p->IsOnSq(BC, P, H7) || p->IsOnSq(BC, P, G6))) Add(e, BC, Par.values[B_FIANCH]);
+            if (p->IsOnSq(BC, P, G6) && (p->IsOnSq(BC, P, H7) || p->IsOnSq(BC, P, F7))) Add(e, BC, Par.values[B_FIANCH]);
             if (p->IsOnSq(WC, P, E5) && (p->IsOnSq(WC, P, D4) || p->IsOnSq(WC, P, F4))) Add(e, BC, Par.values[B_BADF]);
             if (p->Kings(BC) & Mask.ks_castle[BC]) Add(e, BC, Par.values[B_KING], 0);
         }

@@ -301,7 +301,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
             bb_contact = bb_control & BB.KingAttacks(king_sq);   // queen contact checks
             while (bb_contact) {
-                int contactSq = PopFirstBit(&bb_contact);     // find potential contact check square
+                int contactSq = PopFirstBit(&bb_contact);        // find potential contact check square
                 if (p->Swap(sq, contactSq) >= 0) {               // if check doesn't lose material, evaluate
                     e->att[sd] += V(Q_CONTACT);
                     break;
