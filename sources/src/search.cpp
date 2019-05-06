@@ -181,8 +181,7 @@ void cEngine::MultiPv(POS * p, int * pv) {
 
     if (bestPv == 0) {
         ExtractMove(line[1].pv);
-    }
-    else {
+    } else {
         ExtractMove(line[bestPv].pv);
     }
 }
@@ -226,8 +225,7 @@ void cEngine::Iterate(POS *p, int *pv) {
 
         if (Par.search_skill > 6) {
             cur_val = Widen(p, mRootDepth, pv, cur_val);
-        }
-        else {
+        } else {
             cur_val = SearchRoot(p, 0, -INF, INF, mRootDepth, pv);
         }
 
@@ -237,8 +235,9 @@ void cEngine::Iterate(POS *p, int *pv) {
 
         // Shorten search if there is only one root move available
 
-        if (mRootDepth >= 8 && mFlRootChoice == false)
+        if (mRootDepth >= 8 && mFlRootChoice == false) {
             break;
+        }
 
         // Abort search on finding checkmate score
 
@@ -255,8 +254,9 @@ void cEngine::Iterate(POS *p, int *pv) {
         // Set information about depth
 
         mDpCompleted = mRootDepth;
-        if (Glob.depth_reached < mDpCompleted)
+        if (Glob.depth_reached < mDpCompleted) {
             Glob.depth_reached = mDpCompleted;
+        }
     }
 
     if (!Par.shut_up) Glob.abort_search = true; // for correct exit from fixed depth search
@@ -395,8 +395,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
 
         if (victim != NO_TP) {
             last_capt = Tsq(move);
-        }
-        else {
+        } else {
             last_capt = -1;
         }
 
@@ -816,23 +815,37 @@ avoid_null:
         // SAVE INFORMATION ABOUT A POSSIBLE CAPTURE VICTIM
 
         victim = p->TpOnSq(Tsq(move));
-        if (victim != NO_TP) last_capt = Tsq(move);
-        else last_capt = -1;
+        if (victim != NO_TP) {
+            last_capt = Tsq(move);
+        } else {
+            last_capt = -1;
+        }
 
         // MAKE MOVE
 
         p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
+        if (p->Illegal()) { 
+            p->UndoMove(move, u); 
+            continue; 
+        }
 
         // GATHER INFO ABOUT THE MOVE
 
         flExtended = false;
         mv_played[mv_tried] = move;
         mv_tried++;
-        if (!ply && mv_tried > 1) mFlRootChoice = true;
-        if (mv_type == MV_NORMAL) quiet_tried++;
-        if (ply == 0 && !Par.shut_up && depth > 16 && Glob.thread_no == 1)
+        
+        if (!ply && mv_tried > 1) {
+            mFlRootChoice = true;
+        }
+
+        if (mv_type == MV_NORMAL) {
+            quiet_tried++;
+        }
+
+        if (ply == 0 && !Par.shut_up && depth > 16 && Glob.thread_no == 1) {
             DisplayCurrmove(move, mv_tried);
+        }
 
         // SET NEW SEARCH DEPTH
 
@@ -912,7 +925,7 @@ avoid_null:
         // SEE pruning of bad captures
 
         if (fl_prunable_node
-        && mv_type == MV_BADCAPT
+        && (mv_type == MV_BADCAPT)
         && !p->InCheck()
         && depth <= 3
         && !is_pv
@@ -948,9 +961,9 @@ avoid_null:
                 reduction++;
             }
 
-            // ...in two steps
+            // ...in two steps (in non-pv nodes)
 
-            if (mv_hist_score < -MAX_HIST / 2) {
+            if (!is_pv && mv_hist_score < -MAX_HIST / 2) {
                 reduction++;
             }
 

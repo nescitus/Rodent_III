@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 8844 lines
 
-// bench 14, release: 14840004 nodes searched in 13031, speed 1138735 nps (Score: 2.643)
+// bench 14, release: 15038591 nodes searched in 12531, speed 1200015 nps (Score: 2.785)
 // 52,6 vs Rodent III 0.275
 
 #pragma once
@@ -1037,8 +1037,6 @@ extern ChessHeapClass Trans;
 
 extern int tDepth[MAX_THREADS];
 
-// TODO: changing tt date of used entries (thx Kestutis)
-// TODO: IID at cut nodes
 // TODO: continuation move
 // TODO: easy move code
 // TODO: no book moves in analyze mode
