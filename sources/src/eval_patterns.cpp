@@ -204,7 +204,7 @@ void cEngine::EvaluateKingPatterns(POS *p, eData *e) {
 void cEngine::EvaluateCentralPatterns(POS *p, eData *e) {
 
     // Bishop and central pawn
-
+    
     if (p->IsOnSq(WC, P, D4)) {
         if (p->Bishops(WC) & (SqBb(H2) | SqBb(G3) | SqBb(F4) | SqBb(G5) | SqBb(H4))) Add(e, WC, Par.values[B_WING], 0);
     }
@@ -220,7 +220,7 @@ void cEngine::EvaluateCentralPatterns(POS *p, eData *e) {
     if (p->IsOnSq(BC, P, E5)) {
         if (p->Bishops(BC) & (SqBb(A7) | SqBb(B6) | SqBb(C5) | SqBb(B4) | SqBb(A5))) Add(e, BC, Par.values[B_WING], 0);
     }
-
+    
     // Knight blocking c pawn
 
     if (p->IsOnSq(WC, P, C2) && p->IsOnSq(WC, P, D4) && p->IsOnSq(WC, N, C3)) {

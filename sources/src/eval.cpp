@@ -380,7 +380,7 @@ void cEngine::EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int 
 
     if (SqBb(sq) & Mask.home[sd]) {
         U64 stop = BB.ShiftFwd(SqBb(sq), sd);             // get square in front of a minor
-		if (stop & p->Pawns(sd)) {                        // is it occupied by own pawn?
+		if (stop & (p->Pawns(sd) | p->Pawns(~sd))) {                        // is it occupied by own pawn?
 			*outpost_mg += v1;                            // bonus for a pawn shielding a minor
 			*outpost_eg += v2;
 		}
