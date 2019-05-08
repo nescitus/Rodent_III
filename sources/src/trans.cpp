@@ -49,7 +49,8 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-ChessHeapClass Trans;
+ChessHeapClass TransWhite;
+ChessHeapClass TransBlack;
 
 void ChessHeapClass::AllocTrans(unsigned int mbsize) {
 

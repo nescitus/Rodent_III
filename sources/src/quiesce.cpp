@@ -53,7 +53,14 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply)) {
+    bool isRetrieved = false;
+
+    if (p->mSide == WC)
+        isRetrieved = TransWhite.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply);
+    else 
+        isRetrieved = TransBlack.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply);
+
+    if (isRetrieved) {
         if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
         if (!is_pv) return score; // !is_pv condition confirmed 2018-08-13
     }
@@ -92,7 +99,10 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         // BETA CUTOFF
 
         if (score >= beta) {
-            Trans.Store(p->mHashKey, move, score, LOWER, 0, ply);
+            if (p->mSide == WC)
+                TransWhite.Store(p->mHashKey, move, score, LOWER, 0, ply);
+            else
+                TransBlack.Store(p->mHashKey, move, score, LOWER, 0, ply);
             return score;
         }
 
@@ -115,8 +125,14 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
-    if (*pv) Trans.Store(p->mHashKey, *pv, best, EXACT, 0, ply);
-    else     Trans.Store(p->mHashKey,   0, best, UPPER, 0, ply);
+    if (p->mSide == WC) {
+
+        if (*pv) TransWhite.Store(p->mHashKey, *pv, best, EXACT, 0, ply);
+        else     TransWhite.Store(p->mHashKey, 0, best, UPPER, 0, ply);
+    } else {
+        if (*pv) TransBlack.Store(p->mHashKey, *pv, best, EXACT, 0, ply);
+        else     TransBlack.Store(p->mHashKey, 0, best, UPPER, 0, ply);
+    }
 
     return best;
 }
@@ -141,9 +157,17 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply)) {
-        if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
-        if (!is_pv) return score;
+    if (p->mSide == WC) {
+
+        if (TransWhite.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply)) {
+            if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
+            if (!is_pv) return score;
+        }
+    } else {
+        if (TransBlack.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply)) {
+            if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
+            if (!is_pv) return score;
+        }
     }
 
     // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
@@ -180,7 +204,10 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         // BETA CUTOFF
 
         if (score >= beta) {
-            Trans.Store(p->mHashKey, move, score, LOWER, 0, ply);
+            if (p->mSide == WC)
+                TransWhite.Store(p->mHashKey, move, score, LOWER, 0, ply);
+            else
+                TransBlack.Store(p->mHashKey, move, score, LOWER, 0, ply);
             return score;
         }
 
@@ -203,8 +230,13 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
-    if (*pv) Trans.Store(p->mHashKey, *pv, best, EXACT, 0, ply);
-    else     Trans.Store(p->mHashKey,   0, best, UPPER, 0, ply);
+    if (p->mSide == WC) {
+        if (*pv) TransWhite.Store(p->mHashKey, *pv, best, EXACT, 0, ply);
+        else     TransWhite.Store(p->mHashKey, 0, best, UPPER, 0, ply);
+    } else {
+        if (*pv) TransBlack.Store(p->mHashKey, *pv, best, EXACT, 0, ply);
+        else     TransBlack.Store(p->mHashKey, 0, best, UPPER, 0, ply);
+    }
 
     return best;
 }

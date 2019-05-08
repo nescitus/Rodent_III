@@ -174,7 +174,8 @@ void ParseSetoption(const char *ptr) {
     printf_debug("setoption name: '%s' value: '%s'\n", name, value );
 
     if (strcmp(name, "hash") == 0)                                           {
-        Trans.AllocTrans(atoi(value));
+        TransWhite.AllocTrans(atoi(value));
+        TransBlack.AllocTrans(atoi(value));
 #ifdef USE_THREADS
     } else if (strcmp(name, "threads") == 0 && Glob.threadOverride == 0)     {
         Glob.thread_no = (atoi(value));
@@ -187,7 +188,8 @@ void ParseSetoption(const char *ptr) {
         }
 #endif
     } else if (strcmp(name, "clear hash") == 0)                              {
-        Trans.Clear();
+        TransWhite.Clear();
+        TransBlack.Clear();
     } else if (strcmp(name, "multipv") == 0)                                 {
         Glob.multiPv = atoi(value);
     } else if (strcmp(name, "timebuffer") == 0)                              {

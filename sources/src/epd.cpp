@@ -121,7 +121,8 @@ double cEngine::TexelFit(POS *p, int *pv) {
     double sum = 0.0;
     double k_const = 1.250;
     int iteration = 0;
-    Trans.Clear();
+    TransWhite.Clear();
+    TransBlack.Clear();
     ClearAll();
 
     double result = 1;

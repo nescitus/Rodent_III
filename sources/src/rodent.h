@@ -1033,7 +1033,8 @@ extern const int ph_value[7];
 #endif
 
 #include "chessheapclass.h"
-extern ChessHeapClass Trans;
+extern ChessHeapClass TransWhite;
+extern ChessHeapClass TransBlack;
 
 extern int tDepth[MAX_THREADS];
 

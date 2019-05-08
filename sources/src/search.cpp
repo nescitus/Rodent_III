@@ -52,7 +52,8 @@ void cParam::InitAsymmetric(POS *p) {
 
 void cGlobals::ClearData() {
 
-    Trans.Clear();
+    TransWhite.Clear();
+    TransBlack.Clear();
 #ifndef USE_THREADS
     EngineSingle.ClearAll();
 #else
@@ -337,7 +338,15 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (Trans.Retrieve(p->mHashKey, &move, &hashScore, &hashFlag, alpha, beta, depth, ply)) {
+    bool isRetrieved = false;
+
+    if (p->mSide == WC) {
+        isRetrieved = TransWhite.Retrieve(p->mHashKey, &move, &hashScore, &hashFlag, alpha, beta, depth, ply);
+    } else {
+        isRetrieved = TransBlack.Retrieve(p->mHashKey, &move, &hashScore, &hashFlag, alpha, beta, depth, ply);
+    }
+
+    if (isRetrieved) {
 
         if (hashScore >= beta) {
             UpdateHistory(p, -1, move, depth, ply);
@@ -352,7 +361,13 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
     // PREPARE FOR SINGULAR EXTENSION, SENPAI-STYLE
 
     if (is_pv && depth > 5) {
-        if (Trans.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply)) {
+        bool isRetrieved = false;
+        if (p->mSide == WC) {
+            isRetrieved = TransWhite.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply);
+        } else {
+            isRetrieved = TransBlack.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply);
+        }
+        if (isRetrieved) {
             if (hashFlag & LOWER) {
                 canSing = true;
             }
@@ -374,7 +389,10 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
     && !move
     && depth > 6) {
         Search(p, ply, alpha, beta, depth - 2, false, -1, -1, pv);
-        Trans.RetrieveMove(p->mHashKey, &move);
+        if (p->mSide == WC)
+            TransWhite.RetrieveMove(p->mHashKey, &move);
+        else
+            TransBlack.RetrieveMove(p->mHashKey, &move);
     }
 
     // PREPARE FOR MAIN SEARCH
@@ -519,7 +537,10 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
                     DecreaseHistory(p, mv_played[mv], depth);
                 }
             }
-            Trans.Store(p->mHashKey, move, score, LOWER, depth, ply);
+            if (p->mSide == WC) 
+               TransWhite.Store(p->mHashKey, move, score, LOWER, depth, ply);
+            else
+               TransBlack.Store(p->mHashKey, move, score, LOWER, depth, ply);
 
             // At root, change the best move and show the new pv
 
@@ -558,10 +579,18 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
                 DecreaseHistory(p, mv_played[mv], depth);
             }
         }
-        Trans.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
+
+        if (p->mSide == WC)
+            TransWhite.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
+        else
+            TransBlack.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
     }
-    else
-        Trans.Store(p->mHashKey, 0, best, UPPER, depth, ply);
+    else {
+        if (p->mSide == WC)
+           TransWhite.Store(p->mHashKey, 0, best, UPPER, depth, ply);
+        else
+           TransBlack.Store(p->mHashKey, 0, best, UPPER, depth, ply);
+    }
 
     return best;
 }
@@ -626,7 +655,16 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
-    if (Trans.Retrieve(p->mHashKey, &move, &hashScore, &hashFlag, alpha, beta, depth, ply)) {
+    bool isRetrieved = false;
+
+    if (p->mSide == WC) {
+        isRetrieved = TransWhite.Retrieve(p->mHashKey, &move, &hashScore, &hashFlag, alpha, beta, depth, ply);
+    }
+    else {
+        isRetrieved = TransBlack.Retrieve(p->mHashKey, &move, &hashScore, &hashFlag, alpha, beta, depth, ply);
+    }
+
+    if (isRetrieved) {
 
         hasTT = true;
 
@@ -642,7 +680,14 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     // PREPARE FOR SINGULAR EXTENSION, SENPAI-STYLE
 
     if (is_pv && depth > 5) {
-        if (Trans.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply)) {
+        bool isRetrieved = false;
+        if (p->mSide == WC) {
+            isRetrieved = TransWhite.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply);
+        }
+        else {
+            isRetrieved = TransBlack.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply);
+        }
+        if (isRetrieved) {
             if (hashFlag & LOWER) {
                 canSing = true;
             }
@@ -720,8 +765,14 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
         // omit null move search if normal search to the same depth wouldn't exceed beta
         // (sometimes we can check it for free via hash table)
 
-        if (Trans.Retrieve(p->mHashKey, &move, &null_score, &nullHashFlag, alpha, beta, new_depth, ply)) {
-            if (null_score < beta) goto avoid_null;
+        if (p->mSide == WC) {
+            if (TransWhite.Retrieve(p->mHashKey, &move, &null_score, &nullHashFlag, alpha, beta, new_depth, ply)) {
+                if (null_score < beta) goto avoid_null;
+            }
+        } else {
+            if (TransBlack.Retrieve(p->mHashKey, &move, &null_score, &nullHashFlag, alpha, beta, new_depth, ply)) {
+                if (null_score < beta) goto avoid_null;
+            }
         }
 
         p->DoNull(u);
@@ -731,7 +782,12 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
         // get location of a piece whose capture refuted null move
         // its escape will be prioritised in the move ordering
 
-        Trans.Retrieve(p->mHashKey, &null_refutation, &null_score, &nullHashFlag, alpha, beta, depth, ply);
+        if (p->mSide == WC)
+           TransWhite.Retrieve(p->mHashKey, &null_refutation, &null_score, &nullHashFlag, alpha, beta, depth, ply);
+        else
+            TransBlack.Retrieve(p->mHashKey, &null_refutation, &null_score, &nullHashFlag, alpha, beta, depth, ply);
+
+
         if (null_refutation > 0) ref_sq = Tsq(null_refutation);
 
         p->UndoNull(u);
@@ -783,7 +839,10 @@ avoid_null:
     && !move
     && depth > 6) {
         Search(p, ply, alpha, beta, depth - 2, false, -1, last_capt_sq, pv);
-        Trans.RetrieveMove(p->mHashKey, &move);
+        if (p->mSide == WC)
+            TransWhite.RetrieveMove(p->mHashKey, &move);
+        else
+            TransBlack.RetrieveMove(p->mHashKey, &move);
     }
 
     // TODO: internal iterative deepening in cut nodes
@@ -1036,7 +1095,10 @@ avoid_null:
                     DecreaseHistory(p, mv_played[mv], depth);
                 }
             }
-            Trans.Store(p->mHashKey, move, score, LOWER, depth, ply);
+            if (p->mSide == WC)
+                TransWhite.Store(p->mHashKey, move, score, LOWER, depth, ply);
+            else
+                TransBlack.Store(p->mHashKey, move, score, LOWER, depth, ply);
 
             return score;
         }
@@ -1068,9 +1130,16 @@ avoid_null:
                 DecreaseHistory(p, mv_played[mv], depth);
             }
         }
-        Trans.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
-    } else
-        Trans.Store(p->mHashKey, 0, best, UPPER, depth, ply);
+        if (p->mSide == WC)
+            TransWhite.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
+        else
+            TransBlack.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
+    } else {
+        if (p->mSide == WC)
+            TransWhite.Store(p->mHashKey, 0, best, UPPER, depth, ply);
+        else
+            TransBlack.Store(p->mHashKey, 0, best, UPPER, depth, ply);
+    }
 
     return best;
 }
