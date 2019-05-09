@@ -43,6 +43,14 @@ If not, see <http://www.gnu.org/licenses/>.
 
 using U64 = uint64_t;
 
+// max size of hashtable
+
+#ifdef _WIN64
+static constexpr int max_tt_size_mb = 16384;
+#else
+static constexpr int max_tt_size_mb = 4096; // TODO: Fruit 3.2.1 uses 16384 on 64-bit systems, 1024 otherwise
+#endif
+
 // define how Rodent is to be compiled
 
 #define USE_MAGIC

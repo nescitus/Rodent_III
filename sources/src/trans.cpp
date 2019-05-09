@@ -73,6 +73,7 @@ void ChessHeapClass::AllocTrans(unsigned int mbsize) {
 
         tt_size = tt_size * (1024 * 1024 / sizeof(ENTRY)); // number of elements of type ENTRY
         tt_mask = tt_size - 4;
+        printf("info string ttsize %ull\n", tt_size);
 
 #if defined(USE_THREADS)
         unsigned int number_of_aflags = tt_size / 4;

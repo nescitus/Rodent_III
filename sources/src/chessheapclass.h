@@ -5,9 +5,8 @@
 
 class ChessHeapClass {
     static constexpr int bucket_size_mb = 512;
-    static constexpr int max_memory_mb = 4096;
     static constexpr int num_per_bucket = bucket_size_mb * 1024 * 1024 / sizeof(ENTRY);
-    static constexpr int arrays_size = max_memory_mb / bucket_size_mb;
+    static constexpr int arrays_size = max_tt_size_mb / bucket_size_mb;
 
     static_assert(sizeof(ENTRY) == 16, "ENTRY size must be 16 bytes.");
 
@@ -43,7 +42,7 @@ class ChessHeapClass {
 
     bool Alloc(int size_mb) {       // allocate size_mb megabyte of memory and return true on success
 
-        if (size_mb > max_memory_mb)
+        if (size_mb > max_tt_size_mb)
             return false;
 
         Free();

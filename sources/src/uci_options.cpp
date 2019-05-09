@@ -39,7 +39,7 @@ void PrintSingleOption(int ind) {
 void PrintUciOptions() {
 
 	printf("option name Clear Hash type button\n");
-    printf("option name Hash type spin default 16 min 1 max 4096\n");
+    printf("option name Hash type spin default 16 min 1 max %d\n", max_tt_size_mb);
 #ifdef USE_THREADS
 	if (Glob.threadOverride == 0)
     printf("option name Threads type spin default %d min 1 max %d\n", Glob.thread_no, MAX_THREADS);

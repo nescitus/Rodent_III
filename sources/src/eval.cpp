@@ -380,8 +380,8 @@ void cEngine::EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int 
 
     if (SqBb(sq) & Mask.home[sd]) {
         U64 stop = BB.ShiftFwd(SqBb(sq), sd);             // get square in front of a minor
-		if (stop & (p->Pawns(sd) | p->Pawns(~sd))) {                        // is it occupied by own pawn?
-			*outpost_mg += v1;                            // bonus for a pawn shielding a minor
+		if (stop & (p->Pawns(sd) | p->Pawns(~sd))) {      // is it occupied by a pawn?
+			*outpost_mg += v1;                            // add bonus for a pawn shielding a minor
 			*outpost_eg += v2;
 		}
     }
@@ -390,7 +390,7 @@ void cEngine::EvaluateShielded(POS *p, eData *e, eColor sd, int sq, int v1, int 
 void cEngine::EvaluateOutpost(POS *p, eData *e, eColor sd, int pc, int sq, int *outpost_mg, int *outpost_eg) {
 
     int tmp = Par.sp_pst[sd][pc][sq];                     // get base outpost bonus
-	int dst = Dist.metric[sd][p->KingSq(~sd)];
+	int dst = Dist.metric[sd][p->KingSq(~sd)];            // factor in distance to enemy king
 	if (dst > 0) tmp += dst / 2;
 
     if (tmp) {
