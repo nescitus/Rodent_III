@@ -107,9 +107,6 @@ void PrintUciOptions() {
         printf("option name SlowMover type spin default %d min 10 max 500\n", Par.time_percentage);
         printf("option name Selectivity type spin default %d min 10 max 500\n", Par.hist_perc);
         printf("option name SearchSkill type spin default %d min 0 max 10\n", Par.search_skill);
-#ifdef USE_RISKY_PARAMETER
-        printf("option name RiskyDepth type spin default %d min 0 max 10\n", Par.riskydepth);
-#endif
     }
 	printf("option name Verbose type check default %s\n", Glob.is_noisy ? "true" : "false");
     printf("option name Ponder type check default %s\n", Par.use_ponder ? "true" : "false");
@@ -375,11 +372,6 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "searchskill") == 0)                             {
         Par.search_skill = atoi(value);
         Glob.should_clear = true;
-#ifdef USE_RISKY_PARAMETER
-    } else if (strcmp(name, "riskydepth") == 0)                              {
-        Par.riskydepth = atoi(value);
-        Glob.should_clear = true;
-#endif
     } else if (strcmp(name, "slowmover") == 0)                               {
         Par.time_percentage = atoi(value);
     } else if (strcmp(name, "selectivity") == 0)                             {

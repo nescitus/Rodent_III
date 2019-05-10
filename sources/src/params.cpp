@@ -688,9 +688,6 @@ void cParam::DefaultWeights() {  // tuned automatically
 
 #endif
 
-#ifdef USE_RISKY_PARAMETER
-    riskydepth = 0;
-#endif
     draw_score = 0;
     shut_up = false;       // true suppresses displaying info currmove etc.
 
@@ -797,10 +794,6 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     mob_style = 0;         // 1 is only marginally behind
     values[P_MOB_MG] = 2;
     values[P_MOB_EG] = 2;
-
-#ifdef USE_RISKY_PARAMETER
-    riskydepth = 0;
-#endif
     draw_score = 0;
     shut_up = false;       // true suppresses displaying info currmove etc.
 

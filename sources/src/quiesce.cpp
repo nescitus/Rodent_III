@@ -19,7 +19,7 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 // QuiescenceChecks() allows the engine to consider most of the checking moves
-// as well as special quiet moves (hash and killers). It improves engines'
+// as well as special quiet moves (hash and killers). It improves engine's
 // tactical awareness near the leaves and after a null move.
 
 int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
@@ -31,42 +31,56 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     UNDO u[1];
     eData e;
 
-    if (p->InCheck()) return QuiesceFlee(p, ply, alpha, beta, pv);
+    if (p->InCheck()) {
+        return QuiesceFlee(p, ply, alpha, beta, pv);
+    }
 
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
     Slowdown();
-    if (Glob.abort_search && mRootDepth > 1) return 0;
+    
+    if (Glob.abort_search && mRootDepth > 1) {
+        return 0;
+    }
+
     *pv = 0;
-    if (p->IsDraw() && ply) return p->DrawScore();
+
+    if (p->IsDraw()) {
+        return p->DrawScore();
+    }
+
     move = 0;
 
     // DETERMINE FLOOR VALUE
 
     best = Evaluate(p, &e);
-#ifdef USE_RISKY_PARAMETER
-    best = EvalScaleByDepth(p, ply, best);
-#endif
-    if (best >= beta) return best;
-    if (best > alpha) alpha = best;
+
+    if (best >= beta) {
+        return best;
+    }
+
+    if (best > alpha) {
+        alpha = best;
+    }
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
     if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply)) {
-        if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
-        if (!is_pv) return score; // !is_pv condition confirmed 2018-08-13
+        
+        if (score >= beta) {
+            UpdateHistory(p, -1, move, 1, ply);
+        }
+
+        if (!is_pv) {
+            return score; // !is_pv condition confirmed 2018-08-13
+        }
     }
 
     // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
 
     if (ply >= MAX_PLY - 1) {
-        int eval = Evaluate(p, &e);
-#ifdef USE_RISKY_PARAMETER
-        eval = EvalScaleByDepth(p, ply, eval);
-#endif
-        return eval;
-
+        return Evaluate(p, &e);
     }
 
     // PREPARE FOR SEARCH
@@ -80,14 +94,19 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         // MAKE MOVE
 
         p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
+        if (p->Illegal()) { 
+            p->UndoMove(move, u); 
+            continue; 
+        }
 
         score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
 
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) {
+            return 0;
+        }
 
         // BETA CUTOFF
 
@@ -110,8 +129,9 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // RETURN CORRECT CHECKMATE/STALEMATE SCORE
 
-    if (best == -INF)
+    if (best == -INF) {
         return p->InCheck() ? -MATE + ply : 0;
+    }
 
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
@@ -134,26 +154,36 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
 
     Glob.nodes++;
     Slowdown();
-    if (Glob.abort_search && mRootDepth > 1) return 0;
+    
+    if (Glob.abort_search && mRootDepth > 1) {
+        return 0;
+    }
+
     *pv = 0;
-    if (p->IsDraw() && ply) return p->DrawScore();
+    
+    if (p->IsDraw() && ply) {
+        return p->DrawScore();
+    }
+    
     move = 0;
 
     // RETRIEVE MOVE FROM TRANSPOSITION TABLE
 
     if (Trans.Retrieve(p->mHashKey, &move, &score, &hashFlag, alpha, beta, 0, ply)) {
-        if (score >= beta) UpdateHistory(p, -1, move, 1, ply);
-        if (!is_pv) return score;
+        
+        if (score >= beta) {
+            UpdateHistory(p, -1, move, 1, ply);
+        }
+
+        if (!is_pv) {
+            return score;
+        }
     }
 
     // SAFEGUARD AGAINST REACHING MAX PLY LIMIT
 
     if (ply >= MAX_PLY - 1) {
-        int eval = Evaluate(p, &e);
-#ifdef USE_RISKY_PARAMETER
-        eval = EvalScaleByDepth(p, ply, eval);
-#endif
-        return eval;
+        return Evaluate(p, &e);
     }
 
     // PREPARE FOR MAIN SEARCH
@@ -168,14 +198,19 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         // MAKE MOVE
 
         p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
+        if (p->Illegal()) { 
+            p->UndoMove(move, u); 
+            continue; 
+        }
 
         score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
 
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) {
+            return 0;
+        }
 
         // BETA CUTOFF
 
@@ -219,58 +254,47 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // USE DEDICATED EVASION SEARCH WHEN IN CHECK
 
-    if (p->InCheck()) return QuiesceFlee(p, ply, alpha, beta, pv);
+    if (p->InCheck()) {
+        return QuiesceFlee(p, ply, alpha, beta, pv);
+    }
 
     Glob.nodes++;
     Slowdown();
 
     // EARLY EXIT
 
-    if (Glob.abort_search && mRootDepth > 1) return 0;
+    if (Glob.abort_search && mRootDepth > 1) {
+        return 0;
+    }
+
     *pv = 0;
-    if (p->IsDraw()) return p->DrawScore();
+
+    if (p->IsDraw()) {
+        return p->DrawScore();
+    }
 
     // SAFEGUARD AGAINST HITTIMG MAX PLY LIMIT
 
     if (ply >= MAX_PLY - 1) {
-        int eval = Evaluate(p, &e);
-#ifdef USE_RISKY_PARAMETER
-        eval = EvalScaleByDepth(p, ply, eval);
-#endif
-        return eval;
+        return Evaluate(p, &e);
     }
 
     // GET STAND PAT SCORE
 
     best = Evaluate(p, &e);
-#ifdef USE_RISKY_PARAMETER
-    best = EvalScaleByDepth(p, ply, best);
-#endif
-
-    // CORRECTION OF SCORE FOR OWN SIDE IN RISKY MODE (Roman T. Sovanyan)
-#ifdef USE_RISKY_PARAMETER
-    if ((Par.riskydepth > 0)
-    && (ply >= Par.riskydepth)
-    && (p->mSide == Par.prog_side)
-    && (Abs(best) > 100) && (Abs(best) < 1000)) {
-
-        int eval_adj = (int)round(
-                                best < 0 ? (double)best * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply :
-                                           (double)best * (Glob.nodes > 100 ?   2 : 1) * ply / Par.riskydepth
-                                 );
-
-        if (eval_adj > 1000) eval_adj = 1000;
-
-        best = eval_adj;
-    }
-#endif
 
     // SET VARIABLES FOR DELTA PRUNING, EXIT IF STAND PAT SCORE ABOVE BETA
 
     int floor = best;
     int alpha_floor = alpha;
-    if (best >= beta) return best;
-    if (best > alpha) alpha = best;
+    
+    if (best >= beta) {
+        return best;
+    }
+
+    if (best > alpha) {
+        alpha = best;
+    }
 
     InitCaptures(p, m);
 
@@ -285,23 +309,36 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
             // 1. Prune captures that are unlikely to raise alpha even if opponent does not recapture
 
-            if (floor + tp_value[p->TpOnSq(Tsq(move))] + 150 < alpha_floor) continue;
+            if (floor + tp_value[p->TpOnSq(Tsq(move))] + 150 < alpha_floor) {
+                continue;
+            }
 
             // 2. Prune captures that probably lose material
 
-            if (BadCapture(p, move)) continue;
+            if (BadCapture(p, move)) {
+                continue;
+            }
         }
 
+        // MAKE MOVE
+
         p->DoMove(move, u);
-        if (p->Illegal()) { p->UndoMove(move, u); continue; }
+        if (p->Illegal()) { 
+            p->UndoMove(move, u); 
+            continue; 
+        }
+
         score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
         p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) return 0;
+        if (Glob.abort_search && mRootDepth > 1) {
+            return 0;
+        }
 
         // BETA CUTOFF
 
-        if (score >= beta)
+        if (score >= beta) {
             return score;
+        }
 
         // ADJUST ALPHA AND SCORE
 

@@ -653,33 +653,6 @@ void cEngine::EvaluateThreats(POS *p, eData *e, eColor sd) {
     Add(e, sd, (V(W_THREATS) * mg) / 100, (V(W_THREATS) * eg) / 100);
 }
 
-#ifdef USE_RISKY_PARAMETER
-
-// from Rodent Risky code by Roman T. Sovanyan
-
-int cEngine::EvalScaleByDepth(POS *p, int ply, int eval) {
-
-    int eval_adj = eval;
-
-    //Correct self-side score by depth for human opponent
-
-    if ((Par.riskydepth > 0)
-    && (ply >= Par.riskydepth)
-    && (Abs(eval) > Par.draw_score)
-    && (Abs(eval) < 1000)) {
-
-        eval_adj = (int)round(
-                (eval < 0) == (p->mSide == Par.prog_side) ? (double)eval * (Glob.nodes > 100 ? 0.5 : 1) * Par.riskydepth / ply :
-                                                            (double)eval * (Glob.nodes > 100 ?   2 : 1) * ply / Par.riskydepth
-                             );
-
-        if (eval_adj > 1000) eval_adj = 1000;
-    }
-
-    return eval_adj;
-}
-#endif
-
 int cEngine::Evaluate(POS *p, eData *e) {
 
     // Try retrieving score from per-thread eval hashtable

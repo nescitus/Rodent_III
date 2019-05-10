@@ -16,9 +16,9 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 8859 lines
+// 8850 lines
 
-// bench 14, release: 11986026 nodes searched in 10469, speed 1144797 nps (Score: 2.657)
+// bench 14, release: 11986026 nodes searched in 10250, speed 1169254 nps (Score: 2.713)
 // 52,6 vs Rodent III 0.275
 
 #pragma once
@@ -59,8 +59,6 @@ static constexpr int max_tt_size_mb = 4096; // TODO: Fruit 3.2.1 uses 16384 on 6
 #endif
 #define USE_FIRST_ONE_INTRINSICS
 #define TEXEL_PST    // should we use Texel-tuned piece/square tables?
-
-//#define USE_RISKY_PARAMETER
 
 // max size of an opening book to fully cache in memory (in MB)
 #ifndef NO_BOOK_IN_MEMORY
@@ -649,9 +647,7 @@ class cParam {
     int np_table[9];
     int rp_table[9];
     int backward_malus_mg[8];
-#ifdef USE_RISKY_PARAMETER
-    int riskydepth;
-#endif
+
     NOINLINE void InitPst();
     NOINLINE void InitMobility();
     NOINLINE void InitBackward();
@@ -871,9 +867,7 @@ class cEngine {
     int SetNullReductionDepth(int depth, int eval, int beta);
 
     int Evaluate(POS *p, eData *e);
-#ifdef USE_RISKY_PARAMETER
-    static int EvalScaleByDepth(POS *p, int ply, int eval);
-#endif
+
     static int EvaluateChains(POS *p, eColor sd);
     static void EvaluateMaterial(POS *p, eData *e, eColor sd);
     static void EvaluatePieces(POS *p, eData *e, eColor sd);
