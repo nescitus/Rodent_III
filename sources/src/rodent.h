@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2018 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -615,17 +615,17 @@ class cParam {
     bool fl_weakening;
     bool shut_up;
     int time_percentage;
-    int draw_score;
-    eColor prog_side;
-    int search_skill;
-    int nps_limit;
+    int drawScore;
+    eColor programSide;
+    int searchSkill;
+    int npsLimit;
     int eval_blur;
     int hist_perc;
-    int hist_limit;
+    int histLimit;
     int keep_pc[7];
     int imbalance[9][9];
-    int sd_att[2];
-    int sd_mob[2];
+    int sideAttack[2];
+    int sideMobility[2];
     int mg_pst[2][6][64];
     int eg_pst[2][6][64];
     int sp_pst[2][6][64];
@@ -729,26 +729,26 @@ class cGlobals {
   public:
     glob_int threadOverride;
     glob_U64 nodes;
-    glob_bool abort_search;
-    glob_bool is_testing;
+    glob_bool abortSearch;
+    glob_bool isTesting;
 	bool is_noisy;
     bool elo_slider;
-    bool is_console;
+    bool isConsole;
     bool is_tuning;
     glob_bool pondering;
     bool reading_personality;
     bool use_books_from_pers;
-    bool should_clear;
+    bool shouldClear;
     bool goodbye;
     bool use_personality_files;
 	bool scoreJump;
     bool show_pers_file;
-    glob_int depth_reached;
+    glob_int depthReached;
     int moves_from_start; // to restrict book depth for weaker levels
     int thread_no;
 	int multiPv;
     int time_buffer;
-	bool time_tricks;
+	bool timeTricks;
     U64 game_key;         // random key initialized on ucinewgame to ensure non-repeating random eval modification for weak personalities
     int avoidMove[MAX_PV + 1]; // list of moves to avoid in multi-pv re-searches
 

@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2018 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -19,6 +19,8 @@ If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <string.h>
 #include "rodent.h"
+
+// initialize random numbers
 
 std::mt19937_64 e2(2018);
 std::uniform_int_distribution<U64> dist(std::llround(std::pow(2, 56)), std::llround(std::pow(2, 62)));
@@ -42,8 +44,10 @@ void POS::Init() { // static init function
     for (int i = 0; i < 12; i++)
         for (int j = 0; j < 64; j++)
             msZobPiece[i][j] = Random64();
+
     for (int i = 0; i < 16; i++)
         msZobCastle[i] = Random64();
+
     for (int i = 0; i < 8; i++)
         msZobEp[i] = Random64();
 }

@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2018 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -20,7 +20,7 @@ If not, see <http://www.gnu.org/licenses/>.
 int POS::msCastleMask[64];
 
 const int tp_value[7] = { 100, 325, 325, 500, 1000,  0,   0 };
-const int ph_value[7] = {   0,   1,   1,   2,    4,  0,   0 };
+const int ph_value[7] = {   0,   1,   1,   2,    4,  0,   0 }; // any change requires modification in draw.cpp
 
 U64 POS::msZobPiece[12][64];
 U64 POS::msZobCastle[16];

@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2018 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -40,7 +40,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
     Glob.nodes++;
     Slowdown();
     
-    if (Glob.abort_search && mRootDepth > 1) {
+    if (Glob.abortSearch && mRootDepth > 1) {
         return 0;
     }
 
@@ -104,7 +104,7 @@ int cEngine::QuiesceChecks(POS *p, int ply, int alpha, int beta, int *pv) {
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) {
+        if (Glob.abortSearch && mRootDepth > 1) {
             return 0;
         }
 
@@ -155,7 +155,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
     Glob.nodes++;
     Slowdown();
     
-    if (Glob.abort_search && mRootDepth > 1) {
+    if (Glob.abortSearch && mRootDepth > 1) {
         return 0;
     }
 
@@ -208,7 +208,7 @@ int cEngine::QuiesceFlee(POS *p, int ply, int alpha, int beta, int *pv) {
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) {
+        if (Glob.abortSearch && mRootDepth > 1) {
             return 0;
         }
 
@@ -263,7 +263,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
     // EARLY EXIT
 
-    if (Glob.abort_search && mRootDepth > 1) {
+    if (Glob.abortSearch && mRootDepth > 1) {
         return 0;
     }
 
@@ -330,7 +330,7 @@ int cEngine::Quiesce(POS *p, int ply, int alpha, int beta, int *pv) {
 
         score = -Quiesce(p, ply + 1, -beta, -alpha, new_pv);
         p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) {
+        if (Glob.abortSearch && mRootDepth > 1) {
             return 0;
         }
 

@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2018 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -34,8 +34,8 @@ void cParam::DefaultWeights() {  // tuned automatically
 
     // Switch off weakening parameters
 
-    search_skill = 10;
-    nps_limit = 0;
+    searchSkill = 10;
+    npsLimit = 0;
     fl_weakening = false;
     elo = 2800;
     eval_blur = 0;
@@ -688,7 +688,7 @@ void cParam::DefaultWeights() {  // tuned automatically
 
 #endif
 
-    draw_score = 0;
+    drawScore = 0;
     shut_up = false;       // true suppresses displaying info currmove etc.
 
     Recalculate();         // some values need to be calculated anew after the parameter change
@@ -696,15 +696,15 @@ void cParam::DefaultWeights() {  // tuned automatically
     // History limit to prunings and reductions
 
     hist_perc = 175;
-    hist_limit = 24576;
+    histLimit = 24576;
 }
 
 void cParam::InitialPersonalityWeights() { // tuned manually for good experience of Rodent personalities
 
     // Switch off weakening parameters
 
-    search_skill = 10;
-    nps_limit = 0;
+    searchSkill = 10;
+    npsLimit = 0;
     fl_weakening = false;
     elo = 2800;
     eval_blur = 0;
@@ -794,7 +794,7 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     mob_style = 0;         // 1 is only marginally behind
     values[P_MOB_MG] = 2;
     values[P_MOB_EG] = 2;
-    draw_score = 0;
+    drawScore = 0;
     shut_up = false;       // true suppresses displaying info currmove etc.
 
     // Attack and mobility weights that can be set independently for each side
@@ -972,7 +972,7 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
     // History limit to prunings and reductions
 
     hist_perc = 175;
-    hist_limit = 24576;
+    histLimit = 24576;
 
     // when testing a personality, place changes in relation to default below:
 
@@ -1639,13 +1639,13 @@ void cParam::InitTables() {
 }
 
 void cParam::SetSpeed(int elo_in) {
-    nps_limit = 0;
+    npsLimit = 0;
     eval_blur = 0;
 
     if (fl_weakening) {
-        nps_limit = EloToSpeed(elo_in);
+        npsLimit = EloToSpeed(elo_in);
         eval_blur = EloToBlur(elo_in);
-        book_depth = SpeedToBookDepth(nps_limit);
+        book_depth = SpeedToBookDepth(npsLimit);
     }
 }
 

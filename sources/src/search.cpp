@@ -34,19 +34,19 @@ int cEngine::msLmrSize[2][MAX_PLY][MAX_MOVES];
 
 void cParam::InitAsymmetric(POS *p) {
 
-    prog_side = p->mSide;
+    programSide = p->mSide;
 
-    if (prog_side == WC) { // TODO: no if/else, but progside/op_side
-        sd_att[WC] = values[W_OWN_ATT];
-        sd_att[BC] = values[W_OPP_ATT];
-        sd_mob[WC] = values[W_OWN_MOB];
-        sd_mob[BC] = values[W_OPP_MOB];
+    if (programSide == WC) { // TODO: no if/else, but progside/op_side
+        sideAttack[WC] = values[W_OWN_ATT];
+        sideAttack[BC] = values[W_OPP_ATT];
+        sideMobility[WC] = values[W_OWN_MOB];
+        sideMobility[BC] = values[W_OPP_MOB];
     }
     else {
-        sd_att[BC] = values[W_OWN_ATT];
-        sd_att[WC] = values[W_OPP_ATT];
-        sd_mob[BC] = values[W_OWN_MOB];
-        sd_mob[WC] = values[W_OPP_MOB];
+        sideAttack[BC] = values[W_OWN_ATT];
+        sideAttack[WC] = values[W_OPP_ATT];
+        sideMobility[BC] = values[W_OWN_MOB];
+        sideMobility[WC] = values[W_OPP_MOB];
     }
 }
 
@@ -60,7 +60,7 @@ void cGlobals::ClearData() {
         engine.ClearAll();
     }
 #endif
-    should_clear = false;
+    shouldClear = false;
 }
 
 bool cGlobals::MoveToAvoid(int move) {
@@ -87,22 +87,28 @@ void cEngine::InitSearch() { // static init function
 
     // Set depth of late move reduction (formula based on Stockfish)
 
-    for (int dp = 0; dp < MAX_PLY; dp++)
-        for (int mv = 0; mv < MAX_MOVES; mv++) {
+    for (int depth = 0; depth < MAX_PLY; depth++)
+        for (int moveCount = 0; moveCount < MAX_MOVES; moveCount++) {
 
             int r = 0;
 
-            if (dp != 0 && mv != 0) {
+            if (depth != 0 && moveCount != 0) {
                 // +-inf to int is undefined
-                r = (int)(0.33 + (log(Min(mv, 63)) * log(Min(dp, 63)) / 2.00));
+                r = (int)(0.33 + (log(Min(moveCount, 63)) * log(Min(depth, 63)) / 2.00));
             }
 
-            msLmrSize[0][dp][mv] = r;     // zero window node
-            msLmrSize[1][dp][mv] = r - 1; // principal variation node (checking for pos. values is in `Search()`)
+            msLmrSize[0][depth][moveCount] = r;     // zero window node
+            msLmrSize[1][depth][moveCount] = r - 1; // principal variation node (checking for pos. values is in `Search()`)
 
             // reduction cannot exceed actual depth
-            if (msLmrSize[0][dp][mv] > dp - 1) msLmrSize[0][dp][mv] = dp - 1;
-            if (msLmrSize[1][dp][mv] > dp - 1) msLmrSize[1][dp][mv] = dp - 1;
+            
+            if (msLmrSize[0][depth][moveCount] > depth - 1) {
+                msLmrSize[0][depth][moveCount] = depth - 1;
+            }
+
+            if (msLmrSize[1][depth][moveCount] > depth - 1) {
+                msLmrSize[1][depth][moveCount] = depth - 1;
+            }
         }
 }
 
@@ -139,7 +145,7 @@ void cEngine::MultiPv(POS * p, int * pv) {
 
         val[1] = Widen(p, mRootDepth, line[1].pv, val[1]);
 
-        if (Glob.abort_search) {
+        if (Glob.abortSearch) {
             break;
         }
 
@@ -154,7 +160,7 @@ void cEngine::MultiPv(POS * p, int * pv) {
 
             val[i] = Widen(p, mRootDepth, line[i].pv, val[i]);
 
-            if (Glob.abort_search) {
+            if (Glob.abortSearch) {
                 break;
             }
 
@@ -166,7 +172,7 @@ void cEngine::MultiPv(POS * p, int * pv) {
             Glob.SetAvoidMove(i, line[i].pv[0]);
         }
 
-        if (Glob.abort_search) {
+        if (Glob.abortSearch) {
             break;
         }
 
@@ -214,7 +220,7 @@ void cEngine::Iterate(POS *p, int *pv) {
         // If a thread is lagging behind too much, which makes it unlikely
         // to contribute to the final result, skip the iteration.
 
-        if (Glob.depth_reached > mDpCompleted + 1) {
+        if (Glob.depthReached > mDpCompleted + 1) {
             mDpCompleted++;
             continue;
         }
@@ -223,13 +229,13 @@ void cEngine::Iterate(POS *p, int *pv) {
 
         printf("info depth %d\n", mRootDepth);
 
-        if (Par.search_skill > 6) {
+        if (Par.searchSkill > 6) {
             cur_val = Widen(p, mRootDepth, pv, cur_val);
         } else {
             cur_val = SearchRoot(p, 0, -INF, INF, mRootDepth, pv);
         }
 
-        if (Glob.abort_search) {
+        if (Glob.abortSearch) {
             break;
         }
 
@@ -254,12 +260,12 @@ void cEngine::Iterate(POS *p, int *pv) {
         // Set information about depth
 
         mDpCompleted = mRootDepth;
-        if (Glob.depth_reached < mDpCompleted) {
-            Glob.depth_reached = mDpCompleted;
+        if (Glob.depthReached < mDpCompleted) {
+            Glob.depthReached = mDpCompleted;
         }
     }
 
-    if (!Par.shut_up) Glob.abort_search = true; // for correct exit from fixed depth search
+    if (!Par.shut_up) Glob.abortSearch = true; // for correct exit from fixed depth search
 }
 
 // Aspiration search, progressively widening the window (based on Senpai 1.0)
@@ -273,7 +279,7 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
             alpha = lastScore - margin;
             beta = lastScore + margin;
             cur_val = SearchRoot(p, 0, alpha, beta, depth, pv);
-            if (Glob.abort_search) break;
+            if (Glob.abortSearch) break;
 
             // score drops
 
@@ -309,7 +315,7 @@ int cEngine::Widen(POS *p, int depth, int *pv, int lastScore) {
 
 int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv) {
 
-    int best, score = -INF, move, new_depth, new_pv[MAX_PLY];
+    int best, score = -INF, move, newDepth, new_pv[MAX_PLY];
     int mv_type, reduction, victim, last_capt, hashFlag;
     int singMove = -1, singScore = -INF;
     int mv_tried = 0;
@@ -321,16 +327,16 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
     eData e;
     int hashScore = -INF;
 
-    bool fl_check;
-    bool flExtended;
-    bool is_pv = (alpha != beta - 1);
+    bool flagInCheck;
+    bool flagExtended;
+    bool isPv = (alpha != beta - 1);
     bool canSing = false;
 
     // EARLY EXIT AND NODE INITIALIZATION
 
     Glob.nodes++;
     Slowdown();
-    if (Glob.abort_search && mRootDepth > 1) return 0;
+    if (Glob.abortSearch && mRootDepth > 1) return 0;
     if (ply) *pv = 0;
     if (p->IsDraw() && ply) return p->DrawScore();
     move = 0;
@@ -343,7 +349,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
             UpdateHistory(p, -1, move, depth, ply);
         }
 
-        if (!is_pv && Par.search_skill > 0) {
+        if (!isPv && Par.searchSkill > 0) {
             return hashScore;
         }
 
@@ -351,7 +357,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
 
     // PREPARE FOR SINGULAR EXTENSION, SENPAI-STYLE
 
-    if (is_pv && depth > 5) {
+    if (isPv && depth > 5) {
         if (Trans.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply)) {
             if (hashFlag & LOWER) {
                 canSing = true;
@@ -365,12 +371,12 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
         return Evaluate(p, &e);
     }
 
-    fl_check = p->InCheck();
+    flagInCheck = p->InCheck();
 
     // INTERNAL ITERATIVE DEEPENING
 
-    if (is_pv
-    && !fl_check
+    if (isPv
+    && !flagInCheck
     && !move
     && depth > 6) {
         Search(p, ply, alpha, beta, depth - 2, false, -1, -1, pv);
@@ -415,7 +421,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
 
         // GATHER INFO ABOUT THE MOVE
 
-        flExtended = false;
+        flagExtended = false;
         mv_played[mv_tried] = move;
         mv_tried++;
         if (!ply && mv_tried > 1) mFlRootChoice = true;
@@ -425,36 +431,36 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
 
         // SET NEW SEARCH DEPTH
 
-        new_depth = depth - 1;
+        newDepth = depth - 1;
 
         // EXTENSIONS
 
         // 1. check extension, applied in pv nodes or at low depth
 
-        if (is_pv || depth < 8) {
-            new_depth += p->InCheck();
-            flExtended = true;
+        if (isPv || depth < 8) {
+            newDepth += p->InCheck();
+            flagExtended = true;
         };
 
         // 2. pawn to 7th rank extension at the tips of pv-line
 
-        if (is_pv
+        if (isPv
         && depth < 6
         && p->TpOnSq(Tsq(move)) == P
         && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) {
-            new_depth += 1;
-            flExtended = true;
+            newDepth += 1;
+            flagExtended = true;
         };
 
         // 3. singular extension, Senpai-style
 
-        if (is_pv && depth > 5 && move == singMove && canSing && flExtended == false) {
+        if (isPv && depth > 5 && move == singMove && canSing && flagExtended == false) {
             int new_alpha = -singScore - 50;
             int mockPv;
             int sc = Search(p, ply + 1, new_alpha, new_alpha + 1, depth - 4, false, -1, -1, &mockPv);
             if (sc <= new_alpha) {
-                new_depth += 1;
-                flExtended = true;
+                newDepth += 1;
+                flagExtended = true;
             }
         }
 
@@ -463,26 +469,26 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
         reduction = 0;
 
         if (depth > 2
-        && Par.search_skill > 2
+        && Par.searchSkill > 2
         && mv_tried > 3
-        && !fl_check
+        && !flagInCheck
         && !p->InCheck()
-        && msLmrSize[is_pv][depth][mv_tried] > 0
+        && msLmrSize[isPv][depth][mv_tried] > 0
         && mv_type == MV_NORMAL
-        && mv_hist_score < Par.hist_limit
+        && mv_hist_score < Par.histLimit
         && MoveType(move) != CASTLE) {
 
             // read reduction amount from the table
 
-            reduction = (int)msLmrSize[is_pv][depth][mv_tried];
+            reduction = (int)msLmrSize[isPv][depth][mv_tried];
 
             // increase reduction on bad history score
 
             if (mv_hist_score < 0
-            && new_depth - reduction >= 2)
+            && newDepth - reduction >= 2)
                 reduction++;
 
-            new_depth = new_depth - reduction;
+            newDepth = newDepth - reduction;
         }
 
     research:
@@ -490,17 +496,17 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
         // PRINCIPAL VARIATION SEARCH
 
         if (best == -INF)
-            score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
+            score = -Search(p, ply + 1, -beta, -alpha, newDepth, false, move, last_capt, new_pv);
         else {
-            score = -Search(p, ply + 1, -alpha - 1, -alpha, new_depth, false, move, last_capt, new_pv);
-            if (!Glob.abort_search && score > alpha && score < beta)
-                score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
+            score = -Search(p, ply + 1, -alpha - 1, -alpha, newDepth, false, move, last_capt, new_pv);
+            if (!Glob.abortSearch && score > alpha && score < beta)
+                score = -Search(p, ply + 1, -beta, -alpha, newDepth, false, move, last_capt, new_pv);
         }
 
         // DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
 
         if (score > alpha && reduction) {
-            new_depth = new_depth + reduction;
+            newDepth = newDepth + reduction;
             reduction = 0;
             goto research;
         }
@@ -508,12 +514,12 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) return 0;
+        if (Glob.abortSearch && mRootDepth > 1) return 0;
 
         // BETA CUTOFF
 
         if (score >= beta) {
-            if (!fl_check) {
+            if (!flagInCheck) {
                 UpdateHistory(p, -1, move, depth, ply);
                 for (int mv = 0; mv < mv_tried; mv++) {
                     DecreaseHistory(p, mv_played[mv], depth);
@@ -552,7 +558,7 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
     if (*pv) {
-        if (!fl_check) {
+        if (!flagInCheck) {
             UpdateHistory(p, -1, *pv, depth, ply);
             for (int mv = 0; mv < mv_tried; mv++) {
                 DecreaseHistory(p, mv_played[mv], depth);
@@ -567,26 +573,26 @@ int cEngine::SearchRoot(POS *p, int ply, int alpha, int beta, int depth, int *pv
 }
 
 
-int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_null, int last_move, int last_capt_sq, int *pv) {
+int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool wasNull, int lastMove, int lastCaptSquare, int *pv) {
 
-    int best, score = -INF, null_score, move, new_depth, new_pv[MAX_PLY];
-    int mv_type, reduction, victim, last_capt, hashFlag, nullHashFlag;
-    int null_refutation = -1, ref_sq = -1, singMove = -1, singScore = -INF;
-    int mv_tried = 0;
-    int mv_played[MAX_MOVES];
-    int quiet_tried = 0;
-    int mv_hist_score = 0;
+    int best, score = -INF, nullScore, move, newDepth, newPv[MAX_PLY];
+    int moveType, reduction, victim, lastCaptTarget, hashFlag, nullHashFlag;
+    int nullRefutation = -1, refutationSqare = -1, singMove = -1, singScore = -INF;
+    int movesTried = 0;
+    int movesPlayed[MAX_MOVES];
+    int quietTried = 0;
+    int moveHistScore = 0;
     MOVES m[1];
     UNDO u[1];
     eData e;
     int moveSEEscore = 0; // see score of a bad capture
     int hashScore = -INF;
 
-    bool fl_check;
-    bool flExtended;
-    bool fl_futility = false;
-    bool did_null = false;
-    bool is_pv = (alpha != beta - 1);
+    bool flagInCheck;
+    bool flagExtended;
+    bool flagFutility = false;
+    bool didNull = false;
+    bool isPv = (alpha != beta - 1);
     bool canSing = false;
 
     // QUIESCENCE SEARCH ENTRY POINT
@@ -599,25 +605,25 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
 
     Glob.nodes++;
     Slowdown();
-    if (Glob.abort_search && mRootDepth > 1) return 0;
+    if (Glob.abortSearch && mRootDepth > 1) return 0;
     *pv = 0;
     if (p->IsDraw()) return p->DrawScore();
     move = 0;
 
     // MATE DISTANCE PRUNING
 
-    int checkmating_score = MATE - ply;
-    if (checkmating_score < beta) {
-        beta = checkmating_score;
-        if (alpha >= checkmating_score) {
+    int checkmatingScore = MATE - ply;
+    if (checkmatingScore < beta) {
+        beta = checkmatingScore;
+        if (alpha >= checkmatingScore) {
             return alpha;
         }
     }
 
-    int checkmated_score = -MATE + ply;
-    if (checkmated_score > alpha) {
-        alpha = checkmated_score;
-        if (beta <= checkmated_score) {
+    int checkmatedScore = -MATE + ply;
+    if (checkmatedScore > alpha) {
+        alpha = checkmatedScore;
+        if (beta <= checkmatedScore) {
             return beta;
         }
     }
@@ -631,17 +637,17 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
         hasTT = true;
 
         if (hashScore >= beta) {
-            UpdateHistory(p, last_move, move, depth, ply);
+            UpdateHistory(p, lastMove, move, depth, ply);
         }
 
-        if (!is_pv && Par.search_skill > 0) {
+        if (!isPv && Par.searchSkill > 0) {
             return hashScore;
         }
     }
 
     // PREPARE FOR SINGULAR EXTENSION, SENPAI-STYLE
 
-    if (is_pv && depth > 5) {
+    if (isPv && depth > 5) {
         if (Trans.Retrieve(p->mHashKey, &singMove, &singScore, &hashFlag, alpha, beta, depth - 4, ply)) {
             if (hashFlag & LOWER) {
                 canSing = true;
@@ -656,19 +662,19 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
         return eval;
     }
 
-    fl_check = p->InCheck();
+    flagInCheck = p->InCheck();
 
     // CAN WE PRUNE THIS NODE?
 
-    int fl_prunable_node = !fl_check
-        && !is_pv
+    int flagPrunableNode = !flagInCheck
+        && !isPv
         && alpha > -MAX_EVAL
         && beta < MAX_EVAL;
 
     // GET EVAL SCORE FOR PRUNING/REDUCTION DECISIONS
 
     int eval = 0;
-    if (fl_check) eval = -INF;
+    if (flagInCheck) eval = -INF;
     else eval = Evaluate(p, &e);
 
     // ADJUST EVAL USING HASH SCORE,THEN SAVE TO STACK
@@ -685,19 +691,19 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     bool improving = false;
 
     if (ply > 2
-    && !fl_check
+    && !flagInCheck
     && eval > mEvalStack[ply - 2]) {
         improving = true;
     }
 
     // BETA PRUNING / STATIC NULL MOVE
 
-    if (fl_prunable_node
-    && Par.search_skill > 7
+    if (flagPrunableNode
+    && Par.searchSkill > 7
     && depth <= 7
     && eval < MAX_EVAL
     && p->MayNull()
-    && !was_null) {
+    && !wasNull) {
         int sc = eval - (175 - 50 * improving) * depth;
         if (sc > beta) return sc;
     }
@@ -705,38 +711,38 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
     // NULL MOVE
 
     if (depth > 1
-    && Par.search_skill > 1
-    && !was_null
-    && fl_prunable_node
+    && Par.searchSkill > 1
+    && !wasNull
+    && flagPrunableNode
     && p->MayNull()
     && eval >= beta) {
 
-        did_null = true;
+        didNull = true;
 
         // null move depth reduction - modified Stockfish formula
 
-        new_depth = SetNullReductionDepth(depth, eval, beta);
+        newDepth = SetNullReductionDepth(depth, eval, beta);
 
         // omit null move search if normal search to the same depth wouldn't exceed beta
         // (sometimes we can check it for free via hash table)
 
-        if (Trans.Retrieve(p->mHashKey, &move, &null_score, &nullHashFlag, alpha, beta, new_depth, ply)) {
-            if (null_score < beta) goto avoid_null;
+        if (Trans.Retrieve(p->mHashKey, &move, &nullScore, &nullHashFlag, alpha, beta, newDepth, ply)) {
+            if (nullScore < beta) goto avoidNull;
         }
 
         p->DoNull(u);
-        if (new_depth <= 0) score = -QuiesceChecks(p, ply + 1, -beta, -beta + 1, new_pv);
-        else                score = -Search(p, ply + 1, -beta, -beta + 1, new_depth, true, 0, -1, new_pv);
+        if (newDepth <= 0) score = -QuiesceChecks(p, ply + 1, -beta, -beta + 1, newPv);
+        else                score = -Search(p, ply + 1, -beta, -beta + 1, newDepth, true, 0, -1, newPv);
 
         // get location of a piece whose capture refuted null move
         // its escape will be prioritised in the move ordering
 
-        Trans.Retrieve(p->mHashKey, &null_refutation, &null_score, &nullHashFlag, alpha, beta, depth, ply);
-        if (null_refutation > 0) ref_sq = Tsq(null_refutation);
+        Trans.Retrieve(p->mHashKey, &nullRefutation, &nullScore, &nullHashFlag, alpha, beta, depth, ply);
+        if (nullRefutation > 0) refutationSqare = Tsq(nullRefutation);
 
         p->UndoNull(u);
 
-        if (Glob.abort_search && mRootDepth > 1) {
+        if (Glob.abortSearch && mRootDepth > 1) {
             return 0;
         }
 
@@ -750,22 +756,22 @@ int cEngine::Search(POS *p, int ply, int alpha, int beta, int depth, bool was_nu
 
             // verification search
 
-            if (new_depth > 6 && Par.search_skill > 9)
-                score = Search(p, ply, alpha, beta, new_depth - 5, true, last_move, last_capt_sq, pv);
+            if (newDepth > 6 && Par.searchSkill > 9)
+                score = Search(p, ply, alpha, beta, newDepth - 5, true, lastMove, lastCaptSquare, pv);
 
-            if (Glob.abort_search && mRootDepth > 1) return 0;
+            if (Glob.abortSearch && mRootDepth > 1) return 0;
             if (score >= beta) return score;
         }
     } // end of null move code
 
-avoid_null:
+avoidNull:
 
     // RAZORING (based on Toga II 3.0)
 
-    if (fl_prunable_node
-    && Par.search_skill > 3
+    if (flagPrunableNode
+    && Par.searchSkill > 3
     && !move
-    && !was_null
+    && !wasNull
     && !(p->Pawns(p->mSide) & bb_rel_rank[p->mSide][RANK_7]) // no pawns to promote in one move
     && depth <= mscRazorDepth) {
         int threshold = beta - mscRazorMargin[depth];
@@ -778,11 +784,11 @@ avoid_null:
 
     // INTERNAL ITERATIVE DEEPENING
 
-    if (is_pv
-    && !fl_check
+    if (isPv
+    && !flagInCheck
     && !move
     && depth > 6) {
-        Search(p, ply, alpha, beta, depth - 2, false, -1, last_capt_sq, pv);
+        Search(p, ply, alpha, beta, depth - 2, false, -1, lastCaptSquare, pv);
         Trans.RetrieveMove(p->mHashKey, &move);
     }
 
@@ -791,30 +797,30 @@ avoid_null:
     // PREPARE FOR MAIN SEARCH
 
     best = -INF;
-    InitMoves(p, m, move, Refutation(move), ref_sq, ply);
+    InitMoves(p, m, move, Refutation(move), refutationSqare, ply);
 
     // MAIN LOOP
 
-    while ((move = NextMove(m, &mv_type, ply))) {
+    while ((move = NextMove(m, &moveType, ply))) {
 
         // SET FUTILITY PRUNING FLAG
         // before the first applicable move is tried
 
-        if (mv_type == MV_NORMAL
-        && Par.search_skill > 4
-        && quiet_tried == 0
-        && fl_prunable_node
+        if (moveType == MV_NORMAL
+        && Par.searchSkill > 4
+        && quietTried == 0
+        && flagPrunableNode
         && depth <= mscFutDepth) {
-            if (eval + mscFutMargin[depth] < beta) fl_futility = true;
+            if (eval + mscFutMargin[depth] < beta) flagFutility = true;
         }
 
         // GET MOVE HISTORY SCORE
 
-        mv_hist_score = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
+        moveHistScore = mHistory[p->mPc[Fsq(move)]][Tsq(move)];
 
         // GET SEE SCORE OF A BAD CAPTURE
 
-        if (mv_type == MV_BADCAPT) {
+        if (moveType == MV_BADCAPT) {
             moveSEEscore = p->Swap(Fsq(move), Tsq(move));
         }
 
@@ -822,9 +828,9 @@ avoid_null:
 
         victim = p->TpOnSq(Tsq(move));
         if (victim != NO_TP) {
-            last_capt = Tsq(move);
+            lastCaptTarget = Tsq(move);
         } else {
-            last_capt = -1;
+            lastCaptTarget = -1;
         }
 
         // MAKE MOVE
@@ -837,75 +843,75 @@ avoid_null:
 
         // GATHER INFO ABOUT THE MOVE
 
-        flExtended = false;
-        mv_played[mv_tried] = move;
-        mv_tried++;
+        flagExtended = false;
+        movesPlayed[movesTried] = move;
+        movesTried++;
         
-        if (!ply && mv_tried > 1) {
+        if (!ply && movesTried > 1) {
             mFlRootChoice = true;
         }
 
-        if (mv_type == MV_NORMAL) {
-            quiet_tried++;
+        if (moveType == MV_NORMAL) {
+            quietTried++;
         }
 
         if (ply == 0 && !Par.shut_up && depth > 16 && Glob.thread_no == 1) {
-            DisplayCurrmove(move, mv_tried);
+            DisplayCurrmove(move, movesTried);
         }
 
         // SET NEW SEARCH DEPTH
 
-        new_depth = depth - 1;
+        newDepth = depth - 1;
 
         // EXTENSIONS
 
         // 1. check extension, applied in pv nodes or at low depth
 
-        if (is_pv || depth < 8) {
-            new_depth += p->InCheck();
-            flExtended = true;
+        if (isPv || depth < 8) {
+            newDepth += p->InCheck();
+            flagExtended = true;
         };
 
         // 2. recapture extension in pv-nodes
 
-        if (is_pv && Tsq(move) == last_capt_sq) {
-            new_depth += 1;
-            flExtended = true;
+        if (isPv && Tsq(move) == lastCaptSquare) {
+            newDepth += 1;
+            flagExtended = true;
         };
 
         // 3. pawn to 7th rank extension at the tips of pv-line
 
-        if (is_pv
+        if (isPv
         && depth < 6
         && p->TpOnSq(Tsq(move)) == P
         && (SqBb(Tsq(move)) & (RANK_2_BB | RANK_7_BB))) {
-            new_depth += 1;
-            flExtended = true;
+            newDepth += 1;
+            flagExtended = true;
         };
 
         // 4. singular extension, Senpai-style
 
-        if (is_pv
+        if (isPv
         && depth > 5
         && move == singMove
         && canSing
         /*&& flExtended == false*/) {
-            int new_alpha = -singScore - 50;
+            int newAlpha = -singScore - 50;
             int mockPv;
-            int sc = Search(p, ply+1, new_alpha, new_alpha + 1, depth - 4, false, -1, -1, &mockPv);
-            if (sc <= new_alpha) {
-                new_depth += 1;
-                flExtended = true;
+            int sc = Search(p, ply+1, newAlpha, newAlpha + 1, depth - 4, false, -1, -1, &mockPv);
+            if (sc <= newAlpha) {
+                newDepth += 1;
+                flagExtended = true;
             }
         }
 
         // FUTILITY PRUNING
 
-        if (fl_futility
+        if (flagFutility
         && !p->InCheck()
-        && mv_hist_score < Par.hist_limit
-        && (mv_type == MV_NORMAL)
-        && mv_tried > 1) {
+        && moveHistScore < Par.histLimit
+        && (moveType == MV_NORMAL)
+        && movesTried > 1) {
             p->UndoMove(move, u);
             continue;
         }
@@ -917,24 +923,24 @@ avoid_null:
             { 0, 5, 6, 9, 15, 23, 32, 42, 54, 68, 83 }
         };
 
-        if (fl_prunable_node
-        && Par.search_skill > 5
+        if (flagPrunableNode
+        && Par.searchSkill > 5
         && depth <= 10
-        && quiet_tried > lmpTable[improving][depth]
+        && quietTried > lmpTable[improving][depth]
         && !p->InCheck()
-        && mv_hist_score < Par.hist_limit
-        && mv_type == MV_NORMAL) {
+        && moveHistScore < Par.histLimit
+        && moveType == MV_NORMAL) {
             p->UndoMove(move, u);
             continue;
         }
 
         // SEE pruning of bad captures
 
-        if (fl_prunable_node
-        && (mv_type == MV_BADCAPT)
+        if (flagPrunableNode
+        && (moveType == MV_BADCAPT)
         && !p->InCheck()
         && depth <= 3
-        && !is_pv
+        && !isPv
         && alpha > -MAX_EVAL
         && beta < MAX_EVAL) {
             if (moveSEEscore > 150 * depth) { // yes, sign is correct
@@ -948,58 +954,58 @@ avoid_null:
         reduction = 0;
 
         if (depth > 2
-        && Par.search_skill > 2
-        && mv_tried > 3
-        && !fl_check
+        && Par.searchSkill > 2
+        && movesTried > 3
+        && !flagInCheck
         && !p->InCheck()
-        && msLmrSize[is_pv][depth][mv_tried] > 0
-        && mv_type == MV_NORMAL
-        && mv_hist_score < Par.hist_limit
+        && msLmrSize[isPv][depth][movesTried] > 0
+        && moveType == MV_NORMAL
+        && moveHistScore < Par.histLimit
         && MoveType(move) != CASTLE) {
 
             // read reduction amount from the table
 
-            reduction = (int)msLmrSize[is_pv][depth][mv_tried];
+            reduction = (int)msLmrSize[isPv][depth][movesTried];
 
             // increase reduction if move has a bad history score...
 
-            if (mv_hist_score < 0) {
+            if (moveHistScore < 0) {
                 reduction++;
             }
 
             // ...in two steps (in non-pv nodes)
 
-            if (!is_pv && mv_hist_score < -MAX_HIST / 2) {
+            if (!isPv && moveHistScore < -MAX_HIST / 2) {
                 reduction++;
             }
 
             // increase reduction if score is dropping within search
 
-            if (!is_pv && !improving) {
+            if (!isPv && !improving) {
                 reduction++;
             }
 
             // reduction cannot exceed actual depth
 
-            if (reduction >= new_depth) {
-                reduction = new_depth - 1;
+            if (reduction >= newDepth) {
+                reduction = newDepth - 1;
             }
 
-            new_depth = new_depth - reduction;
+            newDepth = newDepth - reduction;
         }
 
         // LMR 2: MARGINAL REDUCTION OF BAD CAPTURES
 
         if (depth > 2
-        && Par.search_skill > 8
-        && mv_tried > 6
+        && Par.searchSkill > 8
+        && movesTried > 6
         && alpha > -MAX_EVAL && beta < MAX_EVAL
-        && !fl_check
+        && !flagInCheck
         && !p->InCheck()
-        && (mv_type == MV_BADCAPT)
-        && !is_pv) {
+        && (moveType == MV_BADCAPT)
+        && !isPv) {
             reduction = 1;
-            new_depth -= reduction;
+            newDepth -= reduction;
         }
 
     research:
@@ -1007,17 +1013,17 @@ avoid_null:
         // PRINCIPAL VARIATION SEARCH
 
         if (best == -INF)
-            score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
+            score = -Search(p, ply + 1, -beta, -alpha, newDepth, false, move, lastCaptTarget, newPv);
         else {
-            score = -Search(p, ply + 1, -alpha - 1, -alpha, new_depth, false, move, last_capt, new_pv);
-            if (!Glob.abort_search && score > alpha && score < beta)
-                score = -Search(p, ply + 1, -beta, -alpha, new_depth, false, move, last_capt, new_pv);
+            score = -Search(p, ply + 1, -alpha - 1, -alpha, newDepth, false, move, lastCaptTarget, newPv);
+            if (!Glob.abortSearch && score > alpha && score < beta)
+                score = -Search(p, ply + 1, -beta, -alpha, newDepth, false, move, lastCaptTarget, newPv);
         }
 
         // DON'T REDUCE A MOVE THAT SCORED ABOVE ALPHA
 
         if (score > alpha && reduction) {
-            new_depth = new_depth + reduction;
+            newDepth = newDepth + reduction;
             reduction = 0;
             goto research;
         }
@@ -1025,15 +1031,15 @@ avoid_null:
         // UNDO MOVE
 
         p->UndoMove(move, u);
-        if (Glob.abort_search && mRootDepth > 1) return 0;
+        if (Glob.abortSearch && mRootDepth > 1) return 0;
 
         // BETA CUTOFF
 
         if (score >= beta) {
-            if (!fl_check) {
-                UpdateHistory(p, last_move, move, depth, ply);
-                for (int mv = 0; mv < mv_tried; mv++) {
-                    DecreaseHistory(p, mv_played[mv], depth);
+            if (!flagInCheck) {
+                UpdateHistory(p, lastMove, move, depth, ply);
+                for (int mv = 0; mv < movesTried; mv++) {
+                    DecreaseHistory(p, movesPlayed[mv], depth);
                 }
             }
             Trans.Store(p->mHashKey, move, score, LOWER, depth, ply);
@@ -1047,7 +1053,7 @@ avoid_null:
             best = score;
             if (score > alpha) {
                 alpha = score;
-                BuildPv(pv, new_pv, move);
+                BuildPv(pv, newPv, move);
             }
         }
 
@@ -1062,10 +1068,10 @@ avoid_null:
     // SAVE RESULT IN THE TRANSPOSITION TABLE
 
     if (*pv) {
-        if (!fl_check) {
-            UpdateHistory(p, last_move, *pv, depth, ply);
-            for (int mv = 0; mv < mv_tried; mv++) {
-                DecreaseHistory(p, mv_played[mv], depth);
+        if (!flagInCheck) {
+            UpdateHistory(p, lastMove, *pv, depth, ply);
+            for (int mv = 0; mv < movesTried; mv++) {
+                DecreaseHistory(p, movesPlayed[mv], depth);
             }
         }
         Trans.Store(p->mHashKey, *pv, best, EXACT, depth, ply);
@@ -1092,7 +1098,7 @@ U64 GetNps(int elapsed) {
 
 void DisplayCurrmove(int move, int tried) {
 
-    if (!Glob.is_console) {
+    if (!Glob.isConsole) {
         printf("info currmove ");
         PrintMove(move);
         printf(" currmovenumber %d \n", tried);
@@ -1103,9 +1109,10 @@ void cEngine::DisplayPv(int multipv, int score, int *pv) {
 
     // don't display information from threads that are late
 
-    if (mRootDepth < Glob.depth_reached) return;
+    if (mRootDepth < Glob.depthReached) return;
 
-    const char *type; char pv_str[512];
+    const char *type; 
+    char pvString[512];
     int elapsed = GetMS() - msStartTime;
     U64 nps = GetNps(elapsed);
 
@@ -1117,14 +1124,14 @@ void cEngine::DisplayPv(int multipv, int score, int *pv) {
     else
         type = "cp";
 
-    PvToStr(pv, pv_str);
+    PvToStr(pv, pvString);
 
     if (multipv == 0)
         printf("info depth %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
-                mRootDepth, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
+                mRootDepth, elapsed, (U64)Glob.nodes, nps, type, score, pvString);
     else
         printf("info depth %d multipv %d time %d nodes %" PRIu64 " nps %" PRIu64 " score %s %d pv %s\n",
-                mRootDepth, multipv, elapsed, (U64)Glob.nodes, nps, type, score, pv_str);
+                mRootDepth, multipv, elapsed, (U64)Glob.nodes, nps, type, score, pvString);
 }
 
 void CheckTimeout() {
@@ -1134,12 +1141,12 @@ void CheckTimeout() {
     if (InputAvailable()) {
         ReadLine(command, sizeof(command));
         if (strcmp(command, "stop") == 0)
-            Glob.abort_search = true;
+            Glob.abortSearch = true;
         else if (strcmp(command, "quit") == 0) {
 #ifndef USE_THREADS
             exit(0);
 #else
-            Glob.abort_search = true;
+            Glob.abortSearch = true;
             Glob.goodbye = true; // will crash if just `exit()`. should wait until threads are terminated
 #endif
         }
@@ -1148,10 +1155,10 @@ void CheckTimeout() {
     }
 
     int time = cEngine::msMoveTime;
-    if (Glob.scoreJump && Glob.time_tricks) time *= 2;
+    if (Glob.scoreJump && Glob.timeTricks) time *= 2;
 
     if (!Glob.pondering && cEngine::msMoveTime >= 0 && GetMS() - cEngine::msStartTime >= time)
-        Glob.abort_search = true;
+        Glob.abortSearch = true;
 }
 
 void cEngine::Slowdown() {
@@ -1160,20 +1167,20 @@ void cEngine::Slowdown() {
 
     if (msMoveNodes > 0) {
         if (Glob.nodes >= (unsigned)msMoveNodes)
-            Glob.abort_search = true;
+            Glob.abortSearch = true;
     }
 
     // Handling slowdown for weak levels
 
-    if (Par.nps_limit && mRootDepth > 1) {
+    if (Par.npsLimit && mRootDepth > 1) {
         int time = GetMS() - msStartTime + 1;
         int nps = (int)GetNps(time);
-        while (nps > Par.nps_limit) {
+        while (nps > Par.npsLimit) {
             WasteTime(10);
             time = GetMS() - msStartTime + 1;
             nps = (int)GetNps(time);
             if ((!Glob.pondering && msMoveTime >= 0 && GetMS() - msStartTime >= msMoveTime)) {
-                Glob.abort_search = true;
+                Glob.abortSearch = true;
                 return;
             }
         }
@@ -1193,7 +1200,7 @@ void cEngine::Slowdown() {
 
     if (Glob.multiPv > 1) {
         if ((!(Glob.nodes & 2047))
-        && !Glob.is_testing
+        && !Glob.isTesting
         &&   mRootDepth > 1) CheckTimeout();
     }
 
@@ -1201,6 +1208,6 @@ void cEngine::Slowdown() {
 
 int POS::DrawScore() const {
 
-    if (mSide == Par.prog_side) return -Par.draw_score;
-    else                        return  Par.draw_score;
+    if (mSide == Par.programSide) return -Par.drawScore;
+    else                          return  Par.drawScore;
 }

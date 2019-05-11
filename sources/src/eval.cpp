@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2017 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -356,7 +356,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     // Weighting eval parameters
 
-    Add(e, sd, (Par.sd_mob[sd] * mob_mg)  / 100, (Par.sd_mob[sd] * mob_eg)  / 100);
+    Add(e, sd, (Par.sideMobility[sd] * mob_mg)  / 100, (Par.sideMobility[sd] * mob_eg)  / 100);
     Add(e, sd, (V(W_TROPISM) * tropism_mg) / 100, (V(W_TROPISM) * tropism_eg) / 100);
     Add(e, sd, (V(W_LINES) * lines_mg)     / 100, (V(W_LINES) * lines_eg)     / 100);
     Add(e, sd, (V(W_FWD) * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
@@ -372,7 +372,7 @@ void cEngine::EvaluateKingAttack(POS *p, eData *e, eColor sd) {
     if (e->wood[sd] > 1) {
         if (e->att[sd] > 399) e->att[sd] = 399;
         if (p->mCnt[sd][Q] == 0) e->att[sd] = 0;
-        Add(e, sd, (Par.danger[e->att[sd]] * Par.sd_att[sd]) / 100);
+        Add(e, sd, (Par.danger[e->att[sd]] * Par.sideAttack[sd]) / 100);
     }
 }
 
@@ -441,8 +441,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, eColor sd) {
         if (fl_phalanx) {
             mass_mg += Par.sp_pst[sd][PHA_MG][sq];
             mass_eg += Par.sp_pst[sd][PHA_EG][sq];
-        }
-        else if (fl_defended) {
+        } else if (fl_defended) {
             mass_mg += Par.sp_pst[sd][DEF_MG][sq];
             mass_eg += Par.sp_pst[sd][DEF_EG][sq];
         }
@@ -722,11 +721,11 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
     // Add asymmetric bonus for keeping certain type of pieces
 
-    e->mg[Par.prog_side] += Par.keep_pc[Q] * p->mCnt[Par.prog_side][Q];
-    e->mg[Par.prog_side] += Par.keep_pc[R] * p->mCnt[Par.prog_side][R];
-    e->mg[Par.prog_side] += Par.keep_pc[B] * p->mCnt[Par.prog_side][B];
-    e->mg[Par.prog_side] += Par.keep_pc[N] * p->mCnt[Par.prog_side][N];
-    e->mg[Par.prog_side] += Par.keep_pc[P] * p->mCnt[Par.prog_side][P];
+    e->mg[Par.programSide] += Par.keep_pc[Q] * p->mCnt[Par.programSide][Q];
+    e->mg[Par.programSide] += Par.keep_pc[R] * p->mCnt[Par.programSide][R];
+    e->mg[Par.programSide] += Par.keep_pc[B] * p->mCnt[Par.programSide][B];
+    e->mg[Par.programSide] += Par.keep_pc[N] * p->mCnt[Par.programSide][N];
+    e->mg[Par.programSide] += Par.keep_pc[P] * p->mCnt[Par.programSide][P];
 
     // Interpolate between midgame and endgame scores
 

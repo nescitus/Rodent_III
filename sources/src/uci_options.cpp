@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2018 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -94,11 +94,11 @@ void PrintUciOptions() {
 
         printf("option name Fianchetto type spin default %d min 0 max 100\n", V(B_KING));
 
-        printf("option name Contempt type spin default %d min -500 max 500\n", Par.draw_score);
+        printf("option name Contempt type spin default %d min -500 max 500\n", Par.drawScore);
 
         if (!Glob.elo_slider) {
             printf("option name EvalBlur type spin default %d min 0 max 5000000\n", Par.eval_blur);
-            printf("option name NpsLimit type spin default %d min 0 max 5000000\n", Par.nps_limit);
+            printf("option name NpsLimit type spin default %d min 0 max 5000000\n", Par.npsLimit);
         } else {
             printf("option name UCI_LimitStrength type check default %s\n", Par.fl_weakening ? "true" : "false");
             printf("option name UCI_Elo type spin default %d min 800 max 2800\n", Par.elo);
@@ -106,13 +106,13 @@ void PrintUciOptions() {
 
         printf("option name SlowMover type spin default %d min 10 max 500\n", Par.time_percentage);
         printf("option name Selectivity type spin default %d min 10 max 500\n", Par.hist_perc);
-        printf("option name SearchSkill type spin default %d min 0 max 10\n", Par.search_skill);
+        printf("option name SearchSkill type spin default %d min 0 max 10\n", Par.searchSkill);
     }
 	printf("option name Verbose type check default %s\n", Glob.is_noisy ? "true" : "false");
     printf("option name Ponder type check default %s\n", Par.use_ponder ? "true" : "false");
     printf("option name UseBook type check default %s\n", Par.use_book ? "true" : "false");
     printf("option name VerboseBook type check default %s\n", Par.verbose_book ? "true" : "false");
-	printf("option name TimeTricks type check default %s\n", Glob.time_tricks ? "true" : "false");
+	printf("option name TimeTricks type check default %s\n", Glob.timeTricks ? "true" : "false");
 
     if (!Glob.use_books_from_pers || !Glob.use_personality_files) {
         printf("option name GuideBookFile type string default %s\n", GuideBook.bookName);
@@ -135,7 +135,7 @@ static void setvalue(int ind, int val, bool isTable) {
 
     Par.values[ind] = val;
     if (isTable) Par.InitPst();
-    Glob.should_clear = true;
+    Glob.shouldClear = true;
 }
 
 static char *pseudotrimstring(char *in_str) {
@@ -221,35 +221,35 @@ void ParseSetoption(const char *ptr) {
         SetPieceValue(Q, atoi(value), Q_MID);
     } else if (strcmp(name, "keeppawn") == 0)                                {
         Par.keep_pc[P] = atoi(value);
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "keepknight") == 0)                              {
         Par.keep_pc[N] = atoi(value);
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "keepbishop") == 0)                              {
         Par.keep_pc[B] = atoi(value);
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "keeprook") == 0)                                {
         Par.keep_pc[R] = atoi(value);
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "keepqueen") == 0)                               {
         Par.keep_pc[Q] = atoi(value);
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "bishoppair") == 0)                              {
         setvalue(B_PAIR, atoi(value), false);
     } else if (strcmp(name, "exchangeimbalance") == 0)                       {
         Par.values[A_EXC] = atoi(value);
         Par.InitMaterialTweaks();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "minorvsqueen") == 0)                            {
         setvalue(ELEPH, atoi(value), false);
     } else if (strcmp(name, "knightlikesclosed") == 0)                       {
         Par.values[N_CL] = atoi(value);
         Par.InitMaterialTweaks();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "rooklikesopen") == 0)                           {
         Par.values[R_OP] = atoi(value);
         Par.InitMaterialTweaks();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "material") == 0)                                {
         setvalue(W_MATERIAL, atoi(value), true);
     } else if (strcmp(name, "pieceplacement") == 0)                          {
@@ -305,7 +305,7 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "backwardpawnmg") == 0)                          {
         Par.values[BK_MID] = atoi(value);
         Par.InitBackward();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "backwardpawneg") == 0)                          {
         setvalue(BK_END, atoi(value), false);
     } else if (strcmp(name, "backwardopenmg") == 0)                          {
@@ -313,27 +313,27 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "pststyle") == 0)                                {
         Par.pst_style = atoi(value);
         Par.InitPst();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "mobilitystyle") == 0)                           {
         Par.mob_style = atoi(value);
         Par.InitMobility();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "minorup") == 0)                                 {
         Par.values[A_MIN] = atoi(value);
         Par.InitMaterialTweaks();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "majorup") == 0)                                 {
         Par.values[A_MAJ] = atoi(value);
         Par.InitMaterialTweaks();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "bothup") == 0)                                  {
         Par.values[A_ALL] = atoi(value);
         Par.InitMaterialTweaks();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "twominors") == 0)                               {
         Par.values[A_TWO] = atoi(value);
         Par.InitMaterialTweaks();
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "minorbehindpawn") == 0 )                        {
 		setvalue(N_SH_MG, atoi(value), false);
 		setvalue(N_SH_EG, atoi(value), false);
@@ -347,13 +347,13 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "mainbookfile") == 0)                            {
         if (Glob.CanReadBook() ) MainBook.SetBookName(value);
     } else if (strcmp(name, "contempt") == 0)                                {
-        Par.draw_score = atoi(value);
-        Glob.should_clear = true;
+        Par.drawScore = atoi(value);
+        Glob.shouldClear = true;
     } else if (strcmp(name, "evalblur") == 0)                                {
         Par.eval_blur = atoi(value);
-        Glob.should_clear = true;
+        Glob.shouldClear = true;
     } else if (strcmp(name, "npslimit") == 0)                                {
-        Par.nps_limit = atoi(value);
+        Par.npsLimit = atoi(value);
     } else if (strcmp(name, "uci_elo") == 0)                                 {
         Par.elo = atoi(value);
         Par.SetSpeed(Par.elo);
@@ -368,16 +368,16 @@ void ParseSetoption(const char *ptr) {
     } else if (strcmp(name, "verbosebook") == 0)                             {
         valuebool(Par.verbose_book, value);
     } else if (strcmp(name, "timetricks") == 0)                              {
-        valuebool(Glob.time_tricks, value);
+        valuebool(Glob.timeTricks, value);
     } else if (strcmp(name, "searchskill") == 0)                             {
-        Par.search_skill = atoi(value);
-        Glob.should_clear = true;
+        Par.searchSkill = atoi(value);
+        Glob.shouldClear = true;
     } else if (strcmp(name, "slowmover") == 0)                               {
         Par.time_percentage = atoi(value);
     } else if (strcmp(name, "selectivity") == 0)                             {
         Par.hist_perc = atoi(value);
-        Par.hist_limit = -MAX_HIST + ((MAX_HIST * Par.hist_perc) / 100);
-        Glob.should_clear = true;
+        Par.histLimit = -MAX_HIST + ((MAX_HIST * Par.hist_perc) / 100);
+        Glob.shouldClear = true;
     } else if (strcmp(name, "personalityfile") == 0)                         {
         ReadPersonality(value);
     } else if (strcmp(name, "personality") == 0 )                            {
@@ -410,7 +410,7 @@ void SetPieceValue(int pc, int val, int slot) {
 
     Par.values[slot + 1] = eg_val;
     Par.InitPst();
-    Glob.should_clear = true;
+    Glob.shouldClear = true;
 }
 
 void ReadThreadNumber(const char * fileName) {
@@ -523,6 +523,6 @@ void ReadPersonality(const char *fileName) {
     }
     if (cnt != 0) pers_aliases.count = cnt;
     fclose(personalityFile);
-    Par.SpeedToBookDepth(Par.nps_limit);
+    Par.SpeedToBookDepth(Par.npsLimit);
     Glob.reading_personality = false;
 }

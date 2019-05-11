@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2018 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -69,7 +69,7 @@ void UciLoop() {
 
             PrintVersion();
 
-            Glob.is_console = false;
+            Glob.isConsole = false;
             printf("id author Pawel Koziol (based on Sungorus 1.4 by Pablo Vazquez)\n");
             PrintOverrides();
             PrintUciOptions();
@@ -298,9 +298,9 @@ void ParseGo(POS *p, const char *ptr) {
     cEngine::msStartTime = GetMS();
     Trans.tt_date = (Trans.tt_date + 1) & 255;
     Glob.nodes = 0;
-    Glob.abort_search = false;
-    Glob.depth_reached = 0;
-    if (Glob.should_clear)
+    Glob.abortSearch = false;
+    Glob.depthReached = 0;
+    if (Glob.shouldClear)
         Glob.ClearData(); // options has been changed and old tt scores are no longer reliable
     Par.InitAsymmetric(p);
 
@@ -357,7 +357,7 @@ void ParseGo(POS *p, const char *ptr) {
         engine.StartThinkThread(p);
 
     std::thread timer([] {
-        while (Glob.abort_search == false) {
+        while (Glob.abortSearch == false) {
 
             // Check for timeout every 5 milliseconds. This allows Rodent
             // to survive extreme time controls, like 1 s + 10 ms
@@ -423,7 +423,7 @@ void cEngine::Bench(int depth) {
     printf("Bench test started (depth %d): \n", depth);
 
     Glob.nodes = 0;
-    Glob.abort_search = false;
+    Glob.abortSearch = false;
     msStartTime = GetMS();
     msSearchDepth = depth;
 
@@ -433,7 +433,7 @@ void cEngine::Bench(int depth) {
         printf("%s\n", test[i]);
         p->SetPosition(test[i]);
         Par.InitAsymmetric(p);
-        Glob.depth_reached = 0;
+        Glob.depthReached = 0;
         Iterate(p, pv);
     }
 

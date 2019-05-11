@@ -1,7 +1,7 @@
 /*
 Rodent, a UCI chess playing engine derived from Sungorus 1.4
 Copyright (C) 2009-2011 Pablo Vazquez (Sungorus author)
-Copyright (C) 2011-2018 Pawel Koziol
+Copyright (C) 2011-2019 Pawel Koziol
 
 Rodent is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
@@ -130,7 +130,7 @@ if (Glob.is_noisy) {
 void cGlobals::Init() {
 
 	is_noisy = false;
-    is_testing = false;
+    isTesting = false;
     is_tuning = false;
     reading_personality = false;
     use_personality_files = true;
@@ -140,7 +140,7 @@ void cGlobals::Init() {
 	if (Glob.threadOverride)
 		thread_no = Glob.threadOverride;
 	time_buffer = 10; // blitz under Arena would require something like 200, but it's user's job
-	time_tricks = false;
+	timeTricks = false;
 	game_key = 0;
 
     // Clearing  and  setting threads  may  be  necessary
@@ -155,8 +155,8 @@ void cGlobals::Init() {
     }
 #endif
 
-    should_clear = false;
-    is_console = true;
+    shouldClear = false;
+    isConsole = true;
     elo_slider = true;
 	multiPv = 1;
 }
