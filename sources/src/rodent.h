@@ -827,6 +827,8 @@ class cEngine {
     bool mFlRootChoice;
 	int mEngSide;
 
+#ifdef USE_TUNING
+
     std::string epd10[10000000];
     std::string epd01[10000000];
     std::string epd05[10000000];
@@ -835,6 +837,8 @@ class cEngine {
     int cnt01;
     int cnt05;
     int step = 10;
+
+#endif
 
     static void InitCaptures(POS *p, MOVES *m);
     void InitMoves(POS *p, MOVES *m, int trans_move, int ref_move, int ref_sq, int ply);
@@ -947,11 +951,13 @@ class cEngine {
     void Think(POS *p);
 	void MultiPv(POS *p, int * pv);
 
+#ifdef USE_TUNING
     double best_tune;
     double TexelFit(POS *p, int *pv);
     bool TuneOne(POS *p, int *pv, int par);
     void TuneMe(POS *p, int *pv, int iterations);
     void LoadEpd();
+#endif
 };
 
 #ifdef USE_THREADS

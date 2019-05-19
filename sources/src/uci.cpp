@@ -97,7 +97,7 @@ void UciLoop() {
         } else if (strcmp(token, "stepp") == 0)      {
             p->ParseMoves(ptr);
             p->PrintBoard();
-
+#ifdef USE_TUNING
         } else if (strcmp(token, "tune") == 0)       {
             Engines.front().LoadEpd();
             Glob.is_tuning = true;
@@ -109,6 +109,7 @@ void UciLoop() {
 
 #endif
             Glob.is_tuning = false;
+#endif
         } else if (strcmp(token, "bench") == 0)      {
             ptr = ParseToken(ptr, token);
 #ifndef USE_THREADS

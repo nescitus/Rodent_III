@@ -2,6 +2,8 @@
 #include <math.h>
 #include "rodent.h"
 
+#ifdef USE_TUNING
+
 void cEngine::LoadEpd() {
 
     cnt01 = 0;
@@ -177,3 +179,5 @@ double TexelSigmoid(int score, double k) {
     double exp = -(k*((double)score) / 400.0);
     return 1.0 / (1.0 + pow(10.0, exp));
 }
+
+#endif
