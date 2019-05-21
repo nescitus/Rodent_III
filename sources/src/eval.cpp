@@ -89,7 +89,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     U64 b_checks = BB.BishAttacks(p->OccBb(), king_sq) & ~p->mClBb[sd] & ~e->p_takes[op];
     U64 r_checks = BB.RookAttacks(p->OccBb(), king_sq) & ~p->mClBb[sd] & ~e->p_takes[op];
     U64 q_checks = r_checks & b_checks;
-    U64 bb_excluded = p->Pawns(sd);
+    U64 bb_excluded = p->Pawns(sd) | e->p_takes[op];
 
     // Knight eval
 
@@ -169,7 +169,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
             e->att[sd] += V(B_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = PopCnt(bb_control & ~e->p_takes[op] & ~bb_excluded); // get mobility count
+        cnt = PopCnt(bb_control &~bb_excluded); // get mobility count
         mob_mg += Par.b_mob_mg[cnt];
         mob_eg += Par.b_mob_eg[cnt];
 
@@ -238,7 +238,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
             e->att[sd] += V(R_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = PopCnt(bb_control & ~bb_excluded);                        // get mobility count
+        cnt = PopCnt(bb_control & ~bb_excluded);                 // get mobility count
         mob_mg += Par.r_mob_mg[cnt];
         mob_eg += Par.r_mob_eg[cnt];
 
@@ -282,7 +282,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Queens(sd);
     while (bb_pieces) {
-        sq = PopFirstBit(&bb_pieces);                         // get square
+        sq = PopFirstBit(&bb_pieces);                           // get square
 
         // queen tropism to enemy king (based on Gambit Fruit)
 
@@ -318,7 +318,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
             e->att[sd] += V(Q_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
         }
 
-        cnt = PopCnt(bb_control & ~bb_excluded);              // get mobility count
+        cnt = PopCnt(bb_control & ~bb_excluded);                 // get mobility count
         mob_mg += Par.q_mob_mg[cnt];
         mob_eg += Par.q_mob_eg[cnt];
 

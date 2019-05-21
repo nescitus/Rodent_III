@@ -18,7 +18,7 @@ If not, see <http://www.gnu.org/licenses/>.
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
 // 8850 lines
 
-// bench 14, release: 11986026 nodes searched in 10250, speed 1169254 nps (Score: 2.713)
+// bench 14, release: 14018379 nodes searched in 11532, speed 1215501 nps (Score: 2.821)
 // 52,6 vs Rodent III 0.275
 
 #pragma once
