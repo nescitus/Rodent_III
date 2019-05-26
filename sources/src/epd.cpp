@@ -48,8 +48,8 @@ void cEngine::LoadEpd() {
     printf("%d Total positions loaded\n", readCnt);
 }
 
-int startTune = a2Pawn;
-int endTune = h7Pawn + 1;
+int startTune = B_PAIR;
+int endTune = A_ALL+1;
 
 bool cEngine::TuneOne(POS *p, int *pv, int par) {
 

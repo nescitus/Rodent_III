@@ -16,7 +16,9 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 8850 lines
+// 8892 lines
+
+// b 16 43346149 nodes searched in 34547, speed 1254664 nps (Score: 2.912)
 
 // bench 14, release: 14018379 nodes searched in 11532, speed 1215501 nps (Score: 2.821)
 // 52,6 vs Rodent III 0.275
@@ -40,6 +42,8 @@ If not, see <http://www.gnu.org/licenses/>.
 
 #include <cstdint>
 #include <cinttypes>
+
+//#define USE_TUNING
 
 using U64 = uint64_t;
 
@@ -672,6 +676,11 @@ class cDistance {
   public:
     int metric[64][64]; // chebyshev distance for unstoppable passers
     int bonus[64][64];
+    int grid[64][64];
+    int nTropismMg[64][64];
+    int bTropismMg[64][64];
+    int rTropismMg[64][64];
+    int qTropismMg[64][64];
     void Init();
 };
 

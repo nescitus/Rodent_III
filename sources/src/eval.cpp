@@ -99,8 +99,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         // knight tropism to enemy king (based on Gambit Fruit)
 
-        tropism_mg += V(NTR_MG) * Dist.bonus[sq][king_sq];
-        tropism_eg += V(NTR_EG) * Dist.bonus[sq][king_sq];
+        tropism_mg += Dist.nTropismMg[sq][king_sq];
+
+        //tropism_mg += V(NTR_MG) * Dist.bonus[sq][king_sq];
+        //tropism_eg += V(NTR_EG) * Dist.bonus[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(N_FWD);
@@ -143,8 +145,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         // bishop tropism  to enemy king (based on Gambit Fruit)
 
-        tropism_mg += V(BTR_MG) * Dist.bonus[sq][king_sq];
-        tropism_eg += V(BTR_EG) * Dist.bonus[sq][king_sq];
+        tropism_mg += Dist.bTropismMg[sq][king_sq];
+
+        //tropism_mg += V(BTR_MG) * Dist.bonus[sq][king_sq];
+        //tropism_eg += V(BTR_EG) * Dist.bonus[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(B_FWD);
@@ -204,8 +208,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         // rook tropism to enemy king (based on Gambit Fruit)
 
-        tropism_mg += V(RTR_MG) * Dist.bonus[sq][king_sq];
-        tropism_eg += V(RTR_EG) * Dist.bonus[sq][king_sq];
+        tropism_mg += Dist.rTropismMg[sq][king_sq];
+
+       // tropism_mg += V(RTR_MG) * Dist.bonus[sq][king_sq];
+       // tropism_eg += V(RTR_EG) * Dist.bonus[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(R_FWD);
@@ -286,8 +292,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         // queen tropism to enemy king (based on Gambit Fruit)
 
-        tropism_mg += V(QTR_MG) * Dist.bonus[sq][king_sq];
-        tropism_eg += V(QTR_EG) * Dist.bonus[sq][king_sq];
+        tropism_mg += Dist.qTropismMg[sq][king_sq];
+
+        //tropism_mg += V(QTR_MG) * Dist.bonus[sq][king_sq];
+        //tropism_eg += V(QTR_EG) * Dist.bonus[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(Q_FWD);

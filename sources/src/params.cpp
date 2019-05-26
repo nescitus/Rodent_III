@@ -1682,14 +1682,50 @@ int cParam::SpeedToBookDepth(int nps) {
 
 void cDistance::Init() {
 
+    static const int diagToUpperLeft[64] = {
+     0,  1,  2,  3,  4,  5,  6,  7,
+     1,  2,  3,  4,  5,  6,  7,  8,
+     2,  3,  4,  5,  6,  7,  8,  9,
+     3,  4,  5,  6,  7,  8,  9, 10,
+     4,  5,  6,  7,  8,  9, 10, 11,
+     5,  6,  7,  8,  9, 10, 11, 12,
+     6,  7,  8,  9, 10, 11, 12, 13,
+     7,  8,  9, 10, 11, 12, 13, 14
+    };
+
+    static const int diagToUpperRight[64] = {
+         7,  6,  5,  4,  3,  2,  1,  0,
+         8,  7,  6,  5,  4,  3,  2,  1,
+         9,  8,  7,  6,  5,  4,  3,  2,
+        10,  9,  8,  7,  6,  5,  4,  3,
+        11, 10,  9,  8,  7,  6,  5,  4,
+        12, 11, 10,  9,  8,  7,  6,  5,
+        13, 12, 11, 10,  9,  8,  7,  6,
+        14, 13, 12, 11, 10,  9,  8,  7
+    };
+
+    int nBonusMg[15] = { 14, 22, 29, 28, 19, -1, -6, -10, -11, -12, -13, -14, -15, -16, -17 };
+    int bBonusMg[15] = { 6, -12, 4, -16, -11, -17, -6, -14, -9, -17, -1, -17, -4, 3, 7 };
+    int rBonusMg[15] = { 7, 22, 23, 22, 22, 16, -2, -5, -14, -10, -8, -15, -16, -17, -17 };
+    int qBonusMg[15] = { 35, 49, 47, 44, 40, 14, 3, 0, -2, 1, 4, -3, -5, -6, -9 };
+
     // Init distance tables
 
     for (int sq1 = 0; sq1 < 64; ++sq1) {
         for (int sq2 = 0; sq2 < 64; ++sq2) {
-            int r_delta = Abs(Rank(sq1) - Rank(sq2));
-            int f_delta = Abs(File(sq1) - File(sq2));
-            bonus[sq1][sq2] = 14 - (r_delta + f_delta);  // for king tropism evaluation
-            metric[sq1][sq2] = Max(r_delta, f_delta);    // chebyshev distance for unstoppable passers
+            int rankDelta = Abs(Rank(sq1) - Rank(sq2));
+            int fileDelta = Abs(File(sq1) - File(sq2));
+            grid[sq1][sq2] = rankDelta + fileDelta;
+            bonus[sq1][sq2] = 14 - (rankDelta + fileDelta);  // for Fruit-like king tropism evaluation
+            metric[sq1][sq2] = Max(rankDelta, fileDelta);    // chebyshev distance for unstoppable passers
+
+            // Init per-piece distance bonuses (Hakapeliitta formula)
+
+            qTropismMg[sq1][sq2] = qBonusMg[grid[sq1][sq2]];
+            rTropismMg[sq1][sq2] = rBonusMg[grid[sq1][sq2]];
+            nTropismMg[sq1][sq2] = nBonusMg[grid[sq1][sq2]];
+            bTropismMg[sq1][sq2] = bBonusMg[Abs(diagToUpperRight[sq1] - diagToUpperRight[sq2])];
+            bTropismMg[sq1][sq2] += bBonusMg[Abs(diagToUpperLeft[sq1] - diagToUpperLeft[sq2])];
         }
     }
 }
