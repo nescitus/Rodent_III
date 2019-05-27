@@ -22,15 +22,15 @@ constexpr U64 cMask::home[2];
 constexpr U64 cMask::away[2];
 
 // Castling zones
-constexpr U64 cMask::kingSideCastle[2];
-constexpr U64 cMask::queenSideCastle[2];
+constexpr U64 cMask::ks_castle[2];
+constexpr U64 cMask::qs_castle[2];
 
 // Mask of squares with positive outpost score
 constexpr U64 cMask::outpost_map[2];
 
 // King side / queen side / center
 constexpr U64 cMask::kingSide;
-constexpr U64 cMask::queenSide;
+constexpr U64 cMask::q_side;
 constexpr U64 cMask::center;
 
 // Squares requiring bishop pat

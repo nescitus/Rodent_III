@@ -53,14 +53,14 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
             if (p->IsOnSq(WC, P, C3)) Add(e, WC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
             if (p->IsOnSq(WC, P, B3) && (p->IsOnSq(WC, P, A2) || p->IsOnSq(WC, P, C2))) Add(e, WC, Par.values[B_FIANCH]);
             if (p->IsOnSq(BC, P, D4) && (p->IsOnSq(BC, P, E5) || p->IsOnSq(BC, P, C5))) Add(e, WC, Par.values[B_BADF]);
-            if (p->Kings(WC) & Mask.queenSideCastle[WC]) Add(e, WC, Par.values[B_KING], 0);
+            if (p->Kings(WC) & Mask.qs_castle[WC]) Add(e, WC, Par.values[B_KING], 0);
         }
 
         if (p->IsOnSq(WC, B, G2)) {
             if (p->IsOnSq(WC, P, F3)) Add(e, WC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
             if (p->IsOnSq(WC, P, G3) && (p->IsOnSq(WC, P, H2) || p->IsOnSq(WC, P, F2))) Add(e, WC, Par.values[B_FIANCH]);
             if (p->IsOnSq(BC, P, E4) && (p->IsOnSq(BC, P, D5) || p->IsOnSq(BC, P, F5))) Add(e, WC, Par.values[B_BADF]);
-            if (p->Kings(WC) & Mask.kingSideCastle[WC]) Add(e, WC, Par.values[B_KING], 0);
+            if (p->Kings(WC) & Mask.ks_castle[WC]) Add(e, WC, Par.values[B_KING], 0);
         }
     }
 
@@ -98,13 +98,13 @@ void cEngine::EvaluateBishopPatterns(POS *p, eData *e) {
             if (p->IsOnSq(BC, P, C6)) Add(e, BC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
             if (p->IsOnSq(BC, P, B6) && (p->IsOnSq(BC, P, A7) || p->IsOnSq(BC, P, C7))) Add(e, BC, Par.values[B_FIANCH]);
             if (p->IsOnSq(WC, P, D5) && (p->IsOnSq(WC, P, E4) || p->IsOnSq(WC, P, C4))) Add(e, BC, Par.values[B_BADF]);
-            if (p->Kings(BC) & Mask.queenSideCastle[BC]) Add(e, BC, Par.values[B_KING], 0);
+            if (p->Kings(BC) & Mask.qs_castle[BC]) Add(e, BC, Par.values[B_KING], 0);
         }
         if (p->IsOnSq(BC, B, G7)) {
             if (p->IsOnSq(BC, P, F6)) Add(e, BC, Par.values[B_BF_MG], Par.values[B_BF_EG]);
             if (p->IsOnSq(BC, P, G6) && (p->IsOnSq(BC, P, H7) || p->IsOnSq(BC, P, F7))) Add(e, BC, Par.values[B_FIANCH]);
             if (p->IsOnSq(WC, P, E5) && (p->IsOnSq(WC, P, D4) || p->IsOnSq(WC, P, F4))) Add(e, BC, Par.values[B_BADF]);
-            if (p->Kings(BC) & Mask.kingSideCastle[BC]) Add(e, BC, Par.values[B_KING], 0);
+            if (p->Kings(BC) & Mask.ks_castle[BC]) Add(e, BC, Par.values[B_KING], 0);
         }
     }
 

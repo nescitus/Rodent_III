@@ -59,8 +59,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     int r_on_7th = 0;
     int mob_mg = 0;
     int mob_eg = 0;
-    int tropism_mg = 0;
-    int tropism_eg = 0;
+    int tropism = 0;
     int lines_mg = 0;
     int lines_eg = 0;
     int fwd_weight = 0;
@@ -95,14 +94,11 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     bb_pieces = p->Knights(sd);
     while (bb_pieces) {
-        sq = PopFirstBit(&bb_pieces);                         // get square
+        sq = PopFirstBit(&bb_pieces);                           // get square
 
-        // knight tropism to enemy king (based on Gambit Fruit)
+        // knight tropism to enemy king (based on Hakapeliitta)
 
-        tropism_mg += Dist.nTropismMg[sq][king_sq];
-
-        //tropism_mg += V(NTR_MG) * Dist.bonus[sq][king_sq];
-        //tropism_eg += V(NTR_EG) * Dist.bonus[sq][king_sq];
+        tropism += Dist.nTropismMg[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(N_FWD);
@@ -145,10 +141,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         // bishop tropism  to enemy king (based on Hakapeliitta)
 
-        tropism_mg += Dist.bTropismMg[sq][king_sq];
-
-        //tropism_mg += V(BTR_MG) * Dist.bonus[sq][king_sq];
-        //tropism_eg += V(BTR_EG) * Dist.bonus[sq][king_sq];
+        tropism += Dist.bTropismMg[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(B_FWD);
@@ -208,10 +201,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
         // rook tropism to enemy king (based on Hakapeliitta)
 
-        tropism_mg += Dist.rTropismMg[sq][king_sq];
-
-       // tropism_mg += V(RTR_MG) * Dist.bonus[sq][king_sq];
-       // tropism_eg += V(RTR_EG) * Dist.bonus[sq][king_sq];
+        tropism += Dist.rTropismMg[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(R_FWD);
@@ -290,11 +280,9 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     while (bb_pieces) {
         sq = PopFirstBit(&bb_pieces);                           // get square
 
-        // queen tropism to enemy king (based on Hakapeliitta + Gambit Fruit)
+        // queen tropism to enemy king (based on Hakapeliitta)
 
-        tropism_mg += Dist.qTropismMg[sq][king_sq];
-        tropism_mg += V(QTR_MG) * Dist.bonus[sq][king_sq];
-        //tropism_eg += V(QTR_EG) * Dist.bonus[sq][king_sq];
+        tropism += Dist.qTropismMg[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(Q_FWD);
@@ -364,7 +352,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     // Weighting eval parameters
 
     Add(e, sd, (Par.sideMobility[sd] * mob_mg)  / 100, (Par.sideMobility[sd] * mob_eg)  / 100);
-    Add(e, sd, (V(W_TROPISM) * tropism_mg) / 100, (V(W_TROPISM) * tropism_eg) / 100);
+    Add(e, sd, (V(W_TROPISM) * tropism) / 100, 0);
     Add(e, sd, (V(W_LINES) * lines_mg)     / 100, (V(W_LINES) * lines_eg)     / 100);
     Add(e, sd, (V(W_FWD) * fwd_bonus[fwd_cnt] * fwd_weight) / 100, 0);
     Add(e, sd, (V(W_OUTPOSTS) * outpost_mg) / 100, (V(W_OUTPOSTS) * outpost_eg) / 100);

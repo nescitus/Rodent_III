@@ -16,7 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 8892 lines
+// 8872 lines
 
 // bench 14, release: 14330383 nodes searched in 12172, speed 1177226 nps (Score: 2.732)
 // bench 16, release: 40897119 nodes searched in 31468, speed 1299600 nps (Score: 3.016)
@@ -476,7 +476,6 @@ enum Values {
     B_PAIR, N_PAIR, R_PAIR, ELEPH, A_EXC, A_TWO, A_MAJ, A_MIN, A_ALL,                   // material adjustments
     N_ATT1, N_ATT2, B_ATT1, B_ATT2, R_ATT1, R_ATT2, Q_ATT1, Q_ATT2,                     // attacks against enemy king zone
     N_CHK, B_CHK, R_CHK, Q_CHK, R_CONTACT, Q_CONTACT,                                   // check threats
-    NTR_MG, NTR_EG, BTR_MG, BTR_EG, RTR_MG, RTR_EG, QTR_MG, QTR_EG,                     // king tropism
     N_FWD, B_FWD, R_FWD, Q_FWD, 
 	N_OWH_MG, N_OWH_EG, B_OWH_MG, B_OWH_EG, 
 	N_REACH_MG, N_REACH_EG, B_REACH_MG, B_REACH_EG, 
@@ -542,7 +541,6 @@ const char* const paramNames[N_OF_VAL] = {
     "BishopPair", "N_PAIR", "R_PAIR", "ELEPH", "A_EXC", "A_TWO", "A_MAJ", "A_MIN", "A_ALL",    // material adjustments
     "N_ATT1", "N_ATT2", "B_ATT1", "B_ATT2", "R_ATT1", "R_ATT2", "Q_ATT1", "Q_ATT2",            // attacks against enemy king zone
     "N_CHK", "B_CHK", "R_CHK", "Q_CHK", "R_CONTACT", "Q_CONTACT",                              // check threats
-    "NTR_MG", "NTR_EG", "BTR_MG", "BTR_EG", "RTR_MG", "RTR_EG", "QTR_MG", "QTR_EG",            // king tropism
     "N_FWD", "B_FWD", "R_FWD", "Q_FWD", 
 	"N_OWH_MG", "N_OWH_EG", "B_OWH_MG", "B_OWH_EG",
 	"N_REACH_MG", "N_REACH_EG", "B_REACH_MG", "B_REACH_EG", 
@@ -694,16 +692,16 @@ class cMask {
     static constexpr U64 away[2] = { RANK_8_BB | RANK_7_BB | RANK_6_BB | RANK_5_BB,
                                      RANK_1_BB | RANK_2_BB | RANK_3_BB | RANK_4_BB };
 
-    static constexpr U64 kingSideCastle[2] = { SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | SqBb(G2) | SqBb(H2),
+    static constexpr U64 ks_castle[2] = { SqBb(F1) | SqBb(G1) | SqBb(H1) | SqBb(F2) | SqBb(G2) | SqBb(H2),
                                           SqBb(F8) | SqBb(G8) | SqBb(H8) | SqBb(F7) | SqBb(G7) | SqBb(H7) };
-    static constexpr U64 queenSideCastle[2] = { SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2),
+    static constexpr U64 qs_castle[2] = { SqBb(A1) | SqBb(B1) | SqBb(C1) | SqBb(A2) | SqBb(B2) | SqBb(C2),
                                           SqBb(A8) | SqBb(B8) | SqBb(C8) | SqBb(A7) | SqBb(B7) | SqBb(C7) };
 
     static constexpr U64 outpost_map[2] = { (bb_rel_rank[WC][RANK_4] | bb_rel_rank[WC][RANK_5] | bb_rel_rank[WC][RANK_6]) & bbNotA & bbNotH,
                                             (bb_rel_rank[BC][RANK_4] | bb_rel_rank[BC][RANK_5] | bb_rel_rank[BC][RANK_6]) & bbNotA & bbNotH };
 
     static constexpr U64 kingSide = FILE_F_BB | FILE_G_BB | FILE_H_BB;
-    static constexpr U64 queenSide = FILE_A_BB | FILE_B_BB | FILE_C_BB;
+    static constexpr U64 q_side = FILE_A_BB | FILE_B_BB | FILE_C_BB;
     static constexpr U64 center = SqBb(C3) | SqBb(D3) | SqBb(E3) | SqBb(F3)
                                 | SqBb(C4) | SqBb(D4) | SqBb(E4) | SqBb(F4)
                                 | SqBb(C5) | SqBb(D5) | SqBb(E5) | SqBb(F5)

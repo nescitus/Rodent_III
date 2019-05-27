@@ -120,19 +120,6 @@ void cParam::DefaultWeights() {  // tuned automatically
     SetVal(R_CONTACT, 32, 0, 50, tuneAttack);
     SetVal(Q_CONTACT, 36, 0, 50, tuneAttack);
 
-    // King tropism
-
-    static const bool tuneTropism = false;
-
-    SetVal(NTR_MG,  13, -50, 50, tuneTropism);
-    SetVal(NTR_EG, -11, -50, 50, tuneTropism);
-    SetVal(BTR_MG,   2, -50, 50, tuneTropism);
-    SetVal(BTR_EG,  -9, -50, 50, tuneTropism);
-    SetVal(RTR_MG,  -1, -50, 50, tuneTropism);
-    SetVal(RTR_EG,  -7, -50, 50, tuneTropism);
-    SetVal(QTR_MG,   7, -50, 50, tuneTropism);
-    SetVal(QTR_EG,  14, -50, 50, tuneTropism);
-
     // Varia
 
     SetVal(W_MATERIAL, 98,  0, 200, false);
@@ -774,17 +761,6 @@ void cParam::InitialPersonalityWeights() { // tuned manually for good experience
 
     values[R_CONTACT] = 24;
     values[Q_CONTACT] = 36;
-
-    // King tropism
-
-    values[NTR_MG] = 3;
-    values[NTR_EG] = 3;
-    values[BTR_MG] = 2;
-    values[BTR_EG] = 1;
-    values[RTR_MG] = 2;
-    values[RTR_EG] = 1;
-    values[QTR_MG] = 2;
-    values[QTR_EG] = 4;
 
     // Varia
 
@@ -1721,7 +1697,7 @@ void cDistance::Init() {
 
             // Init per-piece distance bonuses (Hakapeliitta formula)
 
-            qTropismMg[sq1][sq2] = qBonusMg[grid[sq1][sq2]];
+            qTropismMg[sq1][sq2] = qBonusMg[grid[sq1][sq2]] + 7 * bonus[sq1][sq2];
             rTropismMg[sq1][sq2] = rBonusMg[grid[sq1][sq2]];
             nTropismMg[sq1][sq2] = nBonusMg[grid[sq1][sq2]];
             bTropismMg[sq1][sq2] = bBonusMg[Abs(diagToUpperRight[sq1] - diagToUpperRight[sq2])];
