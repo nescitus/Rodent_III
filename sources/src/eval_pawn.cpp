@@ -111,12 +111,12 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     U64 bb_all_pawns = p->Pawns(WC) | p->Pawns(BC);
 
     if (bb_all_pawns) {
-        if (!(bb_all_pawns & Mask.k_side)) {
+        if (!(bb_all_pawns & Mask.kingSide)) {
             AddPawns(e, WC, empty_ks[p->mKingSq[WC]], empty_ks[p->mKingSq[WC]]);
             AddPawns(e, BC, empty_ks[p->mKingSq[BC]], empty_ks[p->mKingSq[BC]]);
         }
 
-        if (!(bb_all_pawns & Mask.q_side)) {
+        if (!(bb_all_pawns & Mask.queenSide)) {
             AddPawns(e, WC, empty_qs[p->mKingSq[WC]], empty_qs[p->mKingSq[WC]]);
             AddPawns(e, BC, empty_qs[p->mKingSq[BC]], empty_qs[p->mKingSq[BC]]);
         }
@@ -156,8 +156,8 @@ void cEngine::EvaluateKing(POS *p, eData *e, eColor sd) {
     // Normalize king square for pawn shield evaluation,
     // to discourage shuffling the king between g1 and h1.
 
-    if (SqBb(sq) & Mask.ks_castle[sd]) sq = kCastle[sd];
-    if (SqBb(sq) & Mask.qs_castle[sd]) sq = qCastle[sd];
+    if (SqBb(sq) & Mask.kingSideCastle[sd]) sq = kCastle[sd];
+    if (SqBb(sq) & Mask.queenSideCastle[sd]) sq = qCastle[sd];
 
     // Evaluate shielding and storming pawns on each file.
 
@@ -221,7 +221,7 @@ int cEngine::EvaluateChains(POS *p, eColor sd) {
 
     // basic pointy chain
 
-    if (SqBb(sq) & Mask.ks_castle[sd]) {
+    if (SqBb(sq) & Mask.kingSideCastle[sd]) {
 
         if (OPP_PAWN(E4)) {
             if (CONTAINS(opPawns, D5, C6)) // c6-d5-e4 triad
@@ -251,7 +251,7 @@ int cEngine::EvaluateChains(POS *p, eColor sd) {
         }
     }
 
-    if (SqBb(sq) & Mask.qs_castle[sd]) {
+    if (SqBb(sq) & Mask.queenSideCastle[sd]) {
 
         // basic pointy chain
 

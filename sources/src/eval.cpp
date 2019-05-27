@@ -143,7 +143,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     while (bb_pieces) {
         sq = PopFirstBit(&bb_pieces);                         // get square
 
-        // bishop tropism  to enemy king (based on Gambit Fruit)
+        // bishop tropism  to enemy king (based on Hakapeliitta)
 
         tropism_mg += Dist.bTropismMg[sq][king_sq];
 
@@ -206,7 +206,7 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     while (bb_pieces) {
         sq = PopFirstBit(&bb_pieces);                         // get square
 
-        // rook tropism to enemy king (based on Gambit Fruit)
+        // rook tropism to enemy king (based on Hakapeliitta)
 
         tropism_mg += Dist.rTropismMg[sq][king_sq];
 
@@ -290,11 +290,10 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
     while (bb_pieces) {
         sq = PopFirstBit(&bb_pieces);                           // get square
 
-        // queen tropism to enemy king (based on Gambit Fruit)
+        // queen tropism to enemy king (based on Hakapeliitta + Gambit Fruit)
 
         tropism_mg += Dist.qTropismMg[sq][king_sq];
-
-        //tropism_mg += V(QTR_MG) * Dist.bonus[sq][king_sq];
+        tropism_mg += V(QTR_MG) * Dist.bonus[sq][king_sq];
         //tropism_eg += V(QTR_EG) * Dist.bonus[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
