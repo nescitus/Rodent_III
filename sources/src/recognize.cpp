@@ -79,7 +79,7 @@ bool POS::KPKdraw(eColor sd) const {
     // opposition next to a pawn
 
     if (mSide == sd
-    && (bbStrongKing & BB.ShiftSideways(bbPawn))
+    && (bbStrongKing & ShiftSideways(bbPawn))
     && (bbWeakKing & BB.ShiftFwd(BB.ShiftFwd(bbStrongKing, sd), sd))
        ) return true;
 

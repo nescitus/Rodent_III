@@ -295,7 +295,7 @@ int *POS::GenerateSpecial(int *list) const {
     U64 n_check = BB.KnightAttacks(king_sq);
     U64 r_check = BB.RookAttacks(OccBb(), king_sq);
     U64 b_check = BB.BishAttacks(OccBb(), king_sq);
-    U64 p_check = BB.ShiftFwd(BB.ShiftSideways(SqBb(king_sq)), op);
+    U64 p_check = BB.ShiftFwd(ShiftSideways(SqBb(king_sq)), op);
 
     // TODO: discovered checks by a pawn
 

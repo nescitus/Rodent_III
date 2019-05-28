@@ -54,8 +54,8 @@ void cEngine::EvaluateMaterial(POS *p, eData *e, eColor sd) {
 
 void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
-    U64 bb_pieces, bb_attack, bb_control, bb_possible, bb_contact, bb_zone, bb_file;
-    int sq, cnt, own_p_cnt, opp_p_cnt;
+    U64 pieces, attack, control, possibleOutpost, contact, kingZone, file;
+    int sq, cnt, ownPawnCount, oppPawnCount;
     int r_on_7th = 0;
     int mob_mg = 0;
     int mob_eg = 0;
@@ -72,14 +72,14 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     eColor op = ~sd;
     int king_sq = p->KingSq(op);
-    bb_zone = BB.KingAttacks(king_sq);
-    bb_zone |= BB.ShiftFwd(bb_zone, op);
+    kingZone = BB.KingAttacks(king_sq);
+    kingZone |= BB.ShiftFwd(kingZone, op);
 
 	// Factor in minor pieces as king defenders
 
 	int defenders[5] = { -5, 0, 3, 6, 9 };
 	U64 minors = p->Knights(~sd) | p->Bishops(~sd);
-	cnt = Min(PopCnt(minors & bb_zone), 4);
+	cnt = Min(PopCnt(minors & kingZone), 4);
 	Add(e, ~sd, defenders[cnt], 0);
 
     // Init helper bitboards
@@ -92,40 +92,40 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     // Knight eval
 
-    bb_pieces = p->Knights(sd);
-    while (bb_pieces) {
-        sq = PopFirstBit(&bb_pieces);                           // get square
+    pieces = p->Knights(sd);
+    while (pieces) {
+        sq = PopFirstBit(&pieces);                           // get square
 
         // knight tropism to enemy king (based on Hakapeliitta)
 
-        tropism += Dist.nTropismMg[sq][king_sq];
+        tropism += Dist.knightTropism[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(N_FWD);
             fwd_cnt += 1;
         }
 
-        bb_control = BB.KnightAttacks(sq) & ~p->mClBb[sd];       // get control bitboard
-        center_control += PopCnt(bb_control & Mask.center);
-        if (!(bb_control  & ~e->p_takes[op] & Mask.away[sd]))    // we do not attack enemy half of the board
+        control = BB.KnightAttacks(sq) & ~p->mClBb[sd];       // get control bitboard
+        center_control += PopCnt(control & Mask.center);
+        if (!(control  & ~e->p_takes[op] & Mask.away[sd]))    // we do not attack enemy half of the board
             Add(e, sd, V(N_OWH_MG), V(N_OWH_EG) );
         e->all_att[sd] |= BB.KnightAttacks(sq);
-        e->ev_att[sd]  |= bb_control;
-        if (bb_control & n_checks) e->att[sd] += V(N_CHK);// check threats
+        e->ev_att[sd]  |= control;
+        if (control & n_checks) e->att[sd] += V(N_CHK);// check threats
 
-        bb_possible = bb_control & ~e->p_takes[op];              // reachable outposts
-        bb_possible &= ~e->p_can_take[op];
-        bb_possible &= Mask.outpost_map[sd];
-        if (bb_possible) Add(e, sd, V(N_REACH_MG), V(N_REACH_EG));
+        possibleOutpost = control & ~e->p_takes[op];              // reachable outposts
+        possibleOutpost &= ~e->p_can_take[op];
+        possibleOutpost &= Mask.outpost_map[sd];
+        if (possibleOutpost) Add(e, sd, V(N_REACH_MG), V(N_REACH_EG));
 
-        bb_attack = BB.KnightAttacks(sd);
-        if (bb_attack & bb_zone) {                               // king attack
+        attack = BB.KnightAttacks(sd);
+        if (attack & kingZone) {                               // king attack
             e->wood[sd]++;
-            e->att[sd] += V(N_ATT1) * PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            e->att[sd] += V(N_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            e->att[sd] += V(N_ATT1) * PopCnt(attack & (kingZone & ~e->p_takes[op]));
+            e->att[sd] += V(N_ATT2) * PopCnt(attack & (kingZone & e->p_takes[op]));
         }
 
-        cnt = PopCnt(bb_control & ~e->p_takes[op]);           // get mobility count
+        cnt = PopCnt(control & ~e->p_takes[op]);           // get mobility count
         mob_mg += Par.n_mob_mg[cnt];
         mob_eg += Par.n_mob_eg[cnt];
 
@@ -135,45 +135,45 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     // Bishop eval
 
-    bb_pieces = p->Bishops(sd);
-    while (bb_pieces) {
-        sq = PopFirstBit(&bb_pieces);                         // get square
+    pieces = p->Bishops(sd);
+    while (pieces) {
+        sq = PopFirstBit(&pieces);                         // get square
 
         // bishop tropism  to enemy king (based on Hakapeliitta)
 
-        tropism += Dist.bTropismMg[sq][king_sq];
+        tropism += Dist.bishopTropism[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(B_FWD);
             fwd_cnt += 1;
         }
 
-        bb_control = BB.BishAttacks(p->OccBb(), sq);             // get control bitboard
-        center_control += PopCnt(bb_control & Mask.center);
-        e->all_att[sd] |= bb_control;                            // update attack map
-        e->ev_att[sd]  |= bb_control;
-        if (!(bb_control & Mask.away[sd]))
+        control = BB.BishAttacks(p->OccBb(), sq);             // get control bitboard
+        center_control += PopCnt(control & Mask.center);
+        e->all_att[sd] |= control;                            // update attack map
+        e->ev_att[sd]  |= control;
+        if (!(control & Mask.away[sd]))
              Add(e, sd, V(B_OWH_MG), V(B_OWH_EG) ); // we do not attack enemy half of the board
-		if (bb_control & b_checks) {
+		if (control & b_checks) {
 			e->att[sd] += V(B_CHK);  // check threats
 		}
 
-        bb_attack = BB.BishAttacks(p->OccBb() ^ p->Queens(sd), sq);  // get king attack bitboard
+        attack = BB.BishAttacks(p->OccBb() ^ p->Queens(sd), sq);  // get king attack bitboard
 
-        if (bb_attack & bb_zone) {                               // evaluate king attacks
+        if (attack & kingZone) {                               // evaluate king attacks
             e->wood[sd]++;
-            e->att[sd] += V(B_ATT1) * PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            e->att[sd] += V(B_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            e->att[sd] += V(B_ATT1) * PopCnt(attack & (kingZone & ~e->p_takes[op]));
+            e->att[sd] += V(B_ATT2) * PopCnt(attack & (kingZone & e->p_takes[op]));
         }
 
-        cnt = PopCnt(bb_control &~bb_excluded); // get mobility count
+        cnt = PopCnt(control &~bb_excluded); // get mobility count
         mob_mg += Par.b_mob_mg[cnt];
         mob_eg += Par.b_mob_eg[cnt];
 
-        bb_possible = bb_control & ~e->p_takes[op];              // reachable outposts
-        bb_possible &= ~e->p_can_take[op];
-        bb_possible &= Mask.outpost_map[sd];
-        if (bb_possible) Add(e, sd, V(B_REACH_MG), V(B_REACH_EG));
+        possibleOutpost = control & ~e->p_takes[op];              // reachable outposts
+        possibleOutpost &= ~e->p_can_take[op];
+        possibleOutpost &= Mask.outpost_map[sd];
+        if (possibleOutpost) Add(e, sd, V(B_REACH_MG), V(B_REACH_EG));
 
 		EvaluateShielded(p, e, sd, sq, V(B_SH_MG), V(B_SH_EG), &outpost_mg, &outpost_eg);  // bishop shielded by a pawn
         EvaluateOutpost(p, e, sd, B, sq, &outpost_mg, &outpost_eg);              // outpost
@@ -181,44 +181,44 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
         // Pawns on the same square color as our bishop
 
         if (bbWhiteSq & SqBb(sq)) {
-            own_p_cnt = PopCnt(bbWhiteSq & p->Pawns(sd)) - 4;
-            opp_p_cnt = PopCnt(bbWhiteSq & p->Pawns(op)) - 4;
+            ownPawnCount = PopCnt(bbWhiteSq & p->Pawns(sd)) - 4;
+            oppPawnCount = PopCnt(bbWhiteSq & p->Pawns(op)) - 4;
         } else {
-            own_p_cnt = PopCnt(bbBlackSq & p->Pawns(sd)) - 4;
-            opp_p_cnt = PopCnt(bbBlackSq & p->Pawns(op)) - 4;
+            ownPawnCount = PopCnt(bbBlackSq & p->Pawns(sd)) - 4;
+            oppPawnCount = PopCnt(bbBlackSq & p->Pawns(op)) - 4;
         }
 
         // TODO: perhaps slightly bigger endgame penalties
-        Add(e, sd, V(B_OWN_P) * own_p_cnt
-                 + V(B_OPP_P) * opp_p_cnt);
+        Add(e, sd, V(B_OWN_P) * ownPawnCount
+                 + V(B_OPP_P) * oppPawnCount);
     }
 
     // Rook eval
 
-    bb_pieces = p->Rooks(sd);
-    while (bb_pieces) {
-        sq = PopFirstBit(&bb_pieces);                         // get square
+    pieces = p->Rooks(sd);
+    while (pieces) {
+        sq = PopFirstBit(&pieces);                         // get square
 
         // rook tropism to enemy king (based on Hakapeliitta)
 
-        tropism += Dist.rTropismMg[sq][king_sq];
+        tropism += Dist.rookTropism[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(R_FWD);
             fwd_cnt += 1;
         }
 
-        bb_control = BB.RookAttacks(p->OccBb(), sq);             // get control bitboard
-        e->all_att[sd] |= bb_control;                            // update attack map
-        e->ev_att[sd] |= bb_control;
+        control = BB.RookAttacks(p->OccBb(), sq);             // get control bitboard
+        e->all_att[sd] |= control;                            // update attack map
+        e->ev_att[sd] |= control;
 
-        if ((bb_control & ~p->mClBb[sd] & r_checks)
+        if ((control & ~p->mClBb[sd] & r_checks)
         && p->Queens(sd)) {
             e->att[sd] += V(R_CHK);                              // check threat bonus
-            bb_contact = (bb_control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
+            contact = (control & BB.KingAttacks(king_sq)) & r_checks;  // get contact check bitboard
 
-            while (bb_contact) {
-                int contactSq = PopFirstBit(&bb_contact);     // find a potential contact check
+            while (contact) {
+                int contactSq = PopFirstBit(&contact);     // find a potential contact check
                 if (p->Swap(sq, contactSq) >= 0) {               // rook exchanges are also accepted
                     e->att[sd] += V(R_CONTACT);
                     break;
@@ -226,33 +226,33 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
             }
         }
 
-        bb_attack = BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);// get king attack bitboard
+        attack = BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);// get king attack bitboard
 
-        if (bb_attack & bb_zone) {                                         // evaluate king attacks
+        if (attack & kingZone) {                                         // evaluate king attacks
             e->wood[sd]++;
-            e->att[sd] += V(R_ATT1) * PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            e->att[sd] += V(R_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            e->att[sd] += V(R_ATT1) * PopCnt(attack & (kingZone & ~e->p_takes[op]));
+            e->att[sd] += V(R_ATT2) * PopCnt(attack & (kingZone & e->p_takes[op]));
         }
 
-        cnt = PopCnt(bb_control & ~bb_excluded);                 // get mobility count
+        cnt = PopCnt(control & ~bb_excluded);                 // get mobility count
         mob_mg += Par.r_mob_mg[cnt];
         mob_eg += Par.r_mob_eg[cnt];
 
         // FILE EVALUATION:
 
-        bb_file = BB.FillNorth(SqBb(sq)) | BB.FillSouth(SqBb(sq));   // get file
+        file = BB.FillNorth(SqBb(sq)) | BB.FillSouth(SqBb(sq));   // get file
 
-        if (bb_file & p->Queens(op)) {                           // enemy queen on rook's file
+        if (file & p->Queens(op)) {                           // enemy queen on rook's file
             lines_mg += V(ROQ_MG);
             lines_eg += V(ROQ_EG);
         }
 
-        if (!(bb_file & p->Pawns(sd))) {                         // no own pawns on that file
-            if (!(bb_file & p->Pawns(op))) {                     // open file
+        if (!(file & p->Pawns(sd))) {                         // no own pawns on that file
+            if (!(file & p->Pawns(op))) {                     // open file
                 lines_mg += V(ROF_MG);
                 lines_eg += V(ROF_EG);
             } else {                                             // half-open file...
-                if (bb_file & (p->Pawns(op) & e->p_takes[op])) { // ...with defended enemy pawn
+                if (file & (p->Pawns(op) & e->p_takes[op])) { // ...with defended enemy pawn
                     lines_mg += V(RBH_MG);
                     lines_eg += V(RBH_EG);
                 } else {                                         // ...with undefended enemy pawn
@@ -276,27 +276,27 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
 
     // Queen eval
 
-    bb_pieces = p->Queens(sd);
-    while (bb_pieces) {
-        sq = PopFirstBit(&bb_pieces);                           // get square
+    pieces = p->Queens(sd);
+    while (pieces) {
+        sq = PopFirstBit(&pieces);                           // get square
 
         // queen tropism to enemy king (based on Hakapeliitta)
 
-        tropism += Dist.qTropismMg[sq][king_sq];
+        tropism += Dist.queenTropism[sq][king_sq];
 
         if (SqBb(sq) & Mask.away[sd]) {                          // forwardness (based on Toga II 3.0)
             fwd_weight += V(Q_FWD);
             fwd_cnt += 1;
         }
 
-        bb_control = BB.QueenAttacks(p->OccBb(), sq);            // get control bitboard
-        e->all_att[sd] |= bb_control;                            // update attack map
-        if (bb_control & q_checks) {                             // check threat bonus
+        control = BB.QueenAttacks(p->OccBb(), sq);            // get control bitboard
+        e->all_att[sd] |= control;                            // update attack map
+        if (control & q_checks) {                             // check threat bonus
             e->att[sd] += V(Q_CHK);
 
-            bb_contact = bb_control & BB.KingAttacks(king_sq);   // queen contact checks
-            while (bb_contact) {
-                int contactSq = PopFirstBit(&bb_contact);        // find potential contact check square
+            contact = control & BB.KingAttacks(king_sq);   // queen contact checks
+            while (contact) {
+                int contactSq = PopFirstBit(&contact);        // find potential contact check square
                 if (p->Swap(sq, contactSq) >= 0) {               // if check doesn't lose material, evaluate
                     e->att[sd] += V(Q_CONTACT);
                     break;
@@ -304,16 +304,16 @@ void cEngine::EvaluatePieces(POS *p, eData *e, eColor sd) {
             }
         }
 
-        bb_attack  = BB.BishAttacks(p->OccBb() ^ p->DiagMovers(sd), sq);
-        bb_attack |= BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);
+        attack  = BB.BishAttacks(p->OccBb() ^ p->DiagMovers(sd), sq);
+        attack |= BB.RookAttacks(p->OccBb() ^ p->StraightMovers(sd), sq);
 
-        if (bb_attack & bb_zone) {                               // evaluate king attacks
+        if (attack & kingZone) {                               // evaluate king attacks
             e->wood[sd]++;
-            e->att[sd] += V(Q_ATT1) * PopCnt(bb_attack & (bb_zone & ~e->p_takes[op]));
-            e->att[sd] += V(Q_ATT2) * PopCnt(bb_attack & (bb_zone & e->p_takes[op]));
+            e->att[sd] += V(Q_ATT1) * PopCnt(attack & (kingZone & ~e->p_takes[op]));
+            e->att[sd] += V(Q_ATT2) * PopCnt(attack & (kingZone & e->p_takes[op]));
         }
 
-        cnt = PopCnt(bb_control & ~bb_excluded);                 // get mobility count
+        cnt = PopCnt(control & ~bb_excluded);                 // get mobility count
         mob_mg += Par.q_mob_mg[cnt];
         mob_eg += Par.q_mob_eg[cnt];
 
@@ -414,7 +414,7 @@ void cEngine::EvaluatePawns(POS *p, eData *e, eColor sd) {
         sq = PopFirstBit(&bb_pieces);
         front_span = BB.GetFrontSpan(SqBb(sq), sd);
         fl_unopposed = ((front_span & p->Pawns(op)) == 0);
-        fl_phalanx = (BB.ShiftSideways(SqBb(sq)) & p->Pawns(sd));
+        fl_phalanx = (ShiftSideways(SqBb(sq)) & p->Pawns(sd));
         fl_defended = (SqBb(sq) & e->p_takes[sd]);
 
         // Candidate passers
@@ -669,12 +669,12 @@ int cEngine::Evaluate(POS *p, eData *e) {
 
     // Init helper bitboards (pawn info)
 
-    e->p_takes[WC] = BB.GetWPControl(p->Pawns(WC));
-    e->p_takes[BC] = BB.GetBPControl(p->Pawns(BC));
+    e->p_takes[WC] = GetWPControl(p->Pawns(WC));
+    e->p_takes[BC] = GetBPControl(p->Pawns(BC));
     e->p_can_take[WC] = BB.FillNorth(e->p_takes[WC]);
     e->p_can_take[BC] = BB.FillSouth(e->p_takes[BC]);
-    e->two_pawns_take[WC] = BB.GetDoubleWPControl(p->Pawns(WC));
-    e->two_pawns_take[BC] = BB.GetDoubleBPControl(p->Pawns(BC));
+    e->two_pawns_take[WC] = GetDoubleWPControl(p->Pawns(WC));
+    e->two_pawns_take[BC] = GetDoubleBPControl(p->Pawns(BC));
 
     // Init or clear attack maps
 

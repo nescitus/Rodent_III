@@ -134,71 +134,43 @@ int PopFirstBit(U64 *bb) {
     return FirstOne(bb_local);
 }
 
-U64 cBitBoard::FillNorth(U64 bb) {
-    bb |= bb << 8;
-    bb |= bb << 16;
-    bb |= bb << 32;
-    return bb;
+U64 cBitBoard::FillNorth(U64 b) {
+    b |= b << 8;
+    b |= b << 16;
+    b |= b << 32;
+    return b;
 }
 
-U64 cBitBoard::FillSouth(U64 bb) {
-    bb |= bb >> 8;
-    bb |= bb >> 16;
-    bb |= bb >> 32;
-    return bb;
+U64 cBitBoard::FillSouth(U64 b) {
+    b |= b >> 8;
+    b |= b >> 16;
+    b |= b >> 32;
+    return b;
 }
 
-U64 cBitBoard::FillNorthExcl(U64 bb) {
-    return FillNorth(ShiftNorth(bb));
+U64 cBitBoard::FillNorthExcl(U64 b) {
+    return FillNorth(ShiftNorth(b));
 }
 
-U64 cBitBoard::FillSouthExcl(U64 bb) {
-    return FillSouth(ShiftSouth(bb));
+U64 cBitBoard::FillSouthExcl(U64 b) {
+    return FillSouth(ShiftSouth(b));
 }
 
-U64 cBitBoard::FillNorthSq(int sq) {
-    return FillNorth(SqBb(sq));
+U64 cBitBoard::GetPawnControl(U64 b, eColor sd) {
+    if (sd == WC) return GetWPControl(b);
+    else          return GetBPControl(b);
 }
 
-U64 cBitBoard::FillSouthSq(int sq) {
-    return FillSouth(SqBb(sq));
+U64 cBitBoard::GetFrontSpan(U64 b, eColor sd) {
+
+    if (sd == WC) return BB.FillNorthExcl(b);
+    else          return BB.FillSouthExcl(b);
 }
 
-U64 cBitBoard::GetWPControl(U64 bb) {
-    return (ShiftNE(bb) | ShiftNW(bb));
-}
+U64 cBitBoard::ShiftFwd(U64 b, eColor sd) {
 
-U64 cBitBoard::GetBPControl(U64 bb) {
-    return (ShiftSE(bb) | ShiftSW(bb));
-}
-
-U64 cBitBoard::GetPawnControl(U64 bb, eColor sd) {
-    if (sd == WC) return GetWPControl(bb);
-    else          return GetBPControl(bb);
-}
-
-U64 cBitBoard::GetDoubleWPControl(U64 bb) {
-    return (ShiftNE(bb) & ShiftNW(bb));
-}
-
-U64 cBitBoard::GetDoubleBPControl(U64 bb) {
-    return (ShiftSE(bb) & ShiftSW(bb));
-}
-
-U64 cBitBoard::GetFrontSpan(U64 bb, eColor sd) {
-
-    if (sd == WC) return BB.FillNorthExcl(bb);
-    else          return BB.FillSouthExcl(bb);
-}
-
-U64 cBitBoard::ShiftFwd(U64 bb, eColor sd) {
-
-    if (sd == WC) return ShiftNorth(bb);
-    else          return ShiftSouth(bb);
-}
-
-U64 cBitBoard::ShiftSideways(U64 bb) {
-    return (ShiftWest(bb) | ShiftEast(bb));
+    if (sd == WC) return ShiftNorth(b);
+    else          return ShiftSouth(b);
 }
 
 U64 cBitBoard::PawnAttacks(eColor sd, int sq) {

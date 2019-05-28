@@ -1698,11 +1698,11 @@ void cDistance::Init() {
 
             // Init per-piece distance bonuses (Hakapeliitta formula)
 
-            qTropismMg[sq1][sq2] = qBonusMg[grid[sq1][sq2]] + 7 * bonus[sq1][sq2];
-            rTropismMg[sq1][sq2] = rBonusMg[grid[sq1][sq2]];
-            nTropismMg[sq1][sq2] = nBonusMg[grid[sq1][sq2]];
-            bTropismMg[sq1][sq2] = bBonusMg[Abs(diagToUpperRight[sq1] - diagToUpperRight[sq2])];
-            bTropismMg[sq1][sq2] += bBonusMg[Abs(diagToUpperLeft[sq1] - diagToUpperLeft[sq2])];
+            queenTropism[sq1][sq2] = qBonusMg[grid[sq1][sq2]] + 7 * bonus[sq1][sq2];
+            rookTropism[sq1][sq2] = rBonusMg[grid[sq1][sq2]];
+            knightTropism[sq1][sq2] = nBonusMg[grid[sq1][sq2]];
+            bishopTropism[sq1][sq2] = bBonusMg[Abs(diagToUpperRight[sq1] - diagToUpperRight[sq2])];
+            bishopTropism[sq1][sq2] += bBonusMg[Abs(diagToUpperLeft[sq1] - diagToUpperLeft[sq2])];
         }
     }
 }

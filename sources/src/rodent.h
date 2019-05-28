@@ -16,7 +16,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 // REGEX to count all the lines under MSVC 13: ^(?([^\r\n])\s)*[^\s+?/]+[^\n]*$
-// 8872 lines
+// 8830 lines
 
 // bench 14, release: 14888173 nodes searched in 12985, speed 1146478 nps (Score: 2.661)
 // bench 16, release: 38627529 nodes searched in 30797, speed 1254221 nps (Score: 2.911)
@@ -257,16 +257,22 @@ template<typename T> constexpr T Clip(const T& sc, const T& lim) { if (sc < -lim
 constexpr U64 bbNotA = ~FILE_A_BB; // 0xfefefefefefefefe
 constexpr U64 bbNotH = ~FILE_H_BB; // 0x7f7f7f7f7f7f7f7f
 
-constexpr U64 ShiftNorth(const U64& x) { return x << 8; }
-constexpr U64 ShiftSouth(const U64& x) { return x >> 8; }
-constexpr U64 ShiftWest(const U64& x)  { return (x & bbNotA) >> 1; }
-constexpr U64 ShiftEast(const U64& x)  { return (x & bbNotH) << 1; }
-constexpr U64 ShiftNW(const U64& x)    { return (x & bbNotA) << 7; }
-constexpr U64 ShiftNE(const U64& x)    { return (x & bbNotH) << 9; }
-constexpr U64 ShiftSW(const U64& x)    { return (x & bbNotA) >> 9; }
-constexpr U64 ShiftSE(const U64& x)    { return (x & bbNotH) >> 7; }
+constexpr U64 ShiftNorth(const U64& b) { return b << 8; }
+constexpr U64 ShiftSouth(const U64& b) { return b >> 8; }
+constexpr U64 ShiftWest(const U64& b)  { return (b & bbNotA) >> 1; }
+constexpr U64 ShiftEast(const U64& b)  { return (b & bbNotH) << 1; }
+constexpr U64 ShiftNW(const U64& b)    { return (b & bbNotA) << 7; }
+constexpr U64 ShiftNE(const U64& b)    { return (b & bbNotH) << 9; }
+constexpr U64 ShiftSW(const U64& b)    { return (b & bbNotA) >> 9; }
+constexpr U64 ShiftSE(const U64& b)    { return (b & bbNotH) >> 7; }
 
-constexpr bool MoreThanOne(const U64& bb) { return bb & (bb - 1); }
+constexpr U64 ShiftSideways(const U64& b) { return (ShiftWest(b) | ShiftEast(b)); }
+constexpr U64 GetWPControl(const U64& b)  { return (ShiftNE(b) | ShiftNW(b)); }
+constexpr U64 GetBPControl(const U64& b)  { return (ShiftSE(b) | ShiftSW(b)); }
+constexpr U64 GetDoubleWPControl(const U64& b) { return (ShiftNE(b) & ShiftNW(b)); }
+constexpr U64 GetDoubleBPControl(const U64& b) { return (ShiftSE(b) & ShiftSW(b)); }
+
+constexpr bool MoreThanOne(const U64& b) { return b & (b - 1); }
 
 // bitboard functions
 
@@ -297,17 +303,10 @@ class cBitBoard {
     void Init();
     void Print(U64 bb);
     U64 ShiftFwd(U64 bb, eColor sd);
-    U64 ShiftSideways(U64 bb);
-    U64 GetWPControl(U64 bb);
-    U64 GetBPControl(U64 bb);
     U64 GetPawnControl(U64 bb, eColor sd);
-    U64 GetDoubleWPControl(U64 bb);
-    U64 GetDoubleBPControl(U64 bb);
     U64 GetFrontSpan(U64 bb, eColor sd);
     U64 FillNorth(U64 bb);
     U64 FillSouth(U64 bb);
-    U64 FillNorthSq(int sq);
-    U64 FillSouthSq(int sq);
     U64 FillNorthExcl(U64 bb);
     U64 FillSouthExcl(U64 bb);
 
@@ -674,10 +673,10 @@ class cDistance {
     int metric[64][64]; // chebyshev distance for unstoppable passers
     int bonus[64][64];
     int grid[64][64];
-    int nTropismMg[64][64];
-    int bTropismMg[64][64];
-    int rTropismMg[64][64];
-    int qTropismMg[64][64];
+    int knightTropism[64][64];
+    int bishopTropism[64][64];
+    int rookTropism[64][64];
+    int queenTropism[64][64];
     void Init();
 };
 

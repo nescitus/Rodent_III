@@ -50,10 +50,10 @@ void cMask::Init() {
     // Supported mask (for weak pawns detection)
 
     for (int sq = 0; sq < 64; sq++) {
-        supported[WC][sq] = BB.ShiftSideways(SqBb(sq));
+        supported[WC][sq] = ShiftSideways(SqBb(sq));
         supported[WC][sq] |= BB.FillSouth(supported[WC][sq]);
 
-        supported[BC][sq] = BB.ShiftSideways(SqBb(sq));
+        supported[BC][sq] = ShiftSideways(SqBb(sq));
         supported[BC][sq] |= BB.FillNorth(supported[BC][sq]);
     }
 
@@ -61,8 +61,8 @@ void cMask::Init() {
 
     for (int sq = 0; sq < 64; sq++) {
         passed[WC][sq] = BB.FillNorthExcl(SqBb(sq));
-        passed[WC][sq] |= BB.ShiftSideways(passed[WC][sq]);
+        passed[WC][sq] |= ShiftSideways(passed[WC][sq]);
         passed[BC][sq] = BB.FillSouthExcl(SqBb(sq));
-        passed[BC][sq] |= BB.ShiftSideways(passed[BC][sq]);
+        passed[BC][sq] |= ShiftSideways(passed[BC][sq]);
     }
 }
