@@ -475,59 +475,60 @@ void cParam::DefaultWeights() {  // tuned automatically
 
 #ifdef TEXEL_PST
 
-    SetVal(a2Pawn, -24, -50, 50, true);
-    SetVal(b2Pawn, -20, -50, 50, true);
-    SetVal(c2Pawn, -28, -50, 50, true);
-    SetVal(d2Pawn, -11, -50, 50, true);
-    SetVal(e2Pawn, -20, -50, 50, true);
-    SetVal(f2Pawn, 9, -50, 50, true);
-    SetVal(g2Pawn, -4, -50, 50, true);
-    SetVal(h2Pawn, -32, -50, 50, true);
+    SetVal(a2Pawn, -10, -50, 50, true);
+    SetVal(b2Pawn,  -3, -50, 50, true);
+    SetVal(c2Pawn, -18, -50, 50, true);
+    SetVal(d2Pawn,  -9, -50, 50, true);
+    SetVal(e2Pawn, -13, -50, 50, true);
+    SetVal(f2Pawn,  20, -50, 50, true);
+    SetVal(g2Pawn,  17, -50, 50, true);
+    SetVal(h2Pawn, -22, -50, 50, true);
 
-    SetVal(a3Pawn, -14, -50, 50, true);
-    SetVal(b3Pawn, -16, -50, 50, true);
-    SetVal(c3Pawn, -12, -50, 50, true);
-    SetVal(d3Pawn, -16, -50, 50, true);
-    SetVal(e3Pawn, -6, -50, 50, true);
-    SetVal(f3Pawn, -1, -50, 50, true);
-    SetVal(g3Pawn, -4, -50, 50, true);
-    SetVal(h3Pawn, -21, -50, 50, true);
+    SetVal(a3Pawn,  -1, -50, 50, true);
+    SetVal(b3Pawn,  -6, -50, 50, true);
+    SetVal(c3Pawn,  -6, -50, 50, true);
+    SetVal(d3Pawn,  -8, -50, 50, true);
+    SetVal(e3Pawn,   0, -50, 50, true);
+    SetVal(f3Pawn,   2, -50, 50, true);
+    SetVal(g3Pawn,  14, -50, 50, true);
+    SetVal(h3Pawn,  -14, -50, 50, true);
 
-    SetVal(a4Pawn, -12, -50, 50, true);
-    SetVal(b4Pawn, -18, -50, 50, true);
-    SetVal(c4Pawn, -10, -50, 50, true);
-    SetVal(d4Pawn, 4, -50, 50, true);
-    SetVal(e4Pawn, 0, -50, 50, true);
-    SetVal(f4Pawn, 3, -50, 50, true);
-    SetVal(g4Pawn, -19, -50, 50, true);
-    SetVal(h4Pawn, -27, -50, 50, true);
+    SetVal(a4Pawn,  -1, -50, 50, true);
+    SetVal(b4Pawn,  -7, -50, 50, true);
+    SetVal(c4Pawn,  -3, -50, 50, true);
+    SetVal(d4Pawn,  17, -50, 50, true);
+    SetVal(e4Pawn,  11, -50, 50, true);
+    SetVal(f4Pawn,   9, -50, 50, true);
+    SetVal(g4Pawn,  -5, -50, 50, true);
+    SetVal(h4Pawn, -23, -50, 50, true);
 
-    SetVal(a5Pawn, 3, -50, 50, true);
-    SetVal(b5Pawn, 3, -50, 50, true);
-    SetVal(c5Pawn, 2, -50, 50, true);
-    SetVal(d5Pawn, 11, -50, 50, true);
-    SetVal(e5Pawn, 11, -50, 50, true);
-    SetVal(f5Pawn, -7, -50, 50, true);
-    SetVal(g5Pawn, -2, -50, 50, true);
-    SetVal(h5Pawn, -21, -50, 50, true);
+    SetVal(a5Pawn, 20, -50, 50, true);
+    SetVal(b5Pawn, 19, -50, 50, true);
+    SetVal(c5Pawn, 10, -50, 50, true);
+    SetVal(d5Pawn, 21, -50, 50, true);
+    SetVal(e5Pawn, 21, -50, 50, true);
+    SetVal(f5Pawn, 10, -50, 50, true);
+    SetVal(g5Pawn, 16, -50, 50, true);
+    SetVal(h5Pawn, -14, -50, 50, true);
 
-    SetVal(a6Pawn, 16, -50, 50, true);
-    SetVal(b6Pawn, 18, -50, 50, true);
-    SetVal(c6Pawn, 36, -50, 50, true);
-    SetVal(d6Pawn, 32, -50, 50, true);
-    SetVal(e6Pawn, 32, -50, 50, true);
-    SetVal(f6Pawn, 47, -50, 50, true);
-    SetVal(g6Pawn, 19, -50, 50, true);
-    SetVal(h6Pawn, 2, -50, 50, true);
+    SetVal(a6Pawn, 48, -50, 50, true);
+    SetVal(b6Pawn, 36, -50, 50, true);
+    SetVal(c6Pawn, 47, -50, 50, true);
+    SetVal(d6Pawn, 16, -50, 50, true);
+    SetVal(e6Pawn, 48, -50, 50, true);
+    SetVal(f6Pawn, 50, -50, 50, true);
+    SetVal(g6Pawn, 36, -50, 50, true);
+    SetVal(h6Pawn, 12, -50, 50, true);
 
-    SetVal(a7Pawn, 22, -50, 50, true);
-    SetVal(b7Pawn, 23, -50, 50, true);
-    SetVal(c7Pawn, 69, -50, 99, true);
-    SetVal(d7Pawn, 86, -50, 99, true);
-    SetVal(e7Pawn, 87, -50, 99, true);
-    SetVal(f7Pawn, 69, -50, 99, true);
-    SetVal(g7Pawn, 13, -50, 50, true);
-    SetVal(h7Pawn, 15, -50, 50, true);
+
+    SetVal(a7Pawn, 50, -50, 50, true);
+    SetVal(b7Pawn, 50, -50, 50, true);
+    SetVal(c7Pawn, 59, -50, 99, true);
+    SetVal(d7Pawn, 59, -50, 99, true);
+    SetVal(e7Pawn, 58, -50, 99, true);
+    SetVal(f7Pawn, 12, -50, 99, true);
+    SetVal(g7Pawn, 14, -50, 50, true);
+    SetVal(h7Pawn, 32, -50, 50, true);
 
 	SetVal(a1Knight, -63, -99, 50, true);
 	SetVal(b1Knight, -20, -99, 50, true);

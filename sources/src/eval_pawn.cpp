@@ -16,29 +16,8 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "rodent.h"
+#include "eval.h"
 #include <cstring>
-
-static const int empty_ks[64] = {
-    0,   0,   0,   0,   0, -10, -20, -30,
-    0,   0,   0,   0,   0, -10, -20, -30,
-    0,   0,   0,   0,   0, -10, -20, -30,
-    0,   0,   0,   0,   0, -10, -20, -30,
-    0,   0,   0,   0,   0, -10, -20, -30,
-    0,   0,   0,   0,   0, -10, -20, -30,
-    0,   0,   0,   0,   0, -10, -20, -30,
-    0,   0,   0,   0,   0, -10, -20, -30
-};
-
-static const int empty_qs[64] = {
-  -30, -20, -10,   0,   0,   0,   0,   0,
-  -30, -20, -10,   0,   0,   0,   0,   0,
-  -30, -20, -10,   0,   0,   0,   0,   0,
-  -30, -20, -10,   0,   0,   0,   0,   0,
-  -30, -20, -10,   0,   0,   0,   0,   0,
-  -30, -20, -10,   0,   0,   0,   0,   0,
-  -30, -20, -10,   0,   0,   0,   0,   0,
-  -30, -20, -10,   0,   0,   0,   0,   0
-};
 
 void cEngine::ClearPawnHash() {
 
@@ -112,13 +91,13 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
 
     if (bb_all_pawns) {
         if (!(bb_all_pawns & Mask.kingSide)) {
-            AddPawns(e, WC, empty_ks[p->mKingSq[WC]], empty_ks[p->mKingSq[WC]]);
-            AddPawns(e, BC, empty_ks[p->mKingSq[BC]], empty_ks[p->mKingSq[BC]]);
+            AddPawns(e, WC, pst_empty_ks[p->mKingSq[WC]], pst_empty_ks[p->mKingSq[WC]]);
+            AddPawns(e, BC, pst_empty_ks[p->mKingSq[BC]], pst_empty_ks[p->mKingSq[BC]]);
         }
 
         if (!(bb_all_pawns & Mask.q_side)) {
-            AddPawns(e, WC, empty_qs[p->mKingSq[WC]], empty_qs[p->mKingSq[WC]]);
-            AddPawns(e, BC, empty_qs[p->mKingSq[BC]], empty_qs[p->mKingSq[BC]]);
+            AddPawns(e, WC, pst_empty_qs[p->mKingSq[WC]], pst_empty_qs[p->mKingSq[WC]]);
+            AddPawns(e, BC, pst_empty_qs[p->mKingSq[BC]], pst_empty_qs[p->mKingSq[BC]]);
         }
     }
 
