@@ -71,7 +71,7 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     if (p->IsOnSq(WC, P, B3) && (e->two_pawns_take[WC] & SqBb(B5))) tmp -= V(P_BADBIND);
     if (p->IsOnSq(WC, P, G3) && (e->two_pawns_take[WC] & SqBb(G5))) tmp -= V(P_BADBIND);
 
-    Add(e, WC, tmp, 0);
+    AddPawns(e, WC, tmp, 0);
 
     tmp = 0;
     if (e->two_pawns_take[BC] & SqBb(D4)) tmp += V(P_BIND);
@@ -82,7 +82,7 @@ void cEngine::EvaluatePawnStruct(POS *p, eData *e) {
     if (p->IsOnSq(BC, P, B6) && (e->two_pawns_take[BC] & SqBb(B4))) tmp -= V(P_BADBIND);
     if (p->IsOnSq(BC, P, G6) && (e->two_pawns_take[BC] & SqBb(G4))) tmp -= V(P_BADBIND);
 
-    Add(e, BC, tmp, 0);
+    AddPawns(e, BC, tmp, 0);
 
 
     // King on a wing without pawns
