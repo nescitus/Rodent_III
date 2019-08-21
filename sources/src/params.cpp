@@ -1036,6 +1036,7 @@ void cParam::InitPst() {
         }
     }
 
+#ifdef TEXEL_PST
 	mg_pst[WC][P][A2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a2Pawn];
 	mg_pst[BC][P][A7] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[a2Pawn];
 	mg_pst[WC][P][B2] = ((values[P_MID] * Par.values[W_MATERIAL]) / 100) + values[b2Pawn];
@@ -1542,6 +1543,7 @@ void cParam::InitPst() {
 	mg_pst[BC][B][G1] = ((values[B_MID] * Par.values[W_MATERIAL]) / 100) + values[g8Bish];
 	mg_pst[WC][B][H8] = ((values[B_MID] * Par.values[W_MATERIAL]) / 100) + values[h8Bish];
 	mg_pst[BC][B][H1] = ((values[B_MID] * Par.values[W_MATERIAL]) / 100) + values[h8Bish];
+#endif
 }
 
 void cParam::InitMobility() {
